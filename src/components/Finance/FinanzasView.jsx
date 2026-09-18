@@ -26,16 +26,16 @@ export default function FinanzasView({ onOpenCloseCash }) {
   const balanceNeto = totalIngresos - totalEgresos;
 
   const totalEfectivo = ventas
-    .filter(v => v.metodo_pago === 'EFECTIVO')
-    .reduce((acc, curr) => acc + (curr.total || 0), 0);
+    .filter(v => v.metodo_pago?.toUpperCase() === 'EFECTIVO' || v.metodo_pago === 'Efectivo')
+    .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
 
   const totalQR = ventas
-    .filter(v => v.metodo_pago === 'QR')
-    .reduce((acc, curr) => acc + (curr.total || 0), 0);
+    .filter(v => v.metodo_pago?.toUpperCase()?.includes('QR'))
+    .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
 
   const totalTarjeta = ventas
-    .filter(v => v.metodo_pago === 'TARJETA')
-    .reduce((acc, curr) => acc + (curr.total || 0), 0);
+    .filter(v => v.metodo_pago?.toUpperCase()?.includes('TARJETA') || v.metodo_pago === 'Tarjeta')
+    .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
 
   return (
     <div className="space-y-4 animate-fadeIn pb-12">

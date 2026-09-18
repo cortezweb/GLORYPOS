@@ -34,15 +34,15 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash }) {
     .reduce((sum, m) => sum + (Number(m.monto) || 0), 0) || 300.00;
 
   const ventasEfectivo = ventas
-    .filter(v => v.metodo_pago === 'Efectivo' && v.estado !== 'ANULADO')
+    .filter(v => (v.metodo_pago?.toUpperCase() === 'EFECTIVO' || v.metodo_pago === 'Efectivo') && v.estado !== 'ANULADO')
     .reduce((sum, v) => sum + (Number(v.total) || 0), 0);
 
   const ventasQr = ventas
-    .filter(v => (v.metodo_pago === 'QR Simple' || v.metodo_pago === 'QR') && v.estado !== 'ANULADO')
+    .filter(v => (v.metodo_pago?.toUpperCase()?.includes('QR')) && v.estado !== 'ANULADO')
     .reduce((sum, v) => sum + (Number(v.total) || 0), 0);
 
   const ventasTarjeta = ventas
-    .filter(v => v.metodo_pago === 'Tarjeta' && v.estado !== 'ANULADO')
+    .filter(v => (v.metodo_pago?.toUpperCase()?.includes('TARJETA') || v.metodo_pago === 'Tarjeta') && v.estado !== 'ANULADO')
     .reduce((sum, v) => sum + (Number(v.total) || 0), 0);
 
   const totalIngresosExtra = movimientos

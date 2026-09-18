@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Store, AlertCircle, ShoppingCart } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
@@ -175,7 +176,7 @@ function MainShell() {
                 onOpenVariants={(prod) => setSelectedVariantProduct(prod)}
                 onOpenScale={(prod) => setSelectedScaleProduct(prod)}
                 onOpenModifiers={(prod) => setSelectedModifierProduct(prod)}
-                onOpenInventory={() => setCurrentView('inventory')}
+                onOpenInventory={() => setCurrentView('productos')}
                 onSelectSubView={(sub) => setCurrentView(sub)}
               />
             </div>
@@ -188,62 +189,108 @@ function MainShell() {
         ) : (
           <div className="flex-1 overflow-y-auto pb-20 lg:pb-8">
             <div className="max-w-7xl mx-auto w-full p-2.5 sm:p-4 lg:p-6">
-              {/* Ventas Sub-Windows */}
-              {(currentView === 'ventas_comprobantes' || currentView === 'sales') && (
+              {/* Ventas Sub-Windows (Soporta múltiples alias para evitar pantallas en blanco) */}
+              {['ventas_comprobantes', 'comprobantes', 'sales'].includes(currentView) && (
                 <ComprobantesView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
                 />
               )}
-              {currentView === 'ventas_notas' && (
+              {['ventas_notas', 'notas_venta', 'notas'].includes(currentView) && (
                 <NotasVentaView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
                 />
               )}
-              {currentView === 'ventas_cotizaciones' && (
+              {['ventas_cotizaciones', 'cotizaciones', 'preventa'].includes(currentView) && (
                 <CotizacionesView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenPosWithCart={() => setCurrentView('pos')} 
                 />
               )}
-              {currentView === 'ventas_caja' && (
+              {['ventas_caja', 'caja_chica', 'caja'].includes(currentView) && (
                 <CajaChicaView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenCloseCash={() => setIsCloseCashOpen(true)} 
                 />
               )}
 
-              {currentView === 'productos' && (
+              {/* Catálogo y Kardex */}
+              {['productos', 'products'].includes(currentView) && (
                 <ProductsView 
                   currentRubro={currentRubro}
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                   onOpenScanner={() => setIsScannerOpen(true)} 
                 />
               )}
-              {currentView === 'inventory' && (
+              {['inventory', 'inventario', 'kardex'].includes(currentView) && (
                 <InventoryView 
                   currentRubro={currentRubro}
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                   onOpenScanner={() => setIsScannerOpen(true)} 
                 />
               )}
-              {currentView === 'clients' && <ClientsView />}
-              {currentView === 'purchases' && <PurchasesView />}
-              {currentView === 'reports' && (
+
+              {/* Operaciones & Clientes */}
+              {['clients', 'clientes'].includes(currentView) && <ClientsView />}
+              {['purchases', 'compras'].includes(currentView) && <PurchasesView />}
+              {['reports', 'reportes'].includes(currentView) && (
                 <ReportsView onOpenReceipt={(venta) => setActiveTicketSale(venta)} />
               )}
-              {currentView === 'subscription' && <SubscriptionView />}
+              {['subscription', 'suscripcion', 'planes'].includes(currentView) && <SubscriptionView />}
               
-              {/* Additional Stitch Menu Views */}
-              {currentView === 'tienda_virtual' && <TiendaVirtualView />}
-              {currentView === 'finanzas' && (
+              {/* Vistas Avanzadas & Complementarias */}
+              {['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView) && <TiendaVirtualView />}
+              {['finanzas'].includes(currentView) && (
                 <FinanzasView onOpenCloseCash={() => setIsCloseCashOpen(true)} />
               )}
-              {currentView === 'guias_remision' && <GuiasRemisionView />}
-              {currentView === 'documentos_avanzados' && <DocumentosAvanzadosView />}
-              {currentView === 'administracion' && <AdministracionView />}
-              {currentView === 'modulos' && <ModulosView />}
+              {['guias_remision', 'guias', 'despacho'].includes(currentView) && <GuiasRemisionView />}
+              {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
+              {['administracion', 'admin', 'configuracion'].includes(currentView) && <AdministracionView />}
+              {['modulos'].includes(currentView) && <ModulosView />}
+              {['admin_dashboard', 'dashboard'].includes(currentView) && (
+                <ReportsView onOpenReceipt={(venta) => setActiveTicketSale(venta)} />
+              )}
+
+              {/* Fallback de Seguridad: Evita pantallas en blanco / plomo si una vista no existe */}
+              {![
+                'pos',
+                'ventas_comprobantes', 'comprobantes', 'sales',
+                'ventas_notas', 'notas_venta', 'notas',
+                'ventas_cotizaciones', 'cotizaciones', 'preventa',
+                'ventas_caja', 'caja_chica', 'caja',
+                'productos', 'products',
+                'inventory', 'inventario', 'kardex',
+                'clients', 'clientes',
+                'purchases', 'compras',
+                'reports', 'reportes',
+                'subscription', 'suscripcion', 'planes',
+                'tienda_virtual', 'catalogo_online', 'tienda',
+                'finanzas',
+                'guias_remision', 'guias', 'despacho',
+                'documentos_avanzados', 'documentos',
+                'administracion', 'admin', 'configuracion',
+                'modulos',
+                'admin_dashboard', 'dashboard'
+              ].includes(currentView) && (
+                <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 space-y-4 shadow-sm">
+                  <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+                    <Store className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">Módulo en Preparación</h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      La sección <strong className="text-slate-700 font-mono">"{currentView}"</strong> se encuentra lista para el siguiente turno.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setCurrentView('pos')}
+                    className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition"
+                  >
+                    Volver al Punto de Venta (POS)
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

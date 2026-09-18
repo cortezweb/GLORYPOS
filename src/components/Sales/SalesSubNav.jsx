@@ -5,30 +5,40 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
   const tabs = [
     {
       id: 'pos',
+      viewId: 'pos',
+      aliases: ['pos'],
       label: 'Nueva Venta',
       icon: ShoppingCart,
       badge: 'POS'
     },
     {
       id: 'comprobantes',
+      viewId: 'ventas_comprobantes',
+      aliases: ['comprobantes', 'ventas_comprobantes', 'sales'],
       label: 'Comprobantes Emitidos',
       icon: FileText,
       badge: null
     },
     {
       id: 'notas_venta',
+      viewId: 'ventas_notas',
+      aliases: ['notas_venta', 'ventas_notas', 'notas'],
       label: 'Notas de Venta',
       icon: Receipt,
       badge: null
     },
     {
       id: 'cotizaciones',
+      viewId: 'ventas_cotizaciones',
+      aliases: ['cotizaciones', 'ventas_cotizaciones', 'preventa'],
       label: 'Cotizaciones / Pedidos',
       icon: FileSpreadsheet,
       badge: null
     },
     {
       id: 'caja_chica',
+      viewId: 'ventas_caja',
+      aliases: ['caja_chica', 'ventas_caja', 'caja'],
       label: 'Caja Chica / Turno',
       icon: Wallet,
       badge: 'Turno'
@@ -45,7 +55,7 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
           <span className="text-[#2563eb] font-bold">Ventas</span>
           <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
           <span className="text-gray-800 font-semibold">
-            {tabs.find(t => t.id === currentSubView)?.label || 'Punto de Venta'}
+            {tabs.find(t => t.aliases.includes(currentSubView))?.label || 'Punto de Venta'}
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-gray-400">
@@ -58,12 +68,12 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
       <nav className="flex items-center gap-1.5 px-3 sm:px-4 py-2 overflow-x-auto no-scrollbar">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = currentSubView === tab.id;
+          const isActive = tab.aliases.includes(currentSubView);
 
           return (
             <button
               key={tab.id}
-              onClick={() => onSelectSubView(tab.id)}
+              onClick={() => onSelectSubView(tab.viewId)}
               className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all duration-150 shrink-0 ${
                 isActive
                   ? 'bg-gradient-to-r from-[#2563eb] to-[#7c3aed] text-white font-semibold shadow-sm shadow-blue-500/25 ring-1 ring-blue-600/30'

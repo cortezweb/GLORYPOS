@@ -24,14 +24,18 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
 
   // Filter only formal receipts & invoices (excluding pure internal draft notes if requested, but showing all issued docs)
   const comprobantes = ventas.filter(v => 
-    v.tipo_documento === 'FACTURA_SIAT' || v.tipo_documento === 'BOLETA'
+    v.tipo_documento === 'FACTURA_SIAT' || 
+    v.tipo_documento === 'FACTURA' || 
+    v.tipo_documento === 'BOLETA'
   );
 
   const totalFacturado = comprobantes
     .filter(v => v.estado !== 'ANULADO')
     .reduce((sum, v) => sum + (Number(v.total) || 0), 0);
 
-  const totalFacturasSiat = comprobantes.filter(v => v.tipo_documento === 'FACTURA_SIAT').length;
+  const totalFacturasSiat = comprobantes.filter(v => 
+    v.tipo_documento === 'FACTURA_SIAT' || v.tipo_documento === 'FACTURA'
+  ).length;
   const totalBoletas = comprobantes.filter(v => v.tipo_documento === 'BOLETA').length;
 
   const filtered = comprobantes.filter(v => {
@@ -43,7 +47,9 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
       v.cuf?.toLowerCase().includes(term);
 
     const matchesDoc = 
-      filterDoc === 'ALL' || v.tipo_documento === filterDoc;
+      filterDoc === 'ALL' || 
+      v.tipo_documento === filterDoc ||
+      (filterDoc === 'FACTURA_SIAT' && v.tipo_documento === 'FACTURA');
 
     return matchesSearch && matchesDoc;
   });
@@ -194,7 +200,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
         {/* Comprobantes Table & Card List */}
         <div className="space-y-2.5">
           {filtered.map((v) => {
-            const isFactura = v.tipo_documento === 'FACTURA_SIAT';
+            const isFactura = v.tipo_documento === 'FACTURA_SIAT' || v.tipo_documento === 'FACTURA';
             const isAnulado = v.estado === 'ANULADO';
             const fechaFormateada = new Date(v.fecha).toLocaleString('es-BO', {
               day: '2-digit',
