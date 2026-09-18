@@ -6,6 +6,7 @@ import {
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 
 export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   const { items, total, count, clearCart } = useCart();
@@ -173,6 +174,9 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
       clearCart();
       setIsProcessing(false);
       onSaleCompleted(venta);
+
+      // Sincronizar en segundo plano con Supabase Cloud
+      syncService.syncLocalToCloud().catch(err => console.warn('Background cloud sync:', err));
     } catch (err) {
       console.error('Error al procesar la venta:', err);
       setIsProcessing(false);

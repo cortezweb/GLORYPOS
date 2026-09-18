@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock } from 'lucide-react';
+import { Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, Cloud, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { syncService } from '../../services/syncService';
 
 export default function TopBar({ 
   onOpenSidebar, 
@@ -14,6 +15,32 @@ export default function TopBar({
 }) {
   const { empresa } = useAuth();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [syncState, setSyncState] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
+
+  const handleManualSync = async () => {
+    if (syncState === 'syncing') return;
+    setSyncState('syncing');
+    try {
+      const res = await syncService.syncLocalToCloud();
+      if (res?.success) {
+        setSyncState('synced');
+        setTimeout(() => setSyncState('idle'), 3500);
+      } else {
+        setSyncState('error');
+        setTimeout(() => setSyncState('idle'), 4000);
+      }
+    } catch {
+      setSyncState('error');
+      setTimeout(() => setSyncState('idle'), 4000);
+    }
+  };
+
+  useEffect(() => {
+    // Auto-sync al volver a estar en línea
+    if (isOnline) {
+      syncService.syncLocalToCloud().catch(() => {});
+    }
+  }, [isOnline]);
 
   useEffect(() => {
     const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -66,6 +93,40 @@ export default function TopBar({
                 <span className={`w-1.5 h-1.5 rounded-full mr-1 ${isOnline !== false ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
                 {isOnline !== false ? 'En Línea' : 'Offline'}
               </span>
+
+              {/* Supabase Cloud Sync Indicator & Button */}
+              <button
+                type="button"
+                onClick={handleManualSync}
+                disabled={syncState === 'syncing' || !isOnline}
+                title={
+                  syncState === 'syncing'
+                    ? 'Sincronizando con Supabase...'
+                    : syncState === 'synced'
+                      ? 'Datos sincronizados con la nube'
+                      : syncState === 'error'
+                        ? 'Error al sincronizar con Supabase'
+                        : 'Sincronizar datos locales con Supabase (Nube)'
+                }
+                className={`hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold rounded-full border transition cursor-pointer active:scale-95 ${
+                  syncState === 'syncing'
+                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                    : syncState === 'synced'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                      : syncState === 'error'
+                        ? 'bg-rose-50 text-rose-700 border-rose-300'
+                        : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200'
+                }`}
+              >
+                {syncState === 'syncing' ? (
+                  <RefreshCw className="w-3 h-3 text-blue-600 animate-spin" />
+                ) : (
+                  <Cloud className={`w-3 h-3 ${syncState === 'synced' ? 'text-emerald-600' : 'text-indigo-600'}`} />
+                )}
+                <span>
+                  {syncState === 'syncing' ? 'Sincronizando...' : syncState === 'synced' ? 'Nube OK' : syncState === 'error' ? 'Sync Falló' : 'Sync Nube'}
+                </span>
+              </button>
 
               {/* Rubro Selector Quick Button */}
               {onOpenRubroModal && (
