@@ -122,6 +122,32 @@ CREATE INDEX IF NOT EXISTS idx_ventas_empresa ON ventas(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_ventas_fecha ON ventas(fecha);
 CREATE INDEX IF NOT EXISTS idx_kardex_producto ON kardex(producto_id);
 
+-- POLÍTICAS DE SEGURIDAD ROW LEVEL SECURITY (RLS) PARA POS EN TIEMPO REAL
+ALTER TABLE empresas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE productos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ventas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE clientes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE kardex ENABLE ROW LEVEL SECURITY;
+ALTER TABLE caja_chica ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Acceso publico empresas" ON empresas;
+CREATE POLICY "Acceso publico empresas" ON empresas FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acceso publico productos" ON productos;
+CREATE POLICY "Acceso publico productos" ON productos FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acceso publico ventas" ON ventas;
+CREATE POLICY "Acceso publico ventas" ON ventas FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acceso publico clientes" ON clientes;
+CREATE POLICY "Acceso publico clientes" ON clientes FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acceso publico kardex" ON kardex;
+CREATE POLICY "Acceso publico kardex" ON kardex FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acceso publico caja_chica" ON caja_chica;
+CREATE POLICY "Acceso publico caja_chica" ON caja_chica FOR ALL USING (true) WITH CHECK (true);
+
 -- EMPRESA DEMO INICIAL
 INSERT INTO empresas (id, nombre, nit_ci, rubro, plan_tipo, ciudad, direccion, telefono)
 VALUES (
