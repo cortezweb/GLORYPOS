@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Lock, Unlock, ShieldAlert, KeyRound, Clock, UserCheck } from 'lucide-react';
 import { playErrorBeep } from '../../utils/audio';
 
-export default function LockTerminalModal({ isOpen, onClose, cajeroNombre = 'Carlos Gutiérrez' }) {
+export default function LockTerminalModal({ isOpen, onClose, cajeroNombre = 'Carlos Gutiérrez', cajeroPin = '1234' }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -44,8 +44,8 @@ export default function LockTerminalModal({ isOpen, onClose, cajeroNombre = 'Car
     setError(false);
 
     if (newPin.length === 4) {
-      // Validate PIN: Default 1234 or 0000
-      if (newPin === '1234' || newPin === '0000') {
+      // Validate PIN: cajeroPin or Master 1234 / 0000
+      if (newPin === String(cajeroPin) || newPin === '1234' || newPin === '0000') {
         setTimeout(() => {
           setPin('');
           onClose();

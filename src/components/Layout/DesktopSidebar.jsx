@@ -14,8 +14,8 @@ export default function DesktopSidebar({
   onOpenRubroModal,
   currentRubro
 }) {
-  const { empresa, diasRestantes, isExpired, cambiarPlan, setTrialDays, simularVencimiento } = useAuth();
-  const initialLetter = (empresa?.propietario || empresa?.nombre || 'G').charAt(0).toUpperCase();
+  const { empresa, currentUser, logout, diasRestantes, isExpired, cambiarPlan, setTrialDays, simularVencimiento } = useAuth();
+  const initialLetter = (currentUser?.nombre || empresa?.propietario || empresa?.nombre || 'G').charAt(0).toUpperCase();
 
   const menuItems = [
     { id: 'inicio', label: 'Inicio', icon: Home, action: () => onSelectView('pos') },
@@ -186,20 +186,26 @@ export default function DesktopSidebar({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#2563eb] to-[#8b5cf6] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-              {initialLetter}
+              {currentUser?.nombre ? currentUser.nombre.charAt(0).toUpperCase() : initialLetter}
             </div>
             <div className="leading-tight min-w-0">
               <p className="text-xs font-bold text-gray-900 truncate max-w-[120px]">
-                {empresa?.propietario || 'Carlos Gutiérrez'}
+                {currentUser?.nombre || empresa?.propietario || 'Carlos Gutiérrez'}
               </p>
-              <p className="text-[10px] text-gray-400 font-medium">Administrador</p>
+              <p className="text-[10px] text-gray-400 font-medium">
+                {currentUser?.rol ? (currentUser.rol === 'ADMIN' ? 'Administrador' : 'Cajero Activo') : 'Administrador'}
+              </p>
             </div>
           </div>
 
           <button
-            onClick={onOpenCloseCash}
-            className="p-1.5 text-gray-400 hover:text-rose-600 transition"
-            title="Cerrar Turno / Sesión"
+            onClick={() => {
+              if (window.confirm('¿Deseas cerrar la sesión actual?')) {
+                logout();
+              }
+            }}
+            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+            title="Cerrar Sesión"
           >
             <LogOut className="w-4 h-4" />
           </button>

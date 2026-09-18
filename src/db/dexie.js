@@ -38,6 +38,20 @@ db.version(4).stores({
   kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo'
 });
 
+db.version(5).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, email, pin, rol, nombre'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
@@ -459,6 +473,49 @@ export async function initDatabase() {
         motivo: 'Ajuste por Merma / Empaque Dañado',
         saldo_nuevo: 18,
         costo_unitario: 3.20
+      }
+    ]);
+  }
+
+  // Usuarios predeterminados para inicio de sesión táctil y por credenciales
+  const userCount = await db.usuarios.count();
+  if (userCount === 0) {
+    await db.usuarios.bulkAdd([
+      {
+        id: 'usr-admin',
+        nombre: 'Administrador General',
+        email: 'admin@glorypos.bo',
+        password: 'admin',
+        pin: '1234',
+        rol: 'ADMIN',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        color: 'from-blue-600 to-indigo-600',
+        activo: true,
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'usr-carlos',
+        nombre: 'Carlos Gutiérrez',
+        email: 'carlos@glorypos.bo',
+        password: 'caja',
+        pin: '0000',
+        rol: 'CAJERO',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+        color: 'from-emerald-600 to-teal-600',
+        activo: true,
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'usr-maria',
+        nombre: 'María Fernández',
+        email: 'maria@glorypos.bo',
+        password: '123',
+        pin: '4321',
+        rol: 'VENDEDOR',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+        color: 'from-purple-600 to-pink-600',
+        activo: true,
+        created_at: new Date().toISOString()
       }
     ]);
   }

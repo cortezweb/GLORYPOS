@@ -16,11 +16,11 @@ export default function Sidebar({
   onOpenRubroModal,
   currentRubro
 }) {
-  const { empresa, diasRestantes, isExpired, cambiarPlan, setTrialDays, simularVencimiento } = useAuth();
+  const { empresa, currentUser, logout, diasRestantes, isExpired, cambiarPlan, setTrialDays, simularVencimiento } = useAuth();
 
   if (!isOpen) return null;
 
-  const initialLetter = (empresa?.propietario || empresa?.nombre || 'G').charAt(0).toUpperCase();
+  const initialLetter = (currentUser?.nombre || empresa?.propietario || empresa?.nombre || 'G').charAt(0).toUpperCase();
 
   const menuItems = [
     { id: 'inicio', label: 'Inicio', icon: Home, action: () => onSelectView('pos') },
@@ -244,21 +244,28 @@ export default function Sidebar({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#2563eb] to-[#8b5cf6] text-white flex items-center justify-center font-bold text-sm shadow-xs shadow-indigo-500/20">
-                {initialLetter}
+                {currentUser?.nombre ? currentUser.nombre.charAt(0).toUpperCase() : initialLetter}
               </div>
               <div className="leading-snug">
                 <p className="text-xs font-bold text-gray-900 tracking-tight truncate max-w-[150px]">
-                  {empresa?.propietario || 'Carlos Gutiérrez'}
+                  {currentUser?.nombre || empresa?.propietario || 'Carlos Gutiérrez'}
                 </p>
-                <p className="text-[11px] text-gray-400 font-medium">Administrador</p>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  {currentUser?.rol ? (currentUser.rol === 'ADMIN' ? 'Administrador' : 'Cajero Activo') : 'Administrador'}
+                </p>
               </div>
             </div>
 
             <button 
-              onClick={() => { onClose(); onOpenCloseCash(); }}
-              aria-label="Cerrar Turno o Arqueo" 
-              className="p-2 text-gray-400 hover:text-red-500 transition" 
-              title="Cerrar Turno o Arqueo"
+              onClick={() => { 
+                if (window.confirm('¿Deseas cerrar la sesión actual?')) {
+                  onClose(); 
+                  logout(); 
+                }
+              }}
+              aria-label="Cerrar Sesión" 
+              className="p-2 text-gray-400 hover:text-red-500 transition rounded-lg hover:bg-rose-50" 
+              title="Cerrar Sesión"
             >
               <LogOut className="w-5 h-5 stroke-[1.8]" />
             </button>

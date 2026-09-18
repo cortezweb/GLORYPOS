@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, Cloud, RefreshCw } from 'lucide-react';
+import { Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, Cloud, RefreshCw, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
 
@@ -13,7 +13,7 @@ export default function TopBar({
   currentRubro,
   onOpenRubroModal
 }) {
-  const { empresa } = useAuth();
+  const { empresa, currentUser, logout } = useAuth();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [syncState, setSyncState] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
 
@@ -204,15 +204,43 @@ export default function TopBar({
             <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
           </button>
 
-          {/* User Profile Avatar */}
-          <button 
-            onClick={onOpenSidebar}
-            aria-label="Perfil de Cajero" 
-            className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-indigo-100" 
-            type="button"
-          >
-            {empresa?.nombre ? empresa.nombre.charAt(0).toUpperCase() : 'T'}
-          </button>
+          {/* User Profile Avatar & Role Badge */}
+          <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200 ml-1">
+            <button 
+              onClick={onOpenSidebar}
+              aria-label="Perfil de Cajero" 
+              title={`Usuario: ${currentUser?.nombre || 'Carlos Gutiérrez'} (${currentUser?.rol || 'CAJERO'})`}
+              className="flex items-center gap-1.5 p-1 rounded-full hover:bg-slate-100 transition cursor-pointer" 
+              type="button"
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-indigo-100">
+                {currentUser?.nombre ? currentUser.nombre.charAt(0).toUpperCase() : 'C'}
+              </div>
+              <div className="hidden xl:flex flex-col items-start leading-none pr-1">
+                <span className="text-[11px] font-bold text-slate-800 truncate max-w-[100px]">
+                  {currentUser?.nombre ? currentUser.nombre.split(' ')[0] : 'Cajero'}
+                </span>
+                <span className="text-[8px] font-extrabold text-blue-600 uppercase">
+                  {currentUser?.rol || 'CAJA'}
+                </span>
+              </div>
+            </button>
+
+            {/* Logout Action */}
+            <button
+              onClick={() => {
+                if (window.confirm('¿Deseas cerrar la sesión actual?')) {
+                  logout();
+                }
+              }}
+              aria-label="Cerrar sesión"
+              title="Cerrar sesión"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+              type="button"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </header>

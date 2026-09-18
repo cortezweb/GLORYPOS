@@ -49,8 +49,11 @@ import NotasVentaView from './components/Sales/NotasVentaView';
 import CotizacionesView from './components/Sales/CotizacionesView';
 import CajaChicaView from './components/Sales/CajaChicaView';
 
+// Auth Login Screen
+import LoginView from './components/Auth/LoginView';
+
 function MainShell() {
-  const { isExpired } = useAuth();
+  const { isExpired, currentUser, isAuthenticated, loading } = useAuth();
 
   // Navigation State
   const [currentView, setCurrentView] = useState('pos');
@@ -130,6 +133,19 @@ function MainShell() {
     setIsCheckoutOpen(false);
     setActiveTicketSale(venta);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-white">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-xs font-bold text-slate-400 mt-4 tracking-widest uppercase">Iniciando GLORYPOS...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !currentUser) {
+    return <LoginView />;
+  }
 
   return (
     <div className="min-h-screen w-full bg-slate-100 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-hidden">
@@ -398,7 +414,8 @@ function MainShell() {
       <LockTerminalModal
         isOpen={isTerminalLocked}
         onClose={() => setIsTerminalLocked(false)}
-        cajeroNombre="Carlos Gutiérrez"
+        cajeroNombre={currentUser?.nombre || "Carlos Gutiérrez"}
+        cajeroPin={currentUser?.pin || "1234"}
       />
 
       {/* Soft Paywall when Subscription/Trial Expires */}

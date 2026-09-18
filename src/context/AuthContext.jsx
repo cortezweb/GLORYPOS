@@ -5,18 +5,101 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [empresa, setEmpresa] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loadEmpresa = async () => {
+  const loadData = async () => {
     await initDatabase();
     const config = await db.config_empresa.get('empresa_activa');
     setEmpresa(config);
+
+    const userList = await db.usuarios.toArray();
+    setUsuarios(userList);
+
+    // Recuperar sesión persistente de usuario
+    try {
+      const savedSession = localStorage.getItem('glorypos_user_session');
+      if (savedSession) {
+        const parsed = JSON.parse(savedSession);
+        // Validar que el usuario aún exista en la base de datos
+        const existing = userList.find(u => u.id === parsed.id);
+        if (existing) {
+          setCurrentUser(existing);
+        } else {
+          localStorage.removeItem('glorypos_user_session');
+          setCurrentUser(null);
+        }
+      }
+    } catch {
+      localStorage.removeItem('glorypos_user_session');
+      setCurrentUser(null);
+    }
+
     setLoading(false);
   };
 
   useEffect(() => {
-    loadEmpresa();
+    loadData();
   }, []);
+
+  // Iniciar sesión con PIN táctil (4 dígitos)
+  const loginWithPin = async (pin, specificUserId = null) => {
+    if (!pin) return { success: false, error: 'Ingresa un PIN' };
+
+    let user = null;
+    if (specificUserId) {
+      const target = await db.usuarios.get(specificUserId);
+      if (target && target.pin === String(pin)) {
+        user = target;
+      }
+    } else {
+      user = await db.usuarios.where('pin').equals(String(pin)).first();
+    }
+
+    if (user) {
+      localStorage.setItem('glorypos_user_session', JSON.stringify(user));
+      setCurrentUser(user);
+      return { success: true, user };
+    } else {
+      return { success: false, error: 'PIN incorrecto. Intenta de nuevo.' };
+    }
+  };
+
+  // Iniciar sesión con Correo / Usuario y Contraseña
+  const loginWithCredentials = async (identifier, password) => {
+    if (!identifier || !password) {
+      return { success: false, error: 'Completa todos los campos' };
+    }
+
+    const term = identifier.trim().toLowerCase();
+    const allUsers = await db.usuarios.toArray();
+    const user = allUsers.find(
+      u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) && u.password === password
+    );
+
+    if (user) {
+      localStorage.setItem('glorypos_user_session', JSON.stringify(user));
+      setCurrentUser(user);
+      return { success: true, user };
+    } else {
+      return { success: false, error: 'Credenciales inválidas. Revisa correo y clave.' };
+    }
+  };
+
+  // Cerrar sesión
+  const logout = () => {
+    localStorage.removeItem('glorypos_user_session');
+    setCurrentUser(null);
+  };
+
+  // Cambiar de usuario rápidamente (ej. cambio de turno de cajero)
+  const switchUser = (user) => {
+    if (user) {
+      localStorage.setItem('glorypos_user_session', JSON.stringify(user));
+      setCurrentUser(user);
+    }
+  };
 
   const updateEmpresa = async (newData) => {
     const updated = { ...empresa, ...newData };
@@ -71,14 +154,21 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         empresa,
+        currentUser,
+        usuarios,
+        isAuthenticated: !!currentUser,
         loading,
         diasRestantes: calcularDiasRestantes(),
         isExpired,
+        loginWithPin,
+        loginWithCredentials,
+        logout,
+        switchUser,
         updateEmpresa,
         setTrialDays,
         simularVencimiento,
         cambiarPlan,
-        refresh: loadEmpresa
+        refresh: loadData
       }}
     >
       {children}
