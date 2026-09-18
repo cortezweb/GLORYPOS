@@ -1,0 +1,90 @@
+import React from 'react';
+import { ShoppingCart, FileText, Receipt, FileSpreadsheet, Wallet, ChevronRight } from 'lucide-react';
+
+export default function SalesSubNav({ currentSubView, onSelectSubView }) {
+  const tabs = [
+    {
+      id: 'pos',
+      label: 'Nueva Venta',
+      icon: ShoppingCart,
+      badge: 'POS'
+    },
+    {
+      id: 'comprobantes',
+      label: 'Comprobantes Emitidos',
+      icon: FileText,
+      badge: null
+    },
+    {
+      id: 'notas_venta',
+      label: 'Notas de Venta',
+      icon: Receipt,
+      badge: null
+    },
+    {
+      id: 'cotizaciones',
+      label: 'Cotizaciones / Pedidos',
+      icon: FileSpreadsheet,
+      badge: null
+    },
+    {
+      id: 'caja_chica',
+      label: 'Caja Chica / Turno',
+      icon: Wallet,
+      badge: 'Turno'
+    }
+  ];
+
+  return (
+    <div className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-2xs select-none" data-purpose="sales-subnav">
+      {/* Top Breadcrumb Bar */}
+      <div className="px-3 sm:px-4 pt-2 pb-1 flex items-center justify-between text-xs text-gray-500 border-b border-gray-100">
+        <div className="flex items-center space-x-1.5 font-medium">
+          <span className="text-gray-400">Módulo</span>
+          <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
+          <span className="text-[#2563eb] font-bold">Ventas</span>
+          <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
+          <span className="text-gray-800 font-semibold">
+            {tabs.find(t => t.id === currentSubView)?.label || 'Punto de Venta'}
+          </span>
+        </div>
+        <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-gray-400">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Facturación Electrónica & Caja Activa</span>
+        </div>
+      </div>
+
+      {/* Horizontal Scrollable Submenu Pills */}
+      <nav className="flex items-center gap-1.5 px-3 sm:px-4 py-2 overflow-x-auto no-scrollbar">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = currentSubView === tab.id;
+
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onSelectSubView(tab.id)}
+              className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all duration-150 shrink-0 ${
+                isActive
+                  ? 'bg-gradient-to-r from-[#2563eb] to-[#7c3aed] text-white font-semibold shadow-sm shadow-blue-500/25 ring-1 ring-blue-600/30'
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200/80 font-medium'
+              }`}
+            >
+              <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+              <span>{tab.label}</span>
+              {tab.badge && (
+                <span
+                  className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-blue-50 text-[#2563eb]'
+                  }`}
+                >
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}

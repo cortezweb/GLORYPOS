@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Procesar Pago - Tukifac POS</title>
+<!-- Tailwind CSS v3 with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            'primary-hover': '#1d4ed8',
+            'electric-violet': '#7c3aed',
+            'violet-hover': '#6d28d9',
+            yape: '#742384',
+            plin: '#00a3e0'
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scroll-and-layout">
+    /* iOS friendly bounce and scroll behavior */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 flex justify-center items-center min-h-screen text-slate-800 antialiased font-sans">
+<!-- BEGIN: MobileDeviceContainer -->
+<!-- Container mimicking modern mobile screen width -->
+<main class="w-full max-w-[430px] bg-white min-h-screen shadow-2xl flex flex-col justify-between relative overflow-hidden">
+<!-- BEGIN: TopBarStatus -->
+<!-- Top Mock Android/iOS Status Bar Header -->
+<header class="px-5 pt-3 pb-2 flex items-center justify-between text-xs text-slate-500 font-medium tracking-tight bg-white select-none">
+<span class="font-semibold text-slate-700">6:49</span>
+<div class="flex items-center space-x-2 text-[11px]">
+<svg class="w-3.5 h-3.5 fill-current text-slate-600" viewbox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4a1 1 0 001.41 1.41l1.79-.62A8.96 8.96 0 0012 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 16a6.99 6.99 0 01-4.88-2L8.5 16.5a1 1 0 00-1-1H6.07A6.98 6.98 0 015 12c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"></path></svg>
+<svg class="w-3.5 h-3.5 fill-current text-slate-600" viewbox="0 0 24 24"><path d="M12 4a8 8 0 00-8 8c0 1.97.72 3.77 1.92 5.17l-.87 2.61a1 1 0 001.27 1.27l2.61-.87A7.95 7.95 0 0012 20a8 8 0 100-16z"></path></svg>
+<span class="bg-blue-600 text-white rounded-full px-1 text-[9px] font-bold">5G</span>
+<svg class="w-4 h-3 fill-current text-slate-700 inline-block" viewbox="0 0 24 14"><rect fill="none" height="12" rx="2" stroke="currentColor" stroke-width="2" width="19" x="1" y="1"></rect><rect height="8" rx="1" width="12" x="3" y="3"></rect><rect height="4" rx="0.5" width="2" x="21" y="5"></rect></svg>
+</div>
+</header>
+<!-- END: TopBarStatus -->
+<!-- BEGIN: ModalHeader -->
+<div class="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-20">
+<div class="flex items-center space-x-2">
+<div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+<!-- Receipt Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h1 class="text-base font-bold text-slate-800">Procesar pago</h1>
+</div>
+<button aria-label="Cerrar modal" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- END: ModalHeader -->
+<!-- BEGIN: FormScrollArea -->
+<div class="flex-1 overflow-y-auto px-4 py-3 space-y-4 text-xs">
+<!-- BEGIN: ClienteSelector -->
+<section class="space-y-1" data-purpose="cliente-section">
+<label class="block text-[11px] font-medium text-slate-500 uppercase tracking-wider">Cliente</label>
+<div class="flex items-center space-x-2">
+<div class="relative flex-1">
+<select class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-3 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 appearance-none">
+<option selected="">Clientes Varios</option>
+<option>20601234567 - EMPRESA DEMO S.A.C.</option>
+<option>72849102 - JUAN PÉREZ LÓPEZ</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+</div>
+<button class="border border-blue-600 text-blue-600 hover:bg-blue-50 active:scale-95 px-3 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-1 shadow-sm whitespace-nowrap" type="button">
+<span>+ Nuevo</span>
+</button>
+</div>
+</section>
+<!-- END: ClienteSelector -->
+<!-- BEGIN: ComprobanteSelector -->
+<section class="space-y-1" data-purpose="comprobante-type-section">
+<label class="block text-[11px] font-medium text-slate-500 uppercase tracking-wider">Comprobante</label>
+<div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100/90 rounded-xl border border-slate-200">
+<!-- Tab 1: Nota de venta (Active) -->
+<button class="py-2 text-center rounded-lg font-semibold transition shadow-sm text-xs bg-blue-600 text-white" type="button">
+            Nota de venta
+          </button>
+<!-- Tab 2: Boleta -->
+<button class="py-2 text-center rounded-lg font-medium text-slate-600 hover:text-slate-800 hover:bg-white/60 transition text-xs" type="button">
+            Boleta
+          </button>
+<!-- Tab 3: Factura -->
+<button class="py-2 text-center rounded-lg font-medium text-slate-600 hover:text-slate-800 hover:bg-white/60 transition text-xs" type="button">
+            Factura
+          </button>
+</div>
+</section>
+<!-- END: ComprobanteSelector -->
+<!-- BEGIN: SerieYDescuento -->
+<section class="grid grid-cols-12 gap-2" data-purpose="serie-descuento-grid">
+<!-- Serie Field -->
+<div class="col-span-7 space-y-1">
+<label class="block text-[11px] font-medium text-slate-500">Serie</label>
+<div class="relative">
+<select class="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-3 pr-7 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-600 appearance-none">
+<option selected="">NV001</option>
+<option>B001</option>
+<option>F001</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+</div>
+</div>
+<!-- Descuento Field -->
+<div class="col-span-5 space-y-1">
+<label class="block text-[11px] font-medium text-slate-500">Descuento</label>
+<div class="flex items-stretch rounded-lg border border-slate-200 overflow-hidden bg-slate-50">
+<span class="inline-flex items-center px-2 bg-blue-600 text-white font-bold text-[11px]">%</span>
+<input class="w-full border-0 bg-transparent py-1.5 px-2 text-xs font-semibold text-slate-700 text-center focus:ring-0 focus:outline-none" max="100" min="0" type="number" value="0"/>
+</div>
+</div>
+</section>
+<!-- END: SerieYDescuento -->
+<!-- BEGIN: MetodosDePago -->
+<section class="space-y-2 pt-1" data-purpose="metodos-pago-section">
+<div class="flex justify-between items-center">
+<div class="flex items-center space-x-1">
+<span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Métodos de pago</span>
+<span class="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">1</span>
+</div>
+<label class="inline-flex items-center text-[11px] text-slate-500 cursor-pointer">
+<input class="rounded text-blue-600 focus:ring-0 border-slate-300 w-3.5 h-3.5 mr-1" type="checkbox"/>
+            Más opciones
+          </label>
+</div>
+<!-- Payment Method Grid -->
+<div class="grid grid-cols-2 gap-2">
+<!-- Option: Efectivo (Selected) -->
+<div class="border-2 border-blue-600 bg-blue-50/50 rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 relative shadow-sm cursor-pointer transition" role="button" tabindex="0">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+<!-- Cash Money Icon -->
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<rect height="12" rx="2" stroke-width="2" width="20" x="2" y="6"></rect>
+<circle cx="12" cy="12" r="3" stroke-width="2"></circle>
+<path d="M6 12h.01M18 12h.01" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+<span class="text-xs font-bold text-blue-900">Efectivo</span>
+<span class="absolute top-1 right-1.5 text-blue-600">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path></svg>
+</span>
+</div>
+<!-- Option: Yape -->
+<div class="border border-slate-200 hover:border-purple-300 hover:bg-purple-50/40 bg-white rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 cursor-pointer transition" role="button" tabindex="0">
+<div class="w-8 h-8 rounded-lg bg-yape flex items-center justify-center text-white shadow-sm font-black text-sm tracking-tight">
+              Y
+            </div>
+<span class="text-xs font-semibold text-slate-700">Yape</span>
+</div>
+<!-- Option: Plin -->
+<div class="border border-slate-200 hover:border-sky-300 hover:bg-sky-50/40 bg-white rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 cursor-pointer transition" role="button" tabindex="0">
+<div class="w-8 h-8 rounded-full bg-plin flex items-center justify-center text-white shadow-sm font-black text-[10px] uppercase">
+              plin
+            </div>
+<span class="text-xs font-semibold text-slate-700">Plin</span>
+</div>
+<!-- Option: Tarjeta -->
+<div class="border border-slate-200 hover:border-violet-300 hover:bg-violet-50/40 bg-white rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 cursor-pointer transition" role="button" tabindex="0">
+<div class="w-8 h-8 rounded-lg bg-electric-violet flex items-center justify-center text-white shadow-sm">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<rect height="14" rx="2" stroke-width="2" width="20" x="2" y="5"></rect>
+<line stroke-width="2" x1="2" x2="22" y1="10" y2="10"></line>
+</svg>
+</div>
+<span class="text-xs font-semibold text-slate-700">Tarjeta</span>
+</div>
+</div>
+<!-- Dynamic Inputs for Amount and Reference -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div>
+<label class="block text-[10px] text-slate-400 mb-0.5">Monto recibido</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-500 font-semibold text-xs">S/</span>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-2 py-1.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-600 text-right" type="text" value="96.50"/>
+</div>
+</div>
+<div>
+<label class="block text-[10px] text-slate-400 mb-0.5">N° Op / Ref.</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:ring-1 focus:ring-blue-600" placeholder="Opcional" type="text"/>
+</div>
+</div>
+<!-- Quick Pago Exacto Checkbox -->
+<div class="flex items-center justify-start pt-0.5">
+<label class="inline-flex items-center text-xs font-semibold text-blue-700 cursor-pointer select-none">
+<input checked="" class="rounded text-blue-600 focus:ring-blue-500 border-slate-300 w-4 h-4 mr-1.5" type="checkbox"/>
+            Pago exacto
+          </label>
+</div>
+</section>
+<!-- END: MetodosDePago -->
+<!-- BEGIN: ResumenVenta -->
+<section class="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-1.5" data-purpose="totales-resumen">
+<div class="flex justify-between items-center text-slate-500 text-xs">
+<span>Op. Gravadas</span>
+<span class="font-medium text-slate-700">S/ 81.78</span>
+</div>
+<div class="flex justify-between items-center text-slate-500 text-xs">
+<span>I.G.V. (18%)</span>
+<span class="font-medium text-slate-700">S/ 14.72</span>
+</div>
+<div class="h-px bg-slate-200 my-1"></div>
+<div class="flex justify-between items-baseline pt-0.5">
+<span class="font-bold text-slate-700 text-sm">Total a pagar</span>
+<span class="font-black text-slate-900 text-lg tracking-tight">S/ 96.50</span>
+</div>
+<div class="flex justify-between items-center text-slate-500 text-xs pt-0.5">
+<span class="font-medium">Suma de pagos</span>
+<span class="font-bold text-blue-600">S/ 96.50</span>
+</div>
+</section>
+<!-- END: ResumenVenta -->
+</div>
+<!-- END: FormScrollArea -->
+<!-- BEGIN: FixedFooterActions -->
+<footer class="p-3 bg-white border-t border-slate-200 grid grid-cols-12 gap-2 items-center">
+<button class="col-span-4 py-2.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition active:scale-95 text-center" type="button">
+        Cancelar
+      </button>
+<button class="col-span-8 py-2.5 px-4 bg-gradient-to-r from-blue-600 to-electric-violet hover:from-blue-700 hover:to-violet-700 active:opacity-95 text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center space-x-1.5" type="button">
+<!-- Checkmark icon -->
+<svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Finalizar venta</span>
+</button>
+</footer>
+<!-- END: FixedFooterActions -->
+<!-- Android navigation bar pill indicator -->
+<div class="h-4 bg-white flex items-center justify-center pb-1">
+<div class="w-28 h-1 bg-slate-300 rounded-full"></div>
+</div>
+</main>
+<!-- END: MobileDeviceContainer -->
+</body></html>

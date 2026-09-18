@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>TukiFac POS - Confirmación de Cierre de Sesión</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tukifac: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              navy: '#1e293b'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="base-layout">
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    /* iOS Safe Area Padding Support */
+    .ios-pt-safe {
+      padding-top: env(safe-area-inset-top, 20px);
+    }
+    .ios-pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-slate-800 antialiased overflow-hidden h-screen flex flex-col justify-between">
+<!-- BEGIN: SimulatedBackgroundPOS -->
+<!-- Contextual background showing the TukiFac POS interface and open drawer underneath -->
+<div aria-hidden="true" class="absolute inset-0 flex flex-col pointer-events-none select-none filter blur-[2px] opacity-60">
+<!-- Top Mobile Header Bar -->
+<header class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between ios-pt-safe">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          T
+        </div>
+<span class="font-extrabold text-xl tracking-tight text-slate-800">Tukı<span class="text-emerald-500">Fac</span></span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
+          EC
+        </div>
+</div>
+</header>
+<!-- Simulated Drawer Content on Background -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Sidebar Drawer Partial View -->
+<aside class="w-72 bg-white border-r border-gray-200 flex flex-col justify-between p-4 shadow-xl">
+<div class="space-y-4">
+<div class="border-b pb-3">
+<p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Corporación Industrial</p>
+<p class="text-sm font-bold text-slate-700">RAFAZ E.I.R.L.</p>
+</div>
+<nav class="space-y-2 text-sm text-slate-600">
+<div class="flex items-center space-x-3 p-2 rounded-lg bg-emerald-50 text-emerald-700 font-medium">
+<span>🛒</span><span>Ventas</span>
+</div>
+<div class="flex items-center space-x-3 p-2 rounded-lg">
+<span>📦</span><span>Productos</span>
+</div>
+<div class="flex items-center space-x-3 p-2 rounded-lg">
+<span>📊</span><span>Inventario</span>
+</div>
+<div class="flex items-center space-x-3 p-2 rounded-lg">
+<span>💵</span><span>Finanzas y Caja</span>
+</div>
+<div class="flex items-center space-x-3 p-2 rounded-lg">
+<span>📄</span><span>Comprobantes</span>
+</div>
+</nav>
+</div>
+<!-- User section in sidebar -->
+<div class="pt-4 border-t border-gray-100 flex items-center space-x-3">
+<div class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-semibold text-sm">
+            E
+          </div>
+<div class="leading-tight">
+<p class="text-sm font-bold text-slate-800">Esteffany Cordova</p>
+<p class="text-xs text-slate-400">Administrador</p>
+</div>
+</div>
+</aside>
+<!-- Background Dimmed Products Grid -->
+<main class="flex-1 bg-gray-50 p-4 grid grid-cols-2 gap-3 opacity-40">
+<div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm h-32"></div>
+<div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm h-32"></div>
+<div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm h-32"></div>
+<div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm h-32"></div>
+</main>
+</div>
+</div>
+<!-- END: SimulatedBackgroundPOS -->
+<!-- BEGIN: ModalOverlayWrapper -->
+<!-- Dimmed and blurred backdrop covering mobile viewport -->
+<div class="relative z-50 flex items-end sm:items-center justify-center min-h-full p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm transition-all" data-purpose="dialog-backdrop">
+<!-- BEGIN: ConfirmationModalCard -->
+<div aria-labelledby="dialog-title" aria-modal="true" class="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-100 transform transition-all ios-pb-safe animate-in fade-in slide-in-from-bottom duration-200" data-purpose="shift-closure-dialog" role="dialog">
+<!-- Bottom Sheet Drag Indicator (Visible on Mobile) -->
+<div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-3 mb-1 sm:hidden"></div>
+<!-- Dialog Header -->
+<div class="px-6 pt-4 pb-3 flex items-start space-x-3.5">
+<div class="flex-shrink-0 w-11 h-11 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center text-amber-600 shadow-sm">
+<!-- Alert / Clock Icon -->
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="flex-1 pr-2">
+<h2 class="text-base font-bold text-slate-800 leading-snug" id="dialog-title">
+            ¿Deseas cerrar sesión o finalizar turno?
+          </h2>
+<p class="text-xs text-slate-500 mt-1">
+            Tienes una caja en curso con operaciones pendientes de arqueo.
+          </p>
+</div>
+<!-- Close Button -->
+<button aria-label="Cerrar ventana" class="text-slate-400 hover:text-slate-600 p-1 rounded-full transition-colors focus:outline-none" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Explanatory Warning Message -->
+<div class="px-6 py-2">
+<p class="text-xs text-slate-600 leading-relaxed bg-amber-50/80 border border-amber-200/70 p-3 rounded-xl">
+<span class="font-semibold text-amber-800">Atención:</span> Tienes la caja activa 
+          <span class="font-bold text-slate-700">(Caja 01 - Turno Mañana)</span> con ventas registradas de 
+          <span class="font-bold text-blue-600">S/ 1,420.50</span>. Te recomendamos realizar el arqueo de caja antes de salir.
+        </p>
+</div>
+<!-- Quick Shift Summary Box -->
+<div class="px-6 py-3" data-purpose="shift-quick-summary">
+<div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
+<div class="flex items-center justify-between pb-2 border-b border-slate-200">
+<span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Ventas Turno</span>
+<span class="text-base font-black text-blue-600">S/ 1,420.50</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<div class="bg-white p-2 rounded-lg border border-slate-100">
+<span class="text-slate-400 block text-[11px]">Comprobantes</span>
+<span class="font-semibold text-slate-700">14 Boletas • 2 Facturas</span>
+</div>
+<div class="bg-white p-2 rounded-lg border border-slate-100">
+<span class="text-slate-400 block text-[11px]">Responsable</span>
+<span class="font-semibold text-slate-700 truncate block">Esteffany C.</span>
+</div>
+</div>
+<div class="flex items-center space-x-2 pt-1 text-[11px] text-slate-500">
+<span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+<span>Estado: <strong>Caja Abierta</strong> (Desde 08:30 AM)</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="px-6 pt-2 pb-6 flex flex-col space-y-2.5" data-purpose="dialog-actions">
+<!-- Primary Action: Arqueo y Cierre (Azul Eléctrico) -->
+<button class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white py-3.5 px-4 rounded-xl font-bold text-sm shadow-md shadow-blue-600/25 flex items-center justify-center space-x-2 transition-all" type="button">
+<!-- Calculator / Cash Register Icon -->
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Hacer Arqueo y Cerrar Caja</span>
+</button>
+<!-- Secondary Action: Solo Cerrar Sesión -->
+<button class="w-full bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-700 border border-slate-300 py-3 px-4 rounded-xl font-semibold text-xs tracking-tight flex items-center justify-center space-x-2 transition-all" type="button">
+<!-- Logout Icon -->
+<svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Cerrar Solo Sesión (Mantener Caja Abierta)</span>
+</button>
+<!-- Cancel / Dismiss Action -->
+<button class="w-full text-slate-400 hover:text-slate-600 py-2 text-xs font-semibold transition-colors" type="button">
+          Permanecer en el Sistema
+        </button>
+</div>
+</div>
+<!-- END: ConfirmationModalCard -->
+</div>
+<!-- END: ModalOverlayWrapper -->
+</body></html>

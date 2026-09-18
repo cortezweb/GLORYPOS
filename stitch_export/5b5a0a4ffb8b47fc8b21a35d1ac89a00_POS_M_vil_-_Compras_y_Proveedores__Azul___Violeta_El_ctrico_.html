@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "on-error-container": "#93000a",
+        "primary": "#004ac6",
+        "on-surface-variant": "#434655",
+        "primary-fixed": "#dbe1ff",
+        "on-primary": "#ffffff",
+        "outline": "#737686",
+        "surface-container-highest": "#dae2fd",
+        "outline-variant": "#c3c6d7",
+        "canvas-slate": "#f8fafc",
+        "tertiary-container": "#00788c",
+        "inverse-primary": "#b4c5ff",
+        "surface-dim": "#d2d9f4",
+        "primary-fixed-dim": "#b4c5ff",
+        "surface-container": "#eaedff",
+        "fiscal-danger": "#ef4444",
+        "surface-container-low": "#f2f3ff",
+        "on-primary-fixed": "#00174b",
+        "fiscal-success": "#10b981",
+        "border-subtle": "#e2e8f0",
+        "secondary-fixed-dim": "#d2bbff",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed-variant": "#5a00c6",
+        "on-tertiary-container": "#d7f6ff",
+        "primary-container": "#2563eb",
+        "plin-teal": "#00b4d8",
+        "on-error": "#ffffff",
+        "electric-violet": "#8b5cf6",
+        "secondary-fixed": "#eaddff",
+        "yape-purple": "#7b1fa2",
+        "surface-container-high": "#e2e7ff",
+        "neon-cyan": "#00f0ff",
+        "on-surface": "#131b2e",
+        "on-background": "#131b2e",
+        "error-container": "#ffdad6",
+        "on-primary-fixed-variant": "#003ea8",
+        "surface-container-lowest": "#ffffff",
+        "surface-variant": "#dae2fd",
+        "sunat-amber": "#f59e0b",
+        "tertiary": "#005e6e",
+        "on-secondary-fixed": "#25005a",
+        "inverse-surface": "#283044",
+        "tertiary-fixed": "#acedff",
+        "inverse-on-surface": "#eef0ff",
+        "surface": "#faf8ff",
+        "tertiary-fixed-dim": "#4cd7f6",
+        "secondary-container": "#8a4cfc",
+        "on-tertiary-fixed": "#001f26",
+        "background": "#faf8ff",
+        "vivid-indigo": "#4f46e5",
+        "error": "#ba1a1a",
+        "surface-bright": "#faf8ff",
+        "secondary": "#712ae2",
+        "on-primary-container": "#eeefff",
+        "on-tertiary": "#ffffff",
+        "surface-tint": "#0053db",
+        "on-secondary-container": "#fffbff",
+        "on-tertiary-fixed-variant": "#004e5c"
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      spacing: {
+        "margin": "1rem",
+        "space-xl": "1.75rem",
+        "space-xs": "0.25rem",
+        "space-lg": "1.25rem",
+        "space-md": "0.875rem",
+        "gutter": "0.75rem",
+        "space-sm": "0.5rem"
+      },
+      fontFamily: {
+        "currency-display": ["Plus Jakarta Sans"],
+        "headline-lg-mobile": ["Plus Jakarta Sans"],
+        "headline-md": ["Plus Jakarta Sans"],
+        "body-md": ["Plus Jakarta Sans"],
+        "label-lg": ["Plus Jakarta Sans"],
+        "body-lg": ["Plus Jakarta Sans"],
+        "label-sm": ["Plus Jakarta Sans"],
+        "headline-lg": ["Plus Jakarta Sans"],
+        "headline-sm": ["Plus Jakarta Sans"],
+        "body-sm": ["Plus Jakarta Sans"],
+        "receipt-mono": ["JetBrains Mono"],
+        "label-md": ["Plus Jakarta Sans"]
+      },
+      fontSize: {
+        "currency-display": ["28px", { "lineHeight": "32px", "fontWeight": "800" }],
+        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "800" }],
+        "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "700" }],
+        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+        "label-sm": ["10px", { "lineHeight": "14px", "fontWeight": "700" }],
+        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "700" }],
+        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+        "receipt-mono": ["11px", { "lineHeight": "16px", "fontWeight": "500" }],
+        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }]
+      }
+    }
+  }
+};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(37,99,235,0.06)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><button aria-label="Abrir menú lateral" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex items-center gap-space-xs"><div class="flex items-center gap-1 shrink-0"><span class="font-headline-sm text-headline-sm font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent tracking-tight">TukiFac</span><span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span></div></div><div class="flex flex-col min-w-0 pl-space-xs"><span class="font-label-md text-label-md font-bold text-on-surface truncate uppercase tracking-tight">CORPORACION INDUSTRIAL RAFAZ E.I.R.L.</span><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span><span class="font-label-sm text-label-sm text-blue-600 font-semibold truncate">SUNAT En Línea</span></div></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Notificaciones SUNAT" class="min-w-[44px] min-h-[44px] flex items-center justify-center relative text-on-surface-variant hover:text-on-surface rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full"></span></button><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 flex items-center justify-center text-white shadow-sm"><span class="material-symbols-outlined text-white text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Sección Encabezado & Acción Rápida -->
+<section class="px-margin py-space-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<h1 class="font-headline-md text-headline-md font-extrabold text-on-surface tracking-tight">Compras &amp; Gastos</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Registro y recepción de mercadería con facturas/guías</p>
+</div>
+<button class="shrink-0 h-11 px-space-md bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white font-label-lg text-label-lg font-bold rounded-xl shadow-[0_4px_16px_rgba(99,102,241,0.35)] hover:opacity-95 active:scale-95 transition-all flex items-center gap-1.5" id="btn-nueva-compra" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span>+ Compra</span>
+</button>
+</div>
+<!-- Banner Accion Rapida OCR / QR SUNAT -->
+<button class="w-full bg-gradient-to-r from-blue-50 via-indigo-50/80 to-purple-50 text-on-surface border border-indigo-100 rounded-xl p-space-sm flex items-center justify-between shadow-sm active:scale-[0.99] transition-transform" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">qr_code_scanner</span>
+</div>
+<div class="flex flex-col text-left min-w-0">
+<span class="font-label-lg text-label-lg font-bold text-on-surface truncate">Escanear Factura QR SUNAT</span>
+<span class="font-label-sm text-label-sm text-indigo-700/80 truncate">Carga automática de RUC, ítems y montos XML</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-indigo-600 text-[20px] shrink-0">arrow_forward_ios</span>
+</button>
+</section>
+<!-- Métricas Rápidas / Bento KPIs -->
+<section class="px-margin pb-space-sm">
+<div class="grid grid-cols-2 gap-gutter">
+<!-- KPI 1: Compras Mes -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between border border-indigo-50">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-on-surface-variant">Total Compras</span>
+<div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+</div>
+</div>
+<div class="mt-space-sm">
+<div class="flex items-baseline gap-0.5">
+<span class="font-label-md text-label-md font-extrabold text-blue-600">S/</span>
+<span class="font-currency-display text-currency-display font-extrabold text-on-surface">8,450<span class="text-[14px]">.00</span></span>
+</div>
+<div class="flex items-center gap-1 mt-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[13px] text-blue-600">task_alt</span>
+<span class="font-label-sm text-label-sm font-medium">18 registros mes</span>
+</div>
+</div>
+</div>
+<!-- KPI 2: Cuentas por Pagar -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between border border-purple-50">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-on-surface-variant">Por Pagar</span>
+<div class="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center text-violet-600">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span>
+</div>
+</div>
+<div class="mt-space-sm">
+<div class="flex items-baseline gap-0.5">
+<span class="font-label-md text-label-md font-extrabold text-violet-600">S/</span>
+<span class="font-currency-display text-currency-display font-extrabold text-on-surface">2,120<span class="text-[14px]">.00</span></span>
+</div>
+<div class="flex items-center gap-1 mt-1 text-violet-600 font-semibold">
+<span class="material-symbols-outlined text-[13px]">alarm</span>
+<span class="font-label-sm text-label-sm">3 pendientes</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Buscador y Chips Táctiles de Filtro -->
+<section class="px-margin py-space-xs flex flex-col gap-space-sm">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full h-11 pl-10 pr-10 bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/70 shadow-sm border border-indigo-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors" id="input-search" placeholder="Buscar por Proveedor, RUC o Factura..." type="text"/>
+<button aria-label="Limpiar búsqueda" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface hidden" id="btn-clear-search" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Chips Horizontales -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar pb-1">
+<button class="filter-chip px-space-md py-1.5 rounded-full font-label-md text-label-md font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm whitespace-nowrap transition-all" data-filter="all" type="button">
+        Todas (18)
+      </button>
+<button class="filter-chip px-space-md py-1.5 rounded-full font-label-md text-label-md font-semibold bg-surface-container text-on-surface-variant whitespace-nowrap hover:bg-surface-container-high transition-all" data-filter="paid" type="button">
+        Pagadas (15)
+      </button>
+<button class="filter-chip px-space-md py-1.5 rounded-full font-label-md text-label-md font-semibold bg-surface-container text-on-surface-variant whitespace-nowrap hover:bg-surface-container-high transition-all flex items-center gap-1" data-filter="credit" type="button">
+<span class="w-2 h-2 rounded-full bg-violet-500 inline-block"></span>
+<span>Crédito / Pendiente (3)</span>
+</button>
+</div>
+</section>
+<!-- Lista de Documentos de Compra Recientes -->
+<section class="px-margin pt-space-xs pb-space-xl flex flex-col gap-space-md" id="cards-container">
+<!-- Tarjeta 1: Alicorp (Pagado) -->
+<article class="purchase-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col gap-space-sm border border-indigo-50" data-card-status="paid">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-start gap-space-sm min-w-0">
+<div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 text-blue-600">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-label-lg text-label-lg font-bold text-on-surface truncate">DISTRIBUIDORA ALICORP S.A.A.</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-receipt-mono text-receipt-mono mt-0.5">
+<span>RUC 20100055237</span>
+<span>•</span>
+<span class="font-bold text-on-surface">Factura F001-002934</span>
+</div>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-blue-100/70 text-blue-700 border border-blue-200/50 font-label-sm text-label-sm font-bold shrink-0">
+          Pagado
+        </span>
+</div>
+<!-- Detalle Ítems & Recepción -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm min-w-0">
+<span class="material-symbols-outlined text-[16px] text-blue-600">inventory</span>
+<span class="truncate font-medium">24 sacos Harina, 12 cajas Aceite Primor</span>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-on-surface-variant shrink-0">2 ítems</span>
+</div>
+<div class="flex items-center justify-between pt-0.5 font-label-sm text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">schedule</span>
+            Hoy, 11:20 AM
+          </span>
+<span class="text-indigo-600 font-semibold">Almacén Central P1</span>
+</div>
+</div>
+<!-- Footer Tarjeta: Importe y Botones -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Importe Total</span>
+<div class="flex items-baseline gap-0.5">
+<span class="font-label-md text-label-md font-bold text-on-surface">S/</span>
+<span class="font-headline-sm text-headline-sm font-extrabold text-on-surface">3,450.00</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Ver PDF SUNAT" class="h-9 px-3 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-error">picture_as_pdf</span>
+<span>PDF</span>
+</button>
+<button class="h-9 px-space-md rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 text-white font-label-md text-label-md font-bold hover:opacity-95 active:scale-95 shadow-sm transition-all flex items-center gap-1" type="button">
+<span>Ver Detalle</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Tarjeta 2: Ferretería Sur (Crédito - Urgente) -->
+<article class="purchase-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col gap-space-sm border border-purple-50" data-card-status="credit">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-start gap-space-sm min-w-0">
+<div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center shrink-0 text-violet-600">
+<span class="material-symbols-outlined text-[24px]">hardware</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-label-lg text-label-lg font-bold text-on-surface truncate">FERRETERIA INDUSTRIAL SUR E.I.R.L.</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-receipt-mono text-receipt-mono mt-0.5">
+<span>RUC 20549281923</span>
+<span>•</span>
+<span class="font-bold text-on-surface">Factura E001-000845</span>
+</div>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 border border-amber-500/25 font-label-sm text-label-sm font-bold shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">schedule</span>
+          Crédito (5 días)
+        </span>
+</div>
+<!-- Detalle Ítems & Alerta Vencimiento -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm min-w-0">
+<span class="material-symbols-outlined text-[16px] text-violet-600">inventory_2</span>
+<span class="truncate font-medium">50 bolsas Cemento Sol, 10 varillas Fierro 1/2</span>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-on-surface-variant shrink-0">2 ítems</span>
+</div>
+<div class="flex items-center justify-between pt-0.5 font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Vence: 28 Oct 2024</span>
+<span class="text-violet-700 font-bold">Saldo Pendiente: S/ 1,280.00</span>
+</div>
+</div>
+<!-- Footer Tarjeta: Monto & Botón Pagar Saldo -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Deuda</span>
+<div class="flex items-baseline gap-0.5">
+<span class="font-label-md text-label-md font-bold text-violet-600">S/</span>
+<span class="font-headline-sm text-headline-sm font-extrabold text-on-surface">1,280.00</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Ver Guía de Remisión" class="h-9 w-9 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+</button>
+<button class="h-9 px-space-md rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-label-md text-label-md font-bold hover:opacity-90 active:scale-95 transition-all flex items-center gap-1 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">payments</span>
+<span>Pagar Saldo</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Tarjeta 3: Packaging Perú (Boleta Contado) -->
+<article class="purchase-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col gap-space-sm border border-indigo-50" data-card-status="paid">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-start gap-space-sm min-w-0">
+<div class="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center shrink-0 text-violet-600">
+<span class="material-symbols-outlined text-[24px]">inventory</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-label-lg text-label-lg font-bold text-on-surface truncate">PACKAGING &amp; BOLSAS PERU S.A.C.</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-receipt-mono text-receipt-mono mt-0.5">
+<span>RUC 20601837482</span>
+<span>•</span>
+<span class="font-bold text-on-surface">Boleta B002-00412</span>
+</div>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-violet-100/70 text-violet-700 border border-violet-200/50 font-label-sm text-label-sm font-bold shrink-0">
+          Al Contado
+        </span>
+</div>
+<!-- Detalle Ítems -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm min-w-0">
+<span class="material-symbols-outlined text-[16px] text-indigo-600">shopping_bag</span>
+<span class="truncate font-medium">1,000 Bolsas Biodegradables 15x30 cm</span>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-on-surface-variant shrink-0">1 ítem</span>
+</div>
+<div class="flex items-center justify-between pt-0.5 font-label-sm text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-violet-600">check_circle</span>
+            Pago vía Yape Empresas
+          </span>
+<span class="text-on-surface-variant">Ayer, 4:45 PM</span>
+</div>
+</div>
+<!-- Footer Tarjeta: Monto y Acciones -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Importe Total</span>
+<div class="flex items-baseline gap-0.5">
+<span class="font-label-md text-label-md font-bold text-on-surface">S/</span>
+<span class="font-headline-sm text-headline-sm font-extrabold text-on-surface">380.00</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Ver PDF SUNAT" class="h-9 px-3 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-error">picture_as_pdf</span>
+<span>PDF</span>
+</button>
+<button class="h-9 px-space-md rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 text-white font-label-md text-label-md font-bold hover:opacity-95 active:scale-95 shadow-sm transition-all flex items-center gap-1" type="button">
+<span>Ver Detalle</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- Estado Vacío Dinámico (Oculto por defecto) -->
+<section class="hidden px-margin py-space-xl flex flex-col items-center justify-center text-center" id="empty-state">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant mb-space-sm">
+<span class="material-symbols-outlined text-[32px]">receipt_long</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">No se encontraron facturas</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mt-1">Prueba cambiando el término de búsqueda o seleccionando otro filtro de pago.</p>
+<button class="mt-space-md px-space-md py-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-label-md text-label-md font-bold shadow-sm" id="btn-reset-filters" type="button">
+      Restablecer Filtros
+    </button>
+</section>
+</div>
+<script>
+  (function() {
+    const searchInput = document.getElementById('input-search');
+    const clearBtn = document.getElementById('btn-clear-search');
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const cards = document.querySelectorAll('.purchase-card');
+    const emptyState = document.getElementById('empty-state');
+    const resetFiltersBtn = document.getElementById('btn-reset-filters');
+
+    let currentFilter = 'all';
+
+    function applyFilterAndSearch() {
+      const query = (searchInput.value || '').trim().toLowerCase();
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const cardStatus = card.getAttribute('data-card-status');
+
+        const matchesQuery = !query || text.includes(query);
+        const matchesFilter = (currentFilter === 'all') || (currentFilter === cardStatus);
+
+        if (matchesQuery && matchesFilter) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      if (e.target.value.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      applyFilterAndSearch();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearBtn.classList.add('hidden');
+      applyFilterAndSearch();
+      searchInput.focus();
+    });
+
+    filterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach(c => {
+          c.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white', 'font-bold');
+          c.classList.add('bg-surface-container', 'text-on-surface-variant', 'font-semibold');
+        });
+        chip.classList.remove('bg-surface-container', 'text-on-surface-variant', 'font-semibold');
+        chip.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white', 'font-bold');
+
+        currentFilter = chip.getAttribute('data-filter');
+        applyFilterAndSearch();
+      });
+    });
+
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearBtn.classList.add('hidden');
+        const defaultChip = document.querySelector('[data-filter="all"]');
+        if (defaultChip) defaultChip.click();
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(37,99,235,0.06)]" data-active-classes="text-blue-600 font-bold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] text-blue-600 font-bold transition-colors" data-path="inicio" href="#"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">storefront</span><span class="font-label-sm text-label-sm mt-0.5">Inicio</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="pos-ventas" href="#"><span class="material-symbols-outlined text-[22px]">point_of_sale</span><span class="font-label-sm text-label-sm mt-0.5">POS Ventas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="clientes" href="#"><span class="material-symbols-outlined text-[22px]">badge</span><span class="font-label-sm text-label-sm mt-0.5">Clientes</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="productos" href="#"><span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="font-label-sm text-label-sm mt-0.5">Productos</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="mas" href="#"><span class="material-symbols-outlined text-[22px]">more_horiz</span><span class="font-label-sm text-label-sm mt-0.5">Más</span></a></div></nav></body></html>

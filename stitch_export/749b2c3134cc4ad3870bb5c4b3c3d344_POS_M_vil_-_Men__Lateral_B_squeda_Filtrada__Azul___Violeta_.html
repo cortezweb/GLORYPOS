@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>TukiFac POS - Menú Lateral con Búsqueda</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              blue: '#2563eb',
+              violet: '#7c3aed',
+              50: '#eff6ff',
+              100: '#dbeafe',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            tukidark: '#1e293b',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbars">
+    /* Ocultar barra de desplazamiento para experiencia nativa de app */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-slate-800 font-sans antialiased min-h-screen flex justify-center items-center p-0 sm:p-4">
+<!-- BEGIN: PhoneFrame -->
+<div class="w-full max-w-[420px] h-[100dvh] sm:h-[860px] bg-slate-100 sm:rounded-[38px] shadow-2xl relative overflow-hidden flex flex-col border-[6px] border-slate-800">
+<!-- BEGIN: iOSStatusBar -->
+<header class="h-10 px-6 pt-3 flex justify-between items-center bg-slate-50 select-none z-10 text-xs font-semibold text-slate-800 tracking-tight">
+<span>9:41</span>
+<div class="flex items-center space-x-1.5">
+<!-- Señal Móvil -->
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z" opacity="0.2"></path>
+<path d="M2 17h3v4H2v-4zm5-4h3v8H7v-8zm5-4h3v12h-3V9zm5-4h3v16h-3V5z"></path>
+</svg>
+<!-- Wifi -->
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A16.88 16.88 0 0 0 12 4zm0 3.5c3.51 0 6.74 1.34 9.18 3.55L12 19.34 2.82 11.05C5.26 8.84 8.49 7.5 12 7.5z"></path>
+</svg>
+<!-- Batería -->
+<div class="w-5 h-2.5 border border-slate-700 rounded-sm p-0.5 flex items-center">
+<div class="h-full w-4/5 bg-slate-800 rounded-2xs"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: BackgroundCatalogPreview -->
+<!-- Contenido del POS en segundo plano (atenuado y desenfocado detrás del drawer) -->
+<div aria-hidden="true" class="absolute inset-0 pt-10 flex flex-col bg-slate-100 select-none pointer-events-none filter blur-[1px] opacity-60">
+<!-- Barra superior POS -->
+<div class="px-4 py-3 bg-white flex justify-between items-center border-b border-gray-200">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 rounded bg-gray-200"></div>
+<span class="font-bold text-gray-700 text-sm">Catálogo</span>
+</div>
+<div class="flex space-x-2">
+<div class="w-7 h-7 bg-gray-100 rounded-md"></div>
+<div class="w-7 h-7 bg-gray-100 rounded-md"></div>
+</div>
+</div>
+<!-- Tarjetas simuladas -->
+<div class="p-3 grid grid-cols-2 gap-3">
+<div class="bg-white p-3 rounded-xl shadow-sm h-48 flex flex-col justify-end">
+<div class="h-20 bg-gray-200 rounded-lg mb-2"></div>
+<span class="h-3 w-3/4 bg-gray-300 rounded mb-1"></span>
+<span class="h-3 w-1/3 bg-gray-200 rounded"></span>
+</div>
+<div class="bg-white p-3 rounded-xl shadow-sm h-48 flex flex-col justify-end">
+<div class="h-20 bg-gray-200 rounded-lg mb-2"></div>
+<span class="h-3 w-3/4 bg-gray-300 rounded mb-1"></span>
+<span class="h-3 w-1/3 bg-gray-200 rounded"></span>
+</div>
+</div>
+</div>
+<!-- END: BackgroundCatalogPreview -->
+<!-- Botón flotante de carrito (Visible en la esquina inferior derecha con gradiente azul-violeta eléctrico) -->
+<div class="absolute bottom-6 right-4 z-10 pointer-events-none">
+<button class="w-13 h-13 p-3.5 bg-gradient-to-r from-[#2563eb] to-[#7c3aed] text-white rounded-full shadow-lg flex items-center justify-center border-2 border-white" type="button">
+<svg class="w-6 h-6 stroke-current fill-none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<circle cx="8" cy="21" r="1"></circle>
+<circle cx="19" cy="21" r="1"></circle>
+<path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+</svg>
+</button>
+</div>
+<!-- Backdrop oscurecido para menú lateral -->
+<div class="absolute inset-0 bg-slate-900/40 z-20 backdrop-blur-[2px]"></div>
+<!-- BEGIN: SideNavigationDrawer -->
+<aside class="absolute left-0 top-10 bottom-0 w-[84%] max-w-[325px] bg-white z-30 flex flex-col shadow-2xl animate-fade-in border-r border-slate-100">
+<!-- Drawer Header -->
+<div class="px-4 pt-3 pb-2.5 border-b border-slate-100 flex flex-col space-y-2.5">
+<!-- Logo y Botón Cerrar -->
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-1.5">
+<!-- Icono TukiFac con gradiente azul-violeta eléctrico -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#2563eb] to-[#7c3aed] flex items-center justify-center shadow-sm">
+<span class="text-white font-extrabold text-sm tracking-tighter">Tk</span>
+</div>
+<div class="flex items-baseline font-extrabold text-xl">
+<span class="text-[#2563eb]">Tuki</span>
+<span class="text-slate-800">Fac</span>
+</div>
+</div>
+<button aria-label="Cerrar menú" class="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" type="button">
+<svg class="w-5 h-5 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<line x1="18" x2="6" y1="6" y2="18"></line>
+<line x1="6" x2="18" y1="6" y2="18"></line>
+</svg>
+</button>
+</div>
+<!-- Razón Social Empresa -->
+<div class="bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+<p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Empresa Activa</p>
+<p class="text-[11px] font-semibold text-slate-700 truncate leading-tight mt-0.5">
+            CORPORACION INDUSTRIAL RAFAZ E.I.R.L.
+          </p>
+</div>
+<!-- Enlace de Tutoriales de YouTube -->
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 hover:bg-rose-100 transition text-xs font-semibold" href="#">
+<div class="flex items-center space-x-2">
+<!-- Icono YouTube -->
+<svg class="w-4 h-4 fill-red-600 flex-shrink-0" viewbox="0 0 24 24">
+<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
+</svg>
+<span class="text-[11px] leading-tight font-medium">Tutoriales en YouTube</span>
+</div>
+<svg class="w-3 h-3 stroke-current text-rose-500" fill="none" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Input de Búsqueda Activo (Borde azul eléctrico #2563eb) -->
+<div class="relative mt-1">
+<div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-[#2563eb]">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<circle cx="11" cy="11" r="8"></circle>
+<line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+</svg>
+</div>
+<input class="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 border-2 border-[#2563eb] rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#2563eb] font-medium transition" placeholder="Buscar o filtrar módulo..." type="text" value="com"/>
+<!-- Botón de Limpiar Búsqueda -->
+<button class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600" type="button">
+<svg class="w-3.5 h-3.5 bg-slate-200 text-slate-600 rounded-full p-0.5" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24">
+<line x1="18" x2="6" y1="6" y2="18"></line>
+<line x1="6" x2="18" y1="6" y2="18"></line>
+</svg>
+</button>
+</div>
+</div>
+<!-- BEGIN: FilteredResultsList -->
+<div class="flex-1 overflow-y-auto px-3 py-2 space-y-3 no-scrollbar" data-purpose="search-results-container">
+<!-- Etiqueta de conteo de resultados -->
+<div class="flex items-center justify-between px-1">
+<span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Coincidencias (3)</span>
+<span class="text-[10px] text-[#2563eb] bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded font-medium">Filtro activo</span>
+</div>
+<!-- Resultados Filtrados -->
+<div class="space-y-1">
+<!-- Item 1: Compras (Desplegado con sub-items y acentos azul/violeta) -->
+<div class="bg-blue-50/40 rounded-xl border border-blue-200/80 overflow-hidden">
+<div class="flex items-center justify-between p-2 cursor-pointer hover:bg-blue-50/60 transition">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-blue-100 text-[#2563eb] flex items-center justify-center">
+<!-- Icono Bolsa de Compras -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+<line x1="3" x2="21" y1="6" y2="6"></line>
+<path d="M16 10a4 4 0 0 1-8 0"></path>
+</svg>
+</div>
+<div>
+<span class="text-xs font-bold text-slate-800">
+<span class="bg-yellow-200 text-slate-900 rounded-sm px-0.5">Com</span>pras
+                  </span>
+<p class="text-[10px] text-slate-400 leading-none">Gestión y registro</p>
+</div>
+</div>
+<svg class="w-3.5 h-3.5 text-[#2563eb] transform rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="6 9 12 15 18 9"></polyline>
+</svg>
+</div>
+<!-- Subitems de Compras -->
+<div class="bg-white/80 px-2 py-1.5 space-y-1 border-t border-blue-100 ml-3 mr-2 mb-1.5 rounded-lg">
+<a class="flex items-center justify-between py-1 px-2 text-[11px] text-slate-700 hover:text-[#2563eb] font-medium hover:bg-blue-50/70 rounded transition" href="#">
+<span>Lista de <span class="bg-yellow-200 text-slate-900 rounded-sm px-0.5">com</span>pras</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#2563eb]"></span>
+</a>
+<a class="flex items-center justify-between py-1 px-2 text-[11px] text-slate-700 hover:text-[#7c3aed] font-medium hover:bg-violet-50/70 rounded transition" href="#">
+<span>Nueva <span class="bg-yellow-200 text-slate-900 rounded-sm px-0.5">com</span>pra</span>
+<span class="text-[10px] font-bold text-[#7c3aed]">+</span>
+</a>
+</div>
+</div>
+<!-- Item 2: Comprobantes emitidos -->
+<a class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 group" href="#">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 group-hover:bg-blue-50 group-hover:text-[#2563eb] flex items-center justify-center transition">
+<!-- Icono Recibo/Factura -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+<polyline points="14 2 14 8 20 8"></polyline>
+<line x1="16" x2="8" y1="13" y2="13"></line>
+<line x1="16" x2="8" y1="17" y2="17"></line>
+<polyline points="10 9 9 9 8 9"></polyline>
+</svg>
+</div>
+<div>
+<p class="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
+<span class="bg-yellow-200 text-slate-900 rounded-sm px-0.5">Com</span>probantes emitidos
+                </p>
+<p class="text-[10px] text-slate-400 leading-none">Boletas, facturas y notas</p>
+</div>
+</div>
+<svg class="w-3.5 h-3.5 text-slate-300 group-hover:text-[#2563eb]" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 3: Comprobantes avanzados -->
+<a class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 group" href="#">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 group-hover:bg-violet-50 group-hover:text-[#7c3aed] flex items-center justify-center transition">
+<!-- Icono Capas / Documentos avanzados -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+<polyline points="2 17 12 22 22 17"></polyline>
+<polyline points="2 12 12 17 22 12"></polyline>
+</svg>
+</div>
+<div>
+<p class="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
+<span class="bg-yellow-200 text-slate-900 rounded-sm px-0.5">Com</span>probantes avanzados
+                </p>
+<p class="text-[10px] text-slate-400 leading-none">Retenciones, percepciones</p>
+</div>
+</div>
+<svg class="w-3.5 h-3.5 text-slate-300 group-hover:text-[#7c3aed]" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+</div>
+<!-- BEGIN: FrequentSuggestions -->
+<!-- Sugerencias comunes que no coinciden estrictamente con 'com' pero asisten la navegación rápida -->
+<div class="pt-2 border-t border-slate-100">
+<span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase px-1 block mb-1.5">Accesos frecuentes</span>
+<div class="space-y-1">
+<a class="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition" href="#">
+<div class="flex items-center space-x-2">
+<span class="text-xs">⚡</span>
+<span class="text-[11px] font-medium text-slate-700">Nueva Venta (POS)</span>
+</div>
+<span class="text-[9px] bg-slate-200 text-slate-600 px-1 py-0.5 rounded font-mono font-medium">POS</span>
+</a>
+<a class="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition" href="#">
+<div class="flex items-center space-x-2">
+<span class="text-xs">💰</span>
+<span class="text-[11px] font-medium text-slate-700">Apertura / Cierre de Caja</span>
+</div>
+<span class="text-[9px] bg-slate-200 text-slate-600 px-1 py-0.5 rounded font-mono font-medium">CAJA</span>
+</a>
+</div>
+</div>
+<!-- END: FrequentSuggestions -->
+</div>
+<!-- END: FilteredResultsList -->
+<!-- BEGIN: UserFooter -->
+<footer class="p-3 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<!-- Avatar del Usuario en azul eléctrico #2563eb -->
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#2563eb] to-[#7c3aed] text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white">
+            E
+          </div>
+<div class="truncate">
+<p class="text-xs font-bold text-slate-800 leading-tight">Esteffany Cordova</p>
+<p class="text-[10px] text-slate-500 font-medium">Administrador</p>
+</div>
+</div>
+<!-- Botón Salir / Logout -->
+<button aria-label="Cerrar sesión" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Cerrar sesión" type="button">
+<svg class="w-4 h-4 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+<polyline points="16 17 21 12 16 7"></polyline>
+<line x1="21" x2="9" y1="12" y2="12"></line>
+</svg>
+</button>
+</footer>
+<!-- END: UserFooter -->
+</aside>
+<!-- END: SideNavigationDrawer -->
+<!-- BEGIN: iOSHomeIndicator -->
+<div class="absolute bottom-1 left-0 right-0 flex justify-center pb-1 pointer-events-none z-40">
+<div class="w-32 h-1 bg-slate-400/80 rounded-full"></div>
+</div>
+<!-- END: iOSHomeIndicator -->
+</div>
+<!-- END: PhoneFrame -->
+</body></html>

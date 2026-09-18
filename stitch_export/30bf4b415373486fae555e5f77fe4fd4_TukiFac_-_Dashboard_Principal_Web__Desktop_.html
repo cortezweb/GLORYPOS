@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TukiFac - Tu aliado en facturación</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              dark: '#034e35'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbars">
+    /* Custom thin scrollbar for sidebar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+<style data-purpose="cards-styling">
+    /* Subtle 3D floating effect & gradients */
+    .card-mint {
+      background: linear-gradient(135deg, #d8fae7 0%, #c4f3d7 100%);
+    }
+    .card-yellow {
+      background: linear-gradient(135deg, #fff2cc 0%, #fee6a6 100%);
+    }
+    .card-slate {
+      background: linear-gradient(180deg, #edf2f7 0%, #e2e8f0 100%);
+    }
+    .card-blue-light {
+      background: linear-gradient(180deg, #dcf0fa 0%, #cde8f7 100%);
+    }
+  </style>
+</head>
+<body class="bg-[#0f764a] font-sans antialiased text-slate-700 min-h-screen flex flex-col items-center justify-start p-2 lg:p-4">
+<!-- BEGIN: TopBrandBanner -->
+<div class="w-full text-center pb-2 text-white">
+<div class="inline-flex flex-col items-center">
+<span class="text-sm md:text-base font-extrabold tracking-wider underline underline-offset-4 decoration-emerald-300">WWW.TUKIFAC.COM</span>
+<span class="text-[10px] tracking-wide text-emerald-100 font-medium">tu aliado en facturación</span>
+</div>
+</div>
+<!-- END: TopBrandBanner -->
+<!-- BEGIN: MainContainer -->
+<div class="w-full max-w-[1440px] bg-white rounded-3xl shadow-2xl overflow-hidden border border-emerald-500/20 flex flex-col">
+<!-- BEGIN: TopNavigationBar -->
+<header class="bg-white border-b border-gray-100 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+<!-- Company Branding & Left Header -->
+<div class="flex items-center gap-6">
+<!-- Logo Container -->
+<div class="w-48 flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="text-2xl font-black tracking-tight text-emerald-600">Tuk</span>
+<!-- Friendly Mascot Face in 'i' -->
+<div class="w-6 h-6 rounded-md bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3.5-9c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm7 0c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path>
+</svg>
+</div>
+<span class="text-2xl font-black tracking-tight text-blue-900">Fac</span>
+</div>
+<span class="text-[9px] font-bold text-slate-500 tracking-tight uppercase">INVERSIONES DORICONTA S.A.C.</span>
+</div>
+<!-- Quick Access Icon Buttons -->
+<div class="hidden sm:flex items-center gap-1.5 border-l border-gray-200 pl-4">
+<button class="flex flex-col items-center justify-center w-9 h-9 border border-gray-200 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition text-slate-600" title="Nota de Crédito">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-[9px] font-bold leading-none mt-0.5">NC</span>
+</button>
+<button class="flex flex-col items-center justify-center w-9 h-9 border border-gray-200 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition text-slate-600" title="Nota de Venta">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-[9px] font-bold leading-none mt-0.5">NV</span>
+</button>
+<button class="flex flex-col items-center justify-center w-9 h-9 border border-gray-200 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition text-slate-600" title="Punto de Venta">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-[9px] font-bold leading-none mt-0.5">POS</span>
+</button>
+</div>
+<!-- Subscription Badge Card -->
+<div class="hidden xl:flex flex-col justify-center border border-emerald-200 bg-emerald-50/40 rounded-lg px-3 py-1 text-[11px] leading-tight">
+<div><span class="text-emerald-700 font-bold">Plan:</span> <span class="font-extrabold text-emerald-800">Ilimitado</span></div>
+<div class="text-slate-600 font-semibold text-[10px]">Estás al día en tus pagos</div>
+<div class="text-slate-400 text-[9px]">Fecha de pago: <span class="text-slate-600 font-medium">Al corriente</span></div>
+</div>
+</div>
+<!-- Right Header Actions -->
+<div class="flex items-center gap-2.5">
+<!-- WhatsApp Soporte Button -->
+<a class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition" href="#soporte">
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"></path>
+</svg>
+<span>Soporte</span>
+</a>
+<!-- SUNAT Demo Pill -->
+<div class="hidden sm:flex flex-col items-center justify-center bg-blue-900 text-white px-3 py-1 rounded-lg text-[10px] leading-tight font-medium">
+<span class="font-bold tracking-wide">Modo: DEMO</span>
+<span class="text-blue-200 text-[9px]">Conectado a SUNAT</span>
+</div>
+<!-- Cart Icon -->
+<div class="relative p-1.5 text-slate-700 hover:text-slate-900 cursor-pointer">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="absolute top-0 right-0 bg-slate-900 text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">0</span>
+</div>
+<!-- Notification Bell -->
+<div class="relative p-1.5 text-slate-700 hover:text-slate-900 cursor-pointer">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">58</span>
+</div>
+<!-- User Avatar -->
+<div class="w-7 h-7 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold ring-1 ring-slate-300 ml-1">
+          AD
+        </div>
+</div>
+</header>
+<!-- END: TopNavigationBar -->
+<!-- BEGIN: BodyContainer -->
+<div class="flex flex-1 overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-56 bg-white border-r border-gray-100 flex flex-col shrink-0 p-3 h-[780px] overflow-y-auto">
+<nav class="space-y-1 text-[12px] font-medium text-slate-600">
+<!-- Item Activo: Inicio -->
+<a class="flex items-center gap-2.5 px-3 py-2 bg-emerald-500 text-white font-semibold rounded-lg shadow-sm" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Inicio</span>
+</a>
+<!-- Admin Dashboard -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Admin dashboard</span>
+</div>
+</a>
+<!-- Preventa -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Preventa</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Ventas -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Ventas</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Compras -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Compras</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Clientes -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Clientes</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Productos/Servicios -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Productos/Servicios</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Inventario -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Inventario</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Finanzas -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Finanzas</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Guías de remisión -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Guías de remisión</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Comprobantes pendientes -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="truncate">Comprobantes pendientes</span>
+</div>
+<svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Comprobantes avanzados -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="truncate">Comprobantes avanzados</span>
+</div>
+<svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Contabilidad -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Contabilidad</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Reportes -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Reportes</span>
+</div>
+</a>
+<!-- Tienda Virtual -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Tienda Virtual</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Restaurante -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<!-- Spoon / Fork icon -->
+<svg class="w-4 h-4 text-slate-400" fill="currentColor" viewbox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"></path></svg>
+<span>Restaurante</span>
+</div>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+<!-- Farmacia -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Farmacia</span>
+</div>
+</a>
+<!-- Hoteles -->
+<a class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 rounded-lg transition" href="#">
+<div class="flex items-center gap-2.5">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Hoteles</span>
+</div>
+</a>
+</nav>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: ContentArea -->
+<main class="flex-1 bg-[#f8fafc] p-4 lg:p-6 overflow-y-auto flex flex-col justify-between">
+<div class="space-y-5">
+<!-- BEGIN: VideoTutorialBanner -->
+<div class="relative w-full h-36 md:h-44 rounded-2xl overflow-hidden shadow-sm flex items-center bg-slate-900 group cursor-pointer">
+<!-- Background Image overlay -->
+<img alt="Tutorial background" class="absolute inset-0 w-full h-full object-cover opacity-35 transition duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa7iJiOaP7Wzwg4fiTwrxxkD3_twNe0EJ_dMM99EsNgZYNKIujvoPkUx6PZldVUYcEmJ2KB-IpNz3uv_Y-zfvFwAl7qxL1nJX88poSepCzQpWY0KmvR7dNJwIqB2_eCi_K453COYy4_FfvrffPC0LZ4dbbpqbBaIzHXSFk73n5Pcx-H23C7pB-op9AY3__UrWl7QBnR3hBXIUC-K8we7DbKNssw46Z7s4OSxdrO2tgEH5o9jnpQF3zCQ"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+<!-- Content -->
+<div class="relative z-10 px-8 flex items-center justify-between w-full">
+<h2 class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white leading-tight max-w-md drop-shadow">
+                Aprende a utilizar Tukifac<br/>
+<span class="text-emerald-400">con nuestros tutoriales</span>
+</h2>
+<!-- Play Button -->
+<div class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-white/70 bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition shadow-lg">
+<svg class="w-6 h-6 md:w-8 md:h-8 fill-current ml-1" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+</div>
+</div>
+</div>
+<!-- END: VideoTutorialBanner -->
+<!-- Subheaders for Options -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-end">
+<div class="lg:col-span-7">
+<span class="text-xs font-semibold text-slate-400 tracking-wide">Selecciona una de las opciones</span>
+</div>
+<div class="lg:col-span-5 hidden lg:block">
+<span class="text-xs font-semibold text-slate-400 tracking-wide">Otras herramientas</span>
+</div>
+</div>
+<!-- BEGIN: DashboardCardsGrid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+<!-- Left Big Action Cards (col-span-7) -->
+<div class="lg:col-span-7 flex flex-col gap-4">
+<!-- Card 1: Realiza una Venta Rápida (Mint green) -->
+<div class="card-mint rounded-2xl p-6 relative overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer border border-emerald-100 flex items-center justify-between min-h-[175px]">
+<div class="z-10 max-w-[240px]">
+<span class="inline-block bg-white/70 backdrop-blur-sm text-sky-600 border border-sky-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-3 shadow-xs">
+                    Herramienta
+                  </span>
+<h3 class="text-xl md:text-2xl font-black text-slate-800 leading-tight">
+<span class="text-blue-600 block font-bold">Realiza una</span>
+                    Venta rápida
+                  </h3>
+</div>
+<!-- 3D Graphic Composition for Quick Sale -->
+<div class="relative w-36 h-36 flex items-center justify-center">
+<!-- Phone Base -->
+<div class="w-20 h-32 bg-white rounded-2xl shadow-xl border-4 border-slate-700 relative flex flex-col items-center p-1.5 transform rotate-6">
+<div class="w-6 h-1 bg-slate-300 rounded-full mb-1"></div>
+<!-- Mascot Screen -->
+<div class="w-full h-full bg-sky-100 rounded-lg flex flex-col items-center justify-center p-1 border border-sky-200">
+<!-- Eyeglasses -->
+<div class="flex gap-1 mb-1">
+<div class="w-3.5 h-3.5 border-2 border-slate-800 rounded-full bg-white flex items-center justify-center">
+<div class="w-1 h-1 bg-slate-800 rounded-full"></div>
+</div>
+<div class="w-3.5 h-3.5 border-2 border-slate-800 rounded-full bg-white flex items-center justify-center">
+<div class="w-1 h-1 bg-slate-800 rounded-full"></div>
+</div>
+</div>
+<div class="w-3 h-1 bg-rose-400 rounded-full"></div>
+</div>
+</div>
+<!-- Shopping Basket -->
+<div class="absolute -bottom-1 -left-2 bg-pink-500 w-14 h-10 rounded-lg shadow-lg flex items-center justify-center border-2 border-white -rotate-12">
+<div class="grid grid-cols-3 gap-0.5 p-1">
+<div class="w-2 h-2 border border-white/50"></div>
+<div class="w-2 h-2 border border-white/50"></div>
+<div class="w-2 h-2 border border-white/50"></div>
+</div>
+</div>
+<!-- Dollar Cash Floating -->
+<div class="absolute -bottom-2 -right-1 bg-emerald-500 text-white font-black text-[9px] px-2 py-0.5 rounded shadow rotate-12 border border-emerald-300">
+                    S/
+                  </div>
+</div>
+</div>
+<!-- Card 2: Ver o agregar Productos (Pastel Warm Yellow) -->
+<div class="card-yellow rounded-2xl p-6 relative overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer border border-amber-100 flex items-center justify-between min-h-[175px]">
+<!-- Left 3D Elements (Boxes + Invoice Character) -->
+<div class="relative w-44 h-32 flex items-center">
+<!-- Receipt Paper -->
+<div class="w-14 h-24 bg-sky-200 rounded-lg shadow border border-sky-300 p-2 space-y-1 transform -rotate-6">
+<div class="w-3 h-3 rounded-full bg-white mb-2"></div>
+<div class="h-1 bg-sky-400 rounded w-full"></div>
+<div class="h-1 bg-sky-400 rounded w-4/5"></div>
+<div class="h-1 bg-sky-400 rounded w-2/3"></div>
+</div>
+<!-- Cardboard Box -->
+<div class="w-20 h-20 bg-amber-600 rounded-xl shadow-md -ml-6 relative flex items-center justify-center border-t-2 border-amber-500">
+<div class="w-6 h-8 bg-amber-700/50 rounded-sm"></div>
+</div>
+<!-- Happy Invoice Character -->
+<div class="w-16 h-24 bg-white rounded-xl shadow-xl border-2 border-blue-500 p-1.5 flex flex-col items-center justify-center -ml-4 z-10 transform rotate-6">
+<div class="w-full h-3 bg-blue-500 rounded-t-sm mb-2"></div>
+<!-- Happy Eyes and Smile -->
+<div class="flex gap-2 mb-1">
+<div class="w-1.5 h-1.5 bg-blue-700 rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-blue-700 rounded-full"></div>
+</div>
+<div class="w-4 h-2 border-b-2 border-blue-700 rounded-full"></div>
+<!-- Blue little shoes -->
+<div class="flex gap-2 mt-2">
+<div class="w-2.5 h-1.5 bg-blue-600 rounded-full"></div>
+<div class="w-2.5 h-1.5 bg-blue-600 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Right text content -->
+<div class="z-10 text-right">
+<span class="inline-block bg-white/70 backdrop-blur-sm text-amber-700 border border-amber-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-3 shadow-xs">
+                    Herramienta
+                  </span>
+<h3 class="text-xl md:text-2xl font-black text-slate-800 leading-tight">
+                    Ver o agregar<br/>
+<span class="text-slate-800">Productos</span>
+</h3>
+</div>
+</div>
+</div>
+<!-- Right Column: Secondary Tools (col-span-5) -->
+<div class="lg:col-span-5 flex flex-col gap-4">
+<!-- Two square cards in a row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Card 3: Buscar Documentos -->
+<div class="card-slate rounded-2xl p-4 shadow-sm hover:shadow-md transition cursor-pointer border border-slate-200 flex flex-col items-center text-center min-h-[200px] justify-between">
+<div class="w-full flex flex-col items-center">
+<span class="bg-white/80 backdrop-blur-sm text-slate-600 border border-slate-200 text-[9px] font-bold px-2.5 py-0.5 rounded-full mb-2">
+                      Herramienta
+                    </span>
+<h4 class="text-base font-extrabold text-slate-800 leading-snug">
+                      Buscar<br/>Documentos
+                    </h4>
+</div>
+<!-- 3D Mascot Clipboard -->
+<div class="relative w-24 h-24 my-1 flex items-center justify-center">
+<!-- Clipboard -->
+<div class="w-16 h-20 bg-blue-100 rounded-xl shadow-md border-2 border-blue-400 relative flex flex-col items-center pt-2">
+<!-- Clip -->
+<div class="w-6 h-3 bg-amber-400 rounded-md absolute -top-1.5 shadow-sm"></div>
+<!-- Cute paper character -->
+<div class="w-12 h-14 bg-white rounded shadow-xs p-1 flex flex-col items-center justify-center">
+<div class="flex gap-1 mb-1">
+<div class="w-1 h-1 bg-blue-600 rounded-full"></div>
+<div class="w-1 h-1 bg-blue-600 rounded-full"></div>
+</div>
+<div class="w-2.5 h-1 border-b border-blue-600 rounded-full"></div>
+</div>
+</div>
+<!-- Magnifying glass -->
+<div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full border-2 border-blue-500 bg-sky-200/50 backdrop-blur-xs flex items-center justify-center shadow">
+<div class="w-2 h-4 bg-slate-700 absolute bottom-0 right-0 transform rotate-45 origin-bottom"></div>
+</div>
+</div>
+<div></div>
+</div>
+<!-- Card 4: Consultar Reportes -->
+<div class="card-slate rounded-2xl p-4 shadow-sm hover:shadow-md transition cursor-pointer border border-slate-200 flex flex-col items-center text-center min-h-[200px] justify-between relative">
+<div class="absolute top-3 right-3 text-slate-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div class="w-full flex flex-col items-center">
+<span class="bg-white/80 backdrop-blur-sm text-slate-600 border border-slate-200 text-[9px] font-bold px-2.5 py-0.5 rounded-full mb-2">
+                      Herramienta
+                    </span>
+<h4 class="text-base font-extrabold text-slate-800 leading-snug">
+                      Consultar<br/>Reportes
+                    </h4>
+</div>
+<!-- 3D Reports Graphics -->
+<div class="relative w-24 h-24 my-1 flex items-center justify-center">
+<!-- Chart doc -->
+<div class="w-16 h-18 bg-white rounded-lg shadow-md border border-slate-200 p-2 flex flex-col justify-end gap-1">
+<div class="flex items-end gap-1 h-8 justify-center">
+<div class="w-2 h-4 bg-purple-400 rounded-t"></div>
+<div class="w-2 h-7 bg-purple-600 rounded-t"></div>
+<div class="w-2 h-5 bg-pink-400 rounded-t"></div>
+</div>
+<div class="h-1 bg-emerald-400 rounded w-full"></div>
+</div>
+<!-- Magnifying glass icon overlay -->
+<div class="absolute -left-1 bottom-3 w-7 h-7 rounded-full border-2 border-purple-500 bg-purple-100 flex items-center justify-center">
+<div class="w-2 h-2 rounded-full border border-purple-600"></div>
+</div>
+</div>
+<div></div>
+</div>
+</div>
+<!-- Card 5: Apertura o Cierre de Cajas (Full width pastel blue) -->
+<div class="card-blue-light rounded-2xl p-4 shadow-sm hover:shadow-md transition cursor-pointer border border-sky-100 flex flex-col items-center justify-center text-center">
+<span class="bg-white/80 backdrop-blur-sm text-sky-700 border border-sky-200 text-[9px] font-bold px-2.5 py-0.5 rounded-full mb-1">
+                  Herramienta
+                </span>
+<h4 class="text-base md:text-lg font-black text-slate-800">
+                  Apertura o cierre de cajas
+                </h4>
+</div>
+</div>
+</div>
+<!-- END: DashboardCardsGrid -->
+</div>
+<!-- BEGIN: FooterTicker -->
+<footer class="mt-6 pt-3 border-t border-slate-100 flex items-center justify-center">
+<div class="inline-flex items-center gap-1.5 bg-slate-900 text-white px-4 py-1 rounded-md text-[11px] font-extrabold tracking-wider shadow-sm">
+<span class="text-white">REPORTE</span>
+<span class="bg-emerald-600 text-white px-1 py-0.5 rounded font-black">RESUMIDO</span>
+<span class="text-white">DE VENTAS</span>
+</div>
+</footer>
+<!-- END: FooterTicker -->
+</main>
+<!-- END: ContentArea -->
+</div>
+<!-- END: BodyContainer -->
+</div>
+<!-- END: MainContainer -->
+<script data-purpose="card-interactions">
+    // Add micro-interaction clicks for interactive demonstration
+    document.querySelectorAll('[data-purpose]').forEach(el => {
+      el.addEventListener('click', () => {
+        // Ready for functional hooks
+      });
+    });
+  </script>
+</body></html>

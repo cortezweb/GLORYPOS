@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Tukifac POS - Selección de Presentación</title>
+<!-- Tailwind CSS CDN con plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              500: '#2563EB',
+              600: '#1D4ED8',
+              700: '#1E40AF'
+            },
+            electric: {
+              blue: '#2563EB',
+              'blue-hover': '#1D4ED8',
+              violet: '#7C3AED',
+              'violet-hover': '#6D28D9',
+              'violet-light': '#EDE9FE'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="custom-layout">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    /* Suavizado de bordes para emular interfaz nativa móvil */
+    .sheet-shadow {
+      box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-gray-800 flex justify-center items-center min-h-screen p-0 sm:p-4">
+<!-- BEGIN: MobileDeviceFrame -->
+<div class="relative w-full max-w-sm h-screen sm:h-[844px] bg-gray-100 overflow-hidden flex flex-col justify-between sm:rounded-[40px] sm:border-8 sm:border-gray-900 shadow-2xl">
+<!-- BEGIN: BackgroundPOSCatalog -->
+<!-- Contenido simulado del catálogo de fondo tras el overlay -->
+<div aria-hidden="true" class="absolute inset-0 flex flex-col bg-slate-50 filter blur-[1px] opacity-80">
+<!-- Barra superior simulada de la app -->
+<div class="bg-gradient-to-r from-blue-600 to-violet-600 h-14 flex items-center justify-between px-4 pt-4 text-white">
+<div class="w-6 h-6 rounded bg-white/20"></div>
+<div class="h-4 w-28 bg-white/40 rounded-full"></div>
+<div class="w-6 h-6 rounded-full bg-white/20"></div>
+</div>
+<!-- Cuadrícula de productos de fondo -->
+<div class="p-3 grid grid-cols-2 gap-3 pt-6">
+<div class="bg-white p-3 rounded-xl shadow-sm flex flex-col items-center">
+<div class="w-24 h-24 bg-violet-100 rounded-lg mb-2"></div>
+<div class="w-20 h-3 bg-gray-200 rounded mb-1"></div>
+<div class="w-12 h-3 bg-gray-300 rounded"></div>
+</div>
+<div class="bg-white p-3 rounded-xl shadow-sm flex flex-col items-center">
+<div class="w-24 h-24 bg-blue-50 rounded-lg mb-2"></div>
+<div class="w-20 h-3 bg-gray-200 rounded mb-1"></div>
+<div class="w-12 h-3 bg-gray-300 rounded"></div>
+</div>
+<div class="bg-white p-3 rounded-xl shadow-sm flex flex-col items-center">
+<div class="w-24 h-24 bg-purple-50 rounded-lg mb-2"></div>
+<div class="w-20 h-3 bg-gray-200 rounded mb-1"></div>
+<div class="w-12 h-3 bg-gray-300 rounded"></div>
+</div>
+<div class="bg-white p-3 rounded-xl shadow-sm flex flex-col items-center">
+<div class="w-24 h-24 bg-indigo-50 rounded-lg mb-2"></div>
+<div class="w-20 h-3 bg-gray-200 rounded mb-1"></div>
+<div class="w-12 h-3 bg-gray-300 rounded"></div>
+</div>
+</div>
+</div>
+<!-- END: BackgroundPOSCatalog -->
+<!-- BEGIN: BackdropOverlay -->
+<!-- Capa oscura semitransparente -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-10 transition-opacity"></div>
+<!-- END: BackdropOverlay -->
+<!-- BEGIN: PresentationModalSheet -->
+<!-- Bottom Sheet emergente idéntico a las capturas de Tukifac -->
+<section class="relative z-20 mt-auto bg-white rounded-t-[32px] p-5 sheet-shadow flex flex-col max-h-[85%] w-full transition-transform" data-purpose="variant-selection-bottom-sheet">
+<!-- Indicador visual de arrastre superior -->
+<div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3"></div>
+<!-- Nombre del Producto -->
+<h2 class="text-xl font-bold text-gray-800 tracking-tight mb-3">
+        Chaleco dama
+      </h2>
+<!-- Detalle de Producto / Miniatura y Precio de la presentación -->
+<div class="flex items-center space-x-3 mb-4 pb-1">
+<!-- Miniatura del Producto -->
+<div class="w-14 h-14 bg-gradient-to-br from-violet-100 to-blue-100 rounded-xl flex items-center justify-center p-1 border border-violet-200/80 shadow-sm shrink-0">
+<svg class="w-9 h-9 text-violet-700" fill="currentColor" viewbox="0 0 24 24">
+<path d="M9 3L12 6L15 3H19L20 9L18 10V21H6V10L4 9L5 3H9Z"></path>
+</svg>
+</div>
+<!-- Información de precio dinámico -->
+<div class="flex flex-col">
+<span class="text-xs text-gray-500 font-medium">Precio de la presentación</span>
+<span class="text-xl font-bold text-gray-900 tracking-tight leading-none mt-1" id="header-price-display">
+            S/ 46.00
+          </span>
+</div>
+</div>
+<!-- BEGIN: PresentationSection -->
+<!-- Selector de variantes (Tallas/Presentaciones) -->
+<div class="mb-4">
+<h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          PRESENTACIÓN
+        </h3>
+<p class="text-[11px] text-gray-400 mt-0.5 mb-3">
+          Elige una: Su precio reemplaza el precio base
+        </p>
+<!-- Chips de selección interactiva -->
+<div aria-label="Seleccione presentación" class="grid grid-cols-3 gap-2.5" role="radiogroup">
+<!-- Opción S -->
+<button aria-checked="false" class="variant-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors" data-price="45.00" data-size="S" onclick="selectPresentation(this)" role="radio" type="button">
+<span class="text-xs font-medium text-gray-700">S</span>
+<span class="text-[11px] text-gray-500 font-normal mt-0.5">S/ 45.00</span>
+</button>
+<!-- Opción M (Seleccionada por defecto con azul y violeta eléctrico) -->
+<button aria-checked="true" class="variant-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border border-blue-600 bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-sm transition-colors" data-price="46.00" data-size="M" onclick="selectPresentation(this)" role="radio" type="button">
+<span class="text-xs font-bold text-white">M</span>
+<span class="text-[11px] text-blue-100 font-normal mt-0.5">S/ 46.00</span>
+</button>
+<!-- Opción L -->
+<button aria-checked="false" class="variant-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors" data-price="47.00" data-size="L" onclick="selectPresentation(this)" role="radio" type="button">
+<span class="text-xs font-medium text-gray-700">L</span>
+<span class="text-[11px] text-gray-500 font-normal mt-0.5">S/ 47.00</span>
+</button>
+</div>
+</div>
+<!-- END: PresentationSection -->
+<!-- BEGIN: PriceSummarySection -->
+<!-- Detalle de resumen y precio total unitario -->
+<div class="border-t border-gray-100 pt-3 mb-5">
+<!-- Sub-resumen de variante seleccionada -->
+<div class="flex justify-between items-center text-xs text-gray-500 mb-1">
+<span>Resumen de precio</span>
+<span class="font-medium text-violet-700 font-semibold" id="summary-badge-price">S/ 46.00</span>
+</div>
+<div class="flex justify-between items-center text-xs text-gray-400 mb-3">
+<span id="summary-variant-title">M (S/ 46.00)</span>
+<div class="flex items-center space-x-2">
+<!-- Control opcional de unidades -->
+<button class="w-6 h-6 rounded-full bg-violet-50 text-violet-700 font-bold text-sm flex items-center justify-center active:bg-violet-100" type="button">-</button>
+<span class="text-xs font-semibold text-gray-800">1</span>
+<button class="w-6 h-6 rounded-full bg-violet-50 text-violet-700 font-bold text-sm flex items-center justify-center active:bg-violet-100" type="button">+</button>
+</div>
+</div>
+<!-- Total Unitario Destacado -->
+<div class="flex justify-between items-baseline pt-1">
+<span class="text-sm font-semibold text-gray-800">Total unitario</span>
+<span class="text-xl font-extrabold text-blue-600 tracking-tight" id="total-price">
+            S/ 46.00
+          </span>
+</div>
+</div>
+<!-- END: PriceSummarySection -->
+<!-- BEGIN: ActionButtons -->
+<!-- Botones Cancelar y Agregar -->
+<div class="flex items-center gap-3 pt-1">
+<!-- Botón Cancelar -->
+<button class="w-1/3 py-3 rounded-xl font-medium text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors text-center" type="button">
+          Cancelar
+        </button>
+<!-- Botón Agregar con gradiente Azul Eléctrico y Violeta Eléctrico -->
+<button class="w-2/3 py-3.5 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-blue-600 via-blue-700 to-violet-600 hover:from-blue-700 hover:to-violet-700 active:opacity-95 shadow-md shadow-blue-500/20 transition-all text-center tracking-wide" type="button">
+          Agregar
+        </button>
+</div>
+<!-- END: ActionButtons -->
+</section>
+<!-- END: PresentationModalSheet -->
+</div>
+<!-- END: MobileDeviceFrame -->
+<!-- BEGIN: InteractivityScript -->
+<script data-purpose="variant-selector">
+    function selectPresentation(button) {
+      // Remover estado activo de todos los botones
+      const buttons = document.querySelectorAll('.variant-btn');
+      buttons.forEach(btn => {
+        btn.setAttribute('aria-checked', 'false');
+        btn.className = 'variant-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors';
+        const titleSpan = btn.children[0];
+        const priceSpan = btn.children[1];
+        titleSpan.className = 'text-xs font-medium text-gray-700';
+        priceSpan.className = 'text-[11px] text-gray-500 font-normal mt-0.5';
+      });
+
+      // Asignar estado activo al seleccionado con Azul y Violeta eléctrico
+      button.setAttribute('aria-checked', 'true');
+      button.className = 'variant-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border border-blue-600 bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-sm transition-colors';
+      button.children[0].className = 'text-xs font-bold text-white';
+      button.children[1].className = 'text-[11px] text-blue-100 font-normal mt-0.5';
+
+      // Actualizar información y totales
+      const size = button.getAttribute('data-size');
+      const price = parseFloat(button.getAttribute('data-price')).toFixed(2);
+
+      document.getElementById('header-price-display').innerText = `S/ ${price}`;
+      document.getElementById('summary-badge-price').innerText = `S/ ${price}`;
+      document.getElementById('summary-variant-title').innerText = `${size} (S/ ${price})`;
+      document.getElementById('total-price').innerText = `S/ ${price}`;
+    }
+  </script>
+<!-- END: InteractivityScript -->
+</body></html>

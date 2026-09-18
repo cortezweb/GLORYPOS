@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>TukiFac - Directorio de Clientes</title>
+<!-- Tailwind CSS v3 with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.preconnect" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Phosphor Icons for sharp modern UI icons -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#2563eb',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+            },
+            violet: {
+              DEFAULT: '#7c3aed',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              50: '#f5f3ff',
+              100: '#ede9fe',
+            },
+            indigo: {
+              DEFAULT: '#6366f1',
+              600: '#4f46e5',
+            },
+            tukidark: '#111827',
+            tukibg: '#f8fafc',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          boxShadow: {
+            card: '0 2px 10px -2px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.03)',
+            float: '0 10px 25px -5px rgba(37, 99, 235, 0.35)',
+            bottombar: '0 -4px 20px -2px rgba(0, 0, 0, 0.06)',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="base-styling">
+    body {
+      background-color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style data-purpose="modal-drawer">
+    .drawer-backdrop {
+      background-color: rgba(17, 24, 39, 0.6);
+      backdrop-filter: blur(4px);
+      transition: opacity 0.3s ease-in-out;
+    }
+    .drawer-content {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="bg-tukibg text-slate-800 antialiased min-h-screen flex flex-col justify-between pb-24">
+<!-- BEGIN: MainHeader -->
+<header class="sticky top-0 z-30 bg-white border-b border-slate-100 shadow-sm" data-purpose="app-header">
+<!-- Top Status / Brand Line -->
+<div class="px-4 pt-3 pb-2 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<!-- Menu Hamburger Button -->
+<button aria-label="Abrir Menú" class="p-2 -ml-1 text-slate-700 hover:text-primary-600 rounded-lg active:bg-slate-100 transition-colors" type="button">
+<i class="ph ph-list text-2xl font-bold"></i>
+</button>
+<!-- TukiFac Brand Logo -->
+<div class="flex items-center">
+<span class="text-2xl font-extrabold tracking-tight text-slate-900">Tuki<span class="text-primary-600">Fac</span></span>
+<span class="inline-block w-2 h-2 rounded-full bg-violet-600 ml-0.5"></span>
+<span class="ml-1.5 px-1.5 py-0.5 text-[10px] font-bold uppercase bg-blue-50 text-blue-600 rounded border border-blue-200">SUNAT</span>
+</div>
+</div>
+<!-- User & Notifications -->
+<div class="flex items-center space-x-2">
+<button aria-label="Notificaciones" class="relative p-2 text-slate-600 hover:text-slate-800 rounded-full active:bg-slate-100" type="button">
+<i class="ph ph-bell text-xl"></i>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+</button>
+<!-- User Avatar Capsule -->
+<div class="flex items-center pl-1">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-600 to-violet-600 text-white font-bold flex items-center justify-center text-sm ring-2 ring-blue-100 shadow-sm">
+            E
+          </div>
+</div>
+</div>
+</div>
+<!-- Active Company Sub-banner -->
+<div class="px-4 py-1.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+<div class="flex items-center space-x-1.5 overflow-hidden">
+<i class="ph ph-storefront text-slate-500 shrink-0"></i>
+<span class="font-semibold text-slate-700 truncate">CORPORACION INDUSTRIAL RAFAZ E.I.R.L.</span>
+</div>
+<div class="flex items-center space-x-1 shrink-0 text-primary-700 bg-blue-100/70 px-2 py-0.5 rounded-full text-[10px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-600 animate-pulse"></span>
+<span>Online</span>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 px-4 pt-4 max-w-lg mx-auto w-full" data-purpose="client-directory-content">
+<!-- Title & Action Bar -->
+<div class="flex items-center justify-between mb-3.5">
+<div>
+<h1 class="text-xl font-bold text-slate-900 tracking-tight">Directorio Clientes</h1>
+<p class="text-xs text-slate-500 font-medium">148 contribuyentes registrados</p>
+</div>
+<!-- Add New Client Button (Electric Blue & Violet) -->
+<button class="inline-flex items-center space-x-1.5 bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-700 hover:to-violet-700 active:scale-95 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl shadow-md transition-all shadow-blue-600/25" onclick="toggleClientModal(true)" type="button">
+<i class="ph ph-user-plus text-base font-bold"></i>
+<span>+ Nuevo</span>
+</button>
+</div>
+<!-- BEGIN: SearchAndSunatConsultation -->
+<section class="space-y-2.5 mb-4" data-purpose="search-and-filters">
+<!-- Search Bar -->
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+<i class="ph ph-magnifying-glass text-lg font-bold text-slate-400"></i>
+</div>
+<input class="w-full pl-10 pr-10 py-2.5 text-xs bg-white border border-slate-200 rounded-xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent shadow-card" placeholder="Buscar RUC, DNI o Razón Social..." type="search"/>
+<button aria-label="Escanear DNI o RUC" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-primary-600" type="button">
+<i class="ph ph-scan text-lg"></i>
+</button>
+</div>
+<!-- Quick Filter Chips -->
+<div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-0.5">
+<button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-primary-600 text-white whitespace-nowrap shadow-sm shadow-blue-500/20">
+          Todos (148)
+        </button>
+<button class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white text-slate-600 border border-slate-200 whitespace-nowrap active:bg-slate-50">
+          Empresas (RUC)
+        </button>
+<button class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white text-slate-600 border border-slate-200 whitespace-nowrap active:bg-slate-50">
+          Personas (DNI)
+        </button>
+<button class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white text-slate-600 border border-slate-200 whitespace-nowrap active:bg-slate-50">
+          Varios / Rápido
+        </button>
+</div>
+</section>
+<!-- END: SearchAndSunatConsultation -->
+<!-- BEGIN: ClientCardsList -->
+<section class="space-y-3" data-purpose="client-cards-list">
+<!-- Card 1: INVERSIONES DORICONTA S.A.C. -->
+<article class="bg-white border border-slate-100 rounded-2xl p-4 shadow-card hover:border-blue-200 transition-all">
+<div class="flex items-start justify-between">
+<div class="space-y-1 max-w-[80%]">
+<div class="flex items-center space-x-2">
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-blue-50 text-blue-700 rounded-md border border-blue-200/70">
+                RUC 20601234567
+              </span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Habido / Activo</span>
+</span>
+</div>
+<h2 class="text-sm font-bold text-slate-900 leading-snug">INVERSIONES DORICONTA S.A.C.</h2>
+<p class="text-xs text-slate-500 flex items-center space-x-1 truncate">
+<i class="ph ph-map-pin text-slate-400 shrink-0"></i>
+<span class="truncate">Av. El Sol 450, Urb. Corpac, San Isidro, Lima</span>
+</p>
+</div>
+<!-- Actions drop/more -->
+<button aria-label="Opciones" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg" type="button">
+<i class="ph ph-dots-three-vertical text-lg font-bold"></i>
+</button>
+</div>
+<!-- Metrics & Contact row -->
+<div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
+<div>
+<div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Total facturado</div>
+<div class="text-xs font-bold text-slate-800">S/ 4,850.00 <span class="text-[10px] font-normal text-slate-400">· Ayer</span></div>
+</div>
+<div class="flex items-center space-x-2">
+<!-- WhatsApp Action -->
+<a class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base hover:bg-emerald-100 transition-colors" href="#" title="Enviar comprobante WhatsApp">
+<i class="ph ph-whatsapp-logo font-bold"></i>
+</a>
+<!-- Direct New Sale -->
+<button class="inline-flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-xl transition-all" type="button">
+<i class="ph ph-receipt text-sm"></i>
+<span>Venta</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: Persona Natural - Boleta -->
+<article class="bg-white border border-slate-100 rounded-2xl p-4 shadow-card hover:border-violet-200 transition-all">
+<div class="flex items-start justify-between">
+<div class="space-y-1 max-w-[80%]">
+<div class="flex items-center space-x-2">
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-purple-50 text-purple-700 rounded-md border border-purple-200/70">
+                DNI 45892134
+              </span>
+<span class="text-[10px] font-medium text-slate-500">Persona Natural</span>
+</div>
+<h2 class="text-sm font-bold text-slate-900 leading-snug">Juan Carlos Pérez Mendoza</h2>
+<div class="flex flex-col space-y-0.5 text-xs text-slate-500">
+<span class="flex items-center space-x-1 truncate">
+<i class="ph ph-envelope text-slate-400"></i>
+<span>juan.perez@gmail.com</span>
+</span>
+<span class="flex items-center space-x-1">
+<i class="ph ph-phone text-slate-400"></i>
+<span>987 654 321</span>
+</span>
+</div>
+</div>
+<button aria-label="Opciones" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg" type="button">
+<i class="ph ph-dots-three-vertical text-lg font-bold"></i>
+</button>
+</div>
+<div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
+<div>
+<div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Historial compras</div>
+<div class="text-xs font-bold text-slate-800">S/ 320.50 <span class="text-[10px] font-normal text-slate-400">· 3 Boletas</span></div>
+</div>
+<div class="flex items-center space-x-2">
+<a class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-base hover:bg-slate-200" href="#" title="Historial">
+<i class="ph ph-clock-counter-clockwise"></i>
+</a>
+<!-- Updated Boleta Button: Electric Violet -->
+<button class="inline-flex items-center space-x-1 bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium px-3 py-1.5 rounded-xl transition-all shadow-sm shadow-violet-500/20" type="button">
+<i class="ph ph-plus-circle text-sm"></i>
+<span>Boleta</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3: SERVICIOS GENERALES FIDEL E.I.R.L. (Referencia ticket TukiFac) -->
+<article class="bg-white border border-slate-100 rounded-2xl p-4 shadow-card hover:border-blue-200 transition-all">
+<div class="flex items-start justify-between">
+<div class="space-y-1 max-w-[80%]">
+<div class="flex items-center space-x-2">
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-blue-50 text-blue-700 rounded-md border border-blue-200/70">
+                RUC 20614234165
+              </span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Habido</span>
+</span>
+</div>
+<h2 class="text-sm font-bold text-slate-900 leading-snug">SERVICIOS GENERALES FIDEL E.I.R.L.</h2>
+<p class="text-xs text-slate-500 flex items-center space-x-1 truncate">
+<i class="ph ph-map-pin text-slate-400 shrink-0"></i>
+<span class="truncate">Calle San Juan Bautista Mz B Lot 16, Ate, Lima</span>
+</p>
+</div>
+<button aria-label="Opciones" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg" type="button">
+<i class="ph ph-dots-three-vertical text-lg font-bold"></i>
+</button>
+</div>
+<div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
+<div>
+<div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Última Factura</div>
+<div class="text-xs font-bold text-slate-800">F001-000428 <span class="text-primary-600 font-semibold">(S/ 96.50)</span></div>
+</div>
+<div class="flex items-center space-x-2">
+<a class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base hover:bg-emerald-100" href="#" title="WhatsApp">
+<i class="ph ph-whatsapp-logo font-bold"></i>
+</a>
+<button class="inline-flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-xl transition-all" type="button">
+<i class="ph ph-printer text-sm"></i>
+<span>Ticket</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 4: Clientes Varios (Default POS) -->
+<article class="bg-gradient-to-r from-blue-50/60 to-purple-50/40 border border-blue-200/80 rounded-2xl p-4 shadow-card">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center space-x-2">
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-slate-200 text-slate-700 rounded-md">
+                SIN DOCUMENTO
+              </span>
+<span class="px-2 py-0.5 text-[10px] font-medium bg-blue-100 text-primary-700 rounded-md">
+                Comprobante Rápido
+              </span>
+</div>
+<h2 class="text-sm font-bold text-slate-900">Clientes Varios</h2>
+<p class="text-xs text-slate-500">Cliente predeterminado para boletas menores a S/ 700.00 y notas de venta.</p>
+</div>
+<span class="p-2 bg-blue-100/70 rounded-xl text-primary-600">
+<i class="ph ph-lightning text-xl font-bold"></i>
+</span>
+</div>
+<div class="mt-3 pt-2.5 border-t border-blue-100 flex items-center justify-between">
+<span class="text-xs text-primary-700 font-medium flex items-center space-x-1">
+<i class="ph ph-check-circle font-bold"></i>
+<span>Listo para caja / POS</span>
+</span>
+<!-- Updated Venta Rápida Button: Electric Blue to Violet gradient -->
+<button class="inline-flex items-center space-x-1 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-sm shadow-blue-500/20" type="button">
+<i class="ph ph-shopping-cart text-sm"></i>
+<span>Venta Rápida</span>
+</button>
+</div>
+</article>
+</section>
+<!-- END: ClientCardsList -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: BottomNavigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200/80 shadow-bottombar z-40 px-3 py-2" data-purpose="mobile-bottom-navigation">
+<div class="max-w-md mx-auto grid grid-cols-5 items-center text-center">
+<!-- Item: Inicio -->
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 py-1" href="#">
+<i class="ph ph-house text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">Inicio</span>
+</a>
+<!-- Item: POS / Ventas -->
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 py-1" href="#">
+<i class="ph ph-shopping-cart-simple text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">POS Ventas</span>
+</a>
+<!-- Item Central Clientes (ACTIVO - Electric Blue / Violet) -->
+<a class="flex flex-col items-center justify-center text-primary-600 py-1 relative" href="#">
+<div class="w-10 h-7 rounded-xl bg-gradient-to-r from-blue-50 to-violet-50 flex items-center justify-center text-primary-600">
+<i class="ph ph-users text-2xl font-bold"></i>
+</div>
+<span class="text-[10px] font-bold text-primary-600 mt-0.5">Clientes</span>
+</a>
+<!-- Item: Inventario / Catálogo -->
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 py-1" href="#">
+<i class="ph ph-package text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">Productos</span>
+</a>
+<!-- Item: Más módulos -->
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 py-1" href="#">
+<i class="ph ph-dots-nine text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">Más</span>
+</a>
+</div>
+</nav>
+<!-- END: BottomNavigation -->
+<!-- BEGIN: ModalNewClientDrawer -->
+<div class="fixed inset-0 z-50 flex flex-col justify-end hidden" data-purpose="new-client-form-modal" id="newClientDrawer">
+<!-- Backdrop overlay -->
+<div class="fixed inset-0 drawer-backdrop opacity-0 transition-opacity duration-300" id="modalBackdrop" onclick="toggleClientModal(false)"></div>
+<!-- Bottom Sheet Content -->
+<div class="relative bg-white rounded-t-3xl max-w-lg w-full mx-auto px-5 pt-3 pb-8 max-h-[90vh] overflow-y-auto z-10 shadow-2xl drawer-content translate-y-full transition-transform duration-300 ease-out" id="modalDrawerContent">
+<!-- Drawer Handle indicator -->
+<div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
+<!-- Drawer Header -->
+<div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+<div class="flex items-center space-x-2">
+<div class="w-9 h-9 rounded-xl bg-blue-50 text-primary-600 flex items-center justify-center text-xl">
+<i class="ph ph-user-plus font-bold"></i>
+</div>
+<div>
+<h3 class="text-base font-bold text-slate-900">Registrar Cliente</h3>
+<p class="text-xs text-slate-400">Consulta en línea RENIEC / SUNAT</p>
+</div>
+</div>
+<button class="p-2 text-slate-400 hover:text-slate-600 rounded-full bg-slate-100" onclick="toggleClientModal(false)" type="button">
+<i class="ph ph-x text-base font-bold"></i>
+</button>
+</div>
+<!-- Type of Document Segmented Control -->
+<div class="mb-4">
+<label class="block text-xs font-semibold text-slate-700 mb-1.5">Tipo de Documento</label>
+<div class="grid grid-cols-4 gap-1 p-1 bg-slate-100 rounded-xl">
+<button class="py-1.5 text-xs font-bold rounded-lg bg-white text-primary-700 shadow-sm transition-all text-center" type="button">
+            RUC
+          </button>
+<button class="py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center" type="button">
+            DNI
+          </button>
+<button class="py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center" type="button">
+            C.E.
+          </button>
+<button class="py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center" type="button">
+            Pasap.
+          </button>
+</div>
+</div>
+<!-- Document Input with Direct SUNAT API Button -->
+<div class="mb-4">
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="docNumber">Número de RUC (11 dígitos)</label>
+<div class="relative flex rounded-xl shadow-sm">
+<input class="block w-full rounded-l-xl border-slate-200 text-sm font-semibold tracking-wider text-slate-800 focus:ring-primary-500 focus:border-primary-500 pl-3 py-2.5" id="docNumber" placeholder="Ingrese 11 dígitos..." type="text" value="20608514930"/>
+<button class="inline-flex items-center space-x-1 px-3.5 py-2.5 border border-l-0 border-primary-600 text-xs font-bold rounded-r-xl text-white bg-primary-600 hover:bg-primary-700 active:scale-95 transition-all" onclick="simulateSunatQuery()" type="button">
+<i class="ph ph-lightning font-bold text-sm"></i>
+<span>SUNAT</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-1 text-[11px] text-slate-400">
+<span>Conexión directa padrón SUNAT</span>
+<span class="text-primary-600 font-medium">Auto-llenado activo</span>
+</div>
+</div>
+<!-- Result form fields populated -->
+<div class="space-y-3">
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">Razón Social / Nombres</label>
+<input class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 focus:bg-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500" type="text" value="DISTRIBUIDORA DE ALIMENTOS DEL SUR S.A.C."/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">Dirección Fiscal SUNAT</label>
+<input class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 focus:bg-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500" type="text" value="Av. Nicolás Ayllón 2840, Ate, Lima, Lima"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">Teléfono / Celular</label>
+<input class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl py-2 px-3" placeholder="999 000 111" type="tel"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">Correo Comprobantes</label>
+<input class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl py-2 px-3" placeholder="factura@empresa.com" type="email"/>
+</div>
+</div>
+<!-- Fiscal Status Banner -->
+<div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
+<span class="font-medium text-emerald-800 flex items-center space-x-1.5">
+<i class="ph ph-check-circle-fill text-emerald-600 text-base"></i>
+<span>Estado: <strong>ACTIVO</strong> / Condición: <strong>HABIDO</strong></span>
+</span>
+<span class="text-[10px] bg-emerald-200/70 text-emerald-900 px-1.5 py-0.5 rounded font-bold">OK</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="grid grid-cols-2 gap-3 mt-5">
+<button class="py-3 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors text-center" onclick="toggleClientModal(false)" type="button">
+          Cancelar
+        </button>
+<button class="py-3 px-4 rounded-xl bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-700 hover:to-violet-700 text-xs font-bold text-white shadow-lg shadow-blue-600/30 active:scale-95 transition-all text-center flex items-center justify-center space-x-1.5" onclick="toggleClientModal(false)" type="button">
+<i class="ph ph-floppy-disk text-base"></i>
+<span>Guardar Cliente</span>
+</button>
+</div>
+</div>
+</div>
+<!-- END: ModalNewClientDrawer -->
+<!-- BEGIN: InteractiveScripts -->
+<script data-purpose="modal-toggle-logic">
+    function toggleClientModal(show) {
+      const modal = document.getElementById('newClientDrawer');
+      const backdrop = document.getElementById('modalBackdrop');
+      const content = document.getElementById('modalDrawerContent');
+
+      if (show) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          backdrop.classList.remove('opacity-0');
+          content.classList.remove('translate-y-full');
+        }, 10);
+      } else {
+        backdrop.classList.add('opacity-0');
+        content.classList.add('translate-y-full');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+      }
+    }
+
+    function simulateSunatQuery() {
+      // Visual feedback for simulated quick API lookup
+      const input = document.getElementById('docNumber');
+      input.classList.add('ring-2', 'ring-primary-500');
+      setTimeout(() => {
+        input.classList.remove('ring-2', 'ring-primary-500');
+      }, 500);
+    }
+  </script>
+<!-- END: InteractiveScripts -->
+</body></html>

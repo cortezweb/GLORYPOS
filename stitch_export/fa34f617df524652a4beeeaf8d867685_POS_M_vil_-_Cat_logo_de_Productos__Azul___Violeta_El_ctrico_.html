@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Tukifac.pe - Punto de Venta Móvil</title>
+<!-- Tailwind CSS CDN with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#2563eb',
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            },
+            electric: {
+              indigo: '#4f46e5',
+              violet: '#7c3aed',
+              purple: '#8b5cf6'
+            },
+            tukifac: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              dark: '#0f172a'
+            }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom CSS for specialized UI elements -->
+<style data-purpose="custom-scrollbars">
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style data-purpose="safe-areas">
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-200">
+<!-- BEGIN: ApplicationShell -->
+<div class="max-w-md mx-auto w-full min-h-screen flex flex-col bg-slate-50 relative shadow-2xl overflow-hidden border-x border-gray-200">
+<!-- BEGIN: TopStatusBar -->
+<!-- Simulated iOS/Android dynamic status bar -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-xs">
+<div class="px-4 pt-2 pb-1.5 flex items-center justify-between text-xs text-gray-500 font-medium safe-top">
+<span class="font-semibold text-gray-800">9:41</span>
+<div class="flex items-center space-x-1.5 text-gray-700">
+<span class="text-[10px] bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-bold">5G</span>
+<svg class="w-3.5 h-3.5 inline fill-current" viewbox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"></path></svg>
+<div class="w-5 h-2.5 border border-gray-500 rounded-sm p-0.2 flex items-center">
+<div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-full w-4 rounded-xs"></div>
+</div>
+</div>
+</div>
+<!-- Main App Topbar with Sunat Badge and User Profile -->
+<div class="px-3.5 py-2.5 flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<button aria-label="Abrir Menú" class="p-1.5 -ml-1 rounded-lg text-gray-600 hover:bg-gray-100 active:scale-95 transition" type="button">
+<svg class="w-6 h-6 stroke-current stroke-2" fill="none" viewbox="0 0 24 24">
+<path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<div>
+<div class="flex items-center space-x-1.5">
+<span class="text-sm font-black tracking-tight bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Tukifac</span>
+<span class="text-xs font-semibold text-gray-400">.pe</span>
+<span class="inline-flex items-center px-1.5 py-0.2 text-[9px] font-bold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-200">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600 mr-1 animate-pulse"></span>
+                SUNAT ON
+              </span>
+</div>
+<p class="text-[10px] text-gray-500 font-medium truncate max-w-[170px]">CORPORACIÓN INDUSTRIAL RAFAZ</p>
+</div>
+</div>
+<!-- Right Quick Actions -->
+<div class="flex items-center space-x-2">
+<!-- Notification Icon with Badge -->
+<button aria-label="Notificaciones" class="relative p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+</button>
+<!-- User Status Avatar Button -->
+<button aria-label="Perfil de Cajero" class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-indigo-100" type="button">
+            E
+          </button>
+</div>
+</div>
+</header>
+<!-- END: TopStatusBar -->
+<!-- BEGIN: MainContentArea -->
+<main class="flex-1 overflow-y-auto pb-24">
+<!-- BEGIN: SearchAndToolBar -->
+<section class="p-3 bg-white border-b border-gray-100 shadow-xs" data-purpose="search-bar-section">
+<div class="flex items-center space-x-2">
+<!-- Search Input Box -->
+<div class="relative flex-1">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="w-full pl-9 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Buscar producto o código..." type="search"/>
+<button aria-label="Escanear Código de Barras" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-blue-600" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Quick Toggle Grid/List Display -->
+<div class="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200 text-gray-500">
+<button class="p-1.5 rounded-md bg-white text-blue-600 shadow-xs" title="Vista en cuadrícula">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20">
+<path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+</svg>
+</button>
+<button class="p-1.5 rounded-md hover:text-gray-700" title="Vista en lista">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</section>
+<!-- END: SearchAndToolBar -->
+<!-- BEGIN: CategoryTabs -->
+<!-- Horizontal scrollable category pill selection -->
+<nav class="py-2.5 px-3 bg-white border-b border-gray-200 overflow-x-auto no-scrollbar flex space-x-2 text-xs" data-purpose="category-pills">
+<button class="px-3.5 py-1.5 rounded-full font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white whitespace-nowrap shadow-xs" type="button">
+          Todos
+        </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 whitespace-nowrap transition" type="button">
+          Abarrotes
+        </button>
+<button class="px-3.5 py-1.5 rounded-full font-semibold bg-indigo-50 text-indigo-800 border border-indigo-300 whitespace-nowrap" type="button">
+          Ferretería
+        </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 whitespace-nowrap transition" type="button">
+          Electrohogar
+        </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 whitespace-nowrap transition" type="button">
+          Bebidas y Licores
+        </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 whitespace-nowrap transition" type="button">
+          Textil / Ropa
+        </button>
+</nav>
+<!-- END: CategoryTabs -->
+<!-- BEGIN: ProductCatalogGrid -->
+<section class="p-3" data-purpose="pos-product-grid">
+<div class="flex items-center justify-between mb-2.5 px-1">
+<span class="text-xs font-semibold text-gray-600">Catálogo Ferretería &amp; Abarrotes</span>
+<span class="text-[11px] text-blue-700 font-medium bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">8 Artículos</span>
+</div>
+<!-- 2-Column POS Grid (Mirrors Tukifac app layout) -->
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Product Card 1 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Stock 45</span>
+<img alt="Silicona selladora" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGbO4SO1of1Tu6Q3eOrtEWEE_t7AHLyF0ToVJa59e6Gtt5IxXB0VdKjIWG9cTWeE4JEvYQuffBuVuFw8u1FGXNfc0gKyVSowauGMNWCRCswTnqLAENcHJqAaAE4pVpnNz4xTcgrEC4eP7IXzRQouGqT5zj1ntMixc1Pd4-XZ5QsCf9X-QaTBIjRyleCUFOTUUAn9RAja4GY2UuJ2DX8wGQN2ZVLK1Ox6bj1t8y3EVzbWmkQZXVqxbtXQ"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Silicona selladora multiuso</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 24.00</span>
+</div>
+<button aria-label="Agregar Silicona selladora" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 2 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Stock 18</span>
+<img alt="Brocha 3 pulgadas" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLa8RINrPLPoiHeXUtNYwpmKHLcgU1A2QijOvb972fi1klxv8GKyfhfLoy7qTgJtu6B2nfVFwhAzPz-TM_PaR42q4gkI2TpjL8PHOv0FcsrbmzbA9e3e7n9MSj35KqO0VA8kYsD8Q7t5JoLd4ZcddJjlhjCYcXHoo5k_LhmlhrpJPiZW7_i3V00OnZTPcZK1PbKpsCkcmSIVH2_k45H4tWjHqXh7Y6ek_A7KlBZS9QgnzFuBTG3jA34w"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Brocha 3 pulgadas cerda rubia</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 24.25</span>
+</div>
+<button aria-label="Agregar Brocha 3 pulgadas" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Stock 8</span>
+<img alt="Rodillo para pintar" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4_h8C9VsMXLFifctm8C5sH7dVtCnzmIB0Kmf3GL65O59MVzcqTl_yxtiheMBN5zHL7PzG9i9wx9pj43Q2H4DJOJfRtkLAOWjgwnPzScQJjsRByakWEopygvpO5EfAKPhCwfmdlHubyQjxyEDJIZBG8rnxKmX97D4I8H8qX-nvVSLXHuscpq8vTRoJA_IIxeV_T2rUVh7sweGJmo_JpDHtj8mS5r1F484I8k3KNuL4YKsjAyvBzE3EiA"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Rodillo para pintar epóxico 9"</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 32.78</span>
+</div>
+<button aria-label="Agregar Rodillo para pintar" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 4 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Stock 30</span>
+<img alt="Candado mediano" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfcjCPv8ZmI3MOYSde5fZ_BeGZ2kAy4SHCrDz38ZvBRBqCGjacQdcuHvMY1UowXh4R9WcJ51iZgm4LArMUAMxxs-yeMHLkMuZ2RkogDYoGtCTSUK3EQwW2rGgNEPFxbpIu8YguEWm4JfmBBsfpOAIvNGKajO8pO--LD5NnzYpiAfBTQt_8kqhnF6waexqUYp81inbPxGJW0M-9uYpJ3PwsIkGh2mt2hwLOSs_nCNMW_crp_dp8FWaobQ"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Candado mediano 50mm latón</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 21.75</span>
+</div>
+<button aria-label="Agregar Candado mediano" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 5 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Stock 52</span>
+<img alt="Bisagra de acero" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJ7_BCUsiQDEmwqYRxmyERhT1oHY1tIO-HRNxsMtd74gRGii0DI3Xv-QvYtZk-Tq36kA7uaScwxfKxzAHOZ3ZTKPter8gKktCt55iiSpXPxgwV2L-XHDYuRVy6uOfWmx_ttcIeyfoOHmstoWVEkCV3O-nuzbWaWBg3B9Y77r_VUZ0TISP9KFFiCmVkY_4s4iwqj3ISCwhU0PsVhZwtnt-GjZgPkEhNVLVJOPrQlGLR16UaOdlpC2KMUg"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Bisagra de acero inoxidable 3.5"</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 30.00</span>
+</div>
+<button aria-label="Agregar Bisagra de acero" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 6 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Stock 100</span>
+<img alt="Cinta teflón" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHgsuS42FQVLlaHCylpGBhx6wqnDIMKSj2W92jGuJcNiuq6HxdHEqJ6vEg8B0YNf3XFbzDBxGKRbLVmDk0vz-r4HH49zFqdp6gOtlfZHrHxp7JX7XrZA370oyRXkB0ILRI7a4nseVi4VXwzRRP4gHr6R0nm_bYj-HeF6EY5bWjEbuUiI0E-Yzi3Vqejx5tuBjmaBh0IMcgKplisWHacFc61oLjWro4hn-xe9AN8PrT1jcE4MhT2jxOxQ"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Cinta teflón sellaroscas 3/4"</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 3.50</span>
+</div>
+<button aria-label="Agregar Cinta teflón" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 7 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded">Abarrote</span>
+<img alt="Lentejas 200g" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnierhcs6EHEx9iBwra0H_kz34nHIhsfS4-3kyJebdBMQN0tKwCE_AEUJ6DQDGpDoKCyGJgFiWZyDKdkgVOg3KGE_nQkXDtARNScKD-mXwezxJNhBedcHZ9e_Q45es9meaKccXo-yxOSe0tehhiEeVEaUcVn7gWkvtoop5g-UBBc6MQUg--Dh0Am77s2VwcL5f2if4Tv83_WR_kgwgj7gbgrIWeAKald62U4FgC_TjwT9qimLX2g3wcw"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Lentejas embolsadas 200 g</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 21.41</span>
+</div>
+<button aria-label="Agregar Lentejas" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+<!-- Product Card 8 -->
+<article class="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-blue-400 transition-all">
+<div class="p-3 pb-1 flex flex-col items-center">
+<div class="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 mb-2 relative">
+<span class="absolute top-1 left-1 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded">Abarrote</span>
+<img alt="Fideos codito" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC_ptNWqokUayYpA-XShqz4Lq1SJomcvaBhtecPk4Vp5-5Vzbp5nyVNpL068gcuJtTU1Br0Va736UGzm3kWTpWDheFFtQaNJMQTmA0GZ8tvLLIgjtFsmHbhvWIhLXiQ1nGWNtOP8vdGYAj_dpOJbyta6EB3NBhI51njlU_VM1_9WmcFWoc9qaXXDDh_TpMXsrSVtVldCC2s15U97VEkgHKT7SxWfdzZ-H166_PKC6-sP0MS8i00aTW5w"/>
+</div>
+<h3 class="text-xs font-medium text-gray-800 text-center line-clamp-2 min-h-[32px] w-full">Fideos codito 250g</h3>
+</div>
+<div class="px-3 pb-2.5 pt-1 border-t border-gray-50 flex items-center justify-between">
+<div>
+<span class="text-[10px] text-gray-400 block font-normal">Precio</span>
+<span class="text-sm font-bold text-gray-900">S/ 2.00</span>
+</div>
+<button aria-label="Agregar Fideos codito" class="w-7 h-7 rounded-lg bg-blue-600 active:bg-blue-700 text-white flex items-center justify-center shadow-xs transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- END: ProductCatalogGrid -->
+</main>
+<!-- END: MainContentArea -->
+<!-- BEGIN: FloatingCartButton -->
+<!-- Floating POS checkout button with vibrant electric blue & indigo gradient -->
+<aside class="absolute bottom-20 right-4 z-40" data-purpose="floating-cart">
+<button class="relative group flex items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 active:scale-95 text-white font-bold py-3 px-4 rounded-full shadow-xl transition duration-150 ease-in-out shadow-indigo-500/30" type="button">
+<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-sm font-bold">S/ 47.41</span>
+<!-- Cart Items Badge Indicator -->
+<span class="absolute -top-1.5 -left-1.5 bg-amber-400 text-gray-900 border-2 border-white text-[11px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
+          3
+        </span>
+</button>
+</aside>
+<!-- END: FloatingCartButton -->
+<!-- BEGIN: BottomNavigation -->
+<!-- Native PWA Bottom Tab Bar for Quick POS Actions -->
+<nav class="bg-white border-t border-gray-200 z-30 safe-bottom">
+<div class="grid grid-cols-4 h-14">
+<!-- Tab 1: POS / Ventas (Active) -->
+<button class="flex flex-col items-center justify-center text-blue-600 font-semibold" type="button">
+<svg class="w-5 h-5 mb-0.5 stroke-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[10px]">Ventas</span>
+</button>
+<!-- Tab 2: Catálogo de Productos -->
+<button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-800" type="button">
+<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-[10px]">Productos</span>
+</button>
+<!-- Tab 3: Clientes -->
+<button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-800" type="button">
+<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-[10px]">Clientes</span>
+</button>
+<!-- Tab 4: Comprobantes & SUNAT -->
+<button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-800" type="button">
+<svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-[10px]">Comprobantes</span>
+</button>
+</div>
+</nav>
+<!-- END: BottomNavigation -->
+</div>
+<!-- END: ApplicationShell -->
+</body></html>
