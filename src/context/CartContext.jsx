@@ -28,7 +28,7 @@ export function CartProvider({ children }) {
 
     const presId = presentacion ? presentacion.id : 'u';
     const presNombre = presentacion ? presentacion.nombre : 'Unidad';
-    const precio = presentacion && presentacion.precio ? presentacion.precio : product.precio_venta;
+    const precio = Number(presentacion && presentacion.precio ? presentacion.precio : product.precio_venta) || 0;
 
     // Generate unique key if it has specific custom details
     let uniqueKey = `${product.id}-${presId}`;
@@ -48,7 +48,7 @@ export function CartProvider({ children }) {
         const updated = [...prev];
         const newQty = Math.round((updated[index].cantidad + qtyToAdd) * 1000) / 1000;
         updated[index].cantidad = newQty;
-        updated[index].subtotal = Math.round(newQty * updated[index].precio * 100) / 100;
+        updated[index].subtotal = Math.round(newQty * (Number(updated[index].precio) || 0) * 100) / 100;
         return updated;
       } else {
         const itemQty = Math.round(qtyToAdd * 1000) / 1000;
@@ -158,8 +158,8 @@ export function CartProvider({ children }) {
     setItems([]);
   };
 
-  const total = items.reduce((acc, curr) => acc + curr.subtotal, 0);
-  const count = items.reduce((acc, curr) => acc + curr.cantidad, 0);
+  const total = items.reduce((acc, curr) => acc + (Number(curr.subtotal) || 0), 0);
+  const count = items.reduce((acc, curr) => acc + (Number(curr.cantidad) || 0), 0);
 
   return (
     <CartContext.Provider

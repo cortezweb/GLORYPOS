@@ -3,6 +3,8 @@ import { useCart } from '../../context/CartContext';
 
 export default function VariantModal({ product, isOpen, onClose }) {
   const { addToCart } = useCart();
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [selectedTalla, setSelectedTalla] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
 
