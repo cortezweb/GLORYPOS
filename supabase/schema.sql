@@ -3,8 +3,16 @@
 -- Multi-Tenant, Multi-Rubro, Multi-Sucursal con Soporte Offline
 -- ==============================================================================
 
+-- LIMPIEZA PREVENTIVA DE TABLAS PREVIAS (Para asegurar columnas y relaciones completas)
+DROP TABLE IF EXISTS caja_chica CASCADE;
+DROP TABLE IF EXISTS kardex CASCADE;
+DROP TABLE IF EXISTS ventas CASCADE;
+DROP TABLE IF EXISTS productos CASCADE;
+DROP TABLE IF EXISTS clientes CASCADE;
+DROP TABLE IF EXISTS empresas CASCADE;
+
 -- 1. TABLA DE EMPRESAS / SUCURSALES
-CREATE TABLE IF NOT EXISTS empresas (
+CREATE TABLE empresas (
   id TEXT PRIMARY KEY,
   nombre TEXT NOT NULL DEFAULT 'GLORYPOS BOLIVIA',
   nit_ci TEXT DEFAULT '8472910014',
