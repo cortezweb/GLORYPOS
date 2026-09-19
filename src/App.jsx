@@ -41,6 +41,7 @@ import FinanzasView from './components/Finance/FinanzasView';
 import GuiasRemisionView from './components/Dispatch/GuiasRemisionView';
 import DocumentosAvanzadosView from './components/AdvancedDocs/DocumentosAvanzadosView';
 import AdministracionView from './components/Admin/AdministracionView';
+import SuperAdminView from './components/Admin/SuperAdminView';
 import ModulosView from './components/Modules/ModulosView';
 
 // Ventas Sub-Windows
@@ -272,13 +273,19 @@ function MainShell() {
               {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
               {['administracion', 'admin', 'configuracion'].includes(currentView) && <AdministracionView />}
               {['modulos'].includes(currentView) && <ModulosView />}
-              {['admin_dashboard', 'dashboard'].includes(currentView) && (
-                <ReportsView onOpenReceipt={(venta) => setActiveTicketSale(venta)} />
+              {['superadmin', 'admin_dashboard', 'dashboard', 'inicio'].includes(currentView) && (
+                <SuperAdminView
+                  onSelectView={(v) => setCurrentView(v)}
+                  onOpenCloseCash={() => setIsCloseCashOpen(true)}
+                  onOpenRubroModal={() => setIsRubroModalOpen(true)}
+                  currentRubro={currentRubro}
+                />
               )}
 
               {/* Fallback de Seguridad: Evita pantallas en blanco / plomo si una vista no existe */}
               {![
                 'pos',
+                'superadmin', 'admin_dashboard', 'dashboard', 'inicio',
                 'ventas_comprobantes', 'comprobantes', 'sales',
                 'ventas_notas', 'notas_venta', 'notas',
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',

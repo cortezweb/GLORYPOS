@@ -23,9 +23,9 @@ export default function Sidebar({
   const initialLetter = (currentUser?.nombre || empresa?.propietario || empresa?.nombre || 'G').charAt(0).toUpperCase();
 
   const menuItems = [
-    { id: 'inicio', label: 'Inicio', icon: Home, action: () => onSelectView('pos') },
+    { id: 'inicio', label: 'Inicio', icon: Home, action: () => { onClose(); onSelectView('inicio'); } },
     { id: 'rubro', label: `Rubro: ${currentRubro === 'FERRETERIA' ? 'Ferretería' : currentRubro === 'FARMACIA' ? 'Farmacia' : currentRubro === 'ROPA' ? 'Ropa & Calzado' : currentRubro === 'CARNICERIA' ? 'Carnicería' : currentRubro === 'HELADERIA' ? 'Heladería' : 'Minimarket'}`, icon: Sparkles, action: onOpenRubroModal, highlight: true },
-    { id: 'admin_dashboard', label: 'Admin dashboard', icon: LayoutDashboard, action: onOpenDesktopDashboard },
+    { id: 'admin_dashboard', label: 'Admin dashboard', icon: LayoutDashboard, action: () => { onClose(); onSelectView('superadmin'); }, badge: 'SaaS' },
     { id: 'preventa', label: 'Pre venta', icon: FileCode, action: () => onSelectView('ventas_cotizaciones') },
     { id: 'pos', label: 'Ventas', icon: ShoppingCart, action: () => onSelectView('pos') },
     { id: 'tienda_virtual', label: 'Tienda virtual', icon: Globe, action: () => onSelectView('tienda_virtual') },
