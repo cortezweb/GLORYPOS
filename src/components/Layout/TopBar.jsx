@@ -16,6 +16,15 @@ export default function TopBar({
   const { empresa, currentUser, logout } = useAuth();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [syncState, setSyncState] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
+  const [queueCount, setQueueCount] = useState(0);
+
+  // Refrescar conteo de pendientes cada 15s
+  useEffect(() => {
+    const refreshCount = () => syncService.getQueueCount().then(setQueueCount).catch(() => {});
+    refreshCount();
+    const interval = setInterval(refreshCount, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleManualSync = async () => {
     if (syncState === 'syncing') return;
@@ -33,10 +42,11 @@ export default function TopBar({
       setSyncState('error');
       setTimeout(() => setSyncState('idle'), 4000);
     }
+    // Actualizar badge tras sync
+    syncService.getQueueCount().then(setQueueCount).catch(() => {});
   };
 
   useEffect(() => {
-    // Auto-sync al volver a estar en línea
     if (isOnline) {
       syncService.syncLocalToCloud().catch(() => {});
     }
@@ -121,11 +131,17 @@ export default function TopBar({
                 {syncState === 'syncing' ? (
                   <RefreshCw className="w-3 h-3 text-blue-600 animate-spin" />
                 ) : (
-                  <Cloud className={`w-3 h-3 ${syncState === 'synced' ? 'text-emerald-600' : 'text-indigo-600'}`} />
+                  <Cloud className={`w-3 h-3 ${syncState === 'synced' ? 'text-emerald-600' : syncState === 'error' ? 'text-rose-500' : 'text-indigo-600'}`} />
                 )}
                 <span>
                   {syncState === 'syncing' ? 'Sincronizando...' : syncState === 'synced' ? 'Nube OK' : syncState === 'error' ? 'Sync Falló' : 'Sync Nube'}
                 </span>
+                {/* Badge de registros pendientes */}
+                {queueCount > 0 && syncState === 'idle' && (
+                  <span className="ml-0.5 bg-amber-500 text-white text-[8px] font-black rounded-full px-1 min-w-[14px] text-center leading-tight py-0.5">
+                    {queueCount > 99 ? '99+' : queueCount}
+                  </span>
+                )}
               </button>
 
               {/* Rubro Selector Quick Button */}

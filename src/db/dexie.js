@@ -1,5 +1,6 @@
 import Dexie from 'dexie';
 import { MASTER_PRODUCTS } from './seedMaster';
+import { hashText, isAlreadyHashed } from '../utils/crypto';
 
 export const db = new Dexie('GloryPosBoliviaDB');
 
@@ -50,6 +51,22 @@ db.version(5).stores({
   movimientos_caja: 'id, fecha, tipo, monto, motivo',
   kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
   usuarios: 'id, email, pin, rol, nombre'
+});
+
+// v6: agrega cola de sincronización offline → nube
+db.version(6).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, email, pin, rol, nombre',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
 export async function initDatabase() {
@@ -477,16 +494,29 @@ export async function initDatabase() {
     ]);
   }
 
-  // Usuarios predeterminados para inicio de sesión táctil y por credenciales
-  const userCount = await db.usuarios.count();
-  if (userCount === 0) {
-    await db.usuarios.bulkAdd([
+  // ─── Usuarios con contraseñas hasheadas (SHA-256) ───────────────────────────
+  // Si existen usuarios legacy con contraseñas en texto plano, los migramos.
+  const existingUsers = await db.usuarios.toArray();
+  const needsRehash = existingUsers.some(u => !isAlreadyHashed(u.password || '') || !isAlreadyHashed(u.pin || ''));
+
+  if (existingUsers.length === 0 || needsRehash) {
+    // Borrar usuarios legacy de demo (nunca tienen ventas reales)
+    const demoIds = ['usr-admin', 'usr-carlos', 'usr-maria'];
+    await db.usuarios.where('id').anyOf(demoIds).delete();
+
+    // Re-sembrar con hashes
+    const [hashAdmin, hashCarlos, hashMaria, hashPin1234, hashPin0000, hashPin4321] = await Promise.all([
+      hashText('admin'), hashText('caja'), hashText('123'),
+      hashText('1234'), hashText('0000'), hashText('4321')
+    ]);
+
+    await db.usuarios.bulkPut([
       {
         id: 'usr-admin',
         nombre: 'Administrador General',
         email: 'admin@glorypos.bo',
-        password: 'admin',
-        pin: '1234',
+        password: hashAdmin,
+        pin: hashPin1234,
         rol: 'ADMIN',
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
         color: 'from-blue-600 to-indigo-600',
@@ -497,8 +527,8 @@ export async function initDatabase() {
         id: 'usr-carlos',
         nombre: 'Carlos Gutiérrez',
         email: 'carlos@glorypos.bo',
-        password: 'caja',
-        pin: '0000',
+        password: hashCarlos,
+        pin: hashPin0000,
         rol: 'CAJERO',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
         color: 'from-emerald-600 to-teal-600',
@@ -509,8 +539,8 @@ export async function initDatabase() {
         id: 'usr-maria',
         nombre: 'María Fernández',
         email: 'maria@glorypos.bo',
-        password: '123',
-        pin: '4321',
+        password: hashMaria,
+        pin: hashPin4321,
         rol: 'VENDEDOR',
         avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
         color: 'from-purple-600 to-pink-600',

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, initDatabase } from '../db/dexie';
+import { hashText } from '../utils/crypto';
 
 const AuthContext = createContext();
 
@@ -22,7 +23,6 @@ export function AuthProvider({ children }) {
       const savedSession = localStorage.getItem('glorypos_user_session');
       if (savedSession) {
         const parsed = JSON.parse(savedSession);
-        // Validar que el usuario aún exista en la base de datos
         const existing = userList.find(u => u.id === parsed.id);
         if (existing) {
           setCurrentUser(existing);
@@ -43,18 +43,20 @@ export function AuthProvider({ children }) {
     loadData();
   }, []);
 
-  // Iniciar sesión con PIN táctil (4 dígitos)
+  // Iniciar sesión con PIN táctil (4 dígitos) — compara hash SHA-256
   const loginWithPin = async (pin, specificUserId = null) => {
     if (!pin) return { success: false, error: 'Ingresa un PIN' };
 
+    const hashedPin = await hashText(String(pin));
     let user = null;
+
     if (specificUserId) {
       const target = await db.usuarios.get(specificUserId);
-      if (target && target.pin === String(pin)) {
+      if (target && target.pin === hashedPin) {
         user = target;
       }
     } else {
-      user = await db.usuarios.where('pin').equals(String(pin)).first();
+      user = await db.usuarios.where('pin').equals(hashedPin).first();
     }
 
     if (user) {
@@ -66,16 +68,17 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Iniciar sesión con Correo / Usuario y Contraseña
+  // Iniciar sesión con Correo / Usuario y Contraseña — compara hash SHA-256
   const loginWithCredentials = async (identifier, password) => {
     if (!identifier || !password) {
       return { success: false, error: 'Completa todos los campos' };
     }
 
     const term = identifier.trim().toLowerCase();
+    const hashedPwd = await hashText(password);
     const allUsers = await db.usuarios.toArray();
     const user = allUsers.find(
-      u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) && u.password === password
+      u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) && u.password === hashedPwd
     );
 
     if (user) {

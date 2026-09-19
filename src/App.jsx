@@ -49,15 +49,17 @@ import NotasVentaView from './components/Sales/NotasVentaView';
 import CotizacionesView from './components/Sales/CotizacionesView';
 import CajaChicaView from './components/Sales/CajaChicaView';
 
-// Auth Login Screen
+// Auth Screens
 import LoginView from './components/Auth/LoginView';
+import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
-  const { isExpired, currentUser, isAuthenticated, loading } = useAuth();
+  const { isExpired, currentUser, isAuthenticated, loading, empresa } = useAuth();
 
   // Navigation State
   const [currentView, setCurrentView] = useState('pos');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showRegister, setShowRegister] = useState(false);
 
   // Modals State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -143,8 +145,14 @@ function MainShell() {
     );
   }
 
+  // Sin empresa registrada → onboarding de registro
+  if (!empresa?.nombre || showRegister) {
+    return <RegisterView onGoToLogin={() => setShowRegister(false)} />;
+  }
+
+  // Con empresa pero sin sesión → pantalla de login
   if (!isAuthenticated || !currentUser) {
-    return <LoginView />;
+    return <LoginView onGoToRegister={() => setShowRegister(true)} />;
   }
 
   return (
