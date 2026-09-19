@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, ShieldAlert, KeyRound, Clock, UserCheck } from 'lucide-react';
+import { Lock, Unlock, ShieldAlert, KeyRound, Clock, UserCheck, LogOut } from 'lucide-react';
 import { playErrorBeep } from '../../utils/audio';
 
-export default function LockTerminalModal({ isOpen, onClose, cajeroNombre = 'Carlos Gutiérrez', cajeroPin = '1234' }) {
+export default function LockTerminalModal({ isOpen, onClose, onLogout, cajeroNombre = 'Carlos Gutiérrez', cajeroPin = '1234' }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -176,6 +176,29 @@ export default function LockTerminalModal({ isOpen, onClose, cajeroNombre = 'Car
           >
             ⌫
           </button>
+        </div>
+
+        <div className="flex items-center gap-2.5 pt-1">
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-bold border border-slate-800 transition cursor-pointer"
+            >
+              Cancelar
+            </button>
+          )}
+
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 hover:text-white rounded-xl text-xs font-bold border border-rose-500/30 transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Cerrar Sesión</span>
+            </button>
+          )}
         </div>
 
         <p className="text-[11px] text-slate-500">

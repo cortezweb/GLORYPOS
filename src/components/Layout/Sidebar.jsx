@@ -258,13 +258,11 @@ export default function Sidebar({
 
             <button 
               onClick={() => { 
-                if (window.confirm('¿Deseas cerrar la sesión actual?')) {
-                  onClose(); 
-                  logout(); 
-                }
+                onClose(); 
+                logout(); 
               }}
               aria-label="Cerrar Sesión" 
-              className="p-2 text-gray-400 hover:text-red-500 transition rounded-lg hover:bg-rose-50" 
+              className="p-2 text-gray-400 hover:text-red-500 transition rounded-lg hover:bg-rose-50 cursor-pointer" 
               title="Cerrar Sesión"
             >
               <LogOut className="w-5 h-5 stroke-[1.8]" />

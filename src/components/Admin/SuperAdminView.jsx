@@ -4,7 +4,7 @@ import {
   Building2, ShieldCheck, CheckCircle2, AlertCircle, Clock, Calendar,
   Users, Settings, Plus, RefreshCw, X, ExternalLink, HelpCircle,
   PhoneCall, ChevronRight, Layers, FileText, Check, DollarSign,
-  ArrowUpRight, Store, Send, Lock, Eye, Edit3, UserCheck, Smartphone
+  ArrowUpRight, Store, Send, Lock, Eye, Edit3, UserCheck, Smartphone, LogOut
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
@@ -144,7 +144,7 @@ export default function SuperAdminView({
   onOpenRubroModal,
   currentRubro
 }) {
-  const { empresa, diasRestantes, isExpired, cambiarPlan, setTrialDays, updateEmpresa } = useAuth();
+  const { empresa, currentUser, logout, diasRestantes, isExpired, cambiarPlan, setTrialDays, updateEmpresa } = useAuth();
 
   // Modo de vista: 'hub' (dashboard visual de la imagen) o 'saas_manager' (gestión profunda de suscripciones)
   const [activeTab, setActiveTab] = useState('hub'); // 'hub' | 'clientes' | 'planes' | 'metricas'
@@ -488,6 +488,33 @@ export default function SuperAdminView({
             >
               <Building2 className="w-3 h-3" />
               <span>Clientes SaaS ({totalClientes})</span>
+            </button>
+          </div>
+
+          {/* User Profile & Logout Action */}
+          <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200">
+            <div className="hidden lg:flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                {currentUser?.nombre ? currentUser.nombre.charAt(0).toUpperCase() : 'A'}
+              </div>
+              <div className="flex flex-col text-left leading-none">
+                <span className="text-[11px] font-bold text-slate-800 truncate max-w-[100px]">
+                  {currentUser?.nombre ? currentUser.nombre.split(' ')[0] : 'Admin'}
+                </span>
+                <span className="text-[8px] font-extrabold text-blue-600 uppercase">
+                  {currentUser?.rol || 'SUPERADMIN'}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => logout()}
+              title="Cerrar Sesión"
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-xl text-xs font-bold border border-rose-200 hover:border-rose-600 transition shadow-xs cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Salir</span>
             </button>
           </div>
         </div>

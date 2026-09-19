@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, Cloud, RefreshCw, LogOut } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, Cloud, RefreshCw, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
 
@@ -17,6 +17,19 @@ export default function TopBar({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [syncState, setSyncState] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
   const [queueCount, setQueueCount] = useState(0);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
+
+  // Cerrar menú de usuario al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Refrescar conteo de pendientes cada 15s
   useEffect(() => {
@@ -220,13 +233,15 @@ export default function TopBar({
             <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
           </button>
 
-          {/* User Profile Avatar & Role Badge */}
-          <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200 ml-1">
+          {/* User Profile Avatar & Dropdown Menu */}
+          <div className="relative flex items-center gap-1 pl-1 border-l border-slate-200 ml-1" ref={userMenuRef}>
             <button 
-              onClick={onOpenSidebar}
-              aria-label="Perfil de Cajero" 
+              onClick={() => setIsUserMenuOpen(prev => !prev)}
+              aria-label="Perfil y Sesión de Usuario" 
               title={`Usuario: ${currentUser?.nombre || 'Carlos Gutiérrez'} (${currentUser?.rol || 'CAJERO'})`}
-              className="flex items-center gap-1.5 p-1 rounded-full hover:bg-slate-100 transition cursor-pointer" 
+              className={`flex items-center gap-1.5 p-1 rounded-full transition cursor-pointer ${
+                isUserMenuOpen ? 'bg-indigo-50 ring-2 ring-indigo-300' : 'hover:bg-slate-100'
+              }`} 
               type="button"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-indigo-100">
@@ -240,22 +255,78 @@ export default function TopBar({
                   {currentUser?.rol || 'CAJA'}
                 </span>
               </div>
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isUserMenuOpen ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
 
-            {/* Logout Action */}
+            {/* Quick Logout Action (direct, without blocking window.confirm) */}
             <button
               onClick={() => {
-                if (window.confirm('¿Deseas cerrar la sesión actual?')) {
-                  logout();
-                }
+                logout();
               }}
               aria-label="Cerrar sesión"
-              title="Cerrar sesión"
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+              title="Cerrar sesión inmediatamente"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
               type="button"
             >
               <LogOut className="w-4 h-4" />
             </button>
+
+            {/* User Profile Popover Dropdown */}
+            {isUserMenuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 p-3 animate-fadeIn">
+                {/* User Header */}
+                <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 text-white font-bold text-sm flex items-center justify-center shadow-xs">
+                    {currentUser?.nombre ? currentUser.nombre.charAt(0).toUpperCase() : 'C'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-900 truncate">
+                      {currentUser?.nombre || 'Carlos Gutiérrez'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 truncate">
+                      {currentUser?.email || 'admin@glorypos.bo'}
+                    </p>
+                    <span className="inline-block mt-0.5 px-1.5 py-0.2 bg-indigo-50 text-indigo-700 text-[9px] font-black rounded-md border border-indigo-100 uppercase">
+                      {currentUser?.rol || 'CAJERO'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Company info */}
+                <div className="py-2 px-1 text-[11px] text-slate-600 border-b border-slate-100 flex items-center justify-between">
+                  <span className="text-slate-400">Comercio:</span>
+                  <span className="font-bold text-slate-800 truncate max-w-[130px]">{empresa?.nombre || 'GLORYPOS BOLIVIA'}</span>
+                </div>
+
+                {/* Lock Terminal shortcut button */}
+                {onLockTerminal && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      onLockTerminal();
+                    }}
+                    className="w-full mt-2 flex items-center gap-2 px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-800 rounded-xl transition cursor-pointer"
+                  >
+                    <Lock className="w-4 h-4 text-amber-600" />
+                    <span>Bloquear Terminal (F8)</span>
+                  </button>
+                )}
+
+                {/* Big Red Logout Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    logout();
+                  }}
+                  className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2.5 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white font-bold text-xs rounded-xl border border-rose-200 hover:border-rose-600 transition shadow-xs cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

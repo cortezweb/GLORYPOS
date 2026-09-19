@@ -55,7 +55,7 @@ import LoginView from './components/Auth/LoginView';
 import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
-  const { isExpired, currentUser, isAuthenticated, loading, empresa } = useAuth();
+  const { isExpired, currentUser, isAuthenticated, loading, empresa, logout } = useAuth();
 
   // Navigation State
   const [currentView, setCurrentView] = useState('pos');
@@ -429,6 +429,10 @@ function MainShell() {
       <LockTerminalModal
         isOpen={isTerminalLocked}
         onClose={() => setIsTerminalLocked(false)}
+        onLogout={() => {
+          setIsTerminalLocked(false);
+          logout();
+        }}
         cajeroNombre={currentUser?.nombre || "Carlos Gutiérrez"}
         cajeroPin={currentUser?.pin || "1234"}
       />

@@ -202,11 +202,9 @@ export default function DesktopSidebar({
 
           <button
             onClick={() => {
-              if (window.confirm('¿Deseas cerrar la sesión actual?')) {
-                logout();
-              }
+              logout();
             }}
-            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
             title="Cerrar Sesión"
           >
             <LogOut className="w-4 h-4" />
