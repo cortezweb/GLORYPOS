@@ -7,7 +7,7 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
   const hasVariants = product.presentaciones && product.presentaciones.length > 1;
   const isScaleItem = product.tipo_venta === 'PESO';
   const hasModifiers = (product.sabores && product.sabores.length > 0) || (product.toppings && product.toppings.length > 0);
-  const hasSizes = product.tallas && product.tallas.length > 0;
+  const hasSizes = (product.tallas && product.tallas.length > 0) || (product.colores && product.colores.length > 0);
 
   const stockNum = Number(product.stock_actual) || 0;
   const isOutOfStock = stockNum <= 0;
@@ -108,12 +108,17 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
           {product.nombre}
         </h3>
 
-        {/* Clothing sizes mini preview */}
+        {/* Clothing sizes / colors mini preview */}
         {hasSizes && (
-          <div className="flex items-center gap-1 mt-0.5 overflow-hidden">
-            {product.tallas.slice(0, 4).map(t => (
-              <span key={t} className="text-[9px] font-mono font-bold bg-slate-100 text-slate-600 px-1 rounded">
+          <div className="flex items-center gap-1 mt-0.5 overflow-hidden flex-wrap">
+            {product.tallas && product.tallas.slice(0, 3).map(t => (
+              <span key={t} className="text-[9px] font-mono font-bold bg-violet-50 text-violet-700 px-1 rounded border border-violet-100">
                 {t}
+              </span>
+            ))}
+            {product.colores && product.colores.slice(0, 2).map(c => (
+              <span key={c} className="text-[9px] font-bold bg-slate-100 text-slate-700 px-1 rounded">
+                {c}
               </span>
             ))}
           </div>

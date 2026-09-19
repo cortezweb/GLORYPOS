@@ -84,6 +84,14 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     toppings: []
   });
 
+  // Estados para agregar tallas y colores personalizados dinámicamente
+  const [newCustomSizeInput, setNewCustomSizeInput] = useState('');
+  const [newCustomColorInput, setNewCustomColorInput] = useState('');
+  const [newEditSizeInput, setNewEditSizeInput] = useState('');
+  const [newEditColorInput, setNewEditColorInput] = useState('');
+  const [showCustomVariants, setShowCustomVariants] = useState(false);
+  const [showEditVariants, setShowEditVariants] = useState(false);
+
   const [toastMsg, setToastMsg] = useState(null);
 
   const showToast = (msg) => {
@@ -143,6 +151,11 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
   const handleOpenEdit = (prod, e) => {
     e.stopPropagation();
     setSelectedProductForEdit(prod);
+    const hasExistingVariants = (Array.isArray(prod.tallas) && prod.tallas.length > 0) ||
+                                (Array.isArray(prod.colores) && prod.colores.length > 0);
+    setShowEditVariants(hasExistingVariants || activeRubro === 'ROPA');
+    setNewEditSizeInput('');
+    setNewEditColorInput('');
     setEditForm({
       id: prod.id,
       nombre: prod.nombre,
@@ -157,10 +170,10 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       lote: prod.lote || '',
       fecha_vencimiento: prod.fecha_vencimiento || '',
       principio_activo: prod.principio_activo || '',
-      tallas: prod.tallas || [],
-      colores: prod.colores || [],
-      sabores: prod.sabores || [],
-      toppings: prod.toppings || []
+      tallas: Array.isArray(prod.tallas) ? [...prod.tallas] : [],
+      colores: Array.isArray(prod.colores) ? [...prod.colores] : [],
+      sabores: Array.isArray(prod.sabores) ? [...prod.sabores] : [],
+      toppings: Array.isArray(prod.toppings) ? [...prod.toppings] : []
     });
     setIsEditProductModalOpen(true);
   };
@@ -315,6 +328,9 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       sabores: activeRubro === 'HELADERIA' ? ['Chocolate Belga', 'Vainilla Francesa', 'Frutilla Natural'] : [],
       toppings: activeRubro === 'HELADERIA' ? ['Grajeas de Colores', 'Chispas de Chocolate'] : []
     });
+    setNewCustomSizeInput('');
+    setNewCustomColorInput('');
+    setShowCustomVariants(false);
     await loadData();
     showToast(`Producto creado: ${newCustom.nombre}`);
   };
@@ -325,6 +341,59 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     } else {
       setter([...currentList, item]);
     }
+  };
+
+  // Handlers para agregar y quitar Tallas y Colores dinámicos
+  const handleAddSizeToCustom = () => {
+    const val = newCustomSizeInput.trim();
+    if (!val) return;
+    if (!customForm.tallas?.includes(val)) {
+      setCustomForm(prev => ({ ...prev, tallas: [...(prev.tallas || []), val] }));
+    }
+    setNewCustomSizeInput('');
+  };
+
+  const handleRemoveSizeFromCustom = (size) => {
+    setCustomForm(prev => ({ ...prev, tallas: (prev.tallas || []).filter(s => s !== size) }));
+  };
+
+  const handleAddColorToCustom = () => {
+    const val = newCustomColorInput.trim();
+    if (!val) return;
+    if (!customForm.colores?.includes(val)) {
+      setCustomForm(prev => ({ ...prev, colores: [...(prev.colores || []), val] }));
+    }
+    setNewCustomColorInput('');
+  };
+
+  const handleRemoveColorFromCustom = (color) => {
+    setCustomForm(prev => ({ ...prev, colores: (prev.colores || []).filter(c => c !== color) }));
+  };
+
+  const handleAddSizeToEdit = () => {
+    const val = newEditSizeInput.trim();
+    if (!val) return;
+    if (!editForm.tallas?.includes(val)) {
+      setEditForm(prev => ({ ...prev, tallas: [...(prev.tallas || []), val] }));
+    }
+    setNewEditSizeInput('');
+  };
+
+  const handleRemoveSizeFromEdit = (size) => {
+    setEditForm(prev => ({ ...prev, tallas: (prev.tallas || []).filter(s => s !== size) }));
+  };
+
+  const handleAddColorToEdit = () => {
+    const val = newEditColorInput.trim();
+    if (!val) return;
+    if (!editForm.colores?.includes(val)) {
+      setEditForm(prev => ({ ...prev, colores: [...(prev.colores || []), val] }));
+    }
+    setNewEditColorInput('');
+  };
+
+  const handleRemoveColorFromEdit = (color) => {
+    setEditForm(prev => ({ ...prev, colores: (prev.colores || []).filter(c => c !== color) }));
   };
 
   // Export CSV
@@ -596,6 +665,12 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                           </span>
                         )}
 
+                        {prod.colores && prod.colores.length > 0 && (
+                          <span className="text-[9px] bg-slate-100 text-slate-700 font-bold px-1.5 py-0.2 rounded border border-slate-200 truncate max-w-[130px]">
+                            Colores: {prod.colores.slice(0, 2).join(', ')}
+                          </span>
+                        )}
+
                         {prod.sabores && prod.sabores.length > 0 && (
                           <span className="text-[9px] bg-cyan-50 text-cyan-700 font-bold px-1.5 py-0.2 rounded border border-cyan-100">
                             {prod.sabores.length} Sabores
@@ -859,6 +934,181 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                 </div>
               </div>
             )}
+
+            {/* Tallas y Colores (Variantes) en Edición */}
+            <div className="p-3 bg-violet-50/70 border border-violet-200 rounded-2xl space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-violet-950 text-xs font-black">
+                  <Shirt className="w-4 h-4 text-violet-600" />
+                  <span>Tallas / Tamaños y Colores ({editForm.tallas?.length || 0} tallas • {editForm.colores?.length || 0} colores)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowEditVariants(!showEditVariants)}
+                  className="text-[11px] text-violet-700 font-bold hover:underline"
+                >
+                  {showEditVariants ? 'Ocultar Opciones' : '+ Configurar Variantes'}
+                </button>
+              </div>
+
+              {showEditVariants && (
+                <div className="space-y-3 pt-1 border-t border-violet-200/60">
+                  {/* Tallas / Tamaños */}
+                  <div>
+                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
+                      Tallas / Tamaños Configurados ({editForm.tallas?.length || 0}):
+                    </label>
+
+                    {/* Chips activos con botón para eliminar */}
+                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
+                      {editForm.tallas && editForm.tallas.length > 0 ? (
+                        editForm.tallas.map(t => (
+                          <span
+                            key={t}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black font-mono bg-violet-600 text-white shadow-2xs"
+                          >
+                            <span>{t}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSizeFromEdit(t)}
+                              className="hover:text-rose-200 p-0.5"
+                              title="Eliminar tamaño"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[11px] text-slate-400 italic">No hay tamaños seleccionados</span>
+                      )}
+                    </div>
+
+                    {/* Sugerencias Rápidas */}
+                    <div className="mb-2">
+                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {COMMON_SIZES.map(s => {
+                          const isSelected = editForm.tallas?.includes(s);
+                          return (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => toggleArrayItem(
+                                (list) => setEditForm({ ...editForm, tallas: list }),
+                                editForm.tallas || [],
+                                s
+                              )}
+                              className={`min-w-[28px] py-0.5 px-2 rounded-lg text-[10px] font-bold font-mono transition ${
+                                isSelected ? 'bg-violet-700 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Input para agregar CUALQUIER nuevo tamaño */}
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Ej: 3XL, 1/2 pulgada, Mediano, 500ml..."
+                        value={newEditSizeInput}
+                        onChange={e => setNewEditSizeInput(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddSizeToEdit(); } }}
+                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddSizeToEdit}
+                        className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Agregar Tamaño</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Colores */}
+                  <div className="pt-2 border-t border-violet-100">
+                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
+                      Colores Configurados ({editForm.colores?.length || 0}):
+                    </label>
+
+                    {/* Chips activos de colores con botón para eliminar */}
+                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
+                      {editForm.colores && editForm.colores.length > 0 ? (
+                        editForm.colores.map(c => (
+                          <span
+                            key={c}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white shadow-2xs"
+                          >
+                            <span>{c}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveColorFromEdit(c)}
+                              className="hover:text-rose-200 p-0.5"
+                              title="Eliminar color"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[11px] text-slate-400 italic">No hay colores seleccionados</span>
+                      )}
+                    </div>
+
+                    {/* Sugerencias Rápidas de Colores */}
+                    <div className="mb-2">
+                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {COMMON_COLORS.map(c => {
+                          const isSelected = editForm.colores?.includes(c);
+                          return (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => toggleArrayItem(
+                                (list) => setEditForm({ ...editForm, colores: list }),
+                                editForm.colores || [],
+                                c
+                              )}
+                              className={`py-0.5 px-2 rounded-lg text-[10px] font-bold transition ${
+                                isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
+                              }`}
+                            >
+                              {c}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Input para agregar CUALQUIER nuevo color */}
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Ej: Turquesa, Vino, Mostaza, Dorado..."
+                        value={newEditColorInput}
+                        onChange={e => setNewEditColorInput(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddColorToEdit(); } }}
+                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddColorToEdit}
+                        className="px-3 py-1.5 bg-slate-900 hover:bg-black active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Agregar Color</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
@@ -1182,64 +1432,182 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
               </div>
             )}
 
-            {/* ROPA: Selector de Tallas y Colores */}
-            {activeRubro === 'ROPA' && (
-              <div className="p-3 bg-violet-50/70 border border-violet-200 rounded-2xl space-y-2.5 animate-fadeIn">
-                <div className="flex items-center gap-1.5 text-violet-900 text-xs font-extrabold">
-                  <Shirt className="w-3.5 h-3.5 text-violet-600" />
-                  <span>Tallas y Colores Disponibles</span>
+            {/* Tallas y Colores (Variantes) en Creación */}
+            <div className="p-3 bg-violet-50/70 border border-violet-200 rounded-2xl space-y-3 animate-fadeIn">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-violet-950 text-xs font-black">
+                  <Shirt className="w-4 h-4 text-violet-600" />
+                  <span>Tallas / Tamaños y Colores ({customForm.tallas?.length || 0} tallas • {customForm.colores?.length || 0} colores)</span>
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold text-violet-900 block mb-1">Selecciona las Tallas:</label>
-                  <div className="flex flex-wrap gap-1">
-                    {COMMON_SIZES.map(s => {
-                      const isSelected = customForm.tallas?.includes(s);
-                      return (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => toggleArrayItem(
-                            (list) => setCustomForm({ ...customForm, tallas: list }),
-                            customForm.tallas || [],
-                            s
-                          )}
-                          className={`min-w-[32px] py-1 px-2 rounded-lg text-xs font-bold font-mono transition ${
-                            isSelected ? 'bg-violet-600 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
-                          }`}
-                        >
-                          {s}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-bold text-violet-900 block mb-1">Colores Disponibles:</label>
-                  <div className="flex flex-wrap gap-1">
-                    {COMMON_COLORS.map(c => {
-                      const isSelected = customForm.colores?.includes(c);
-                      return (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => toggleArrayItem(
-                            (list) => setCustomForm({ ...customForm, colores: list }),
-                            customForm.colores || [],
-                            c
-                          )}
-                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition ${
-                            isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
-                          }`}
-                        >
-                          {c}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                {activeRubro !== 'ROPA' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomVariants(!showCustomVariants)}
+                    className="text-[11px] text-violet-700 font-bold hover:underline"
+                  >
+                    {showCustomVariants ? 'Ocultar Opciones' : '+ Configurar Variantes'}
+                  </button>
+                )}
               </div>
-            )}
+
+              {(activeRubro === 'ROPA' || showCustomVariants || (customForm.tallas?.length > 0 || customForm.colores?.length > 0)) && (
+                <div className="space-y-3 pt-1 border-t border-violet-200/60">
+                  {/* Tallas / Tamaños */}
+                  <div>
+                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
+                      Tallas / Tamaños Configurados ({customForm.tallas?.length || 0}):
+                    </label>
+
+                    {/* Chips activos con botón para eliminar */}
+                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
+                      {customForm.tallas && customForm.tallas.length > 0 ? (
+                        customForm.tallas.map(t => (
+                          <span
+                            key={t}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black font-mono bg-violet-600 text-white shadow-2xs"
+                          >
+                            <span>{t}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSizeFromCustom(t)}
+                              className="hover:text-rose-200 p-0.5"
+                              title="Eliminar tamaño"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[11px] text-slate-400 italic">No hay tamaños seleccionados</span>
+                      )}
+                    </div>
+
+                    {/* Sugerencias Rápidas */}
+                    <div className="mb-2">
+                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {COMMON_SIZES.map(s => {
+                          const isSelected = customForm.tallas?.includes(s);
+                          return (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => toggleArrayItem(
+                                (list) => setCustomForm({ ...customForm, tallas: list }),
+                                customForm.tallas || [],
+                                s
+                              )}
+                              className={`min-w-[28px] py-0.5 px-2 rounded-lg text-[10px] font-bold font-mono transition ${
+                                isSelected ? 'bg-violet-700 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Input para agregar CUALQUIER nuevo tamaño */}
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Ej: 3XL, 1/2 pulgada, Mediano, 500ml..."
+                        value={newCustomSizeInput}
+                        onChange={e => setNewCustomSizeInput(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddSizeToCustom(); } }}
+                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddSizeToCustom}
+                        className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Agregar Tamaño</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Colores */}
+                  <div className="pt-2 border-t border-violet-100">
+                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
+                      Colores Configurados ({customForm.colores?.length || 0}):
+                    </label>
+
+                    {/* Chips activos de colores con botón para eliminar */}
+                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
+                      {customForm.colores && customForm.colores.length > 0 ? (
+                        customForm.colores.map(c => (
+                          <span
+                            key={c}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white shadow-2xs"
+                          >
+                            <span>{c}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveColorFromCustom(c)}
+                              className="hover:text-rose-200 p-0.5"
+                              title="Eliminar color"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[11px] text-slate-400 italic">No hay colores seleccionados</span>
+                      )}
+                    </div>
+
+                    {/* Sugerencias Rápidas de Colores */}
+                    <div className="mb-2">
+                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {COMMON_COLORS.map(c => {
+                          const isSelected = customForm.colores?.includes(c);
+                          return (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => toggleArrayItem(
+                                (list) => setCustomForm({ ...customForm, colores: list }),
+                                customForm.colores || [],
+                                c
+                              )}
+                              className={`py-0.5 px-2 rounded-lg text-[10px] font-bold transition ${
+                                isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
+                              }`}
+                            >
+                              {c}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Input para agregar CUALQUIER nuevo color */}
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Ej: Turquesa, Vino, Mostaza, Dorado..."
+                        value={newCustomColorInput}
+                        onChange={e => setNewCustomColorInput(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddColorToCustom(); } }}
+                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddColorToCustom}
+                        className="px-3 py-1.5 bg-slate-900 hover:bg-black active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Agregar Color</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* CARNICERIA: Venta al Peso vs Unidad */}
             {activeRubro === 'CARNICERIA' && (
