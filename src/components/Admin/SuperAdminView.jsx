@@ -235,9 +235,94 @@ export default function SuperAdminView({
   const [selectedClientForEdit, setSelectedClientForEdit] = useState(null);
   const [notificationMsg, setNotificationMsg] = useState(null);
 
+  // Modal de alta de nuevo cliente SaaS
+  const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
+  const [newClientData, setNewClientData] = useState({
+    nombre: '',
+    propietario: '',
+    email: '',
+    nit_ci: '',
+    telefono: '',
+    ciudad: 'Santa Cruz',
+    rubro: 'ABARROTES',
+    plan_tipo: 'PROFESIONAL',
+    duracion_dias: 30,
+    cajas_activas: 2
+  });
+  const [credentialsModalClient, setCredentialsModalClient] = useState(null);
+  const [copiedToast, setCopiedToast] = useState(false);
+
   const showToast = (msg) => {
     setNotificationMsg(msg);
     setTimeout(() => setNotificationMsg(null), 3500);
+  };
+
+  const handleCreateNewClient = (e) => {
+    e.preventDefault();
+    if (!newClientData.nombre.trim() || !newClientData.nit_ci.trim()) {
+      alert('Por favor completa el nombre de la empresa y su NIT/CI.');
+      return;
+    }
+
+    const montos = { BASICO: 150, PROFESIONAL: 350, EMPRESARIAL: 700, TRIAL: 0 };
+    const duracion = Number(newClientData.duracion_dias) || 30;
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + duracion);
+
+    const emailGen = newClientData.email.trim() || `admin@${newClientData.nombre.toLowerCase().replace(/[^a-z0-9]/g, '')}.bo`;
+
+    const createdClient = {
+      id: `emp-${Date.now()}`,
+      nombre: newClientData.nombre.trim(),
+      nit_ci: newClientData.nit_ci.trim(),
+      propietario: newClientData.propietario.trim() || 'Propietario General',
+      email: emailGen,
+      telefono: newClientData.telefono.trim() || '77000000',
+      ciudad: newClientData.ciudad,
+      rubro: newClientData.rubro,
+      plan_tipo: newClientData.plan_tipo,
+      estado_suscripcion: 'ACTIVO',
+      fecha_vencimiento: expiry.toISOString(),
+      cajas_activas: Number(newClientData.cajas_activas) || 2,
+      modulos_activos: ['POS', 'INVENTARIO', 'KARDEX', 'REPORTES', 'SIAT'],
+      monto_mensual: montos[newClientData.plan_tipo] || 150
+    };
+
+    setClientCompanies(prev => [createdClient, ...prev]);
+    setIsNewClientModalOpen(false);
+    setCredentialsModalClient(createdClient);
+    playCashChime();
+    showToast(`¡Cliente "${createdClient.nombre}" dado de alta con éxito!`);
+
+    // Reset form
+    setNewClientData({
+      nombre: '',
+      propietario: '',
+      email: '',
+      nit_ci: '',
+      telefono: '',
+      ciudad: 'Santa Cruz',
+      rubro: 'ABARROTES',
+      plan_tipo: 'PROFESIONAL',
+      duracion_dias: 30,
+      cajas_activas: 2
+    });
+  };
+
+  const getWhatsAppMessage = (client) => {
+    const venc = new Date(client.fecha_vencimiento).toLocaleDateString('es-BO');
+    return `¡Hola ${client.propietario}! 👋%0A%0A` +
+      `Te damos la bienvenida a *GLORYPOS Bolivia* 🇧🇴.%0A` +
+      `Tu suscripción para *${client.nombre}* ha sido dada de alta con éxito:%0A%0A` +
+      `⭐ *Plan:* ${client.plan_tipo}%0A` +
+      `📅 *Vigencia hasta:* ${venc}%0A` +
+      `🏪 *Rubro:* ${client.rubro}%0A%0A` +
+      `🔑 *Tus credenciales de acceso:*%0A` +
+      `• *Enlace:* https://app.glorypos.bo%0A` +
+      `• *Usuario / Correo:* ${client.email}%0A` +
+      `• *PIN Táctil de Cobro:* 1234%0A` +
+      `• *Clave Admin:* admin%0A%0A` +
+      `Estamos a tu disposición para soporte. ¡Buenas ventas! 🚀`;
   };
 
   // Renovar suscripción +30 días a un cliente
@@ -682,21 +767,32 @@ export default function SuperAdminView({
               />
             </div>
 
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto">
-              {['TODOS', 'ACTIVO', 'VENCIDO', 'TRIAL'].map(st => (
-                <button
-                  key={st}
-                  type="button"
-                  onClick={() => setFilterStatus(st)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                    filterStatus === st 
-                      ? 'bg-slate-900 text-white shadow-xs' 
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {st}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto">
+              <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto">
+                {['TODOS', 'ACTIVO', 'VENCIDO', 'TRIAL'].map(st => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setFilterStatus(st)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                      filterStatus === st 
+                        ? 'bg-slate-900 text-white shadow-xs' 
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsNewClientModalOpen(true)}
+                className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black shadow-xs transition flex items-center gap-1.5 shrink-0 active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Registrar Nuevo Cliente</span>
+              </button>
             </div>
           </div>
 
@@ -788,6 +884,16 @@ export default function SuperAdminView({
                                 <span>+30d</span>
                               </button>
 
+                              {/* Botón WhatsApp / Credenciales */}
+                              <button
+                                type="button"
+                                onClick={() => setCredentialsModalClient(client)}
+                                title="Ver credenciales y enviar por WhatsApp"
+                                className="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-bold rounded-xl transition flex items-center gap-1 active:scale-95"
+                              >
+                                <PhoneCall className="w-3.5 h-3.5" />
+                              </button>
+
                               {/* Cambiar Plan dropdown rápido */}
                               <select
                                 value={client.plan_tipo}
@@ -871,6 +977,263 @@ export default function SuperAdminView({
                   <p className="font-bold truncate mt-0.5 text-white">{vid.title}</p>
                 </button>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL: REGISTRAR NUEVO CLIENTE SAAS ── */}
+      {isNewClientModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 text-slate-900 space-y-4 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setIsNewClientModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+              <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-slate-900">Dar de Alta Nuevo Cliente SaaS</h3>
+                <p className="text-xs text-slate-500">Configura los datos del negocio y activa su suscripción.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreateNewClient} className="space-y-3.5 text-xs">
+              {/* Nombre de la Empresa */}
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Nombre Comercial del Negocio *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ej. Minimarket San Lorenzo"
+                  value={newClientData.nombre}
+                  onChange={e => setNewClientData({ ...newClientData, nombre: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              {/* NIT y Propietario en 2 columnas */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">NIT / CI Fiscal *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. 1029384012"
+                    value={newClientData.nit_ci}
+                    onChange={e => setNewClientData({ ...newClientData, nit_ci: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nombre del Dueño / Contacto</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Carlos Gutiérrez"
+                    value={newClientData.propietario}
+                    onChange={e => setNewClientData({ ...newClientData, propietario: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+              </div>
+
+              {/* Teléfono y Correo */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">WhatsApp / Teléfono *</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="Ej. 77012345"
+                    value={newClientData.telefono}
+                    onChange={e => setNewClientData({ ...newClientData, telefono: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Correo Electrónico</label>
+                  <input
+                    type="email"
+                    placeholder="admin@negocio.bo"
+                    value={newClientData.email}
+                    onChange={e => setNewClientData({ ...newClientData, email: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+              </div>
+
+              {/* Ciudad y Rubro */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Ciudad (Bolivia)</label>
+                  <select
+                    value={newClientData.ciudad}
+                    onChange={e => setNewClientData({ ...newClientData, ciudad: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold"
+                  >
+                    <option value="Santa Cruz">Santa Cruz</option>
+                    <option value="La Paz">La Paz</option>
+                    <option value="Cochabamba">Cochabamba</option>
+                    <option value="Sucre">Sucre</option>
+                    <option value="Tarija">Tarija</option>
+                    <option value="Oruro">Oruro</option>
+                    <option value="Potosí">Potosí</option>
+                    <option value="Beni">Beni</option>
+                    <option value="Pando">Pando</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Rubro Comercial</label>
+                  <select
+                    value={newClientData.rubro}
+                    onChange={e => setNewClientData({ ...newClientData, rubro: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold"
+                  >
+                    <option value="ABARROTES">🏪 Minimarket & Abarrotes</option>
+                    <option value="FERRETERIA">🔧 Ferretería & Construcción</option>
+                    <option value="FARMACIA">💊 Farmacia & Botica</option>
+                    <option value="ROPA">👗 Ropa & Calzado</option>
+                    <option value="CARNICERIA">🥩 Carnicería & Frial</option>
+                    <option value="HELADERIA">🍦 Heladería & Cafetería</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Plan y Vigencia Inicial */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 bg-blue-50/60 rounded-2xl border border-blue-100">
+                <div>
+                  <label className="block font-bold text-blue-900 mb-1">Plan a Asignar</label>
+                  <select
+                    value={newClientData.plan_tipo}
+                    onChange={e => setNewClientData({ ...newClientData, plan_tipo: e.target.value })}
+                    className="w-full p-2 bg-white border border-blue-200 rounded-xl font-bold text-blue-800"
+                  >
+                    <option value="TRIAL">Prueba Gratuita (30 días)</option>
+                    <option value="BASICO">Básico (Bs. 150/mes)</option>
+                    <option value="PROFESIONAL">Profesional (Bs. 350/mes)</option>
+                    <option value="EMPRESARIAL">Empresarial (Bs. 700/mes)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-blue-900 mb-1">Vigencia Inicial</label>
+                  <select
+                    value={newClientData.duracion_dias}
+                    onChange={e => setNewClientData({ ...newClientData, duracion_dias: Number(e.target.value) })}
+                    className="w-full p-2 bg-white border border-blue-200 rounded-xl font-bold text-blue-800"
+                  >
+                    <option value={30}>30 Días (1 mes)</option>
+                    <option value={90}>90 Días (Trimestre)</option>
+                    <option value={180}>180 Días (Semestre)</option>
+                    <option value={365}>365 Días (1 Año Anual)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsNewClientModalOpen(false)}
+                  className="px-4 py-2 text-slate-600 hover:bg-slate-100 font-bold rounded-xl transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-xl shadow-md transition flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Activar Suscripción</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL: CREDENCIALES & COMPARTIR POR WHATSAPP ── */}
+      {credentialsModalClient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 text-slate-900 space-y-4 shadow-2xl relative border border-slate-100">
+            <button
+              onClick={() => setCredentialsModalClient(null)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center space-y-1">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2">
+                <CheckCircle2 className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-black text-slate-900">Suscripción Activa</h3>
+              <p className="text-xs text-slate-500 font-medium">
+                Credenciales listas para entregar a <strong className="text-slate-800">{credentialsModalClient.nombre}</strong>
+              </p>
+            </div>
+
+            {/* Tarjeta con los datos de acceso */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 text-xs">
+              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200 font-bold">
+                <span className="text-slate-500">Plan Asignado:</span>
+                <span className="text-indigo-700 font-black">{credentialsModalClient.plan_tipo}</span>
+              </div>
+              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200 font-bold">
+                <span className="text-slate-500">Vigencia hasta:</span>
+                <span className="text-emerald-700">
+                  {new Date(credentialsModalClient.fecha_vencimiento).toLocaleDateString('es-BO')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Enlace del Sistema:</span>
+                <span className="font-mono text-blue-600 font-bold">app.glorypos.bo</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Usuario / Correo:</span>
+                <span className="font-mono text-slate-800 font-bold">{credentialsModalClient.email}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">PIN Táctil Inicial:</span>
+                <span className="font-mono text-slate-800 font-black px-2 py-0.5 bg-white border border-slate-200 rounded-md">1234</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Contraseña Admin:</span>
+                <span className="font-mono text-slate-800 font-black px-2 py-0.5 bg-white border border-slate-200 rounded-md">admin</span>
+              </div>
+            </div>
+
+            {/* Botones de Entrega */}
+            <div className="space-y-2 pt-1">
+              {/* Enviar por WhatsApp con 1 clic */}
+              <a
+                href={`https://wa.me/591${credentialsModalClient.telefono}?text=${getWhatsAppMessage(credentialsModalClient)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2"
+              >
+                <PhoneCall className="w-4 h-4" />
+                <span>Enviar Credenciales por WhatsApp (+591 {credentialsModalClient.telefono})</span>
+              </a>
+
+              {/* Copiar texto al portapapeles */}
+              <button
+                type="button"
+                onClick={() => {
+                  const plainMsg = decodeURIComponent(getWhatsAppMessage(credentialsModalClient).replace(/%0A/g, '\n'));
+                  navigator.clipboard.writeText(plainMsg);
+                  setCopiedToast(true);
+                  setTimeout(() => setCopiedToast(false), 2500);
+                }}
+                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5"
+              >
+                {copiedToast ? <Check className="w-4 h-4 text-emerald-600" /> : <FileText className="w-4 h-4 text-slate-500" />}
+                <span>{copiedToast ? '¡Copiado al Portapapeles!' : 'Copiar Mensaje Completo'}</span>
+              </button>
             </div>
           </div>
         </div>
