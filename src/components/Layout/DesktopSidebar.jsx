@@ -460,12 +460,39 @@ export default function DesktopSidebar({
               <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => onSelectView('inventory')}
+                  onClick={() => onSelectView('movimientos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'inventory' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['movimientos', 'inventory', 'inventario', 'inventario_movimientos'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Stock & Kardex
+                  • Movimientos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('transferencias')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['transferencias', 'inventario_transferencias'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Transferencias
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('historial_transferencias')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['historial_transferencias', 'inventario_historial_transferencias'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Historial de transferencias
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('kardex')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['kardex', 'inventario_kardex'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Kardex
                 </button>
               </div>
             )}

@@ -122,6 +122,26 @@ db.version(9).stores({
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
+// v10: soporte para transferencias de inventario
+db.version(10).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  unidades_medida: 'id, codigo, nombre, simbolo, estado',
+  transferencias_inventario: 'id, fecha, origen, destino, estado',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
@@ -607,5 +627,73 @@ export async function initDatabase() {
         created_at: new Date().toISOString()
       }
     ]);
+  }
+
+  // ─── Transferencias de Inventario (Seed exacto al screenshot) ───────────────
+  if (db.transferencias_inventario) {
+    const trfCount = await db.transferencias_inventario.count();
+    if (trfCount === 0) {
+      await db.transferencias_inventario.bulkAdd([
+        {
+          id: 'trf-1',
+          fecha: '2026-09-16T13:30:01',
+          fechaDisplay: '16/9/2026, 1:30:01 p.m.',
+          origen: 'Principal',
+          destino: 'ALMACEN',
+          productos: [{ id: 'prod-seed-1', nombre: 'Fresa', cantidad: 7, presentacion: 'Unidad' }],
+          productosDisplay: '× 7',
+          estado: 'Confirmado',
+          notas: 'Traslado de reposición de tienda a almacén'
+        },
+        {
+          id: 'trf-2',
+          fecha: '2026-09-13T19:22:10',
+          fechaDisplay: '13/9/2026, 7:22:10 p.m.',
+          origen: 'Principal',
+          destino: 'ALMACEN',
+          productos: [
+            { id: 'prod-seed-2', nombre: 'Boxer', cantidad: 25, presentacion: 'Unidad' },
+            { id: 'prod-seed-6', nombre: 'Bolsa para basura grande', cantidad: 30, presentacion: 'Paquete' },
+            { id: 'prod-seed-7', nombre: 'Vaso plástico PET 16 oz', cantidad: 40, presentacion: 'Ciento' }
+          ],
+          productosDisplay: '× 25  × 30  × 40',
+          estado: 'Confirmado',
+          notas: 'Traslado múltiple de insumos'
+        },
+        {
+          id: 'trf-3',
+          fecha: '2026-08-06T15:48:15',
+          fechaDisplay: '6/8/2026, 3:48:15 p.m.',
+          origen: 'Principal',
+          destino: 'ALMACEN',
+          productos: [{ id: 'prod-seed-3', nombre: 'Escurridor plástico para vajilla', cantidad: 5, presentacion: 'Unidad' }],
+          productosDisplay: '× 5',
+          estado: 'Confirmado',
+          notas: 'Reposición programada'
+        },
+        {
+          id: 'trf-4',
+          fecha: '2026-08-06T15:45:58',
+          fechaDisplay: '6/8/2026, 3:45:58 p.m.',
+          origen: 'Principal',
+          destino: 'ALMACEN',
+          productos: [{ id: 'prod-seed-4', nombre: 'Colador plástico mediano', cantidad: 3, presentacion: 'Unidad' }],
+          productosDisplay: '× 3',
+          estado: 'Confirmado',
+          notas: 'Traslado por solicitud de inventario'
+        },
+        {
+          id: 'trf-5',
+          fecha: '2026-08-06T15:41:05',
+          fechaDisplay: '6/8/2026, 3:41:05 p.m.',
+          origen: 'Principal',
+          destino: 'ALMACEN',
+          productos: [{ id: 'prod-seed-5', nombre: 'Balde plástico 20 litros', cantidad: 5, presentacion: 'Unidad' }],
+          productosDisplay: '× 5',
+          estado: 'Confirmado',
+          notas: 'Traslado inicial'
+        }
+      ]);
+    }
   }
 }

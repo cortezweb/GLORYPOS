@@ -320,9 +320,15 @@ function MainShell() {
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                 />
               )}
-              {['inventory', 'inventario', 'kardex'].includes(currentView) && (
+              {['inventory', 'inventario', 'movimientos', 'inventario_movimientos', 'transferencias', 'inventario_transferencias', 'historial_transferencias', 'inventario_historial_transferencias', 'kardex', 'inventario_kardex'].includes(currentView) && (
                 <InventoryView 
                   currentRubro={currentRubro}
+                  initialTab={
+                    ['transferencias', 'inventario_transferencias'].includes(currentView) ? 'transferencias' :
+                    ['historial_transferencias', 'inventario_historial_transferencias'].includes(currentView) ? 'historial_transferencias' :
+                    ['kardex', 'inventario_kardex'].includes(currentView) ? 'kardex' :
+                    'movimientos'
+                  }
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                   onOpenScanner={() => setIsScannerOpen(true)} 
                 />
@@ -409,7 +415,7 @@ function MainShell() {
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',
                 'ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja',
                 'productos', 'products', 'combos_promociones', 'combos', 'promociones', 'servicios', 'services', 'categorias_marcas', 'categorias', 'marcas', 'unidades_medida', 'unidades', 'unidades-medida',
-                'inventory', 'inventario', 'kardex',
+                'inventory', 'inventario', 'movimientos', 'inventario_movimientos', 'transferencias', 'inventario_transferencias', 'historial_transferencias', 'inventario_historial_transferencias', 'kardex', 'inventario_kardex',
                 'clients', 'clientes',
                 'purchases', 'compras', 'nueva_compra', 'compras_historial', 'proveedores',
                 'reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_cajas_tab',
