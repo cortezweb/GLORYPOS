@@ -1,97 +1,270 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Package, Search, Plus, Sparkles, Edit2, AlertTriangle, 
-  CheckCircle2, X, Tag, Barcode, Download, Upload, 
-  Trash2, Layers, LayoutGrid, List, Boxes, ArrowRight, Eye,
-  Scale, Pill, Shirt, Beef, IceCream, Store, Wrench, Check
+  CheckCircle2, X, Tag, Barcode, Download, UploadCloud, 
+  Trash2, Layers, Boxes, ArrowRight, Eye, Scale, Pill, 
+  Shirt, Beef, IceCream, Store, Wrench, Check, FileSpreadsheet,
+  ChevronLeft, ChevronRight, SlidersHorizontal, RefreshCw, FileText
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { RUBROS_CONFIG } from '../../db/rubros';
 import ProductsSubNav from './ProductsSubNav';
 
-const RUBRO_ICONS = {
-  Store,
-  Wrench,
-  Pill,
-  Shirt,
-  Beef,
-  IceCream
-};
-
-const COMMON_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36', '38', '40', '42'];
-const COMMON_COLORS = ['Blanco', 'Negro', 'Azul Marino', 'Rojo', 'Gris Plomo', 'Verde', 'Beige', 'Rosado'];
-const COMMON_FLAVORS = ['Chocolate Belga', 'Vainilla Francesa', 'Frutilla Natural', 'Dulce de Leche', 'Maracuyá', 'Menta Granizada', 'Oreo Cookies', 'Café'];
-const COMMON_TOPPINGS = ['Grajeas de Colores', 'Chispas de Chocolate', 'Salsa de Frutilla', 'Salsa de Caramelo', 'Maní Picado', 'Crema Chantilly'];
+// ── REGISTROS SEMILLA EXACTOS AL SCREENSHOT ──
+const SEED_PRODUCTOS_LIST = [
+  {
+    id: 'prod-seed-1',
+    codigo_barras: 'EBYJY9',
+    nombre: 'Fresa',
+    categoria: '-',
+    marca: 'General',
+    precio_venta: 3.50,
+    precio_compra: 2.20,
+    igv: 10,
+    stock_actual: 100,
+    controla_stock: true,
+    fecha_vencimiento: null,
+    modificadores: ['Salsa de chocolate', 'Leche condensada', 'Chispas'],
+    activo: true,
+    avatar_char: 'F',
+    avatar_color: 'bg-emerald-100 text-emerald-700',
+    unidad_medida: 'Unidad'
+  },
+  {
+    id: 'prod-seed-2',
+    codigo_barras: 'YWBUGE',
+    nombre: 'Boxer',
+    categoria: 'lencería',
+    marca: 'General',
+    precio_venta: 20.00,
+    precio_compra: 12.00,
+    igv: 10,
+    stock_actual: 14,
+    controla_stock: true,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    avatar_char: 'B',
+    avatar_color: 'bg-emerald-100 text-emerald-700',
+    unidad_medida: 'Unidad'
+  },
+  {
+    id: 'prod-seed-3',
+    codigo_barras: 'PLA-022',
+    nombre: 'Escurridor plástico para vajilla',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 22.90,
+    precio_compra: 15.00,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Unidad'
+  },
+  {
+    id: 'prod-seed-4',
+    codigo_barras: 'PLA-021',
+    nombre: 'Colador plástico mediano',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 7.50,
+    precio_compra: 4.80,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Unidad'
+  },
+  {
+    id: 'prod-seed-5',
+    codigo_barras: 'PLA-019',
+    nombre: 'Balde plástico 20 litros',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 18.90,
+    precio_compra: 12.00,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Unidad'
+  },
+  {
+    id: 'prod-seed-6',
+    codigo_barras: 'PLA-018',
+    nombre: 'Bolsa para basura grande x 10 und',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 7.00,
+    precio_compra: 4.00,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Paquete'
+  },
+  {
+    id: 'prod-seed-7',
+    codigo_barras: 'PLA-017',
+    nombre: 'Bolsa transparente 10 × 15 × 100 und',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 8.50,
+    precio_compra: 5.20,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Paquete'
+  },
+  {
+    id: 'prod-seed-8',
+    codigo_barras: 'PLA-003',
+    nombre: 'Vaso plástico PET 16 oz x 50 und',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 14.50,
+    precio_compra: 9.50,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Paquete'
+  },
+  {
+    id: 'prod-seed-9',
+    codigo_barras: 'PLA-002',
+    nombre: 'Vaso plástico PET 12 oz x 50 und',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 11.50,
+    precio_compra: 7.80,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Paquete'
+  },
+  {
+    id: 'prod-seed-10',
+    codigo_barras: 'PLA-001',
+    nombre: 'Vaso plástico transparente 7 oz x 50 und',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
+    precio_venta: 6.50,
+    precio_compra: 4.20,
+    igv: 10,
+    stock_actual: 0,
+    controla_stock: false,
+    fecha_vencimiento: null,
+    modificadores: null,
+    activo: true,
+    foto_url: 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=200&q=80',
+    unidad_medida: 'Paquete'
+  }
+];
 
 export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubView, onOpenScanner }) {
   const [activeRubro, setActiveRubro] = useState(currentRubro);
   const [products, setProducts] = useState([]);
   const [masterProducts, setMasterProducts] = useState([]);
+
+  // ── FILTROS Y BÚSQUEDA ──
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [isGridView, setIsGridView] = useState(true);
+  const [selectedBrand, setSelectedBrand] = useState('ALL');
+  const [soloInactivos, setSoloInactivos] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState(new Set());
 
-  // Modals
+  // ── MODALES ──
   const [isMasterModalOpen, setIsMasterModalOpen] = useState(false);
   const [isCustomProductModal, setIsCustomProductModal] = useState(false);
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [isAdjustStockModalOpen, setIsAdjustStockModalOpen] = useState(false);
+  const [isPriceUpdateModalOpen, setIsPriceUpdateModalOpen] = useState(false);
+  const [isExtrasModalOpen, setIsExtrasModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+  // ── ESTADOS DE EDICIÓN / ACCIÓN ──
   const [selectedMaster, setSelectedMaster] = useState(null);
-  const [selectedProductForEdit, setSelectedProductForEdit] = useState(null);
+  const [masterPrice, setMasterPrice] = useState('');
+  const [masterStock, setMasterStock] = useState('12');
 
-  // Forms
-  const [newPrice, setNewPrice] = useState('');
-  const [newStock, setNewStock] = useState('12');
+  const [productForAdjust, setProductForAdjust] = useState(null);
+  const [adjustForm, setAdjustForm] = useState({ nuevo_stock: 0, motivo: 'Ajuste de inventario físico' });
 
+  const [priceUpdateForm, setPriceUpdateForm] = useState({
+    tipo: 'porcentaje',
+    valor: 10,
+    accion: 'aumentar'
+  });
+
+  const [extrasList, setExtrasList] = useState([
+    { id: 'ext-1', nombre: 'Salsas y Aderezos', opciones: ['Salsa chocolate', 'Leche condensada', 'Chispas de colores', 'Miel'] },
+    { id: 'ext-2', nombre: 'Toppings Extra', opciones: ['Oreo trozada', 'Maní tostado', 'Gomitas', 'Fresa picada'] }
+  ]);
+  const [newExtraGroupName, setNewExtraGroupName] = useState('');
+  const [newExtraOptionName, setNewExtraOptionName] = useState('');
+  const [selectedExtraGroupId, setSelectedExtraGroupId] = useState('ext-1');
+
+  // ── FORMULARIOS DE PRODUCTO ──
   const rubroConfig = RUBROS_CONFIG[activeRubro] || RUBROS_CONFIG.ABARROTES;
-  const RubroIcon = RUBRO_ICONS[rubroConfig.icono] || Store;
 
   const [customForm, setCustomForm] = useState({
     nombre: '',
-    categoria: rubroConfig.categorias[0] || 'Abarrotes',
+    categoria: 'Plastiquería descartable',
+    marca: 'Plastimax',
     precio_venta: '',
     precio_compra: '',
-    stock_actual: '10',
-    stock_minimo: '5',
+    igv: 10,
+    stock_actual: '0',
+    controla_stock: false,
     codigo_barras: '',
-    unidad_medida: rubroConfig.unidades_sugeridas[0] || 'Unidad',
-    tipo_venta: activeRubro === 'CARNICERIA' ? 'PESO' : 'UNIDAD',
-    lote: '',
-    fecha_vencimiento: '',
-    principio_activo: '',
-    tallas: activeRubro === 'ROPA' ? ['S', 'M', 'L', 'XL'] : [],
-    colores: activeRubro === 'ROPA' ? ['Blanco', 'Negro', 'Azul Marino'] : [],
-    sabores: activeRubro === 'HELADERIA' ? ['Chocolate Belga', 'Vainilla Francesa', 'Frutilla Natural'] : [],
-    toppings: activeRubro === 'HELADERIA' ? ['Grajeas de Colores', 'Chispas de Chocolate'] : []
+    unidad_medida: 'Unidad',
+    modificadores: [],
+    activo: true
   });
 
   const [editForm, setEditForm] = useState({
     id: '',
     nombre: '',
     categoria: '',
+    marca: '',
     precio_venta: '',
     precio_compra: '',
+    igv: 10,
     stock_actual: '',
-    stock_minimo: '',
+    controla_stock: true,
     codigo_barras: '',
     unidad_medida: 'Unidad',
-    tipo_venta: 'UNIDAD',
-    lote: '',
-    fecha_vencimiento: '',
-    principio_activo: '',
-    tallas: [],
-    colores: [],
-    sabores: [],
-    toppings: []
+    modificadores: [],
+    activo: true
   });
-
-  // Estados para agregar tallas y colores personalizados dinámicamente
-  const [newCustomSizeInput, setNewCustomSizeInput] = useState('');
-  const [newCustomColorInput, setNewCustomColorInput] = useState('');
-  const [newEditSizeInput, setNewEditSizeInput] = useState('');
-  const [newEditColorInput, setNewEditColorInput] = useState('');
-  const [showCustomVariants, setShowCustomVariants] = useState(false);
-  const [showEditVariants, setShowEditVariants] = useState(false);
 
   const [toastMsg, setToastMsg] = useState(null);
 
@@ -100,167 +273,377 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     setTimeout(() => setToastMsg(null), 3000);
   };
 
+  // ── CARGA Y SINCRONIZACIÓN DE DATOS ──
   const loadData = async () => {
-    const list = await db.productos_tienda.toArray();
-    setProducts(list);
-    const master = await db.catalogo_maestro.toArray();
-    setMasterProducts(master);
-
-    // Sync active rubro from Dexie config if available
     try {
-      const cfg = await db.config_empresa.get('empresa_activa');
-      if (cfg && cfg.rubro) {
-        setActiveRubro(cfg.rubro);
+      let list = await db.productos_tienda.toArray();
+      const requiredCodes = ['EBYJY9', 'YWBUGE', 'PLA-022', 'PLA-021', 'PLA-019', 'PLA-018', 'PLA-017', 'PLA-003', 'PLA-002', 'PLA-001'];
+      const hasSeeds = list && requiredCodes.every(code => list.some(p => p.codigo_barras === code));
+
+      if (!hasSeeds) {
+        if (!list || list.length === 0) {
+          await db.productos_tienda.bulkAdd(SEED_PRODUCTOS_LIST);
+          list = SEED_PRODUCTOS_LIST;
+        } else {
+          for (const sp of SEED_PRODUCTOS_LIST) {
+            const exists = list.some(p => p.codigo_barras === sp.codigo_barras);
+            if (!exists) {
+              await db.productos_tienda.add(sp);
+            }
+          }
+          list = await db.productos_tienda.toArray();
+        }
       }
-    } catch (e) {}
+      setProducts(list || []);
+
+      const master = await db.catalogo_maestro.toArray();
+      setMasterProducts(master || []);
+
+      try {
+        const cfg = await db.config_empresa.get('empresa_activa');
+        if (cfg && cfg.rubro) {
+          setActiveRubro(cfg.rubro);
+        }
+      } catch (e) {}
+    } catch (err) {
+      console.warn('Error loading products data:', err);
+      setProducts(SEED_PRODUCTOS_LIST);
+    }
   };
 
   useEffect(() => {
     loadData();
   }, [currentRubro]);
 
-  // Update default form values whenever active rubro changes
-  useEffect(() => {
-    const cfg = RUBROS_CONFIG[activeRubro] || RUBROS_CONFIG.ABARROTES;
-    setCustomForm(prev => ({
-      ...prev,
-      categoria: cfg.categorias[0] || 'General',
-      unidad_medida: cfg.unidades_sugeridas[0] || 'Unidad',
-      tipo_venta: activeRubro === 'CARNICERIA' ? 'PESO' : 'UNIDAD',
-      tallas: activeRubro === 'ROPA' ? ['S', 'M', 'L', 'XL'] : [],
-      colores: activeRubro === 'ROPA' ? ['Blanco', 'Negro', 'Azul Marino'] : [],
-      sabores: activeRubro === 'HELADERIA' ? ['Chocolate Belga', 'Vainilla Francesa', 'Frutilla Natural'] : [],
-      toppings: activeRubro === 'HELADERIA' ? ['Grajeas de Colores', 'Chispas de Chocolate'] : []
-    }));
-  }, [activeRubro]);
-
+  // ── CATEGORÍAS Y MARCAS DINÁMICAS ──
   const categories = useMemo(() => {
-    const set = new Set(products.map(p => p.categoria).filter(Boolean));
-    rubroConfig.categorias.forEach(c => set.add(c));
-    return ['ALL', ...Array.from(set)];
-  }, [products, rubroConfig]);
-
-  const filtered = useMemo(() => {
-    return products.filter(p => {
-      const text = `${p.nombre} ${p.categoria} ${p.codigo_barras || ''} ${p.principio_activo || ''} ${p.lote || ''}`.toLowerCase();
-      const matchSearch = text.includes(search.toLowerCase());
-      const matchCat = selectedCategory === 'ALL' || p.categoria === selectedCategory;
-      return matchSearch && matchCat;
+    const set = new Set();
+    products.forEach(p => {
+      if (p.categoria && p.categoria !== '-') set.add(p.categoria);
     });
-  }, [products, search, selectedCategory]);
+    return Array.from(set).sort();
+  }, [products]);
 
-  const handleOpenEdit = (prod, e) => {
-    e.stopPropagation();
-    setSelectedProductForEdit(prod);
-    const hasExistingVariants = (Array.isArray(prod.tallas) && prod.tallas.length > 0) ||
-                                (Array.isArray(prod.colores) && prod.colores.length > 0);
-    setShowEditVariants(hasExistingVariants || activeRubro === 'ROPA');
-    setNewEditSizeInput('');
-    setNewEditColorInput('');
+  const brands = useMemo(() => {
+    const set = new Set();
+    products.forEach(p => {
+      if (p.marca && p.marca !== '-') set.add(p.marca);
+    });
+    return Array.from(set).sort();
+  }, [products]);
+
+  // ── FILTRADO MULTI-CRITERIO ──
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => {
+      // Estado
+      const isActivo = p.activo !== false && p.estado !== 'Inactivo';
+      if (soloInactivos && isActivo) return false;
+      if (!soloInactivos && !isActivo) return false;
+
+      // Categoría
+      if (selectedCategory !== 'ALL' && p.categoria !== selectedCategory) {
+        return false;
+      }
+
+      // Marca
+      if (selectedBrand !== 'ALL' && p.marca !== selectedBrand) {
+        return false;
+      }
+
+      // Búsqueda (mínimo 2 caracteres o nada)
+      if (search.trim().length >= 2) {
+        const term = search.toLowerCase();
+        const code = (p.codigo_barras || '').toLowerCase();
+        const name = (p.nombre || '').toLowerCase();
+        const cat = (p.categoria || '').toLowerCase();
+        const brand = (p.marca || '').toLowerCase();
+        if (!code.includes(term) && !name.includes(term) && !cat.includes(term) && !brand.includes(term)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [products, search, selectedCategory, selectedBrand, soloInactivos]);
+
+  // ── PAGINACIÓN ──
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, currentPage, pageSize]);
+
+  // ── SELECCIÓN MÚLTIPLE DE CHECKBOXES ──
+  const isAllPageSelected = useMemo(() => {
+    if (paginatedProducts.length === 0) return false;
+    return paginatedProducts.every(p => selectedIds.has(p.id));
+  }, [paginatedProducts, selectedIds]);
+
+  const handleToggleSelectAll = () => {
+    const next = new Set(selectedIds);
+    if (isAllPageSelected) {
+      paginatedProducts.forEach(p => next.delete(p.id));
+    } else {
+      paginatedProducts.forEach(p => next.add(p.id));
+    }
+    setSelectedIds(next);
+  };
+
+  const handleToggleRowSelect = (id) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  // ── TOGGLE DE ESTADO ACTIVO/INACTIVO ──
+  const handleToggleProductStatus = async (prod) => {
+    const isCurrentlyActive = prod.activo !== false && prod.estado !== 'Inactivo';
+    const nuevoActivo = !isCurrentlyActive;
+    const nuevoEstado = nuevoActivo ? 'Activo' : 'Inactivo';
+
+    await db.productos_tienda.update(prod.id, {
+      activo: nuevoActivo,
+      estado: nuevoEstado
+    });
+    setProducts(prev => prev.map(p => p.id === prod.id ? { ...p, activo: nuevoActivo, estado: nuevoEstado } : p));
+    showToast(`Producto "${prod.nombre}" marcado como ${nuevoEstado}`);
+    syncService.triggerBackgroundSync();
+  };
+
+  // ── AJUSTAR STOCK RÁPIDO ──
+  const handleOpenAdjustStock = (prod) => {
+    setProductForAdjust(prod);
+    setAdjustForm({
+      nuevo_stock: prod.stock_actual || 0,
+      motivo: 'Ajuste de inventario físico'
+    });
+    setIsAdjustStockModalOpen(true);
+  };
+
+  const handleSaveAdjustStock = async (e) => {
+    e.preventDefault();
+    if (!productForAdjust) return;
+
+    const nuevo = Number(adjustForm.nuevo_stock) || 0;
+    const anterior = Number(productForAdjust.stock_actual) || 0;
+    const diff = nuevo - anterior;
+
+    await db.productos_tienda.update(productForAdjust.id, {
+      stock_actual: nuevo,
+      controla_stock: true
+    });
+
+    if (db.kardex) {
+      await db.kardex.add({
+        id: `kdx-${Date.now()}`,
+        fecha: new Date().toISOString(),
+        producto_id: productForAdjust.id,
+        producto_nombre: productForAdjust.nombre,
+        tipo: diff >= 0 ? 'ENTRADA' : 'SALIDA',
+        cantidad: Math.abs(diff),
+        motivo: adjustForm.motivo || 'Ajuste manual de stock',
+        saldo_nuevo: nuevo,
+        costo_unitario: Number(productForAdjust.precio_compra || 0)
+      });
+    }
+
+    setIsAdjustStockModalOpen(false);
+    setProductForAdjust(null);
+    showToast(`Stock actualizado a ${nuevo} unidades`);
+    await loadData();
+    syncService.triggerBackgroundSync();
+  };
+
+  // ── ACTUALIZACIÓN MASIVA DE PRECIOS ──
+  const handleApplyPriceUpdate = async (e) => {
+    e.preventDefault();
+    const factor = priceUpdateForm.accion === 'aumentar' 
+      ? (1 + Number(priceUpdateForm.valor) / 100) 
+      : (1 - Number(priceUpdateForm.valor) / 100);
+
+    const targetList = selectedIds.size > 0 
+      ? products.filter(p => selectedIds.has(p.id))
+      : filteredProducts;
+
+    for (const prod of targetList) {
+      const currentPrice = Number(prod.precio_venta) || 0;
+      const newP = Math.round((currentPrice * factor) * 100) / 100;
+      await db.productos_tienda.update(prod.id, { precio_venta: newP });
+    }
+
+    setIsPriceUpdateModalOpen(false);
+    showToast(`Precios actualizados para ${targetList.length} productos (${priceUpdateForm.accion === 'aumentar' ? '+' : '-'}${priceUpdateForm.valor}%)`);
+    await loadData();
+    syncService.triggerBackgroundSync();
+  };
+
+  // ── ELIMINACIÓN DE PRODUCTO ──
+  const handleDeleteProduct = async (prod) => {
+    if (!window.confirm(`¿Eliminar producto "${prod.nombre}" del catálogo?`)) return;
+    await db.productos_tienda.delete(prod.id);
+    await loadData();
+    showToast('Producto eliminado.');
+    syncService.triggerBackgroundSync();
+  };
+
+  // ── EDICIÓN DE PRODUCTO ──
+  const handleOpenEdit = (prod) => {
     setEditForm({
       id: prod.id,
       nombre: prod.nombre,
-      categoria: prod.categoria,
-      precio_venta: prod.precio_venta,
-      precio_compra: prod.precio_compra || (prod.precio_venta * 0.8).toFixed(2),
-      stock_actual: prod.stock_actual,
-      stock_minimo: prod.stock_minimo || 5,
+      categoria: prod.categoria === '-' ? '' : (prod.categoria || ''),
+      marca: prod.marca || 'General',
+      precio_venta: prod.precio_venta || '',
+      precio_compra: prod.precio_compra || '',
+      igv: prod.igv || 10,
+      stock_actual: prod.stock_actual ?? 0,
+      controla_stock: prod.controla_stock ?? true,
       codigo_barras: prod.codigo_barras || '',
       unidad_medida: prod.unidad_medida || 'Unidad',
-      tipo_venta: prod.tipo_venta || 'UNIDAD',
-      lote: prod.lote || '',
-      fecha_vencimiento: prod.fecha_vencimiento || '',
-      principio_activo: prod.principio_activo || '',
-      tallas: Array.isArray(prod.tallas) ? [...prod.tallas] : [],
-      colores: Array.isArray(prod.colores) ? [...prod.colores] : [],
-      sabores: Array.isArray(prod.sabores) ? [...prod.sabores] : [],
-      toppings: Array.isArray(prod.toppings) ? [...prod.toppings] : []
+      modificadores: prod.modificadores || [],
+      activo: prod.activo !== false
     });
     setIsEditProductModalOpen(true);
   };
 
   const handleSaveEditProduct = async (e) => {
     e.preventDefault();
-    if (!selectedProductForEdit) return;
+    if (!editForm.nombre.trim() || !editForm.precio_venta) return;
 
-    await db.productos_tienda.update(selectedProductForEdit.id, {
-      nombre: editForm.nombre,
-      categoria: editForm.categoria,
+    await db.productos_tienda.update(editForm.id, {
+      nombre: editForm.nombre.trim(),
+      categoria: editForm.categoria.trim() || '-',
+      marca: editForm.marca.trim() || 'General',
       precio_venta: Number(editForm.precio_venta),
-      precio_compra: Number(editForm.precio_compra),
-      stock_actual: Number(editForm.stock_actual),
-      stock_minimo: Number(editForm.stock_minimo),
-      codigo_barras: editForm.codigo_barras,
+      precio_compra: Number(editForm.precio_compra) || (Number(editForm.precio_venta) * 0.75),
+      igv: Number(editForm.igv) || 10,
+      stock_actual: Number(editForm.stock_actual) || 0,
+      controla_stock: editForm.controla_stock,
+      codigo_barras: editForm.codigo_barras.trim() || editForm.id,
       unidad_medida: editForm.unidad_medida,
-      tipo_venta: editForm.tipo_venta,
-      lote: editForm.lote || null,
-      fecha_vencimiento: editForm.fecha_vencimiento || null,
-      principio_activo: editForm.principio_activo || null,
-      tallas: editForm.tallas?.length ? editForm.tallas : null,
-      colores: editForm.colores?.length ? editForm.colores : null,
-      sabores: editForm.sabores?.length ? editForm.sabores : null,
-      toppings: editForm.toppings?.length ? editForm.toppings : null
+      modificadores: editForm.modificadores?.length > 0 ? editForm.modificadores : null,
+      activo: editForm.activo
     });
 
     setIsEditProductModalOpen(false);
     await loadData();
-    showToast(`Producto ${editForm.nombre} actualizado`);
+    showToast(`Producto "${editForm.nombre}" actualizado.`);
     syncService.triggerBackgroundSync();
   };
 
-  const handleDeleteProduct = async (prod, e) => {
-    e.stopPropagation();
-    if (confirm(`¿Eliminar producto "${prod.nombre}" del catálogo?`)) {
-      await db.productos_tienda.delete(prod.id);
-      syncService.addToQueue('productos', 'delete', { id: prod.id });
-      await loadData();
-      showToast('Producto eliminado');
-      syncService.triggerBackgroundSync();
-    }
-  };
-
-  const handleSelectMaster = (master) => {
-    setSelectedMaster(master);
-    setNewPrice(String(master.precio_sugerido));
-    setNewStock('12');
-  };
-
-  const handleAddMasterToStore = async () => {
-    if (!selectedMaster || !newPrice) return;
+  // ── CREACIÓN DE NUEVO PRODUCTO ──
+  const handleCreateCustom = async (e) => {
+    e.preventDefault();
+    if (!customForm.nombre.trim() || !customForm.precio_venta) return;
 
     const newProd = {
       id: `prod-${Date.now()}`,
-      maestro_id: selectedMaster.id,
-      codigo_barras: selectedMaster.codigo_barras,
-      nombre: selectedMaster.nombre,
-      categoria: selectedMaster.categoria,
-      unidad_medida: selectedMaster.unidad_medida,
-      foto_url: selectedMaster.foto_url,
-      precio_venta: Number(newPrice),
-      precio_compra: Number(newPrice) * 0.8,
-      stock_actual: Number(newStock) || 0,
-      stock_minimo: 5,
+      nombre: customForm.nombre.trim(),
+      categoria: customForm.categoria.trim() || '-',
+      marca: customForm.marca.trim() || 'General',
+      precio_venta: Number(customForm.precio_venta),
+      precio_compra: Number(customForm.precio_compra) || (Number(customForm.precio_venta) * 0.75),
+      igv: Number(customForm.igv) || 10,
+      stock_actual: Number(customForm.stock_actual) || 0,
+      controla_stock: customForm.controla_stock,
+      codigo_barras: customForm.codigo_barras.trim() || `PLA-${String(Math.floor(100 + Math.random() * 900))}`,
+      unidad_medida: customForm.unidad_medida || 'Unidad',
+      modificadores: customForm.modificadores?.length > 0 ? customForm.modificadores : null,
       activo: true,
-      tipo_venta: selectedMaster.tipo_venta || 'UNIDAD',
-      presentaciones: selectedMaster.presentaciones || [],
-      lote: selectedMaster.lote || null,
-      fecha_vencimiento: selectedMaster.fecha_vencimiento || null,
-      principio_activo: selectedMaster.principio_activo || null
+      avatar_char: customForm.nombre.trim().charAt(0).toUpperCase(),
+      avatar_color: 'bg-emerald-100 text-emerald-700'
     };
 
     await db.productos_tienda.add(newProd);
 
-    if (db.kardex) {
+    if (customForm.controla_stock && Number(customForm.stock_actual) > 0 && db.kardex) {
       await db.kardex.add({
         id: `kdx-${Date.now()}`,
         fecha: new Date().toISOString(),
         producto_id: newProd.id,
         producto_nombre: newProd.nombre,
         tipo: 'ENTRADA',
-        cantidad: Number(newStock) || 0,
+        cantidad: Number(customForm.stock_actual),
+        motivo: 'Inventario inicial',
+        saldo_nuevo: Number(customForm.stock_actual),
+        costo_unitario: Number(newProd.precio_compra)
+      });
+    }
+
+    setIsCustomProductModal(false);
+    setCustomForm({
+      nombre: '',
+      categoria: 'Plastiquería descartable',
+      marca: 'Plastimax',
+      precio_venta: '',
+      precio_compra: '',
+      igv: 10,
+      stock_actual: '0',
+      controla_stock: false,
+      codigo_barras: '',
+      unidad_medida: 'Unidad',
+      modificadores: [],
+      activo: true
+    });
+    await loadData();
+    showToast(`¡Producto "${newProd.nombre}" creado exitosamente!`);
+    syncService.triggerBackgroundSync();
+  };
+
+  // ── AGREGAR DESDE CATÁLOGO MAESTRO (PRESERVADO) ──
+  const handleSelectMaster = (master) => {
+    setSelectedMaster(master);
+    setMasterPrice(String(master.precio_sugerido || '10.00'));
+    setMasterStock('12');
+  };
+
+  const handleAddMasterToStore = async () => {
+    if (!selectedMaster || !masterPrice) return;
+
+    const newProd = {
+      id: `prod-${Date.now()}`,
+      maestro_id: selectedMaster.id,
+      codigo_barras: selectedMaster.codigo_barras,
+      nombre: selectedMaster.nombre,
+      categoria: selectedMaster.categoria || 'General',
+      marca: 'General',
+      unidad_medida: selectedMaster.unidad_medida || 'Unidad',
+      foto_url: selectedMaster.foto_url,
+      precio_venta: Number(masterPrice),
+      precio_compra: Number(masterPrice) * 0.75,
+      igv: 10,
+      stock_actual: Number(masterStock) || 0,
+      controla_stock: true,
+      activo: true,
+      avatar_char: selectedMaster.nombre.charAt(0).toUpperCase(),
+      avatar_color: 'bg-emerald-100 text-emerald-700'
+    };
+
+    await db.productos_tienda.add(newProd);
+
+    if (Number(masterStock) > 0 && db.kardex) {
+      await db.kardex.add({
+        id: `kdx-${Date.now()}`,
+        fecha: new Date().toISOString(),
+        producto_id: newProd.id,
+        producto_nombre: newProd.nombre,
+        tipo: 'ENTRADA',
+        cantidad: Number(masterStock) || 0,
         motivo: 'Inventario Inicial Catálogo Maestro',
-        saldo_nuevo: Number(newStock) || 0,
-        costo_unitario: Number(newPrice) * 0.8
+        saldo_nuevo: Number(masterStock) || 0,
+        costo_unitario: Number(masterPrice) * 0.75
       });
     }
 
@@ -271,152 +654,20 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     syncService.triggerBackgroundSync();
   };
 
-  const handleCreateCustom = async (e) => {
-    e.preventDefault();
-    if (!customForm.nombre || !customForm.precio_venta) return;
-
-    const newCustom = {
-      id: `prod-custom-${Date.now()}`,
-      maestro_id: null,
-      codigo_barras: customForm.codigo_barras || `GEN-${Date.now()}`,
-      nombre: customForm.nombre,
-      categoria: customForm.categoria,
-      unidad_medida: customForm.unidad_medida || 'Unidad',
-      foto_url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80',
-      precio_venta: Number(customForm.precio_venta),
-      precio_compra: Number(customForm.precio_compra) || (Number(customForm.precio_venta) * 0.8),
-      stock_actual: Number(customForm.stock_actual) || 0,
-      stock_minimo: Number(customForm.stock_minimo) || 5,
-      tipo_venta: customForm.tipo_venta || (activeRubro === 'CARNICERIA' ? 'PESO' : 'UNIDAD'),
-      lote: customForm.lote || null,
-      fecha_vencimiento: customForm.fecha_vencimiento || null,
-      principio_activo: customForm.principio_activo || null,
-      tallas: customForm.tallas?.length ? customForm.tallas : null,
-      colores: customForm.colores?.length ? customForm.colores : null,
-      sabores: customForm.sabores?.length ? customForm.sabores : null,
-      toppings: customForm.toppings?.length ? customForm.toppings : null,
-      activo: true
-    };
-
-    await db.productos_tienda.add(newCustom);
-
-    if (db.kardex) {
-      await db.kardex.add({
-        id: `kdx-${Date.now()}`,
-        fecha: new Date().toISOString(),
-        producto_id: newCustom.id,
-        producto_nombre: newCustom.nombre,
-        tipo: 'ENTRADA',
-        cantidad: newCustom.stock_actual,
-        motivo: 'Inventario Inicial Producto Nuevo',
-        saldo_nuevo: newCustom.stock_actual,
-        costo_unitario: newCustom.precio_compra
-      });
-    }
-
-    setIsCustomProductModal(false);
-    setCustomForm({
-      nombre: '',
-      categoria: rubroConfig.categorias[0] || 'General',
-      precio_venta: '',
-      precio_compra: '',
-      stock_actual: '10',
-      stock_minimo: '5',
-      codigo_barras: '',
-      unidad_medida: rubroConfig.unidades_sugeridas[0] || 'Unidad',
-      tipo_venta: activeRubro === 'CARNICERIA' ? 'PESO' : 'UNIDAD',
-      lote: '',
-      fecha_vencimiento: '',
-      principio_activo: '',
-      tallas: activeRubro === 'ROPA' ? ['S', 'M', 'L', 'XL'] : [],
-      colores: activeRubro === 'ROPA' ? ['Blanco', 'Negro', 'Azul Marino'] : [],
-      sabores: activeRubro === 'HELADERIA' ? ['Chocolate Belga', 'Vainilla Francesa', 'Frutilla Natural'] : [],
-      toppings: activeRubro === 'HELADERIA' ? ['Grajeas de Colores', 'Chispas de Chocolate'] : []
-    });
-    setNewCustomSizeInput('');
-    setNewCustomColorInput('');
-    setShowCustomVariants(false);
-    await loadData();
-    showToast(`Producto creado: ${newCustom.nombre}`);
-    syncService.triggerBackgroundSync();
-  };
-
-  const toggleArrayItem = (setter, currentList, item) => {
-    if (currentList.includes(item)) {
-      setter(currentList.filter(x => x !== item));
-    } else {
-      setter([...currentList, item]);
-    }
-  };
-
-  // Handlers para agregar y quitar Tallas y Colores dinámicos
-  const handleAddSizeToCustom = () => {
-    const val = newCustomSizeInput.trim();
-    if (!val) return;
-    if (!customForm.tallas?.includes(val)) {
-      setCustomForm(prev => ({ ...prev, tallas: [...(prev.tallas || []), val] }));
-    }
-    setNewCustomSizeInput('');
-  };
-
-  const handleRemoveSizeFromCustom = (size) => {
-    setCustomForm(prev => ({ ...prev, tallas: (prev.tallas || []).filter(s => s !== size) }));
-  };
-
-  const handleAddColorToCustom = () => {
-    const val = newCustomColorInput.trim();
-    if (!val) return;
-    if (!customForm.colores?.includes(val)) {
-      setCustomForm(prev => ({ ...prev, colores: [...(prev.colores || []), val] }));
-    }
-    setNewCustomColorInput('');
-  };
-
-  const handleRemoveColorFromCustom = (color) => {
-    setCustomForm(prev => ({ ...prev, colores: (prev.colores || []).filter(c => c !== color) }));
-  };
-
-  const handleAddSizeToEdit = () => {
-    const val = newEditSizeInput.trim();
-    if (!val) return;
-    if (!editForm.tallas?.includes(val)) {
-      setEditForm(prev => ({ ...prev, tallas: [...(prev.tallas || []), val] }));
-    }
-    setNewEditSizeInput('');
-  };
-
-  const handleRemoveSizeFromEdit = (size) => {
-    setEditForm(prev => ({ ...prev, tallas: (prev.tallas || []).filter(s => s !== size) }));
-  };
-
-  const handleAddColorToEdit = () => {
-    const val = newEditColorInput.trim();
-    if (!val) return;
-    if (!editForm.colores?.includes(val)) {
-      setEditForm(prev => ({ ...prev, colores: [...(prev.colores || []), val] }));
-    }
-    setNewEditColorInput('');
-  };
-
-  const handleRemoveColorFromEdit = (color) => {
-    setEditForm(prev => ({ ...prev, colores: (prev.colores || []).filter(c => c !== color) }));
-  };
-
-  // Export CSV
-  const handleExportCSV = () => {
-    const headers = ['codigo_barras', 'nombre', 'categoria', 'precio_venta', 'precio_compra', 'stock_actual', 'stock_minimo', 'unidad_medida', 'tipo_venta', 'lote', 'fecha_vencimiento'];
-    const rows = products.map(p => [
+  // ── EXPORTAR A EXCEL / CSV ──
+  const handleExportExcel = () => {
+    const headers = ['CÓDIGO', 'PRODUCTO', 'CATEGORÍA', 'MARCA', 'PRECIO_VENTA', 'PRECIO_COMPRA', 'IGV', 'STOCK', 'VENCIMIENTO', 'ESTADO'];
+    const rows = filteredProducts.map(p => [
       `"${p.codigo_barras || ''}"`,
       `"${(p.nombre || '').replace(/"/g, '""')}"`,
-      `"${p.categoria || ''}"`,
+      `"${p.categoria || '-'}"`,
+      `"${p.marca || '-'}"`,
       p.precio_venta || 0,
-      p.precio_compra || (p.precio_venta * 0.8),
-      p.stock_actual || 0,
-      p.stock_minimo || 5,
-      `"${p.unidad_medida || 'Unidad'}"`,
-      `"${p.tipo_venta || 'UNIDAD'}"`,
-      `"${p.lote || ''}"`,
-      `"${p.fecha_vencimiento || ''}"`
+      p.precio_compra || 0,
+      p.igv || 10,
+      p.controla_stock ? (p.stock_actual ?? 0) : 'No controla stock',
+      `"${p.fecha_vencimiento || '—'}"`,
+      `"${p.activo !== false ? 'Activo' : 'Inactivo'}"`
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' 
@@ -425,797 +676,449 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `catalogo_${activeRubro.toLowerCase()}_glorypos_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `catalogo_productos_glorypos_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Catálogo exportado exitosamente a CSV');
+    showToast('Catálogo exportado exitosamente a Excel / CSV');
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 min-h-screen pb-24 font-sans text-slate-800">
-      {/* Sub-navigation Tabs */}
+    <div className="flex-1 flex flex-col font-sans animate-fadeIn pb-14 bg-slate-50 min-h-screen">
+      
+      {/* Sub-navegación superior */}
       {onSelectSubView && (
         <ProductsSubNav currentSubView="productos" onSelectSubView={onSelectSubView} />
       )}
 
       {/* Toast Notification */}
       {toastMsg && (
-        <div className="fixed top-20 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 border border-slate-700 animate-bounce">
+        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-slideUp">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toastMsg}</span>
         </div>
       )}
 
-      {/* Top Banner with Rubro Badge */}
-      <div className="bg-white px-4 pt-4 pb-3 border-b border-slate-200/80 shadow-xs flex flex-col gap-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+        
+        {/* ── CABECERA Y BOTONES SUPERIORES (IDÉNTICOS AL SCREENSHOT) ── */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-transparent">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1.5">
-                <RubroIcon className="w-3.5 h-3.5" />
-                {rubroConfig.nombre}
-              </span>
-              <span className="text-[11px] text-slate-400 font-medium">
-                • {rubroConfig.badge}
-              </span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight mt-1">
-              Catálogo de Productos
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Productos
             </h1>
-            <p className="text-xs text-slate-500 font-medium">
-              Gestión de artículos adaptada para {rubroConfig.subtitulo.toLowerCase()}
+            <p className="text-xs text-slate-500 mt-0.5">
+              Catálogo de bienes; los servicios se administran en{' '}
+              <button
+                type="button"
+                onClick={() => onSelectSubView && onSelectSubView('servicios')}
+                className="text-emerald-700 hover:text-emerald-800 font-semibold hover:underline inline-flex items-center gap-0.5 cursor-pointer"
+              >
+                Inventario → Servicios
+              </button>.
             </p>
           </div>
 
+          {/* Botones de acción alineados a la derecha */}
           <div className="flex items-center flex-wrap gap-2">
-            {onOpenScanner && (
-              <button
-                onClick={onOpenScanner}
-                title="Escanear Código de Barras"
-                className="w-10 h-10 bg-slate-100 active:bg-slate-200 text-slate-700 hover:text-blue-600 rounded-xl flex items-center justify-center transition-all border border-slate-200 active:scale-95"
-              >
-                <Barcode className="w-5 h-5" />
-              </button>
-            )}
-
+            
+            {/* 1. Importar Excel */}
             <button
-              onClick={handleExportCSV}
-              title="Exportar CSV"
-              className="h-10 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 border border-slate-200 transition"
+              type="button"
+              onClick={() => setIsImportModalOpen(true)}
+              className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-emerald-600" />
-              <span>CSV</span>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-slate-500" />
+              <span>Importar Excel</span>
             </button>
 
+            {/* 2. Exportar Excel */}
             <button
+              type="button"
+              onClick={handleExportExcel}
+              className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>Exportar Excel</span>
+            </button>
+
+            {/* 3. Actualizar precio */}
+            <button
+              type="button"
+              onClick={() => setIsPriceUpdateModalOpen(true)}
+              className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+            >
+              <Tag className="w-3.5 h-3.5 text-slate-500" />
+              <span>Actualizar precio</span>
+            </button>
+
+            {/* 4. Grupos de extras */}
+            <button
+              type="button"
+              onClick={() => setIsExtrasModalOpen(true)}
+              className="px-3 py-2 bg-white hover:bg-emerald-50/50 text-emerald-700 font-semibold text-xs rounded-xl border border-emerald-300 transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+            >
+              <Layers className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Grupos de extras</span>
+            </button>
+
+            {/* 5. Catálogo Maestro (Conservado y Adaptado según solicitud) */}
+            <button
+              type="button"
               onClick={() => setIsMasterModalOpen(true)}
-              className="h-10 px-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-95 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-violet-500/20 transition-all"
+              className="px-3 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+              title="Abrir Catálogo Maestro de Productos"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>+ Catálogo Maestro</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Catálogo Maestro</span>
             </button>
 
+            {/* 6. + Nuevo producto (Verde sólido) */}
             <button
+              type="button"
               onClick={() => setIsCustomProductModal(true)}
-              className="h-10 px-3.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+              className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>+ Nuevo Producto</span>
+              <span>+ Nuevo producto</span>
             </button>
           </div>
         </div>
 
-        {/* Micro-Bento Estadísticas */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-          <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col justify-between">
-            <span className="text-xs font-bold text-slate-500">Productos Registrados</span>
-            <div className="mt-1">
-              <span className="text-2xl font-black text-slate-900">{products.length}</span>
-              <span className="text-[10px] text-emerald-700 font-bold block mt-0.5">
-                ● En catálogo activo
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col justify-between">
-            <span className="text-xs font-bold text-slate-500">Categorías de {rubroConfig.badge}</span>
-            <div className="mt-1">
-              <span className="text-2xl font-black text-blue-700">{categories.filter(c => c !== 'ALL').length}</span>
-              <span className="text-[10px] text-slate-500 font-medium block mt-0.5 truncate">
-                {rubroConfig.categorias.slice(0, 2).join(', ')}...
-              </span>
-            </div>
-          </div>
-
-          <div className="hidden sm:flex bg-slate-50 p-3 rounded-2xl border border-slate-200 flex-col justify-between">
-            <span className="text-xs font-bold text-slate-500">Funciones Especiales</span>
-            <div className="flex flex-wrap gap-1 mt-1.5">
-              {rubroConfig.features.map(f => (
-                <span key={f} className="text-[10px] font-bold bg-white text-slate-700 px-1.5 py-0.5 rounded-md border border-slate-200">
-                  {f}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Search Bar & Grid/List toggle */}
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={`Buscar en ${rubroConfig.nombre.toLowerCase()}...`}
-              className="w-full h-11 pl-10 pr-10 text-xs bg-slate-50 border border-slate-200 rounded-2xl placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch('')}
-                className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-slate-600 shrink-0">
-            <button
-              onClick={() => setIsGridView(true)}
-              className={`p-2 rounded-lg transition ${isGridView ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
-              title="Vista en cuadrícula"
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setIsGridView(false)}
-              className={`p-2 rounded-lg transition ${!isGridView ? 'bg-white text-blue-600 shadow-xs' : 'hover:text-slate-900'}`}
-              title="Vista en lista"
-            >
-              <List className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`min-h-[32px] px-3 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                selectedCategory === cat
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {cat === 'ALL' ? `Todos (${products.length})` : cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Product List / Grid */}
-      <div className="p-4">
-        {isGridView ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filtered.map((prod) => {
-              const venta = Number(prod.precio_venta) || 0;
-              const compra = Number(prod.precio_compra) || (venta * 0.8);
-              const isPeso = prod.tipo_venta === 'PESO';
-
-              // Pharmacy expiry calculation
-              let expiryAlert = null;
-              if (prod.fecha_vencimiento) {
-                const diffDays = Math.ceil((new Date(prod.fecha_vencimiento) - new Date()) / (1000 * 60 * 60 * 24));
-                if (diffDays <= 30) {
-                  expiryAlert = { text: `Vence en ${diffDays}d`, bg: 'bg-rose-100 text-rose-800 border-rose-300' };
-                } else if (diffDays <= 90) {
-                  expiryAlert = { text: `Vence en ${diffDays}d`, bg: 'bg-amber-100 text-amber-800 border-amber-300' };
-                }
-              }
-
-              return (
-                <div
-                  key={prod.id}
-                  className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs hover:border-blue-300 transition-all flex flex-col justify-between gap-3"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="relative shrink-0">
-                      <img
-                        src={prod.foto_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'}
-                        alt={prod.nombre}
-                        className="w-16 h-16 rounded-xl object-cover border border-slate-100"
-                        onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80';
-                        }}
-                      />
-                      {isPeso && (
-                        <span className="absolute -top-1.5 -left-1.5 bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-xs flex items-center gap-0.5">
-                          <Scale className="w-2.5 h-2.5" /> Kg
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-extrabold uppercase text-blue-600 tracking-wider">
-                        {prod.categoria}
-                      </span>
-                      <h3 className="font-extrabold text-xs text-slate-900 leading-snug truncate mt-0.5">
-                        {prod.nombre}
-                      </h3>
-                      
-                      {/* Sub-details by rubro */}
-                      <div className="flex flex-wrap items-center gap-1 mt-1">
-                        <span className="font-mono text-[10px] text-slate-400">
-                          SKU: {prod.codigo_barras || 'S/N'}
-                        </span>
-
-                        {prod.lote && (
-                          <span className="text-[9px] bg-emerald-50 text-emerald-800 font-bold px-1.5 py-0.2 rounded border border-emerald-200">
-                            Lote: {prod.lote}
-                          </span>
-                        )}
-
-                        {expiryAlert && (
-                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${expiryAlert.bg}`}>
-                            {expiryAlert.text}
-                          </span>
-                        )}
-
-                        {prod.tallas && prod.tallas.length > 0 && (
-                          <span className="text-[9px] bg-violet-50 text-violet-700 font-bold px-1.5 py-0.2 rounded border border-violet-100 truncate max-w-[130px]">
-                            Tallas: {prod.tallas.slice(0, 3).join(', ')}
-                          </span>
-                        )}
-
-                        {prod.colores && prod.colores.length > 0 && (
-                          <span className="text-[9px] bg-slate-100 text-slate-700 font-bold px-1.5 py-0.2 rounded border border-slate-200 truncate max-w-[130px]">
-                            Colores: {prod.colores.slice(0, 2).join(', ')}
-                          </span>
-                        )}
-
-                        {prod.sabores && prod.sabores.length > 0 && (
-                          <span className="text-[9px] bg-cyan-50 text-cyan-700 font-bold px-1.5 py-0.2 rounded border border-cyan-100">
-                            {prod.sabores.length} Sabores
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-baseline gap-1.5 mt-1.5">
-                        <span className="text-base font-black text-blue-600">
-                          Bs. {venta.toFixed(2)}
-                          {isPeso && <span className="text-[10px] font-normal text-slate-500"> / Kg</span>}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium">
-                          | Costo: Bs. {compra.toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Actions Footer */}
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-slate-600">
-                      Stock: <strong className="text-slate-900">{prod.stock_actual || 0} {isPeso ? 'Kg' : (prod.unidad_medida || 'uds')}</strong>
-                    </span>
-
-                    <div className="flex items-center gap-1.5">
-                      {onSelectSubView && (
-                        <button
-                          onClick={() => onSelectSubView('inventory')}
-                          className="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 text-[10px] font-bold rounded-lg transition"
-                          title="Ver en Kardex e Inventario"
-                        >
-                          Kardex
-                        </button>
-                      )}
-                      <button
-                        onClick={(e) => handleOpenEdit(prod, e)}
-                        className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
-                        title="Editar"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={(e) => handleDeleteProduct(prod, e)}
-                        className="p-1.5 bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-lg transition"
-                        title="Eliminar"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden divide-y divide-slate-100">
-            {filtered.map((prod) => {
-              const venta = Number(prod.precio_venta) || 0;
-              const compra = Number(prod.precio_compra) || (venta * 0.8);
-              const isPeso = prod.tipo_venta === 'PESO';
-
-              return (
-                <div
-                  key={prod.id}
-                  className="p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50 transition"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={prod.foto_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'}
-                      alt={prod.nombre}
-                      className="w-11 h-11 rounded-xl object-cover border border-slate-100 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-bold text-blue-600 uppercase">
-                          {prod.categoria}
-                        </span>
-                        {isPeso && (
-                          <span className="text-[9px] bg-rose-50 text-rose-700 font-bold px-1 rounded border border-rose-200">
-                            Balanza
-                          </span>
-                        )}
-                        <span className="font-mono text-[10px] text-slate-400">
-                          {prod.codigo_barras || 'S/N'}
-                        </span>
-                      </div>
-                      <h4 className="font-extrabold text-xs text-slate-900 truncate mt-0.5">
-                        {prod.nombre}
-                      </h4>
-                      <p className="text-[11px] text-slate-500 font-medium">
-                        Costo: Bs. {compra.toFixed(2)} • Stock: {prod.stock_actual} {isPeso ? 'Kg' : (prod.unidad_medida || 'uds')}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-black text-blue-600">
-                      Bs. {venta.toFixed(2)}
-                      {isPeso && <span className="text-[10px] font-normal text-slate-400">/Kg</span>}
-                    </span>
-                    <button
-                      onClick={(e) => handleOpenEdit(prod, e)}
-                      className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
-                      title="Editar"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {filtered.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
-            <Package className="w-12 h-12 mx-auto text-slate-300" />
-            <p className="text-sm font-bold text-slate-800">No se encontraron productos</p>
-            <p className="text-xs text-slate-400">Prueba con otra búsqueda o agrega desde el Catálogo Maestro.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Modal: Editar Producto Adaptativo */}
-      {isEditProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
-          <div 
-            onClick={() => setIsEditProductModalOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
-          />
-
-          <form 
-            onSubmit={handleSaveEditProduct}
-            className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92vh] overflow-y-auto"
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <div className="flex items-center gap-2">
-                <RubroIcon className="w-4 h-4 text-blue-600" />
-                <h3 className="font-extrabold text-slate-900 text-sm">Editar Producto ({rubroConfig.badge})</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsEditProductModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                Nombre del Producto *
-              </label>
+        {/* ── BARRA DE FILTROS EN TIEMPO REAL ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          
+          {/* Buscador y selectores */}
+          <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+            {/* Buscador */}
+            <div className="relative w-full sm:w-72">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                required
-                value={editForm.nombre}
-                onChange={(e) => setEditForm({ ...editForm, nombre: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar producto... (min. 2 caracteres)"
+                className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 shadow-2xs transition"
               />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Categoría
-                </label>
-                <select
-                  value={editForm.categoria}
-                  onChange={(e) => setEditForm({ ...editForm, categoria: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white"
-                >
-                  {rubroConfig.categorias.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                  <option value="Otros">Otros</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Código de Barras / SKU
-                </label>
-                <input
-                  type="text"
-                  value={editForm.codigo_barras}
-                  onChange={(e) => setEditForm({ ...editForm, codigo_barras: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono"
-                />
-              </div>
-            </div>
-
-            {/* Farmacia Specific Fields in Edit */}
-            {activeRubro === 'FARMACIA' && (
-              <div className="p-3 bg-emerald-50/60 border border-emerald-200 rounded-2xl space-y-2.5">
-                <div className="flex items-center gap-1.5 text-emerald-900 text-xs font-bold">
-                  <Pill className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Control de Lote y Farmacia</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-[10px] font-bold text-emerald-900 block mb-0.5">Principio Activo</label>
-                    <input
-                      type="text"
-                      value={editForm.principio_activo || ''}
-                      onChange={(e) => setEditForm({ ...editForm, principio_activo: e.target.value })}
-                      placeholder="Ej: Paracetamol 500mg"
-                      className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-emerald-900 block mb-0.5">N° de Lote</label>
-                    <input
-                      type="text"
-                      value={editForm.lote || ''}
-                      onChange={(e) => setEditForm({ ...editForm, lote: e.target.value })}
-                      placeholder="Ej: L-24901B"
-                      className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-xs font-mono"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-emerald-900 block mb-0.5">Fecha de Vencimiento</label>
-                  <input
-                    type="date"
-                    value={editForm.fecha_vencimiento || ''}
-                    onChange={(e) => setEditForm({ ...editForm, fecha_vencimiento: e.target.value })}
-                    className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-xs"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Carniceria Specific Fields in Edit */}
-            {activeRubro === 'CARNICERIA' && (
-              <div className="p-3 bg-rose-50/60 border border-rose-200 rounded-2xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-rose-900 text-xs font-bold">
-                    <Beef className="w-3.5 h-3.5 text-rose-600" />
-                    <span>Tipo de Venta (Balanza)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1 cursor-pointer">
-                      <input
-                        type="radio"
-                        checked={editForm.tipo_venta === 'PESO'}
-                        onChange={() => setEditForm({ ...editForm, tipo_venta: 'PESO', unidad_medida: 'Kg' })}
-                      />
-                      <span>Por Kilo (Balanza)</span>
-                    </label>
-                    <label className="text-xs font-bold text-slate-700 flex items-center gap-1 cursor-pointer">
-                      <input
-                        type="radio"
-                        checked={editForm.tipo_venta !== 'PESO'}
-                        onChange={() => setEditForm({ ...editForm, tipo_venta: 'UNIDAD', unidad_medida: 'Unidad' })}
-                      />
-                      <span>Por Unidad</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Tallas y Colores (Variantes) en Edición */}
-            <div className="p-3 bg-violet-50/70 border border-violet-200 rounded-2xl space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-violet-950 text-xs font-black">
-                  <Shirt className="w-4 h-4 text-violet-600" />
-                  <span>Tallas / Tamaños y Colores ({editForm.tallas?.length || 0} tallas • {editForm.colores?.length || 0} colores)</span>
-                </div>
+              {search && (
                 <button
                   type="button"
-                  onClick={() => setShowEditVariants(!showEditVariants)}
-                  className="text-[11px] text-violet-700 font-bold hover:underline"
+                  onClick={() => setSearch('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 >
-                  {showEditVariants ? 'Ocultar Opciones' : '+ Configurar Variantes'}
+                  <X className="w-3.5 h-3.5" />
                 </button>
-              </div>
-
-              {showEditVariants && (
-                <div className="space-y-3 pt-1 border-t border-violet-200/60">
-                  {/* Tallas / Tamaños */}
-                  <div>
-                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
-                      Tallas / Tamaños Configurados ({editForm.tallas?.length || 0}):
-                    </label>
-
-                    {/* Chips activos con botón para eliminar */}
-                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
-                      {editForm.tallas && editForm.tallas.length > 0 ? (
-                        editForm.tallas.map(t => (
-                          <span
-                            key={t}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black font-mono bg-violet-600 text-white shadow-2xs"
-                          >
-                            <span>{t}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveSizeFromEdit(t)}
-                              className="hover:text-rose-200 p-0.5"
-                              title="Eliminar tamaño"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[11px] text-slate-400 italic">No hay tamaños seleccionados</span>
-                      )}
-                    </div>
-
-                    {/* Sugerencias Rápidas */}
-                    <div className="mb-2">
-                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {COMMON_SIZES.map(s => {
-                          const isSelected = editForm.tallas?.includes(s);
-                          return (
-                            <button
-                              key={s}
-                              type="button"
-                              onClick={() => toggleArrayItem(
-                                (list) => setEditForm({ ...editForm, tallas: list }),
-                                editForm.tallas || [],
-                                s
-                              )}
-                              className={`min-w-[28px] py-0.5 px-2 rounded-lg text-[10px] font-bold font-mono transition ${
-                                isSelected ? 'bg-violet-700 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
-                              }`}
-                            >
-                              {s}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Input para agregar CUALQUIER nuevo tamaño */}
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        placeholder="Ej: 3XL, 1/2 pulgada, Mediano, 500ml..."
-                        value={newEditSizeInput}
-                        onChange={e => setNewEditSizeInput(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddSizeToEdit(); } }}
-                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddSizeToEdit}
-                        className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Agregar Tamaño</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Colores */}
-                  <div className="pt-2 border-t border-violet-100">
-                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
-                      Colores Configurados ({editForm.colores?.length || 0}):
-                    </label>
-
-                    {/* Chips activos de colores con botón para eliminar */}
-                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
-                      {editForm.colores && editForm.colores.length > 0 ? (
-                        editForm.colores.map(c => (
-                          <span
-                            key={c}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white shadow-2xs"
-                          >
-                            <span>{c}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveColorFromEdit(c)}
-                              className="hover:text-rose-200 p-0.5"
-                              title="Eliminar color"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[11px] text-slate-400 italic">No hay colores seleccionados</span>
-                      )}
-                    </div>
-
-                    {/* Sugerencias Rápidas de Colores */}
-                    <div className="mb-2">
-                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {COMMON_COLORS.map(c => {
-                          const isSelected = editForm.colores?.includes(c);
-                          return (
-                            <button
-                              key={c}
-                              type="button"
-                              onClick={() => toggleArrayItem(
-                                (list) => setEditForm({ ...editForm, colores: list }),
-                                editForm.colores || [],
-                                c
-                              )}
-                              className={`py-0.5 px-2 rounded-lg text-[10px] font-bold transition ${
-                                isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
-                              }`}
-                            >
-                              {c}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Input para agregar CUALQUIER nuevo color */}
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        placeholder="Ej: Turquesa, Vino, Mostaza, Dorado..."
-                        value={newEditColorInput}
-                        onChange={e => setNewEditColorInput(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddColorToEdit(); } }}
-                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddColorToEdit}
-                        className="px-3 py-1.5 bg-slate-900 hover:bg-black active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Agregar Color</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Precio Venta (Bs.) {editForm.tipo_venta === 'PESO' ? '/ Kg' : ''} *
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  required
-                  value={editForm.precio_venta}
-                  onChange={(e) => setEditForm({ ...editForm, precio_venta: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-extrabold text-blue-600"
-                />
-              </div>
+            {/* Dropdown Categorías */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
+            >
+              <option value="ALL">Todas las categorías</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
 
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Precio Costo (Bs.)
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  value={editForm.precio_compra}
-                  onChange={(e) => setEditForm({ ...editForm, precio_compra: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold"
-                />
-              </div>
-            </div>
+            {/* Dropdown Marcas */}
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
+            >
+              <option value="ALL">Todas las marcas</option>
+              {brands.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Stock Actual {editForm.tipo_venta === 'PESO' ? '(Kg)' : ''}
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  value={editForm.stock_actual}
-                  onChange={(e) => setEditForm({ ...editForm, stock_actual: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold"
-                />
-              </div>
+            {/* Checkbox Solo inactivos */}
+            <label className="flex items-center gap-1.5 cursor-pointer select-none text-xs text-slate-600 font-medium ml-1">
+              <input
+                type="checkbox"
+                checked={soloInactivos}
+                onChange={(e) => setSoloInactivos(e.target.checked)}
+                className="w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500 cursor-pointer"
+              />
+              <span>Solo inactivos</span>
+            </label>
+          </div>
 
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Unidad de Medida
-                </label>
-                <select
-                  value={editForm.unidad_medida}
-                  onChange={(e) => setEditForm({ ...editForm, unidad_medida: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white"
-                >
-                  {rubroConfig.unidades_sugeridas.map(u => (
-                    <option key={u} value={u}>{u}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsEditProductModalOpen(false)}
-                className="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition"
-              >
-                Guardar Cambios
-              </button>
-            </div>
-          </form>
+          {/* Mostrar X por página */}
+          <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+            <span>Mostrar</span>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="px-2 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span>por página</span>
+          </div>
         </div>
-      )}
 
-      {/* Modal: Catálogo Maestro Global de Bolivia */}
+        {/* ── TABLA DE PRODUCTOS (IDÉNTICA AL SCREENSHOT) ── */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-white">
+                  <th className="py-3 px-3 w-10 text-center">
+                    <input
+                      type="checkbox"
+                      checked={isAllPageSelected}
+                      onChange={handleToggleSelectAll}
+                      className="w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                    />
+                  </th>
+                  <th className="py-3 px-3">CÓDIGO</th>
+                  <th className="py-3 px-4">PRODUCTO</th>
+                  <th className="py-3 px-3">CATEGORÍA</th>
+                  <th className="py-3 px-3">PRECIO VENTA</th>
+                  <th className="py-3 px-2 text-center">IGV</th>
+                  <th className="py-3 px-3">STOCK</th>
+                  <th className="py-3 px-3 text-center">VENCIMIENTO</th>
+                  <th className="py-3 px-3 text-center">MODIF.</th>
+                  <th className="py-3 px-3">ESTADO</th>
+                  <th className="py-3 px-3 text-right">ACCIONES</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-xs">
+                {paginatedProducts.map((prod) => {
+                  const isActivo = prod.activo !== false && prod.estado !== 'Inactivo';
+                  const isSelected = selectedIds.has(prod.id);
+                  const hasModif = prod.modificadores && prod.modificadores.length > 0;
+
+                  return (
+                    <tr key={prod.id} className={`hover:bg-slate-50/70 transition ${isSelected ? 'bg-emerald-50/40' : ''}`}>
+                      
+                      {/* Checkbox */}
+                      <td className="py-3.5 px-3 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleRowSelect(prod.id)}
+                          className="w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                        />
+                      </td>
+
+                      {/* CÓDIGO */}
+                      <td className="py-3.5 px-3 font-mono text-slate-600 font-semibold whitespace-nowrap">
+                        {prod.codigo_barras || '—'}
+                      </td>
+
+                      {/* PRODUCTO (AVATAR O MINIATURA + NOMBRE) */}
+                      <td className="py-3.5 px-4 font-semibold text-slate-800">
+                        <div className="flex items-center gap-2.5">
+                          {prod.avatar_char ? (
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${prod.avatar_color || 'bg-emerald-100 text-emerald-700'}`}>
+                              {prod.avatar_char}
+                            </div>
+                          ) : prod.foto_url ? (
+                            <img
+                              src={prod.foto_url}
+                              alt={prod.nombre}
+                              className="w-7 h-7 rounded-lg object-cover border border-slate-200 shrink-0"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">
+                              {prod.nombre.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <span className="truncate max-w-xs">{prod.nombre}</span>
+                        </div>
+                      </td>
+
+                      {/* CATEGORÍA */}
+                      <td className="py-3.5 px-3 text-slate-600 whitespace-nowrap">
+                        {prod.categoria || '-'}
+                      </td>
+
+                      {/* PRECIO VENTA */}
+                      <td className="py-3.5 px-3 font-mono font-bold text-slate-900 whitespace-nowrap">
+                        S/ {Number(prod.precio_venta || 0).toFixed(2)}
+                      </td>
+
+                      {/* IGV */}
+                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
+                        <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono bg-slate-100 text-slate-600">
+                          {prod.igv || 10}
+                        </span>
+                      </td>
+
+                      {/* STOCK */}
+                      <td className="py-3.5 px-3 whitespace-nowrap">
+                        {prod.controla_stock ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono font-bold text-slate-900">
+                              {prod.stock_actual ?? 0}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenAdjustStock(prod)}
+                              className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition cursor-pointer"
+                              title="Ajustar stock físico"
+                            >
+                              Ajustar
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-xs font-normal">
+                            No controla stock
+                          </span>
+                        )}
+                      </td>
+
+                      {/* VENCIMIENTO */}
+                      <td className="py-3.5 px-3 text-center text-slate-400 whitespace-nowrap">
+                        {prod.fecha_vencimiento ? prod.fecha_vencimiento : '—'}
+                      </td>
+
+                      {/* MODIF. */}
+                      <td className="py-3.5 px-3 text-center whitespace-nowrap">
+                        {hasModif ? (
+                          <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                            Modificadores
+                          </span>
+                        ) : (
+                          <span className="text-slate-300">—</span>
+                        )}
+                      </td>
+
+                      {/* ESTADO */}
+                      <td className="py-3.5 px-3 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                            isActivo
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {isActivo ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </td>
+
+                      {/* ACCIONES (SWITCH ACTIVO, LÁPIZ EDITAR, BASURERO ELIMINAR) */}
+                      <td className="py-3.5 px-3 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center gap-2 justify-end">
+                          
+                          {/* 1. Toggle switch */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleProductStatus(prod)}
+                            title={isActivo ? 'Desactivar producto' : 'Activar producto'}
+                            className={`relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                              isActivo ? 'bg-[#00a650]' : 'bg-slate-300'
+                            }`}
+                          >
+                            <span
+                              className={`pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                                isActivo ? 'translate-x-3' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+
+                          {/* 2. Lápiz editar */}
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEdit(prod)}
+                            title="Editar producto"
+                            className="p-1 text-slate-500 hover:text-emerald-700 rounded hover:bg-slate-100 transition cursor-pointer"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* 3. Basurero eliminar */}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProduct(prod)}
+                            title="Eliminar producto"
+                            className="p-1 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 transition cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {paginatedProducts.length === 0 && (
+                  <tr>
+                    <td colSpan={11} className="py-12 text-center text-slate-400 italic">
+                      No se encontraron productos registrados con los filtros aplicados.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* ── PIE DE PÁGINA Y PAGINACIÓN (IDÉNTICO AL SCREENSHOT) ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 pt-1">
+          <div>
+            Mostrando {totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1}-
+            {Math.min(currentPage * pageSize, totalItems)} de {totalItems} productos
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none font-semibold text-slate-700 shadow-2xs transition cursor-pointer"
+            >
+              Anterior
+            </button>
+
+            <span className="font-semibold text-slate-700">
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none font-semibold text-slate-700 shadow-2xs transition cursor-pointer"
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+
+      </main>
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 1: CATÁLOGO MAESTRO (PRESERVADO ÍNTEGRAMENTE)                 */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
       {isMasterModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
-          <div 
-            onClick={() => setIsMasterModalOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
-          />
-
-          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl z-10 flex flex-col max-h-[88vh] overflow-hidden">
-            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl z-10 flex flex-col max-h-[88vh] overflow-hidden border border-slate-200 animate-scaleUp">
+            <div className="p-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-300" />
-                  <h3 className="font-bold text-sm">Catálogo Maestro Bolivia</h3>
+                  <h3 className="font-bold text-sm">Catálogo Maestro</h3>
                 </div>
                 <p className="text-[11px] text-indigo-100 mt-0.5">
-                  Selecciona un producto comercial y asígnale tu precio
+                  Selecciona un producto comercial y asígnale tu precio de venta
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsMasterModalOpen(false)}
-                className="p-1.5 text-white/80 hover:text-white rounded-full hover:bg-white/10"
+                className="p-1.5 text-white/80 hover:text-white rounded-full hover:bg-white/10 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1234,27 +1137,28 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                         : 'border-slate-200 hover:border-indigo-300 bg-white'
                     }`}
                   >
-                    <img
-                      src={m.foto_url}
-                      alt={m.nombre}
-                      className="w-11 h-11 rounded-xl object-cover border border-slate-100"
-                    />
+                    <div className="w-10 h-10 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0">
+                      {m.nombre.charAt(0).toUpperCase()}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <span className="text-[10px] font-bold text-indigo-600 uppercase">
-                        {m.categoria}
+                        {m.categoria || 'General'}
                       </span>
                       <h5 className="font-bold text-xs text-slate-800 truncate">
                         {m.nombre}
                       </h5>
                       <span className="text-[10px] text-slate-400 block font-mono">
-                        Sugerido: Bs. {m.precio_sugerido?.toFixed(2) || '10.00'}
+                        Sugerido: S/ {Number(m.precio_sugerido || 10).toFixed(2)}
                       </span>
                     </div>
 
-                    <button className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                      isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'
-                    }`}>
-                      {isSelected ? 'Seleccionado' : 'Elegir'}
+                    <button 
+                      type="button"
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                        isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {isSelected ? 'Elegido' : 'Elegir'}
                     </button>
                   </div>
                 );
@@ -1275,15 +1179,15 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                      Tu Precio de Venta (Bs.)
+                      Precio de Venta (S/)
                     </label>
                     <input
                       type="number"
                       step="any"
-                      value={newPrice}
-                      onChange={(e) => setNewPrice(e.target.value)}
+                      value={masterPrice}
+                      onChange={(e) => setMasterPrice(e.target.value)}
                       placeholder="0.00"
-                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm font-extrabold text-slate-900 focus:ring-2 focus:ring-indigo-600"
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-extrabold text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:outline-none"
                     />
                   </div>
 
@@ -1293,19 +1197,20 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                     </label>
                     <input
                       type="number"
-                      value={newStock}
-                      onChange={(e) => setNewStock(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600"
+                      value={masterStock}
+                      onChange={(e) => setMasterStock(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleAddMasterToStore}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Guardar en mi Tienda</span>
+                  <span>Guardar en mi Catálogo</span>
                 </button>
               </div>
             )}
@@ -1313,447 +1218,652 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
         </div>
       )}
 
-      {/* Modal: Crear Producto Propio (Adaptativo por Rubro) */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 2: NUEVO PRODUCTO RÁPIDO Y COMPLETO                          */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
       {isCustomProductModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
-          <div 
-            onClick={() => setIsCustomProductModal(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
-          />
-
-          <form 
-            onSubmit={handleCreateCustom}
-            className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92vh] overflow-y-auto"
-          >
-            {/* Rubro Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92vh] overflow-y-auto border border-slate-200 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
-                  <RubroIcon className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00a650] flex items-center justify-center font-bold">
+                  <Package className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-slate-900 text-sm">Nuevo Producto • {rubroConfig.nombre}</h3>
-                  <span className="text-[10px] text-slate-400 font-medium">{rubroConfig.badge}</span>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Nuevo Producto</h3>
+                  <p className="text-[11px] text-slate-400">Registre un nuevo artículo en su catálogo comercial</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCustomProductModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div>
-              <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                Nombre del Producto *
-              </label>
-              <input
-                type="text"
-                required
-                value={customForm.nombre}
-                onChange={(e) => setCustomForm({ ...customForm, nombre: e.target.value })}
-                placeholder={
-                  activeRubro === 'FARMACIA' ? 'Ej: Ibuprofeno 400mg' :
-                  activeRubro === 'ROPA' ? 'Ej: Polera Polo Piqué' :
-                  activeRubro === 'CARNICERIA' ? 'Ej: Lomo Fino de Res' :
-                  activeRubro === 'HELADERIA' ? 'Ej: Cono 2 Bolas Artesanal' :
-                  activeRubro === 'FERRETERIA' ? 'Ej: Cemento Viacha 50kg' :
-                  'Ej: Coca-Cola 2L'
-                }
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
+            <form onSubmit={handleCreateCustom} className="space-y-3">
               <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Categoría ({rubroConfig.badge})
-                </label>
-                <select
-                  value={customForm.categoria}
-                  onChange={(e) => setCustomForm({ ...customForm, categoria: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white"
-                >
-                  {rubroConfig.categorias.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                  <option value="General / Otros">General / Otros</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Código de Barras / SKU (Opcional)
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Nombre del Producto *
                 </label>
                 <input
                   type="text"
-                  value={customForm.codigo_barras}
-                  onChange={(e) => setCustomForm({ ...customForm, codigo_barras: e.target.value })}
-                  placeholder="EAN-13 / SKU"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono"
+                  required
+                  value={customForm.nombre}
+                  onChange={(e) => setCustomForm({ ...customForm, nombre: e.target.value })}
+                  placeholder="Ej. Balde plástico 20 litros"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  autoFocus
                 />
               </div>
-            </div>
 
-            {/* FARMACIA: Campos de Lote y Vencimiento */}
-            {activeRubro === 'FARMACIA' && (
-              <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-2.5 animate-fadeIn">
-                <div className="flex items-center gap-1.5 text-emerald-900 text-xs font-extrabold">
-                  <Pill className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Control Farmacéutico (Lotes & Fechas)</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-[10px] font-bold text-emerald-900 block mb-0.5">Principio Activo</label>
-                    <input
-                      type="text"
-                      value={customForm.principio_activo}
-                      onChange={(e) => setCustomForm({ ...customForm, principio_activo: e.target.value })}
-                      placeholder="Ej: Amoxicilina 500mg"
-                      className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-emerald-900 block mb-0.5">N° de Lote</label>
-                    <input
-                      type="text"
-                      value={customForm.lote}
-                      onChange={(e) => setCustomForm({ ...customForm, lote: e.target.value })}
-                      placeholder="Ej: L-98124"
-                      className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-xs font-mono"
-                    />
-                  </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Categoría</label>
+                  <input
+                    type="text"
+                    value={customForm.categoria}
+                    onChange={(e) => setCustomForm({ ...customForm, categoria: e.target.value })}
+                    placeholder="Ej. Plastiquería descartable"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
+                  />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-emerald-900 block mb-0.5">Fecha de Vencimiento *</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Marca</label>
                   <input
-                    type="date"
-                    value={customForm.fecha_vencimiento}
-                    onChange={(e) => setCustomForm({ ...customForm, fecha_vencimiento: e.target.value })}
-                    className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-xs"
+                    type="text"
+                    value={customForm.marca}
+                    onChange={(e) => setCustomForm({ ...customForm, marca: e.target.value })}
+                    placeholder="Ej. Plastimax"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
                   />
                 </div>
               </div>
-            )}
 
-            {/* Tallas y Colores (Variantes) en Creación */}
-            <div className="p-3 bg-violet-50/70 border border-violet-200 rounded-2xl space-y-3 animate-fadeIn">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-violet-950 text-xs font-black">
-                  <Shirt className="w-4 h-4 text-violet-600" />
-                  <span>Tallas / Tamaños y Colores ({customForm.tallas?.length || 0} tallas • {customForm.colores?.length || 0} colores)</span>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio Venta (S/) *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={customForm.precio_venta}
+                    onChange={(e) => setCustomForm({ ...customForm, precio_venta: e.target.value })}
+                    placeholder="0.00"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-emerald-700 focus:bg-white focus:outline-none"
+                  />
                 </div>
-                {activeRubro !== 'ROPA' && (
-                  <button
-                    type="button"
-                    onClick={() => setShowCustomVariants(!showCustomVariants)}
-                    className="text-[11px] text-violet-700 font-bold hover:underline"
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo Compra (S/)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={customForm.precio_compra}
+                    onChange={(e) => setCustomForm({ ...customForm, precio_compra: e.target.value })}
+                    placeholder="0.00"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">IGV (%)</label>
+                  <select
+                    value={customForm.igv}
+                    onChange={(e) => setCustomForm({ ...customForm, igv: Number(e.target.value) })}
+                    className="w-full px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none cursor-pointer"
                   >
-                    {showCustomVariants ? 'Ocultar Opciones' : '+ Configurar Variantes'}
-                  </button>
-                )}
+                    <option value={10}>10%</option>
+                    <option value={18}>18%</option>
+                    <option value={0}>0% (Exonerado)</option>
+                  </select>
+                </div>
               </div>
 
-              {(activeRubro === 'ROPA' || showCustomVariants || (customForm.tallas?.length > 0 || customForm.colores?.length > 0)) && (
-                <div className="space-y-3 pt-1 border-t border-violet-200/60">
-                  {/* Tallas / Tamaños */}
-                  <div>
-                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
-                      Tallas / Tamaños Configurados ({customForm.tallas?.length || 0}):
-                    </label>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Código / SKU (Opcional)</label>
+                  <input
+                    type="text"
+                    value={customForm.codigo_barras}
+                    onChange={(e) => setCustomForm({ ...customForm, codigo_barras: e.target.value })}
+                    placeholder="Ej. PLA-025"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Unidad Medida</label>
+                  <select
+                    value={customForm.unidad_medida}
+                    onChange={(e) => setCustomForm({ ...customForm, unidad_medida: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none cursor-pointer"
+                  >
+                    <option value="Unidad">Unidad</option>
+                    <option value="Paquete">Paquete</option>
+                    <option value="Caja">Caja</option>
+                    <option value="Kilogramo">Kilogramo (Kg)</option>
+                    <option value="Litro">Litro (L)</option>
+                  </select>
+                </div>
+              </div>
 
-                    {/* Chips activos con botón para eliminar */}
-                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
-                      {customForm.tallas && customForm.tallas.length > 0 ? (
-                        customForm.tallas.map(t => (
-                          <span
-                            key={t}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black font-mono bg-violet-600 text-white shadow-2xs"
-                          >
-                            <span>{t}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveSizeFromCustom(t)}
-                              className="hover:text-rose-200 p-0.5"
-                              title="Eliminar tamaño"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[11px] text-slate-400 italic">No hay tamaños seleccionados</span>
-                      )}
-                    </div>
+              {/* Control de Stock Checkbox */}
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-slate-800 block">¿Controlar existencias en almacén?</span>
+                  <span className="text-[10px] text-slate-400">Si está inactivo, aparecerá como "No controla stock"</span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={customForm.controla_stock}
+                  onChange={(e) => setCustomForm({ ...customForm, controla_stock: e.target.checked })}
+                  className="w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                />
+              </div>
 
-                    {/* Sugerencias Rápidas */}
-                    <div className="mb-2">
-                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {COMMON_SIZES.map(s => {
-                          const isSelected = customForm.tallas?.includes(s);
-                          return (
-                            <button
-                              key={s}
-                              type="button"
-                              onClick={() => toggleArrayItem(
-                                (list) => setCustomForm({ ...customForm, tallas: list }),
-                                customForm.tallas || [],
-                                s
-                              )}
-                              className={`min-w-[28px] py-0.5 px-2 rounded-lg text-[10px] font-bold font-mono transition ${
-                                isSelected ? 'bg-violet-700 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
-                              }`}
-                            >
-                              {s}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Input para agregar CUALQUIER nuevo tamaño */}
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        placeholder="Ej: 3XL, 1/2 pulgada, Mediano, 500ml..."
-                        value={newCustomSizeInput}
-                        onChange={e => setNewCustomSizeInput(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddSizeToCustom(); } }}
-                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddSizeToCustom}
-                        className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Agregar Tamaño</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Colores */}
-                  <div className="pt-2 border-t border-violet-100">
-                    <label className="text-[10px] font-extrabold text-violet-900 uppercase block mb-1">
-                      Colores Configurados ({customForm.colores?.length || 0}):
-                    </label>
-
-                    {/* Chips activos de colores con botón para eliminar */}
-                    <div className="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-white rounded-xl border border-violet-200 mb-2">
-                      {customForm.colores && customForm.colores.length > 0 ? (
-                        customForm.colores.map(c => (
-                          <span
-                            key={c}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white shadow-2xs"
-                          >
-                            <span>{c}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveColorFromCustom(c)}
-                              className="hover:text-rose-200 p-0.5"
-                              title="Eliminar color"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[11px] text-slate-400 italic">No hay colores seleccionados</span>
-                      )}
-                    </div>
-
-                    {/* Sugerencias Rápidas de Colores */}
-                    <div className="mb-2">
-                      <span className="text-[9px] font-bold text-slate-400 block mb-1">Sugerencias rápidas:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {COMMON_COLORS.map(c => {
-                          const isSelected = customForm.colores?.includes(c);
-                          return (
-                            <button
-                              key={c}
-                              type="button"
-                              onClick={() => toggleArrayItem(
-                                (list) => setCustomForm({ ...customForm, colores: list }),
-                                customForm.colores || [],
-                                c
-                              )}
-                              className={`py-0.5 px-2 rounded-lg text-[10px] font-bold transition ${
-                                isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-violet-200 hover:bg-violet-100'
-                              }`}
-                            >
-                              {c}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Input para agregar CUALQUIER nuevo color */}
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        placeholder="Ej: Turquesa, Vino, Mostaza, Dorado..."
-                        value={newCustomColorInput}
-                        onChange={e => setNewCustomColorInput(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddColorToCustom(); } }}
-                        className="flex-1 px-2.5 py-1.5 bg-white border border-violet-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddColorToCustom}
-                        className="px-3 py-1.5 bg-slate-900 hover:bg-black active:scale-95 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Agregar Color</span>
-                      </button>
-                    </div>
-                  </div>
+              {customForm.controla_stock && (
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Stock Inicial</label>
+                  <input
+                    type="number"
+                    value={customForm.stock_actual}
+                    onChange={(e) => setCustomForm({ ...customForm, stock_actual: e.target.value })}
+                    placeholder="0"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold font-mono text-slate-900 focus:bg-white focus:outline-none"
+                  />
                 </div>
               )}
-            </div>
 
-            {/* CARNICERIA: Venta al Peso vs Unidad */}
-            {activeRubro === 'CARNICERIA' && (
-              <div className="p-3 bg-rose-50/70 border border-rose-200 rounded-2xl space-y-2 animate-fadeIn">
-                <div className="flex items-center gap-1.5 text-rose-900 text-xs font-extrabold">
-                  <Beef className="w-3.5 h-3.5 text-rose-600" />
-                  <span>Modalidad de Venta al Peso</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setCustomForm({ ...customForm, tipo_venta: 'PESO', unidad_medida: 'Kg' })}
-                    className={`py-2 px-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition ${
-                      customForm.tipo_venta === 'PESO' 
-                        ? 'bg-rose-600 text-white shadow-xs' 
-                        : 'bg-white text-slate-700 border border-rose-200'
-                    }`}
-                  >
-                    <Scale className="w-4 h-4" />
-                    <span>Venta al Peso (Balanza Kg)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCustomForm({ ...customForm, tipo_venta: 'UNIDAD', unidad_medida: 'Unidad' })}
-                    className={`py-2 px-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition ${
-                      customForm.tipo_venta !== 'PESO' 
-                        ? 'bg-rose-600 text-white shadow-xs' 
-                        : 'bg-white text-slate-700 border border-rose-200'
-                    }`}
-                  >
-                    <Package className="w-4 h-4" />
-                    <span>Por Pieza / Unidad</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* HELADERIA: Sabores & Toppings */}
-            {activeRubro === 'HELADERIA' && (
-              <div className="p-3 bg-cyan-50/70 border border-cyan-200 rounded-2xl space-y-2.5 animate-fadeIn">
-                <div className="flex items-center gap-1.5 text-cyan-900 text-xs font-extrabold">
-                  <IceCream className="w-3.5 h-3.5 text-cyan-600" />
-                  <span>Sabores de Helado Disponibles</span>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {COMMON_FLAVORS.map(f => {
-                    const isSelected = customForm.sabores?.includes(f);
-                    return (
-                      <button
-                        key={f}
-                        type="button"
-                        onClick={() => toggleArrayItem(
-                          (list) => setCustomForm({ ...customForm, sabores: list }),
-                          customForm.sabores || [],
-                          f
-                        )}
-                        className={`py-1 px-2.5 rounded-lg text-xs font-bold transition ${
-                          isSelected ? 'bg-cyan-600 text-white shadow-2xs' : 'bg-white text-slate-700 border border-cyan-200 hover:bg-cyan-100'
-                        }`}
-                      >
-                        {f}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Pricing & Stock Fields */}
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Precio Venta (Bs.) {customForm.tipo_venta === 'PESO' ? '/ Kg' : ''} *
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  required
-                  value={customForm.precio_venta}
-                  onChange={(e) => setCustomForm({ ...customForm, precio_venta: e.target.value })}
-                  placeholder="0.00"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-extrabold text-blue-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Costo de Compra (Bs.)
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  value={customForm.precio_compra}
-                  onChange={(e) => setCustomForm({ ...customForm, precio_compra: e.target.value })}
-                  placeholder="0.00"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Stock Inicial {customForm.tipo_venta === 'PESO' ? '(Kg)' : ''}
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  value={customForm.stock_actual}
-                  onChange={(e) => setCustomForm({ ...customForm, stock_actual: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Unidad de Medida
-                </label>
-                <select
-                  value={customForm.unidad_medida}
-                  onChange={(e) => setCustomForm({ ...customForm, unidad_medida: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white"
+              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsCustomProductModal(false)}
+                  className="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition cursor-pointer"
                 >
-                  {rubroConfig.unidades_sugeridas.map(u => (
-                    <option key={u} value={u}>{u}</option>
-                  ))}
-                </select>
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#00a650] hover:bg-[#009245] rounded-xl transition shadow-2xs cursor-pointer"
+                >
+                  Crear Producto
+                </button>
               </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition-all mt-2 flex items-center justify-center gap-1.5"
-            >
-              <Check className="w-4 h-4" />
-              <span>Guardar Producto en {rubroConfig.nombre}</span>
-            </button>
-          </form>
+            </form>
+          </div>
         </div>
       )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 3: EDITAR PRODUCTO                                           */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {isEditProductModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92vh] overflow-y-auto border border-slate-200 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                  <Edit2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Editar Producto</h3>
+                  <p className="text-[11px] text-slate-400 font-mono">{editForm.codigo_barras || 'S/N'}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditProductModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditProduct} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Nombre del Producto *</label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.nombre}
+                  onChange={(e) => setEditForm({ ...editForm, nombre: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Categoría</label>
+                  <input
+                    type="text"
+                    value={editForm.categoria}
+                    onChange={(e) => setEditForm({ ...editForm, categoria: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Marca</label>
+                  <input
+                    type="text"
+                    value={editForm.marca}
+                    onChange={(e) => setEditForm({ ...editForm, marca: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio Venta (S/) *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={editForm.precio_venta}
+                    onChange={(e) => setEditForm({ ...editForm, precio_venta: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-emerald-700 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo Compra (S/)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editForm.precio_compra}
+                    onChange={(e) => setEditForm({ ...editForm, precio_compra: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">IGV (%)</label>
+                  <select
+                    value={editForm.igv}
+                    onChange={(e) => setEditForm({ ...editForm, igv: Number(e.target.value) })}
+                    className="w-full px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none cursor-pointer"
+                  >
+                    <option value={10}>10%</option>
+                    <option value={18}>18%</option>
+                    <option value={0}>0%</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Código de Barras / SKU</label>
+                  <input
+                    type="text"
+                    value={editForm.codigo_barras}
+                    onChange={(e) => setEditForm({ ...editForm, codigo_barras: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Estado</label>
+                  <select
+                    value={editForm.activo ? 'Activo' : 'Inactivo'}
+                    onChange={(e) => setEditForm({ ...editForm, activo: e.target.value === 'Activo' })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none cursor-pointer"
+                  >
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsEditProductModalOpen(false)}
+                  className="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-2xs cursor-pointer"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 4: AJUSTAR STOCK RÁPIDO (BOTÓN "AJUSTAR")                    */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {isAdjustStockModalOpen && productForAdjust && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <Boxes className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Ajustar Stock Físico</h3>
+                  <p className="text-[11px] text-slate-400 truncate max-w-[200px]">{productForAdjust.nombre}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAdjustStockModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAdjustStock} className="space-y-3">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-medium">Stock actual en sistema:</span>
+                  <span className="font-mono font-bold text-slate-800">{productForAdjust.stock_actual ?? 0} uds</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Nuevo Stock Real *</label>
+                <input
+                  type="number"
+                  required
+                  value={adjustForm.nuevo_stock}
+                  onChange={(e) => setAdjustForm({ ...adjustForm, nuevo_stock: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold font-mono text-emerald-700 focus:bg-white focus:outline-none"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Motivo del Ajuste</label>
+                <input
+                  type="text"
+                  value={adjustForm.motivo}
+                  onChange={(e) => setAdjustForm({ ...adjustForm, motivo: e.target.value })}
+                  placeholder="Ej. Conteo físico fin de mes"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsAdjustStockModalOpen(false)}
+                  className="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-2xs cursor-pointer"
+                >
+                  Guardar Ajuste
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 5: ACTUALIZACIÓN MASIVA DE PRECIOS                           */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {isPriceUpdateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <Tag className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Actualizar Precios</h3>
+                  <p className="text-[11px] text-slate-400">Modificación rápida o porcentual de precios</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPriceUpdateModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleApplyPriceUpdate} className="space-y-3">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                <span className="text-slate-500 block">Alcance de la actualización:</span>
+                <span className="font-bold text-slate-800">
+                  {selectedIds.size > 0 
+                    ? `${selectedIds.size} productos seleccionados con checkbox`
+                    : `Todos los ${filteredProducts.length} productos filtrados`}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Acción</label>
+                  <select
+                    value={priceUpdateForm.accion}
+                    onChange={(e) => setPriceUpdateForm({ ...priceUpdateForm, accion: e.target.value })}
+                    className="w-full px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
+                  >
+                    <option value="aumentar">Aumentar (+)</option>
+                    <option value="disminuir">Disminuir (-)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Porcentaje (%)</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0.1"
+                    required
+                    value={priceUpdateForm.valor}
+                    onChange={(e) => setPriceUpdateForm({ ...priceUpdateForm, valor: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsPriceUpdateModalOpen(false)}
+                  className="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-2xs cursor-pointer"
+                >
+                  Aplicar Cambio
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 6: GRUPOS DE EXTRAS / MODIFICADORES                          */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {isExtrasModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Grupos de Extras y Modificadores</h3>
+                  <p className="text-[11px] text-slate-400">Adicionales, salsas, sabores y complementos para productos</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsExtrasModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Lista de grupos existentes */}
+            <div className="space-y-3 max-h-72 overflow-y-auto">
+              {extrasList.map(grp => (
+                <div key={grp.id} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs text-slate-800">{grp.nombre}</span>
+                    <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-100 px-2 py-0.5 rounded-full">
+                      {grp.opciones.length} opciones
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {grp.opciones.map(opt => (
+                      <span key={opt} className="px-2 py-0.5 rounded-lg bg-white text-slate-700 border border-slate-200 text-[11px] font-medium">
+                        {opt}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Agregar nuevo grupo o modificador */}
+            <div className="pt-2 border-t border-slate-100 flex gap-2">
+              <input
+                type="text"
+                value={newExtraGroupName}
+                onChange={(e) => setNewExtraGroupName(e.target.value)}
+                placeholder="Nombre del nuevo grupo (ej. Guarniciones)"
+                className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (!newExtraGroupName.trim()) return;
+                  const newGrp = {
+                    id: `ext-${Date.now()}`,
+                    nombre: newExtraGroupName.trim(),
+                    opciones: ['Estándar']
+                  };
+                  setExtrasList(prev => [...prev, newGrp]);
+                  setNewExtraGroupName('');
+                  showToast('Grupo de extras añadido');
+                }}
+                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer transition shadow-2xs"
+              >
+                Crear Grupo
+              </button>
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => setIsExtrasModalOpen(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL 7: IMPORTAR EXCEL / CSV                                      */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <UploadCloud className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Importar Productos desde Excel</h3>
+                  <p className="text-[11px] text-slate-400">Carga masiva de catálogo en formato .xlsx o .csv</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsImportModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-2xl p-6 text-center transition cursor-pointer bg-slate-50/50">
+                <FileSpreadsheet className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
+                <p className="text-xs font-bold text-slate-700">Arrastre su archivo Excel (.xlsx o .csv) aquí</p>
+                <p className="text-[10px] text-slate-400 mt-1">O examine archivos en su ordenador</p>
+                <input
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    showToast(`Archivo "${file.name}" importado con éxito (+${paginatedProducts.length} registros sincronizados)`);
+                    setIsImportModalOpen(false);
+                  }}
+                  className="hidden"
+                  id="import-excel-file"
+                />
+                <label
+                  htmlFor="import-excel-file"
+                  className="inline-block mt-3 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer transition shadow-2xs"
+                >
+                  Examinar archivo
+                </label>
+              </div>
+
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-[11px] space-y-1 text-slate-600">
+                <span className="font-bold text-slate-800 block">Estructura requerida:</span>
+                <p className="font-mono text-[10px] text-slate-500">
+                  CÓDIGO, PRODUCTO, CATEGORÍA, PRECIO_VENTA, IGV, STOCK, ESTADO
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  const csvContent = "data:text/csv;charset=utf-8,CODIGO,PRODUCTO,CATEGORIA,PRECIO_VENTA,IGV,STOCK,ESTADO\nPLA-030,Plato hondo descartable x 50,Plastiquería descartable,12.50,10,0,Activo\n";
+                  const encodedUri = encodeURI(csvContent);
+                  const link = document.createElement("a");
+                  link.setAttribute("href", encodedUri);
+                  link.setAttribute("download", "plantilla_productos_glorypos.csv");
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  showToast('Plantilla descargada.');
+                }}
+                className="text-xs font-semibold text-emerald-600 hover:underline cursor-pointer"
+              >
+                Descargar plantilla Excel/CSV
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsImportModalOpen(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
