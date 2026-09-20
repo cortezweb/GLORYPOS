@@ -171,11 +171,23 @@ export default function Sidebar({
                   <button type="button" onClick={() => handleNav('pos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Punto de Venta (POS)
                   </button>
+                  <button type="button" onClick={() => handleNav('nuevo_comprobante')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Nuevo Comprobante
+                  </button>
                   <button type="button" onClick={() => handleNav('ventas_comprobantes')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
-                    • Comprobantes Emitidos
+                    • Consulta de Comprobantes
                   </button>
                   <button type="button" onClick={() => handleNav('ventas_notas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Notas de Venta
+                  </button>
+                  <button type="button" onClick={() => handleNav('cuentas_por_cobrar')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Cuentas por Cobrar
+                  </button>
+                  <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Pedidos Web
+                  </button>
+                  <button type="button" onClick={() => handleNav('membresias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Membresías
                   </button>
                   <button type="button" onClick={() => handleNav('ventas_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Mis Cajas (Turnos)
@@ -190,10 +202,32 @@ export default function Sidebar({
 
           {/* Compras */}
           {hasModule('compras') && (
-            <button type="button" onClick={() => handleNav('purchases')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
-              <ShoppingBag className="w-4 h-4 text-slate-500" />
-              <span>Compras</span>
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMenu('compras')}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100"
+              >
+                <div className="flex items-center gap-2.5">
+                  <ShoppingBag className="w-4 h-4 text-slate-500" />
+                  <span>Compras</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedMenus.compras ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedMenus.compras && (
+                <div className="pl-8 pr-2 py-1 space-y-0.5">
+                  <button type="button" onClick={() => handleNav('nueva_compra')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Nueva Compra
+                  </button>
+                  <button type="button" onClick={() => handleNav('purchases')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Compras
+                  </button>
+                  <button type="button" onClick={() => handleNav('proveedores')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Proveedores
+                  </button>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Clientes */}

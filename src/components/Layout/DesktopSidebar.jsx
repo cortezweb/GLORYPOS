@@ -196,6 +196,17 @@ export default function DesktopSidebar({
                 </button>
                 <button
                   type="button"
+                  onClick={() => onSelectView('nuevo_comprobante')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'nuevo_comprobante'
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Nuevo Comprobante
+                </button>
+                <button
+                  type="button"
                   onClick={() => onSelectView('ventas_comprobantes')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     ['ventas_comprobantes', 'comprobantes'].includes(currentView)
@@ -203,7 +214,7 @@ export default function DesktopSidebar({
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Comprobantes Emitidos
+                  • Consulta de Comprobantes
                 </button>
                 <button
                   type="button"
@@ -215,6 +226,39 @@ export default function DesktopSidebar({
                   }`}
                 >
                   • Notas de Venta
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('cuentas_por_cobrar')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'cuentas_por_cobrar'
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Cuentas por Cobrar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('pedidos_web')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'pedidos_web'
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Pedidos Web
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('membresias')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'membresias'
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Membresías
                 </button>
                 <button
                   type="button"
@@ -261,12 +305,30 @@ export default function DesktopSidebar({
               <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => onSelectView('purchases')}
+                  onClick={() => onSelectView('nueva_compra')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'purchases' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'nueva_compra' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Registro de Compras
+                  • Nueva Compra
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('purchases')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['purchases', 'compras'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Compras
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('proveedores')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'proveedores' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Proveedores
                 </button>
               </div>
             )}

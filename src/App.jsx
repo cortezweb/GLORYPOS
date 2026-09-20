@@ -56,6 +56,10 @@ import NotasVentaView from './components/Sales/NotasVentaView';
 import CotizacionesView from './components/Sales/CotizacionesView';
 import CajaChicaView from './components/Sales/CajaChicaView';
 import ComprobantesPendientesView from './components/Sales/ComprobantesPendientesView';
+import NuevoComprobanteView from './components/Sales/NuevoComprobanteView';
+import MembresiasView from './components/Sales/MembresiasView';
+import PedidosWebView from './components/Sales/PedidosWebView';
+import CuentasPorCobrarView from './components/Sales/CuentasPorCobrarView';
 
 // Auth Screens
 import LoginView from './components/Auth/LoginView';
@@ -243,6 +247,28 @@ function MainShell() {
                   onOpenPosWithCart={() => setCurrentView('pos')} 
                 />
               )}
+              {['nuevo_comprobante', 'ventas_nuevo'].includes(currentView) && (
+                <NuevoComprobanteView 
+                  onSelectSubView={(sub) => setCurrentView(sub)}
+                  onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
+                />
+              )}
+              {['membresias', 'suscripciones', 'ventas_membresias'].includes(currentView) && (
+                <MembresiasView 
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
+                />
+              )}
+              {['pedidos_web', 'pedidosweb', 'ventas_pedidosweb'].includes(currentView) && (
+                <PedidosWebView 
+                  onSelectSubView={(sub) => setCurrentView(sub)}
+                  onOpenPosWithCart={() => setCurrentView('pos')} 
+                />
+              )}
+              {['cuentas_por_cobrar', 'cuentas_cobrar', 'creditos', 'ventas_cuentas_cobrar'].includes(currentView) && (
+                <CuentasPorCobrarView 
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
+                />
+              )}
               {['ventas_caja', 'caja_chica', 'caja'].includes(currentView) && (
                 <CajaChicaView 
                   defaultTab="mis_cajas"
@@ -282,7 +308,15 @@ function MainShell() {
 
               {/* Operaciones & Clientes */}
               {['clients', 'clientes'].includes(currentView) && <ClientsView />}
-              {['purchases', 'compras'].includes(currentView) && <PurchasesView />}
+              {['purchases', 'compras', 'nueva_compra', 'compras_historial', 'proveedores'].includes(currentView) && (
+                <PurchasesView 
+                  initialTab={
+                    currentView === 'nueva_compra' ? 'nueva_compra' :
+                    currentView === 'proveedores' ? 'proveedores' :
+                    'compras'
+                  } 
+                />
+              )}
 
               {/* Reportes Especializados (6 Ventanas) */}
               {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab'].includes(currentView) && (
@@ -339,14 +373,18 @@ function MainShell() {
               {![
                 'pos', 'inicio',
                 'superadmin', 'admin_dashboard', 'dashboard',
-                'ventas_comprobantes', 'comprobantes', 'sales',
+                'ventas_comprobantes', 'comprobantes', 'consulta_comprobantes', 'sales',
+                'nuevo_comprobante', 'ventas_nuevo',
+                'membresias', 'suscripciones', 'ventas_membresias',
+                'pedidos_web', 'pedidosweb', 'ventas_pedidosweb',
+                'cuentas_por_cobrar', 'cuentas_cobrar', 'creditos', 'ventas_cuentas_cobrar',
                 'ventas_notas', 'notas_venta', 'notas',
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',
                 'ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja',
                 'productos', 'products', 'categorias_marcas', 'categorias', 'marcas',
                 'inventory', 'inventario', 'kardex',
                 'clients', 'clientes',
-                'purchases', 'compras',
+                'purchases', 'compras', 'nueva_compra', 'compras_historial', 'proveedores',
                 'reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_cajas_tab',
                 'subscription', 'suscripcion', 'planes',
                 'tienda_virtual', 'catalogo_online', 'tienda',

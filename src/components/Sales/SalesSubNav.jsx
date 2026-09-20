@@ -1,5 +1,8 @@
 import React from 'react';
-import { ShoppingCart, FileText, Receipt, FileSpreadsheet, Wallet, ChevronRight } from 'lucide-react';
+import { 
+  ShoppingCart, FileText, Receipt, FileSpreadsheet, Wallet, 
+  ChevronRight, PlusCircle, Globe, Award, Clock
+} from 'lucide-react';
 
 export default function SalesSubNav({ currentSubView, onSelectSubView }) {
   const tabs = [
@@ -7,15 +10,23 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
       id: 'pos',
       viewId: 'pos',
       aliases: ['pos'],
-      label: 'Nueva Venta',
+      label: 'Punto de Venta',
       icon: ShoppingCart,
       badge: 'POS'
     },
     {
+      id: 'nuevo_comprobante',
+      viewId: 'nuevo_comprobante',
+      aliases: ['nuevo_comprobante', 'ventas_nuevo'],
+      label: 'Nuevo Comprobante',
+      icon: PlusCircle,
+      badge: 'Nuevo'
+    },
+    {
       id: 'comprobantes',
       viewId: 'ventas_comprobantes',
-      aliases: ['comprobantes', 'ventas_comprobantes', 'sales'],
-      label: 'Comprobantes Emitidos',
+      aliases: ['comprobantes', 'ventas_comprobantes', 'consulta_comprobantes', 'sales'],
+      label: 'Consulta de Comprobantes',
       icon: FileText,
       badge: null
     },
@@ -28,11 +39,27 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
       badge: null
     },
     {
-      id: 'cotizaciones',
-      viewId: 'ventas_cotizaciones',
-      aliases: ['cotizaciones', 'ventas_cotizaciones', 'preventa'],
-      label: 'Cotizaciones / Pedidos',
-      icon: FileSpreadsheet,
+      id: 'cuentas_por_cobrar',
+      viewId: 'cuentas_por_cobrar',
+      aliases: ['cuentas_por_cobrar', 'cuentas_cobrar', 'creditos'],
+      label: 'Cuentas por Cobrar',
+      icon: Clock,
+      badge: null
+    },
+    {
+      id: 'pedidos_web',
+      viewId: 'pedidos_web',
+      aliases: ['pedidos_web', 'pedidosweb'],
+      label: 'Pedidos Web',
+      icon: Globe,
+      badge: 'Online'
+    },
+    {
+      id: 'membresias',
+      viewId: 'membresias',
+      aliases: ['membresias', 'suscripciones'],
+      label: 'Membresías',
+      icon: Award,
       badge: null
     },
     {
@@ -41,7 +68,7 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
       aliases: ['caja_chica', 'ventas_caja', 'caja'],
       label: 'Caja Chica / Turno',
       icon: Wallet,
-      badge: 'Turno'
+      badge: null
     }
   ];
 

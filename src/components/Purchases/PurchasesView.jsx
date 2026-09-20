@@ -2,27 +2,49 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Truck, Plus, Search, Building2, Phone, PackagePlus, 
   CheckCircle2, X, ArrowUpRight, DollarSign, Store,
-  Calendar, FileText, Check, AlertCircle, TrendingUp
+  Calendar, FileText, Check, AlertCircle, TrendingUp,
+  Clock, MapPin, Edit2, Trash2, Mail
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 
-export default function PurchasesView() {
+export default function PurchasesView({ initialTab = 'compras' }) {
+  // 3 Pestañas solicitadas: 'nueva_compra', 'compras', 'proveedores'
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
   const [proveedores, setProveedores] = useState([]);
   const [compras, setCompras] = useState([]);
   const [products, setProducts] = useState([]);
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState('ALL'); // 'ALL', 'PAID', 'CREDIT'
   const [search, setSearch] = useState('');
   const [toastMsg, setToastMsg] = useState(null);
 
-  // Formulario de compra
+  // Formulario Nueva Compra
   const [selectedProduct, setSelectedProduct] = useState('');
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [cantidad, setCantidad] = useState('12');
   const [costoUnitario, setCostoUnitario] = useState('8.50');
   const [numeroFactura, setNumeroFactura] = useState('');
   const [metodoPago, setMetodoPago] = useState('CONTADO'); // 'CONTADO', 'CREDITO'
+
+  // Modal / Form Nuevo Proveedor
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [supplierForm, setSupplierForm] = useState({
+    id: '',
+    razon_social: '',
+    nit: '',
+    contacto: '',
+    telefono: '',
+    ciudad: 'Santa Cruz',
+    rubro: 'Distribución General'
+  });
+  const [editingSupplier, setEditingSupplier] = useState(null);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -60,6 +82,7 @@ export default function PurchasesView() {
       .reduce((acc, c) => acc + (Number(c.total) || 0), 0);
   }, [compras]);
 
+  // Manejar Registro de Compra
   const handleRegisterPurchase = async (e) => {
     e.preventDefault();
     if (!selectedProduct || !cantidad || !costoUnitario) return;
@@ -71,7 +94,7 @@ export default function PurchasesView() {
     const totalCompra = cantNum * costoNum;
     const facturaCorr = numeroFactura || `FC-00${Math.floor(1000 + Math.random() * 9000)}`;
 
-    // Guardar compra
+    // Guardar compra en Dexie
     await db.compras.add({
       id: `cmp-${Date.now()}`,
       fecha: new Date().toISOString(),
@@ -96,7 +119,7 @@ export default function PurchasesView() {
         precio_compra: costoNum
       });
 
-      // Registrar movimiento en Kardex
+      // Registrar en Kardex
       if (db.kardex) {
         await db.kardex.add({
           id: `kdx-${Date.now()}`,
@@ -112,11 +135,58 @@ export default function PurchasesView() {
       }
     }
 
-    setIsBuyModalOpen(false);
     setNumeroFactura('');
     await loadData();
-    showToast(`¡Stock actualizado! +${cantNum} uds ingresadas a ${prod?.nombre}.`);
+    showToast(`¡Compra registrada! +${cantNum} unidades ingresadas.`);
     syncService.triggerBackgroundSync();
+    setActiveTab('compras');
+  };
+
+  // Manejar Proveedores
+  const handleSaveSupplier = async (e) => {
+    e.preventDefault();
+    if (!supplierForm.razon_social.trim()) return;
+
+    if (editingSupplier) {
+      await db.proveedores.update(editingSupplier.id, {
+        razon_social: supplierForm.razon_social.trim(),
+        nit: supplierForm.nit.trim(),
+        contacto: supplierForm.contacto.trim(),
+        telefono: supplierForm.telefono.trim(),
+        ciudad: supplierForm.ciudad,
+        rubro: supplierForm.rubro
+      });
+      showToast('¡Proveedor actualizado!');
+    } else {
+      await db.proveedores.add({
+        id: `prov-${Date.now()}`,
+        razon_social: supplierForm.razon_social.trim(),
+        nit: supplierForm.nit.trim() || 'S/N',
+        contacto: supplierForm.contacto.trim() || 'N/A',
+        telefono: supplierForm.telefono.trim() || 'N/A',
+        ciudad: supplierForm.ciudad,
+        rubro: supplierForm.rubro
+      });
+      showToast('¡Nuevo proveedor registrado con éxito!');
+    }
+
+    setIsSupplierModalOpen(false);
+    setEditingSupplier(null);
+    setSupplierForm({ id: '', razon_social: '', nit: '', contacto: '', telefono: '', ciudad: 'Santa Cruz', rubro: 'Distribución General' });
+    await loadData();
+  };
+
+  const handleEditSupplier = (prov) => {
+    setEditingSupplier(prov);
+    setSupplierForm(prov);
+    setIsSupplierModalOpen(true);
+  };
+
+  const handleDeleteSupplier = async (id) => {
+    if (!window.confirm('¿Deseas eliminar este proveedor?')) return;
+    await db.proveedores.delete(id);
+    await loadData();
+    showToast('Proveedor eliminado.');
   };
 
   const filteredCompras = useMemo(() => {
@@ -130,377 +200,589 @@ export default function PurchasesView() {
     });
   }, [compras, search, filterStatus]);
 
+  const filteredProveedores = useMemo(() => {
+    return proveedores.filter(p => 
+      `${p.razon_social} ${p.nit} ${p.contacto}`.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [proveedores, search]);
+
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen pb-24 font-sans text-slate-800">
       
       {/* Toast Notification */}
       {toastMsg && (
-        <div className="fixed top-20 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 border border-slate-700 animate-bounce">
+        <div className="fixed top-20 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 border border-slate-700 animate-fadeIn">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toastMsg}</span>
         </div>
       )}
 
-      {/* Header (Stitch 1:1) */}
-      <div className="bg-white px-4 pt-4 pb-3 border-b border-slate-200/80 shadow-xs flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-1.5">
-              <Truck className="w-4 h-4 text-blue-600" />
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-600">
-                Abastecimiento & Proveedores
-              </span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight mt-0.5">
-              Compras & Facturas
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">
-              Control de ingresos de mercadería, órdenes de compra y pagos a distribuidores
-            </p>
-          </div>
+      {/* ── SUB-BARRA DE NAVEGACIÓN CON LAS 3 PESTAÑAS (Nueva compra, Compras, Proveedores) ── */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-xs select-none">
+        <div className="max-w-7xl mx-auto px-3 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          
+          <button
+            type="button"
+            onClick={() => setActiveTab('nueva_compra')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'nueva_compra'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-500/25 ring-1 ring-blue-600/30'
+                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80'
+            }`}
+          >
+            <PackagePlus className="w-3.5 h-3.5" />
+            <span>Nueva compra</span>
+          </button>
 
           <button
-            onClick={() => setIsBuyModalOpen(true)}
-            className="h-10 px-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
             type="button"
+            onClick={() => setActiveTab('compras')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'compras'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-500/25 ring-1 ring-blue-600/30'
+                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80'
+            }`}
           >
-            <PackagePlus className="w-4 h-4" />
-            <span>+ Ingresar Stock</span>
+            <Truck className="w-3.5 h-3.5" />
+            <span>Compras</span>
+            {compras.length > 0 && (
+              <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
+                activeTab === 'compras' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+              }`}>
+                {compras.length}
+              </span>
+            )}
           </button>
-        </div>
 
-        {/* Micro-Bento Estadísticas de Compras (Stitch 1:1) */}
-        <div className="grid grid-cols-2 gap-3 pt-1">
-          <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col justify-between">
-            <span className="text-xs font-bold text-slate-500">Compras Registradas</span>
-            <div className="mt-1">
-              <span className="text-xl sm:text-2xl font-black text-slate-900">
-                Bs. {totalCompras.toFixed(2)}
+          <button
+            type="button"
+            onClick={() => setActiveTab('proveedores')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'proveedores'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-500/25 ring-1 ring-blue-600/30'
+                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Proveedores</span>
+            {proveedores.length > 0 && (
+              <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
+                activeTab === 'proveedores' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+              }`}>
+                {proveedores.length}
               </span>
-              <span className="text-[10px] text-blue-700 font-bold block mt-0.5">
-                {compras.length} ingresos realizados
-              </span>
-            </div>
-          </div>
+            )}
+          </button>
 
-          <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col justify-between">
-            <span className="text-xs font-bold text-slate-500">Pendiente Proveedores</span>
-            <div className="mt-1">
-              <span className="text-xl sm:text-2xl font-black text-violet-700">
-                Bs. {totalCreditoPendiente.toFixed(2)}
-              </span>
-              <span className="text-[10px] text-violet-600 font-bold block mt-0.5">
-                Créditos por liquidar
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por Proveedor, NIT o Nro Factura..."
-            className="w-full h-11 pl-10 pr-10 text-xs bg-slate-50 border border-slate-200 rounded-2xl placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
-          />
-          {search && (
-            <button
-              onClick={() => setSearch('')}
-              className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-          {[
-            { id: 'ALL', label: `Todas (${compras.length})` },
-            { id: 'PAID', label: 'Pagadas al Contado' },
-            { id: 'CREDIT', label: 'Crédito / Pendiente' }
-          ].map((ft) => (
-            <button
-              key={ft.id}
-              onClick={() => setFilterStatus(ft.id)}
-              className={`min-h-[34px] px-3.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                filterStatus === ft.id
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {ft.label}
-            </button>
-          ))}
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
-        {/* Proveedores Habituales de Bolivia */}
-        <div>
-          <h3 className="font-extrabold text-slate-800 text-xs uppercase tracking-wider mb-2.5 px-1">
-            Proveedores Habituales de Bolivia
-          </h3>
+      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+        
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* PESTAÑA 1: NUEVA COMPRA (FORMULARIO DIRECTO)                       */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {activeTab === 'nueva_compra' && (
+          <div className="space-y-4 animate-fadeIn">
+            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <PackagePlus className="w-4 h-4" />
+                </div>
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+                  Registrar Nueva Compra
+                </h1>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Ingreso de mercadería a almacén, actualización automática de stock y cálculo de costos
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {proveedores.map((prov) => (
-              <div
-                key={prov.id}
-                className="p-3 bg-white rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between gap-3 hover:border-blue-300 transition"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-sm shrink-0 border border-blue-100">
-                    <Building2 className="w-5 h-5" />
+            <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-2xs max-w-2xl">
+              <form onSubmit={handleRegisterPurchase} className="space-y-4">
+                
+                {/* Producto */}
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Producto a Ingresar *
+                  </label>
+                  <select
+                    value={selectedProduct}
+                    onChange={(e) => {
+                      setSelectedProduct(e.target.value);
+                      const p = products.find(x => x.id === e.target.value);
+                      if (p) setCostoUnitario(String(p.precio_compra || 8.00));
+                    }}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  >
+                    {products.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.nombre} (Stock actual: {p.stock_actual} | Costo habitual: Bs. {p.precio_compra})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Proveedor */}
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Proveedor *
+                  </label>
+                  <select
+                    value={selectedSupplier}
+                    onChange={(e) => setSelectedSupplier(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  >
+                    {proveedores.map(prov => (
+                      <option key={prov.id} value={prov.id}>
+                        {prov.razon_social} (NIT: {prov.nit})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Cantidad y Costo */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Cantidad a Ingresar *
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      required
+                      value={cantidad}
+                      onChange={(e) => setCantidad(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                    />
                   </div>
-                  <div className="min-w-0">
-                    <h4 className="font-bold text-xs text-slate-900 truncate">
-                      {prov.razon_social}
-                    </h4>
-                    <p className="text-[11px] text-slate-500 truncate">
-                      NIT: {prov.nit} • {prov.rubro}
-                    </p>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Costo Unitario de Compra (Bs.) *
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      required
+                      value={costoUnitario}
+                      onChange={(e) => setCostoUnitario(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                    />
                   </div>
                 </div>
 
-                <a
-                  href={`tel:${prov.telefono}`}
-                  className="p-2 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-xl transition shrink-0"
-                  title="Llamar"
+                {/* Nro Factura y Forma de Pago */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Nro. Factura / Nota Proveedor
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. FC-89102"
+                      value={numeroFactura}
+                      onChange={(e) => setNumeroFactura(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Condición de Pago
+                    </label>
+                    <select
+                      value={metodoPago}
+                      onChange={(e) => setMetodoPago(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                    >
+                      <option value="CONTADO">Al Contado (Pagado)</option>
+                      <option value="CREDITO">Al Crédito (Cuenta por Pagar)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Total Preview */}
+                <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl flex justify-between items-center text-xs">
+                  <span className="font-bold text-blue-900">Total Importe de Compra:</span>
+                  <span className="text-xl font-black text-blue-700 font-mono">
+                    Bs. {((Number(cantidad) || 0) * (Number(costoUnitario) || 0)).toFixed(2)}
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs rounded-xl transition shadow-md shadow-blue-500/20 active:scale-98 cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  <Phone className="w-4 h-4" />
-                </a>
-              </div>
-            ))}
+                  <Check className="w-4 h-4" />
+                  <span>Guardar Compra & Actualizar Stock</span>
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Historial de Documentos de Compra Recientes (Stitch 1:1) */}
-        <div>
-          <h3 className="font-extrabold text-slate-800 text-xs uppercase tracking-wider mb-2.5 px-1">
-            Documentos de Compra Recientes
-          </h3>
-
-          <div className="space-y-3">
-            {filteredCompras.map((cmp) => {
-              const isCredit = cmp.estado_pago === 'CREDITO';
-              return (
-                <article
-                  key={cmp.id}
-                  className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs hover:shadow-md transition-shadow flex flex-col gap-3"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 text-blue-600 border border-blue-100">
-                        <Store className="w-5 h-5" />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 truncate">
-                          {cmp.proveedor_nombre}
-                        </h4>
-                        <div className="flex items-center gap-1.5 text-slate-500 font-mono text-[11px] mt-0.5">
-                          <span>NIT {cmp.proveedor_nit || '1029384756'}</span>
-                          <span>•</span>
-                          <span className="font-bold text-slate-800">{cmp.numero_factura || 'Factura F001'}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] shrink-0 border ${
-                      isCredit
-                        ? 'bg-purple-50 text-purple-700 border-purple-200'
-                        : 'bg-blue-50 text-blue-700 border-blue-200'
-                    }`}>
-                      {isCredit ? 'Crédito' : 'Pagado'}
-                    </span>
-                  </div>
-
-                  {/* Detalle Ítems & Recepción */}
-                  <div className="bg-slate-50 rounded-xl p-2.5 flex flex-col gap-1 border border-slate-200/60">
-                    <div className="flex items-center justify-between text-slate-800">
-                      <div className="flex items-center gap-1.5 text-slate-600 text-xs min-w-0">
-                        <PackagePlus className="w-4 h-4 text-blue-600 shrink-0" />
-                        <span className="truncate font-semibold">
-                          +{cmp.cantidad} uds • {cmp.producto_nombre}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-bold text-slate-500 shrink-0">
-                        Costo: Bs. {Number(cmp.costo_unitario).toFixed(2)} c/u
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-1 font-mono text-[10px] text-slate-400">
-                      <span>{new Date(cmp.fecha).toLocaleDateString()} {new Date(cmp.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      <span className="text-blue-600 font-bold">{cmp.almacen_destino || 'Almacén Central P1'}</span>
-                    </div>
-                  </div>
-
-                  {/* Footer Importe Total */}
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-                    <span className="text-xs text-slate-500 font-medium">Total Factura:</span>
-                    <span className="text-base font-black text-slate-900">
-                      Bs. {Number(cmp.total).toFixed(2)}
-                    </span>
-                  </div>
-                </article>
-              );
-            })}
-
-            {filteredCompras.length === 0 && (
-              <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">
-                No se encontraron compras con los filtros seleccionados.
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* PESTAÑA 2: COMPRAS (HISTORIAL Y LISTADO)                           */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {activeTab === 'compras' && (
+          <div className="space-y-4 animate-fadeIn">
+            {/* Header */}
+            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Truck className="w-5 h-5 text-indigo-600" />
+                  Historial de Compras
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Registro de facturas recibidas de proveedores y abastecimiento
+                </p>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* Modal: Registrar Compra / Ingreso de Stock */}
-      {isBuyModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
-          <div 
-            onClick={() => setIsBuyModalOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
-          />
-
-          <form 
-            onSubmit={handleRegisterPurchase}
-            className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3"
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h3 className="font-extrabold text-slate-900 text-sm">Registrar Compra / Ingreso Stock</h3>
               <button
                 type="button"
-                onClick={() => setIsBuyModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
+                onClick={() => setActiveTab('nueva_compra')}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm shadow-blue-500/20 active:scale-95 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <Plus className="w-4 h-4" />
+                <span>Nueva Compra</span>
               </button>
             </div>
 
-            <div>
-              <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                Producto a Abastecer *
-              </label>
-              <select
-                value={selectedProduct}
-                onChange={(e) => {
-                  setSelectedProduct(e.target.value);
-                  const p = products.find(x => x.id === e.target.value);
-                  if (p) setCostoUnitario(String(p.precio_compra || 8.00));
-                }}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold"
-              >
-                {products.map(p => (
-                  <option key={p.id} value={p.id}>{p.nombre} (Stock actual: {p.stock_actual})</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Proveedor *
-                </label>
-                <select
-                  value={selectedSupplier}
-                  onChange={(e) => setSelectedSupplier(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold"
-                >
-                  {proveedores.map(pr => (
-                    <option key={pr.id} value={pr.id}>{pr.razon_social}</option>
-                  ))}
-                </select>
+            {/* KPIs */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+                <span className="text-xs font-bold text-slate-500">Total Compras Realizadas</span>
+                <div className="text-2xl font-black text-slate-900 font-mono mt-1">
+                  Bs. {totalCompras.toFixed(2)}
+                </div>
+                <span className="text-[10px] text-blue-600 font-bold block mt-0.5">
+                  {compras.length} órdenes registradas
+                </span>
               </div>
 
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  N° Factura / Guía
-                </label>
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+                <span className="text-xs font-bold text-slate-500">Pendiente a Proveedores (Crédito)</span>
+                <div className="text-2xl font-black text-rose-600 font-mono mt-1">
+                  Bs. {totalCreditoPendiente.toFixed(2)}
+                </div>
+                <span className="text-[10px] text-rose-500 font-bold block mt-0.5">
+                  Cuentas por pagar
+                </span>
+              </div>
+            </div>
+
+            {/* Buscador y Filtros */}
+            <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setFilterStatus('ALL')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    filterStatus === 'ALL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
+                  }`}
+                >
+                  Todas ({compras.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterStatus('PAID')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    filterStatus === 'PAID' ? 'bg-white text-emerald-800 shadow-xs' : 'text-slate-500'
+                  }`}
+                >
+                  Al Contado
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterStatus('CREDIT')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    filterStatus === 'CREDIT' ? 'bg-white text-amber-800 shadow-xs' : 'text-slate-500'
+                  }`}
+                >
+                  Al Crédito
+                </button>
+              </div>
+
+              <div className="relative max-w-xs w-full">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  value={numeroFactura}
-                  onChange={(e) => setNumeroFactura(e.target.value)}
-                  placeholder="Ej: F002-8812"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar proveedor o factura..."
+                  className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            {/* Tabla de Compras */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
+                    <tr>
+                      <th className="py-2 px-3">Fecha</th>
+                      <th className="py-2 px-3">Factura</th>
+                      <th className="py-2 px-3">Proveedor</th>
+                      <th className="py-2 px-3">Producto / Ítem</th>
+                      <th className="py-2 px-3 text-center">Cant.</th>
+                      <th className="py-2 px-3 text-right">Costo U.</th>
+                      <th className="py-2 px-3 text-right">Total</th>
+                      <th className="py-2 px-3 text-center">Condición</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredCompras.map(c => (
+                      <tr key={c.id} className="hover:bg-slate-50/80 transition">
+                        <td className="py-2.5 px-3 text-slate-500 whitespace-nowrap">
+                          {new Date(c.fecha).toLocaleDateString('es-BO')}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono font-bold text-slate-900">
+                          {c.numero_factura}
+                        </td>
+                        <td className="py-2.5 px-3 font-bold text-slate-800">
+                          {c.proveedor_nombre}
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-700">
+                          {c.producto_nombre}
+                        </td>
+                        <td className="py-2.5 px-3 text-center font-mono font-bold">
+                          {c.cantidad}
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-mono text-slate-600">
+                          Bs. {Number(c.costo_unitario).toFixed(2)}
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-mono font-black text-slate-900">
+                          Bs. {Number(c.total).toFixed(2)}
+                        </td>
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            c.estado_pago === 'CREDITO' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                          }`}>
+                            {c.estado_pago || 'CONTADO'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredCompras.length === 0 && (
+                      <tr>
+                        <td colSpan={8} className="py-8 text-center text-slate-400 italic">
+                          No se encontraron compras en este filtro.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* PESTAÑA 3: PROVEEDORES (DIRECTORIO & GESTIÓN)                     */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {activeTab === 'proveedores' && (
+          <div className="space-y-4 animate-fadeIn">
+            {/* Header */}
+            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Cantidad a Ingresar
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  required
-                  value={cantidad}
-                  onChange={(e) => setCantidad(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-black text-slate-900"
-                />
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-indigo-600" />
+                  Directorio de Proveedores
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Distribuidores autorizados, datos de contacto, NIT y canales de abastecimiento
+                </p>
               </div>
 
-              <div>
-                <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                  Costo Unitario (Bs.)
-                </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingSupplier(null);
+                  setSupplierForm({ id: '', razon_social: '', nit: '', contacto: '', telefono: '', ciudad: 'Santa Cruz', rubro: 'Distribución General' });
+                  setIsSupplierModalOpen(true);
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm shadow-blue-500/20 active:scale-95 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Nuevo Proveedor</span>
+              </button>
+            </div>
+
+            {/* Buscador */}
+            <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
+              <div className="relative max-w-sm w-full">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
-                  type="number"
-                  step="any"
-                  required
-                  value={costoUnitario}
-                  onChange={(e) => setCostoUnitario(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-black text-blue-600"
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar por razón social, NIT o contacto..."
+                  className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                Condición de Pago
-              </label>
+            {/* Cards de Proveedores */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredProveedores.map(prov => (
+                <div key={prov.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3 flex flex-col justify-between hover:border-blue-300 transition">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm">{prov.razon_social}</h3>
+                        <span className="text-[10px] text-slate-400 font-mono">NIT: {prov.nit}</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-50 text-blue-700">
+                        {prov.ciudad || 'Bolivia'}
+                      </span>
+                    </div>
+
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Rubro:</span>
+                        <span className="font-bold text-slate-700">{prov.rubro || 'General'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Contacto:</span>
+                        <span className="font-bold text-slate-800">{prov.contacto || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Teléfono:</span>
+                        <span className="font-mono font-bold text-slate-800">{prov.telefono || 'N/A'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => handleEditSupplier(prov)}
+                      className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Editar</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteSupplier(prov.id)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 transition rounded-xl hover:bg-rose-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {filteredProveedores.length === 0 && (
+                <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
+                  <Building2 className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-xs font-bold text-slate-600">No se encontraron proveedores</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Modal Crear / Editar Proveedor */}
+      {isSupplierModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl w-full max-w-sm p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-black text-slate-900">
+                {editingSupplier ? 'Editar Proveedor' : 'Nuevo Proveedor'}
+              </h3>
+              <button 
+                type="button" 
+                onClick={() => setIsSupplierModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveSupplier} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Razón Social *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ej. Cervecería Boliviana Nacional S.A."
+                  value={supplierForm.razon_social}
+                  onChange={(e) => setSupplierForm({ ...supplierForm, razon_social: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">NIT</label>
+                  <input
+                    type="text"
+                    placeholder="1002345012"
+                    value={supplierForm.nit}
+                    onChange={(e) => setSupplierForm({ ...supplierForm, nit: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Teléfono</label>
+                  <input
+                    type="text"
+                    placeholder="800102030"
+                    value={supplierForm.telefono}
+                    onChange={(e) => setSupplierForm({ ...supplierForm, telefono: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Persona de Contacto</label>
+                <input
+                  type="text"
+                  placeholder="Ej. Ramiro Choque"
+                  value={supplierForm.contacto}
+                  onChange={(e) => setSupplierForm({ ...supplierForm, contacto: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Rubro / Especialidad</label>
+                <input
+                  type="text"
+                  placeholder="Ej. Bebidas, Lácteos, Abarrotes..."
+                  value={supplierForm.rubro}
+                  onChange={(e) => setSupplierForm({ ...supplierForm, rubro: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => setMetodoPago('CONTADO')}
-                  className={`py-2 rounded-xl text-xs font-bold transition ${
-                    metodoPago === 'CONTADO' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
-                  }`}
+                  onClick={() => setIsSupplierModalOpen(false)}
+                  className="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
                 >
-                  Contado (Pagado)
+                  Cancelar
                 </button>
                 <button
-                  type="button"
-                  onClick={() => setMetodoPago('CREDITO')}
-                  className={`py-2 rounded-xl text-xs font-bold transition ${
-                    metodoPago === 'CREDITO' ? 'bg-violet-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
-                  }`}
+                  type="submit"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md shadow-blue-600/20"
                 >
-                  Crédito (Por Pagar)
+                  Guardar Proveedor
                 </button>
               </div>
-            </div>
-
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs flex justify-between items-center font-bold">
-              <span className="text-slate-500">Total Compra:</span>
-              <span className="text-slate-900 font-black text-base">
-                Bs. {(Number(cantidad) * Number(costoUnitario || 0)).toFixed(2)}
-              </span>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-all mt-2 active:scale-95"
-            >
-              Registrar Compra, Sumar Stock & Kardex
-            </button>
-          </form>
+            </form>
+          </div>
         </div>
       )}
+
     </div>
   );
 }
