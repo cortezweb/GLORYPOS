@@ -1,47 +1,102 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { db, initDatabase } from '../db/dexie';
 import { hashText } from '../utils/crypto';
+import { tenantService } from '../services/tenantService';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [empresa, setEmpresa] = useState(null);
+  const [tenantSlug, setTenantSlugState] = useState('admin');
+  const [tenantError, setTenantError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loadData = async () => {
-    await initDatabase();
-    const config = await db.config_empresa.get('empresa_activa');
-    setEmpresa(config);
+  const isLocalDev = tenantService.isLocalDev();
+  const detectedSubdomain = tenantService.detectSubdomain();
 
-    const userList = await db.usuarios.toArray();
-    setUsuarios(userList);
+  const loadData = useCallback(async (forcedSlug = null) => {
+    setLoading(true);
+    setTenantError(null);
 
-    // Recuperar sesión persistente de usuario
     try {
-      const savedSession = localStorage.getItem('glorypos_user_session');
-      if (savedSession) {
-        const parsed = JSON.parse(savedSession);
-        const existing = userList.find(u => u.id === parsed.id);
-        if (existing) {
-          setCurrentUser(existing);
-        } else {
+      await initDatabase();
+
+      // 1. Resolver el slug del tenant
+      const activeSlug = forcedSlug || tenantService.getActiveTenantSlug();
+      setTenantSlugState(activeSlug);
+
+      // 2. Cargar datos del inquilino (Supabase -> Dexie)
+      const tenant = await tenantService.getTenantBySlug(activeSlug);
+
+      if (tenant) {
+        setEmpresa(tenant);
+        // 3. Cargar usuarios asignados a este tenant
+        const userList = await tenantService.getTenantUsers(tenant.id);
+        setUsuarios(userList);
+
+        // 4. Recuperar sesión persistente de usuario si pertenece a este tenant
+        try {
+          const savedSession = localStorage.getItem('glorypos_user_session');
+          if (savedSession) {
+            const parsed = JSON.parse(savedSession);
+            const existing = userList.find(u => u.id === parsed.id);
+            if (existing) {
+              setCurrentUser(existing);
+            } else {
+              localStorage.removeItem('glorypos_user_session');
+              setCurrentUser(null);
+            }
+          }
+        } catch {
           localStorage.removeItem('glorypos_user_session');
           setCurrentUser(null);
         }
+      } else {
+        setTenantError(`No se encontró la empresa con identificador "${activeSlug}".`);
+        // En caso de que no exista el slug en local, intentamos cargar la demo local para no bloquear la app
+        const fallback = await db.config_empresa.get('empresa_activa');
+        setEmpresa(fallback || null);
+        const localUsers = await db.usuarios.toArray();
+        setUsuarios(localUsers);
       }
-    } catch {
-      localStorage.removeItem('glorypos_user_session');
-      setCurrentUser(null);
+    } catch (err) {
+      console.error('[AuthContext] Error al cargar datos:', err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
+
+  // Cambiar de inquilino / empresa en caliente (estilo Tukifac en local)
+  const switchTenant = async (newSlug) => {
+    if (!newSlug || newSlug.trim() === '') return { success: false, error: 'Ingresa un identificador' };
+    const clean = newSlug.trim().toLowerCase();
+    tenantService.setActiveTenantSlug(clean);
+    setTenantSlugState(clean);
+
+    const tenant = await tenantService.getTenantBySlug(clean);
+    if (!tenant) {
+      const errorMsg = `No se encontró la empresa "${clean}". Verifica el identificador o regístrala.`;
+      setTenantError(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    setTenantError(null);
+    setEmpresa(tenant);
+    const userList = await tenantService.getTenantUsers(tenant.id);
+    setUsuarios(userList);
+
+    // Cerrar sesión del usuario anterior al cambiar de tenant
+    localStorage.removeItem('glorypos_user_session');
+    setCurrentUser(null);
+
+    return { success: true, empresa: tenant };
+  };
 
   // Iniciar sesión con PIN táctil (4 dígitos) — compara hash SHA-256
   const loginWithPin = async (pin, specificUserId = null) => {
@@ -51,12 +106,16 @@ export function AuthProvider({ children }) {
     let user = null;
 
     if (specificUserId) {
-      const target = await db.usuarios.get(specificUserId);
-      if (target && target.pin === hashedPin) {
-        user = target;
+      user = usuarios.find(u => u.id === specificUserId && (u.pin === hashedPin || u.pin_hash === hashedPin));
+      if (!user) {
+        // Buscar en db local
+        const target = await db.usuarios.get(specificUserId);
+        if (target && (target.pin === hashedPin || target.pin_hash === hashedPin)) {
+          user = target;
+        }
       }
     } else {
-      user = await db.usuarios.where('pin').equals(hashedPin).first();
+      user = usuarios.find(u => u.pin === hashedPin || u.pin_hash === hashedPin);
     }
 
     if (user) {
@@ -76,10 +135,21 @@ export function AuthProvider({ children }) {
 
     const term = identifier.trim().toLowerCase();
     const hashedPwd = await hashText(password);
-    const allUsers = await db.usuarios.toArray();
-    const user = allUsers.find(
-      u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) && u.password === hashedPwd
+    
+    // Buscar usuario en la lista del tenant activo
+    let user = usuarios.find(
+      u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) &&
+           (u.password === hashedPwd || u.password_hash === hashedPwd)
     );
+
+    // Fallback a Dexie si aún no estaba en memoria
+    if (!user) {
+      const allUsers = await db.usuarios.toArray();
+      user = allUsers.find(
+        u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) &&
+             (u.password === hashedPwd || u.password_hash === hashedPwd)
+      );
+    }
 
     if (user) {
       localStorage.setItem('glorypos_user_session', JSON.stringify(user));
@@ -112,7 +182,7 @@ export function AuthProvider({ children }) {
 
   // Calcular días restantes de prueba / suscripción
   const calcularDiasRestantes = () => {
-    if (!empresa || !empresa.fecha_vencimiento) return 0;
+    if (!empresa || !empresa.fecha_vencimiento) return 30;
     const ahora = new Date();
     const vencimiento = new Date(empresa.fecha_vencimiento);
     const diffTime = vencimiento - ahora;
@@ -157,12 +227,17 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         empresa,
+        tenantSlug,
+        tenantError,
+        isLocalDev,
+        detectedSubdomain,
         currentUser,
         usuarios,
         isAuthenticated: !!currentUser,
         loading,
         diasRestantes: calcularDiasRestantes(),
         isExpired,
+        switchTenant,
         loginWithPin,
         loginWithCredentials,
         logout,

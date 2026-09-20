@@ -11,9 +11,10 @@ DROP TABLE IF EXISTS productos CASCADE;
 DROP TABLE IF EXISTS clientes CASCADE;
 DROP TABLE IF EXISTS empresas CASCADE;
 
--- 1. TABLA DE EMPRESAS / SUCURSALES
+-- 1. TABLA DE EMPRESAS / TENANTS (MULTI-TENANT POR SUBDOMINIO O SLUG)
 CREATE TABLE empresas (
   id TEXT PRIMARY KEY,
+  slug TEXT UNIQUE NOT NULL, -- Identificador único / Subdominio (ej: 'admin', 'mi-empresa')
   nombre TEXT NOT NULL DEFAULT 'GLORYPOS BOLIVIA',
   nit_ci TEXT DEFAULT '8472910014',
   rubro TEXT NOT NULL DEFAULT 'ABARROTES', -- 'ABARROTES', 'FERRETERIA', 'FARMACIA', 'ROPA', 'CARNICERIA', 'HELADERIA'
@@ -24,6 +25,22 @@ CREATE TABLE empresas (
   email TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 1.1 TABLA DE USUARIOS POR EMPRESA
+CREATE TABLE IF NOT EXISTS usuarios (
+  id TEXT PRIMARY KEY,
+  empresa_id TEXT REFERENCES empresas(id) ON DELETE CASCADE,
+  nombre TEXT NOT NULL,
+  email TEXT NOT NULL,
+  password_hash TEXT NOT NULL,
+  pin_hash TEXT,
+  rol TEXT NOT NULL DEFAULT 'CAJERO', -- 'ADMIN', 'CAJERO', 'VENDEDOR'
+  avatar TEXT,
+  color TEXT,
+  activo BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT uq_usuario_empresa_email UNIQUE (empresa_id, email)
 );
 
 -- 2. TABLA DE CLIENTES
@@ -124,6 +141,8 @@ CREATE TABLE IF NOT EXISTS caja_chica (
 );
 
 -- ÍNDICES PARA BÚSQUEDA RÁPIDA
+CREATE INDEX IF NOT EXISTS idx_empresas_slug ON empresas(slug);
+CREATE INDEX IF NOT EXISTS idx_usuarios_empresa ON usuarios(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_productos_empresa ON productos(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_productos_codigo ON productos(codigo_barras);
 CREATE INDEX IF NOT EXISTS idx_ventas_empresa ON ventas(empresa_id);
@@ -132,6 +151,7 @@ CREATE INDEX IF NOT EXISTS idx_kardex_producto ON kardex(producto_id);
 
 -- POLÍTICAS DE SEGURIDAD ROW LEVEL SECURITY (RLS) PARA POS EN TIEMPO REAL
 ALTER TABLE empresas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE productos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ventas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clientes ENABLE ROW LEVEL SECURITY;
@@ -140,6 +160,9 @@ ALTER TABLE caja_chica ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Acceso publico empresas" ON empresas;
 CREATE POLICY "Acceso publico empresas" ON empresas FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acceso publico usuarios" ON usuarios;
+CREATE POLICY "Acceso publico usuarios" ON usuarios FOR ALL USING (true) WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Acceso publico productos" ON productos;
 CREATE POLICY "Acceso publico productos" ON productos FOR ALL USING (true) WITH CHECK (true);
@@ -156,10 +179,11 @@ CREATE POLICY "Acceso publico kardex" ON kardex FOR ALL USING (true) WITH CHECK 
 DROP POLICY IF EXISTS "Acceso publico caja_chica" ON caja_chica;
 CREATE POLICY "Acceso publico caja_chica" ON caja_chica FOR ALL USING (true) WITH CHECK (true);
 
--- EMPRESA DEMO INICIAL
-INSERT INTO empresas (id, nombre, nit_ci, rubro, plan_tipo, ciudad, direccion, telefono)
+-- EMPRESAS SEMILLA (MULTI-TENANT DEMO)
+INSERT INTO empresas (id, slug, nombre, nit_ci, rubro, plan_tipo, ciudad, direccion, telefono)
 VALUES (
   'empresa_activa',
+  'admin',
   'GLORYPOS BOLIVIA S.R.L.',
   '8472910014',
   'ABARROTES',
@@ -167,4 +191,48 @@ VALUES (
   'Santa Cruz, Bolivia',
   'Av. Monseñor Rivero #240',
   '77012345'
-) ON CONFLICT (id) DO NOTHING;
+) ON CONFLICT (id) DO UPDATE SET slug = 'admin';
+
+INSERT INTO empresas (id, slug, nombre, nit_ci, rubro, plan_tipo, ciudad, direccion, telefono)
+VALUES (
+  'emp-prado',
+  'prado',
+  'Minimarket & Abarrotes El Prado',
+  '8472910014',
+  'ABARROTES',
+  'TRIAL',
+  'Santa Cruz, Bolivia',
+  'Av. Monseñor Rivero #240',
+  '77012345'
+) ON CONFLICT (id) DO UPDATE SET slug = 'prado';
+
+-- USUARIOS INICIALES (DEMO) VINCULADOS AL TENANT 'admin'
+-- Hashes SHA-256 precalculados para testing seguro
+-- Passwords: admin / caja / 123
+-- PINs: 1234 / 0000 / 4321
+INSERT INTO usuarios (id, empresa_id, nombre, email, password_hash, pin_hash, rol, color, activo)
+VALUES 
+(
+  'usr-admin',
+  'empresa_activa',
+  'Administrador General',
+  'admin@glorypos.bo',
+  '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', -- hashText('admin')
+  '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', -- hashText('1234')
+  'ADMIN',
+  'from-blue-600 to-indigo-600',
+  true
+),
+(
+  'usr-carlos',
+  'empresa_activa',
+  'Carlos Gutiérrez',
+  'carlos@glorypos.bo',
+  '3a29b35b62dd0400b46d79040ab57e62a1c73ecbc3952f01fcf24c40bfa18a99', -- hashText('caja')
+  '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', -- hashText('0000')
+  'CAJERO',
+  'from-emerald-600 to-teal-600',
+  true
+)
+ON CONFLICT (id) DO NOTHING;
+

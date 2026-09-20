@@ -69,6 +69,22 @@ db.version(6).stores({
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
+// v7: soporte multi-tenant (slug en config_empresa, empresa_id en usuarios)
+db.version(7).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
@@ -272,6 +288,7 @@ export async function initDatabase() {
 
     await db.config_empresa.put({
       id: 'empresa_activa',
+      slug: 'admin',
       nombre: 'Minimarket & Abarrotes El Prado',
       nit_ci: '8472910014',
       propietario: 'Carlos Gutiérrez',
@@ -284,6 +301,8 @@ export async function initDatabase() {
       fecha_vencimiento: vencimiento.toISOString(),
       estado_suscripcion: 'ACTIVO'
     });
+  } else if (!config.slug) {
+    await db.config_empresa.update('empresa_activa', { slug: 'admin' });
   }
 
   // Ventas iniciales de demostración
@@ -513,6 +532,7 @@ export async function initDatabase() {
     await db.usuarios.bulkPut([
       {
         id: 'usr-admin',
+        empresa_id: 'empresa_activa',
         nombre: 'Administrador General',
         email: 'admin@glorypos.bo',
         password: hashAdmin,
@@ -525,6 +545,7 @@ export async function initDatabase() {
       },
       {
         id: 'usr-carlos',
+        empresa_id: 'empresa_activa',
         nombre: 'Carlos Gutiérrez',
         email: 'carlos@glorypos.bo',
         password: hashCarlos,
@@ -537,6 +558,7 @@ export async function initDatabase() {
       },
       {
         id: 'usr-maria',
+        empresa_id: 'empresa_activa',
         nombre: 'María Fernández',
         email: 'maria@glorypos.bo',
         password: hashMaria,

@@ -136,6 +136,7 @@ export const syncService = {
       if (localEmpresa) {
         await supabase.from('empresas').upsert({
           id: empresaId,
+          slug: localEmpresa.slug || 'admin',
           nombre: localEmpresa.nombre || 'GLORYPOS BOLIVIA',
           nit_ci: localEmpresa.nit_ci || '',
           rubro: localEmpresa.rubro || 'ABARROTES',
@@ -145,7 +146,7 @@ export const syncService = {
           plan_tipo: localEmpresa.plan_tipo || 'TRIAL',
           estado_suscripcion: localEmpresa.estado_suscripcion || 'ACTIVO',
           updated_at: new Date().toISOString()
-        });
+        }, { onConflict: 'id' });
       }
 
       // Sincronizar Productos

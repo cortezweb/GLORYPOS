@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import {
   Building2, User, Lock, Mail, Phone, MapPin, ChevronRight,
-  ChevronLeft, CheckCircle2, Eye, EyeOff, Store, ArrowLeft, Sparkles
+  ChevronLeft, CheckCircle2, Eye, EyeOff, Store, ArrowLeft, Sparkles, Globe
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { hashText } from '../../utils/crypto';
 import { useAuth } from '../../context/AuthContext';
 import { playCashChime } from '../../utils/audio';
+import { tenantService, slugify } from '../../services/tenantService';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 const RUBROS = [
   { id: 'ABARROTES', label: 'Minimarket / Abarrotes', emoji: '🏪' },
@@ -29,10 +31,12 @@ export default function RegisterView({ onGoToLogin }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isManualSlug, setIsManualSlug] = useState(false);
 
   // Paso 1 — Datos del negocio
   const [negocio, setNegocio] = useState({
     nombre: '',
+    slug: '',
     rubro: '',
     nit_ci: '',
     ciudad: 'Santa Cruz',
@@ -52,6 +56,8 @@ export default function RegisterView({ onGoToLogin }) {
   const validateStep1 = () => {
     const e = {};
     if (!negocio.nombre.trim()) e.nombre = 'El nombre del negocio es requerido';
+    if (!negocio.slug || negocio.slug.trim().length < 3)
+      e.slug = 'El identificador/subdominio debe tener al menos 3 caracteres';
     if (!negocio.rubro) e.rubro = 'Selecciona el rubro';
     if (!negocio.nit_ci.trim()) e.nit_ci = 'El NIT/CI es requerido';
     if (!negocio.ciudad) e.ciudad = 'Selecciona la ciudad';
@@ -86,57 +92,58 @@ export default function RegisterView({ onGoToLogin }) {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const empresaId = 'empresa_activa'; // Single-tenant por dispositivo
-      const ahora = new Date();
-      const vencimiento = new Date();
-      vencimiento.setDate(ahora.getDate() + 30);
-
-      // Guardar empresa en Dexie
-      await db.config_empresa.put({
-        id: empresaId,
+      // 1. Registrar empresa con slug vía tenantService
+      const newEmpresa = await tenantService.registerTenant({
         nombre: negocio.nombre.trim(),
+        slug: negocio.slug.trim().toLowerCase(),
         nit_ci: negocio.nit_ci.trim(),
         rubro: negocio.rubro,
         ciudad: negocio.ciudad,
         direccion: negocio.direccion.trim(),
         telefono: negocio.telefono.trim(),
-        propietario: admin.nombre.trim(),
+        email: admin.email.trim().toLowerCase(),
+        adminNombre: admin.nombre.trim(),
         plan_tipo: 'TRIAL',
-        estado_suscripcion: 'ACTIVO',
-        fecha_inicio: ahora.toISOString(),
-        fecha_vencimiento: vencimiento.toISOString(),
-        dias_prueba: 30,
-        created_at: ahora.toISOString(),
       });
 
-      // Crear usuario administrador con contraseña hasheada
+      // 2. Crear usuario administrador con contraseña hasheada
       const adminId = generateId('usr');
       const [hashedPwd, hashedPin] = await Promise.all([
         hashText(admin.password),
         hashText('1234'), // PIN inicial para el admin
       ]);
 
-      await db.usuarios.put({
+      const adminUser = {
         id: adminId,
+        empresa_id: newEmpresa.id,
         nombre: admin.nombre.trim(),
         email: admin.email.trim().toLowerCase(),
         password: hashedPwd,
+        password_hash: hashedPwd,
         pin: hashedPin,
+        pin_hash: hashedPin,
         rol: 'ADMIN',
-        color: 'from-blue-600 to-indigo-600',
+        color: 'from-emerald-600 to-teal-600',
         activo: true,
-        created_at: ahora.toISOString(),
-      });
+        created_at: new Date().toISOString(),
+      };
+
+      // Guardar en Supabase si está disponible
+      if (isSupabaseConfigured && navigator.onLine && supabase) {
+        try {
+          await supabase.from('usuarios').insert(adminUser);
+        } catch (err) {
+          console.warn('[RegisterView] Error al guardar admin en Supabase:', err);
+        }
+      }
+
+      // Guardar en Dexie
+      await db.usuarios.put(adminUser);
 
       playCashChime();
-      // Refrescar AuthContext para que cargue la empresa y redirigir al login
+      localStorage.setItem('glorypos_user_session', JSON.stringify(adminUser));
       await refresh();
-      // Guardar sesión automáticamente después de registrarse
-      const newUser = await db.usuarios.get(adminId);
-      if (newUser) {
-        localStorage.setItem('glorypos_user_session', JSON.stringify(newUser));
-      }
-      window.location.reload(); // Recarga limpia para que AuthProvider reinicie con la nueva empresa
+      window.location.reload();
     } catch (err) {
       console.error('[RegisterView] Error al registrar:', err);
       setErrors({ submit: 'Ocurrió un error. Intenta de nuevo.' });
@@ -215,11 +222,45 @@ export default function RegisterView({ onGoToLogin }) {
                     type="text"
                     placeholder="Ej: Minimarket El Rey"
                     value={negocio.nombre}
-                    onChange={e => { setNegocio(p => ({ ...p, nombre: e.target.value })); setErrors(prev => ({ ...prev, nombre: null })); }}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setNegocio(p => ({
+                        ...p,
+                        nombre: val,
+                        slug: isManualSlug ? p.slug : slugify(val)
+                      }));
+                      setErrors(prev => ({ ...prev, nombre: null, slug: null }));
+                    }}
                     className={inputClass(errors.nombre)}
                     autoFocus
                   />
                   <FieldError msg={errors.nombre} />
+                </div>
+
+                {/* Subdominio / Identificador de la Empresa */}
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1">
+                    Subdominio / Identificador de tu Empresa *
+                  </label>
+                  <div className={`flex items-center rounded-xl border ${errors.slug ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-slate-50'} overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500/30 transition`}>
+                    <span className="pl-3 text-slate-400 text-xs font-mono select-none">https://</span>
+                    <input
+                      type="text"
+                      placeholder="minimarket-el-rey"
+                      value={negocio.slug}
+                      onChange={e => {
+                        setIsManualSlug(true);
+                        setNegocio(p => ({ ...p, slug: slugify(e.target.value) }));
+                        setErrors(prev => ({ ...prev, slug: null }));
+                      }}
+                      className="w-full px-2 py-2 text-xs bg-transparent text-slate-900 font-mono font-bold focus:outline-none"
+                    />
+                    <span className="pr-3 text-slate-400 text-xs font-mono select-none">.glorypos.bo</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Tu subdominio web único y tu identificador de acceso local estilo Tukifac.
+                  </p>
+                  <FieldError msg={errors.slug} />
                 </div>
 
                 {/* Rubro */}
