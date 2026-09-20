@@ -62,7 +62,7 @@ export default function InicioView({
     <div className="space-y-6 select-none font-sans pb-12">
       
       {/* ======================================================== */}
-      {/* 1. HERO BANNER: VIDEO TUTORIALES TUKIFAC STYLE            */}
+      {/* 1. HERO BANNER: VIDEO TUTORIALES GLORYPOS                 */}
       {/* ======================================================== */}
       <div 
         onClick={() => setIsVideoModalOpen(true)}
@@ -77,19 +77,19 @@ export default function InicioView({
           }}
         />
         
-        {/* Capa de oscurecimiento y gradiente para contraste idéntico al screenshot */}
+        {/* Capa de oscurecimiento y gradiente para contraste */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/40 backdrop-blur-[1px]" />
 
         {/* Contenido del Banner */}
         <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between h-full min-h-[190px]">
           <div className="max-w-xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider mb-2 border border-emerald-500/30">
-              <Sparkles className="w-3 h-3 text-emerald-400" />
-              <span>Centro de Capacitación</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase tracking-wider mb-2 border border-blue-500/30">
+              <Sparkles className="w-3 h-3 text-blue-400" />
+              <span>Centro de Capacitación GLORYPOS</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-md">
-              Aprende a utilizar {empresa?.nombre ? 'tu sistema' : 'Tukifac'} <br />
-              <span className="text-emerald-400">con nuestros tutoriales</span>
+              Aprende a utilizar {empresa?.nombre ? 'tu sistema' : 'GLORYPOS'} <br />
+              <span className="text-blue-400">con nuestros tutoriales</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-2 font-medium hidden sm:block">
               Descubre cómo emitir comprobantes, controlar tu stock y cerrar cajas sin errores.

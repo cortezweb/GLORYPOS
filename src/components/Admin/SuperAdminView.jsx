@@ -4,7 +4,8 @@ import {
   Search, Plus, ChevronRight, ExternalLink, Copy, Check, CheckCircle2,
   AlertCircle, Clock, Sparkles, DollarSign, Lock, Mail, Phone, ArrowUpRight,
   LogOut, RefreshCw, X, FileText, ShoppingCart, Wallet, Send, Terminal,
-  Layers, Zap, UserCheck, PhoneCall, CheckSquare, SlidersHorizontal, KeyRound
+  Layers, Zap, UserCheck, PhoneCall, CheckSquare, SlidersHorizontal, KeyRound,
+  Palette, Laptop, CheckCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
@@ -13,7 +14,7 @@ import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { hashText } from '../../utils/crypto';
 import { playCashChime } from '../../utils/audio';
 
-const RUBROS = [
+export const RUBROS = [
   { id: 'ABARROTES', label: 'Minimarket & Abarrotes', icon: '🏪' },
   { id: 'FERRETERIA', label: 'Ferretería & Construcción', icon: '🔧' },
   { id: 'FARMACIA', label: 'Farmacia & Botica', icon: '💊' },
@@ -22,7 +23,7 @@ const RUBROS = [
   { id: 'HELADERIA', label: 'Heladería & Cafetería', icon: '🍦' },
 ];
 
-const CIUDADES = ['Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Oruro', 'Potosí', 'Beni', 'Pando'];
+export const CIUDADES = ['Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Oruro', 'Potosí', 'Beni', 'Pando'];
 
 export const ALL_CLIENT_MODULES = [
   { id: 'preventa', label: 'Preventa & Cotizaciones', icon: '📝', desc: 'Cotizaciones, proformas y pedidos' },
@@ -70,6 +71,62 @@ export const MODULE_PRESETS = {
   }
 };
 
+// Paletas de Color para el Admin Dashboard
+const COLOR_THEMES = {
+  indigo: {
+    id: 'indigo',
+    name: 'Azul Real & Índigo (SaaS Pro)',
+    dot: 'bg-blue-600',
+    primary: 'blue',
+    headerBg: 'bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white border-blue-900/50',
+    btnPrimary: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/20',
+    badge: 'bg-blue-50 text-blue-700 border-blue-200',
+    activeTab: 'bg-blue-600 text-white shadow-sm',
+    accentText: 'text-blue-600',
+    accentBorder: 'border-blue-500',
+    highlightRing: 'focus:ring-blue-500',
+  },
+  violet: {
+    id: 'violet',
+    name: 'Violeta Eléctrico (Modern)',
+    dot: 'bg-violet-600',
+    primary: 'violet',
+    headerBg: 'bg-gradient-to-r from-slate-900 via-purple-950 to-violet-950 text-white border-purple-900/50',
+    btnPrimary: 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-md shadow-violet-500/20',
+    badge: 'bg-violet-50 text-violet-700 border-violet-200',
+    activeTab: 'bg-violet-600 text-white shadow-sm',
+    accentText: 'text-violet-600',
+    accentBorder: 'border-violet-500',
+    highlightRing: 'focus:ring-violet-500',
+  },
+  emerald: {
+    id: 'emerald',
+    name: 'Esmeralda & Menta (Fintech)',
+    dot: 'bg-emerald-600',
+    primary: 'emerald',
+    headerBg: 'bg-gradient-to-r from-slate-900 via-teal-950 to-emerald-950 text-white border-emerald-900/50',
+    btnPrimary: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md shadow-emerald-500/20',
+    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    activeTab: 'bg-emerald-600 text-white shadow-sm',
+    accentText: 'text-emerald-600',
+    accentBorder: 'border-emerald-500',
+    highlightRing: 'focus:ring-emerald-500',
+  },
+  dark: {
+    id: 'dark',
+    name: 'Modo Obsidiana (Dark Elegante)',
+    dot: 'bg-slate-800',
+    primary: 'slate',
+    headerBg: 'bg-slate-900 text-white border-slate-800',
+    btnPrimary: 'bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-white shadow-md border border-slate-700',
+    badge: 'bg-slate-800 text-slate-200 border-slate-700',
+    activeTab: 'bg-slate-900 text-white shadow-sm',
+    accentText: 'text-slate-900',
+    accentBorder: 'border-slate-800',
+    highlightRing: 'focus:ring-slate-800',
+  }
+};
+
 export default function SuperAdminView({
   onSelectView,
   onOpenCloseCash,
@@ -87,7 +144,19 @@ export default function SuperAdminView({
     updateEmpresa
   } = useAuth();
 
-  // Pestañas de la consola: 'tenants' (directorio) | 'usuarios' | 'metricas' | 'operativo'
+  // Selector de tema de color para el Admin Dashboard
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    return localStorage.getItem('glorypos_admin_theme') || 'indigo';
+  });
+
+  const theme = COLOR_THEMES[selectedTheme] || COLOR_THEMES.indigo;
+
+  const handleThemeChange = (newTheme) => {
+    setSelectedTheme(newTheme);
+    localStorage.setItem('glorypos_admin_theme', newTheme);
+  };
+
+  // Pestañas de la consola: 'tenants' (directorio) | 'usuarios' | 'operativo'
   const [activeTab, setActiveTab] = useState('tenants');
 
   // Estado del listado de empresas / tenants
@@ -101,7 +170,7 @@ export default function SuperAdminView({
       propietario: empresa?.propietario || 'Carlos Gutiérrez',
       ciudad: empresa?.ciudad || 'Santa Cruz',
       telefono: empresa?.telefono || '77012345',
-      email: 'admin@glorypos.bo',
+      email: 'admin@glorypos.com',
       plan_tipo: empresa?.plan_tipo || 'PRO',
       estado_suscripcion: empresa?.estado_suscripcion || 'ACTIVO',
       fecha_vencimiento: empresa?.fecha_vencimiento || new Date(Date.now() + 30 * 86400000).toISOString(),
@@ -239,7 +308,6 @@ export default function SuperAdminView({
           const { data, error } = await supabase.from('empresas').select('*');
           if (data && !error && data.length > 0) {
             setClientCompanies(prev => {
-              // Combinar asegurando slugs únicos
               const existingSlugs = new Set(data.map(d => d.slug));
               const localExtras = prev.filter(p => !existingSlugs.has(p.slug));
               return [...data, ...localExtras];
@@ -258,7 +326,7 @@ export default function SuperAdminView({
     setTimeout(() => setNotificationMsg(null), 3500);
   };
 
-  // ── Handlers del Drawer de Alta ──────────────────────────────────────────
+  // Handlers del Drawer de Alta
   const handleOpenDrawer = () => {
     setDrawerData({
       nombre: '',
@@ -298,7 +366,7 @@ export default function SuperAdminView({
     }
   };
 
-  // ── Handlers de Edición de Módulos de Cliente Existente ─────────────────
+  // Handlers de Edición de Módulos de Cliente Existente
   const handleOpenEditModules = (client) => {
     setEditingModulesClient(client);
     setEditingModulesList(client.modulos_activos || MODULE_PRESETS.FULL.ids);
@@ -398,7 +466,7 @@ export default function SuperAdminView({
         pin: hashedPin,
         pin_hash: hashedPin,
         rol: 'ADMIN',
-        color: 'from-emerald-600 to-teal-600',
+        color: 'from-blue-600 to-indigo-600',
         activo: true,
         created_at: new Date().toISOString()
       };
@@ -413,7 +481,6 @@ export default function SuperAdminView({
 
       await db.usuarios.put(adminUser);
 
-      // Agregar al estado local
       const fullCreated = {
         ...newEmpresa,
         propietario: drawerData.adminNombre.trim() || 'Administrador',
@@ -438,7 +505,7 @@ export default function SuperAdminView({
     }
   };
 
-  // ── Impersonate: Entrar al POS de la empresa seleccionada ────────────────
+  // Impersonate: Entrar al POS de la empresa seleccionada
   const handleImpersonate = async (targetSlug) => {
     if (!targetSlug) return;
     const res = await switchTenant(targetSlug);
@@ -494,51 +561,70 @@ export default function SuperAdminView({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 space-y-6 font-sans antialiased select-none pb-20">
+    <div className="min-h-screen bg-slate-50/70 text-slate-800 p-4 sm:p-6 space-y-6 font-sans antialiased select-none pb-24">
       
-      {/* ── 1. CONSOLE SYSTEM HEADER (HIGH-TECH VERCEL STYLE) ── */}
-      <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md flex flex-wrap items-center justify-between gap-4">
+      {/* ── 1. HEADER EJECUTIVO MODERNO ── */}
+      <div className={`rounded-3xl p-5 sm:p-6 shadow-xl border ${theme.headerBg} flex flex-wrap items-center justify-between gap-4 transition-all duration-300`}>
         
-        {/* Left: Branding & Node Info */}
+        {/* Left: Branding & Status */}
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-emerald-500/20">
-            <Server className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-black text-white shadow-inner">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2 font-mono">
-                GLORYPOS // CONTROL PLANE
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
+                GLORYPOS <span className="text-white/70 font-normal">|</span> Admin Dashboard
               </h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                bolivia-central-1 (ONLINE)
+                Cloud Multi-Tenant Activo
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
-              Cluster Multi-Tenant • Supabase Postgres • Dexie v7 Sync
+            <p className="text-xs text-slate-300 mt-0.5 font-medium">
+              Consola SaaS • Supabase Postgres • Aislamiento de Datos por Empresa
             </p>
           </div>
         </div>
 
-        {/* Right: Quick Operational Buttons & Provision CTA */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+        {/* Right: Quick Operational Buttons, Theme Switcher & Provision CTA */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          
+          {/* Selector de Color Interactivo */}
+          <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/10" title="Selecciona tu paleta de color favorita">
+            <Palette className="w-3.5 h-3.5 text-slate-300 mr-1" />
+            {Object.values(COLOR_THEMES).map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => handleThemeChange(t.id)}
+                title={t.name}
+                className={`w-5 h-5 rounded-full ${t.dot} transition-transform ${
+                  selectedTheme === t.id 
+                    ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900 scale-110 shadow-sm' 
+                    : 'opacity-60 hover:opacity-100 hover:scale-105'
+                }`}
+              />
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1 bg-black/30 p-1 rounded-2xl border border-white/10">
             <button
               type="button"
               onClick={() => onSelectView && onSelectView('pos')}
               title="Abrir Punto de Venta"
-              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg text-xs font-bold border border-slate-800 transition flex items-center gap-1.5"
+              className="px-3 py-1.5 hover:bg-white/10 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
             >
-              <ShoppingCart className="w-3.5 h-3.5 text-emerald-400" />
+              <ShoppingCart className="w-3.5 h-3.5 text-blue-300" />
               <span>POS</span>
             </button>
             <button
               type="button"
               onClick={onOpenCloseCash}
               title="Cierre de Caja"
-              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg text-xs font-bold border border-slate-800 transition flex items-center gap-1.5"
+              className="px-3 py-1.5 hover:bg-white/10 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
             >
-              <Wallet className="w-3.5 h-3.5 text-sky-400" />
+              <Wallet className="w-3.5 h-3.5 text-emerald-300" />
               <span>Caja</span>
             </button>
           </div>
@@ -547,7 +633,7 @@ export default function SuperAdminView({
           <button
             type="button"
             onClick={handleOpenDrawer}
-            className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-98 text-white text-xs font-black rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-2 cursor-pointer"
+            className={`px-4 py-2.5 ${theme.btnPrimary} active:scale-95 text-xs font-black rounded-2xl transition flex items-center gap-2 cursor-pointer`}
           >
             <Plus className="w-4 h-4" />
             <span>Provisionar Nuevo Tenant</span>
@@ -555,190 +641,215 @@ export default function SuperAdminView({
         </div>
       </div>
 
-      {/* ── 2. METRICS ROW (KPIs CLOUD CONSOLE) ── */}
+      {/* ── 2. METRICS ROW (KPIs EJECUTIVOS) ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        
+        {/* KPI 1: Tenants */}
+        <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Tenants Totales</span>
-            <Building2 className="w-4 h-4 text-emerald-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tenants Totales</span>
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <Building2 className="w-4 h-4" />
+            </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{totalClientes}</span>
-            <span className="text-[11px] text-emerald-400 font-semibold">{clientesActivos} activos</span>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{totalClientes}</span>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+              {clientesActivos} activos
+            </span>
           </div>
-          <div className="mt-1 text-[10px] text-slate-500 font-mono">
-            {clientesTrial} en trial • {clientesVencidos} vencidos
+          <div className="mt-2 text-[11px] text-slate-500 font-medium">
+            {clientesTrial} en prueba • {clientesVencidos} vencidos
           </div>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        {/* KPI 2: MRR */}
+        <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">MRR Recurrente</span>
-            <DollarSign className="w-4 h-4 text-indigo-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">MRR Recurrente</span>
+            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <DollarSign className="w-4 h-4" />
+            </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-indigo-300 font-mono">Bs. {mrrTotal.toLocaleString()}</span>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Bs. {mrrTotal.toLocaleString()}
+            </span>
+            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+              /mes
+            </span>
           </div>
-          <div className="mt-1 text-[10px] text-slate-500 font-mono">
+          <div className="mt-2 text-[11px] text-slate-500 font-medium">
             Facturación mensual estimada
           </div>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        {/* KPI 3: Cajas Desplegadas */}
+        <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Cajas POS Desplegadas</span>
-            <Cpu className="w-4 h-4 text-sky-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Cajas POS Activas</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+              <Cpu className="w-4 h-4" />
+            </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-sky-300 font-mono">{totalCajas}</span>
-            <span className="text-[11px] text-sky-400 font-semibold">Terminales</span>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{totalCajas}</span>
+            <span className="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-100">
+              Terminales
+            </span>
           </div>
-          <div className="mt-1 text-[10px] text-slate-500 font-mono">
-            Soporte Touch & Código de Barras
+          <div className="mt-2 text-[11px] text-slate-500 font-medium">
+            Soporte táctil & lector láser
           </div>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        {/* KPI 4: Estado de Red */}
+        <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Estado de Red</span>
-            <Activity className="w-4 h-4 text-emerald-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Salud del Cluster</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <Activity className="w-4 h-4" />
+            </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">99.98%</span>
-            <span className="text-[11px] text-emerald-300">Healthy</span>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">99.98%</span>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+              Operativo
+            </span>
           </div>
-          <div className="mt-1 text-[10px] text-slate-500 font-mono">
-            Cloudflare CDN + Supabase Sync
+          <div className="mt-2 text-[11px] text-slate-500 font-medium">
+            Supabase Postgres + Cloudflare
           </div>
         </div>
       </div>
 
-      {/* ── 3. TABS DE NAVEGACIÓN TÉCNICA ── */}
-      <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2">
+      {/* ── 3. TABS DE NAVEGACIÓN SEGMENTADA ── */}
+      <div className="bg-white p-1.5 rounded-2xl border border-slate-200/90 flex items-center gap-1 shadow-xs max-w-xl">
         <button
           type="button"
           onClick={() => setActiveTab('tenants')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold transition flex items-center gap-2 ${
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
             activeTab === 'tenants'
-              ? 'bg-slate-800 text-white border border-slate-700'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+              ? `${theme.activeTab}`
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
-          <Building2 className="w-4 h-4 text-emerald-400" />
+          <Building2 className="w-4 h-4" />
           <span>Tenants & Empresas ({clientCompanies.length})</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('usuarios')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold transition flex items-center gap-2 ${
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
             activeTab === 'usuarios'
-              ? 'bg-slate-800 text-white border border-slate-700'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+              ? `${theme.activeTab}`
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
-          <Users className="w-4 h-4 text-indigo-400" />
-          <span>Usuarios Globales</span>
+          <Users className="w-4 h-4" />
+          <span>Directorio de Usuarios</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('operativo')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold transition flex items-center gap-2 ${
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
             activeTab === 'operativo'
-              ? 'bg-slate-800 text-white border border-slate-700'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+              ? `${theme.activeTab}`
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
-          <SlidersHorizontal className="w-4 h-4 text-sky-400" />
-          <span>Configuración de Rubro & Terminal</span>
+          <SlidersHorizontal className="w-4 h-4" />
+          <span>Configuración</span>
         </button>
       </div>
 
       {/* Notificación Toast */}
       {notificationMsg && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 bg-emerald-500 text-slate-950 font-black text-xs rounded-2xl shadow-2xl flex items-center gap-2 animate-bounce">
-          <CheckCircle2 className="w-5 h-5 text-slate-950" />
+        <div className="fixed bottom-6 right-6 z-50 p-4 bg-slate-900 text-white font-bold text-xs rounded-2xl shadow-2xl flex items-center gap-2.5 border border-slate-700 animate-fadeIn">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           <span>{notificationMsg}</span>
         </div>
       )}
 
-      {/* ── 4. PESTAÑA: TENANTS & EMPRESAS (TABLA DE ALTA DENSIDAD) ── */}
+      {/* ── 4. PESTAÑA: TENANTS & EMPRESAS ── */}
       {activeTab === 'tenants' && (
         <div className="space-y-4">
           
           {/* Barra de Filtros & Búsqueda */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-2xl border border-slate-800/80">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200/90 shadow-xs">
             <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Buscar por slug, negocio o NIT..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs font-mono rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-medium"
               />
             </div>
 
             <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto">
-              {['TODOS', 'ACTIVO', 'TRIAL', 'VENCIDO'].map(st => (
+              {[
+                { id: 'TODOS', label: 'Todos' },
+                { id: 'ACTIVO', label: 'Activos' },
+                { id: 'TRIAL', label: 'En Prueba' },
+                { id: 'VENCIDO', label: 'Vencidos' }
+              ].map(st => (
                 <button
-                  key={st}
+                  key={st.id}
                   type="button"
-                  onClick={() => setFilterStatus(st)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition ${
-                    filterStatus === st
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
+                  onClick={() => setFilterStatus(st.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    filterStatus === st.id
+                      ? `${theme.badge} border shadow-2xs`
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  {st}
+                  {st.label}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Tabla de Tenants */}
-          <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-slate-200/90 rounded-3xl overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-slate-950/80 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-4 py-3">Tenant / Subdominio</th>
-                    <th className="px-4 py-3">NIT & Contacto</th>
-                    <th className="px-4 py-3">Plan / Estado</th>
-                    <th className="px-4 py-3">Vigencia</th>
-                    <th className="px-4 py-3 text-right">Acciones</th>
+                    <th className="px-5 py-3.5">Empresa / Subdominio</th>
+                    <th className="px-5 py-3.5">NIT & Propietario</th>
+                    <th className="px-5 py-3.5">Plan / Tarifa</th>
+                    <th className="px-5 py-3.5">Estado / Vigencia</th>
+                    <th className="px-5 py-3.5 text-right">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-100">
                   {filteredClients.map((client) => {
                     const isClientExpired = client.estado_suscripcion === 'VENCIDO';
                     const isCurrentActive = client.slug === tenantSlug;
 
                     return (
-                      <tr key={client.id} className="hover:bg-slate-800/40 transition">
+                      <tr key={client.id} className="hover:bg-slate-50/80 transition">
                         
                         {/* Tenant / Subdominio */}
-                        <td className="px-4 py-3.5">
+                        <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-sm font-bold shrink-0">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-base font-bold shrink-0 shadow-2xs">
                               {RUBROS.find(r => r.id === client.rubro)?.icon || '🏪'}
                             </div>
                             <div className="space-y-0.5">
                               <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-100">{client.nombre}</span>
+                                <span className="font-bold text-slate-900 text-sm">{client.nombre}</span>
                                 {isCurrentActive && (
-                                  <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                  <span className="px-2 py-0.5 text-[9px] font-black rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                                     ESPACIO ACTIVO
                                   </span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1.5 text-emerald-400 text-[11px]">
+                              <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[11px] font-semibold">
                                 <Globe className="w-3 h-3 shrink-0" />
                                 <span>{client.slug || 'admin'}.glorypos.bo</span>
                               </div>
@@ -747,70 +858,72 @@ export default function SuperAdminView({
                         </td>
 
                         {/* NIT & Dueño */}
-                        <td className="px-4 py-3.5">
+                        <td className="px-5 py-4">
                           <div className="space-y-0.5">
-                            <span className="text-slate-200 block">NIT: {client.nit_ci}</span>
-                            <span className="text-slate-400 text-[11px]">
+                            <span className="text-slate-900 font-bold block font-mono">NIT: {client.nit_ci}</span>
+                            <span className="text-slate-500 text-[11px]">
                               {client.propietario} • {client.ciudad}
                             </span>
                           </div>
                         </td>
 
-                        {/* Plan & Estado */}
-                        <td className="px-4 py-3.5">
+                        {/* Plan & Tarifa */}
+                        <td className="px-5 py-4">
                           <div className="space-y-1">
-                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 border border-slate-700">
-                              <span className={`w-1.5 h-1.5 rounded-full ${isClientExpired ? 'bg-rose-500' : 'bg-emerald-400 animate-pulse'}`}></span>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                              <span className={`w-1.5 h-1.5 rounded-full ${isClientExpired ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
                               {client.plan_tipo}
                             </span>
-                            <span className="text-[10px] text-slate-500 block">
+                            <span className="text-[11px] text-slate-500 font-medium block">
                               Bs. {client.monto_mensual}/mes • {client.cajas_activas} cajas
                             </span>
                           </div>
                         </td>
 
-                        {/* Vigencia */}
-                        <td className="px-4 py-3.5">
-                          <span className={`text-[11px] block font-semibold ${isClientExpired ? 'text-rose-400' : 'text-slate-300'}`}>
-                            {new Date(client.fecha_vencimiento).toLocaleDateString('es-BO')}
-                          </span>
-                          <span className="text-[10px] text-slate-500">
-                            {isClientExpired ? 'Vencido' : 'Activo'}
-                          </span>
+                        {/* Estado / Vigencia */}
+                        <td className="px-5 py-4">
+                          <div className="space-y-0.5">
+                            <span className={`text-xs font-bold block ${isClientExpired ? 'text-rose-600' : 'text-slate-800'}`}>
+                              {new Date(client.fecha_vencimiento).toLocaleDateString('es-BO')}
+                            </span>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isClientExpired ? 'text-rose-500' : 'text-emerald-600'}`}>
+                              {isClientExpired ? 'Suscripción Vencida' : 'Activo'}
+                            </span>
+                          </div>
                         </td>
 
                         {/* Acciones */}
-                        <td className="px-4 py-3.5 text-right">
+                        <td className="px-5 py-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             
-                            {/* Botón IMPERSONATE (Entrar como Tenant) */}
+                            {/* Botón ACCEDER (Impersonate) */}
                             <button
                               type="button"
                               onClick={() => handleImpersonate(client.slug)}
-                              title="Acceder al POS de este tenant"
-                              className="px-2.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
+                              title="Conectarse al POS de este negocio"
+                              className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
                             >
-                              <Terminal className="w-3 h-3" />
+                              <Laptop className="w-3.5 h-3.5" />
                               <span>Acceder</span>
                             </button>
 
-                            {/* Botón Gestionar Módulos Decididos por el SuperAdmin */}
+                            {/* Botón MÓDULOS */}
                             <button
                               type="button"
                               onClick={() => handleOpenEditModules(client)}
                               title="Configurar módulos asignados a este cliente"
-                              className="px-2.5 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
                             >
-                              <Layers className="w-3 h-3" />
+                              <Layers className="w-3.5 h-3.5 text-slate-500" />
                               <span>Módulos</span>
                             </button>
 
-                            {/* Botón Credenciales */}
+                            {/* Botón CREDENCIALES */}
                             <button
                               type="button"
                               onClick={() => setCredentialsModalClient(client)}
-                              title="Ver credenciales y WhatsApp"
-                              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition"
+                              title="Ver credenciales de acceso y WhatsApp"
+                              className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl border border-slate-200 transition cursor-pointer"
                             >
                               <KeyRound className="w-3.5 h-3.5" />
                             </button>
@@ -828,28 +941,45 @@ export default function SuperAdminView({
 
       {/* ── 5. PESTAÑA: USUARIOS GLOBALES ── */}
       {activeTab === 'usuarios' && (
-        <div className="bg-slate-900/80 border border-slate-800/80 p-5 rounded-2xl space-y-4">
+        <div className="bg-white border border-slate-200/90 p-6 rounded-3xl space-y-4 shadow-xs">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-black text-white font-mono">Directorio de Usuarios de Tenants</h3>
-              <p className="text-xs text-slate-400">Usuarios con permisos de Administrador y Cajeros por empresa</p>
+              <h3 className="text-base font-bold text-slate-900">Directorio de Administradores & Cajeros</h3>
+              <p className="text-xs text-slate-500">Cuentas creadas automáticamente al registrar cada empresa en GLORYPOS</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-2">
             {clientCompanies.map(c => (
-              <div key={c.id} className="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2 font-mono text-xs">
+              <div key={c.id} className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2.5 shadow-2xs hover:border-blue-300 transition">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-white truncate max-w-[180px]">{c.nombre}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-emerald-400">
+                  <span className="font-bold text-slate-900 text-sm truncate max-w-[180px]">{c.nombre}</span>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                     {c.slug}
                   </span>
                 </div>
-                <div className="text-slate-400 text-[11px] space-y-1 pt-1 border-t border-slate-800/80">
-                  <p>👤 Admin: {c.propietario}</p>
-                  <p>✉️ Correo: {c.email}</p>
-                  <p>🔑 PIN Inicial: 1234</p>
+                <div className="text-slate-600 text-xs space-y-1 pt-1.5 border-t border-slate-200/80">
+                  <p className="flex items-center gap-1.5">
+                    <span className="text-slate-400">👤 Dueño:</span>
+                    <strong className="text-slate-800">{c.propietario}</strong>
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <span className="text-slate-400">✉️ Correo:</span>
+                    <span className="font-mono text-slate-700">{c.email}</span>
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <span className="text-slate-400">🔑 PIN de Caja:</span>
+                    <span className="font-mono font-bold text-blue-600">1234</span>
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => handleImpersonate(c.slug)}
+                  className="w-full mt-2 py-1.5 bg-white hover:bg-blue-50 text-blue-700 border border-slate-200 hover:border-blue-300 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                >
+                  <Laptop className="w-3.5 h-3.5" />
+                  <span>Conectar a este POS</span>
+                </button>
               </div>
             ))}
           </div>
@@ -859,46 +989,46 @@ export default function SuperAdminView({
       {/* ── 6. PESTAÑA: CONFIGURACIÓN OPERATIVA ── */}
       {activeTab === 'operativo' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-900/80 border border-slate-800/80 p-5 rounded-2xl space-y-3">
-            <h3 className="text-sm font-black text-white font-mono flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
+          <div className="bg-white border border-slate-200/90 p-6 rounded-3xl space-y-3 shadow-xs">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <SlidersHorizontal className="w-5 h-5 text-blue-600" />
               Rubro Comercial Activo
             </h3>
-            <p className="text-xs text-slate-400">
-              Configura el rubro activo del terminal para adaptar el catálogo a farmacia, abarrotes, ferretería, etc.
+            <p className="text-xs text-slate-500">
+              Configura el rubro activo del terminal para adaptar el catálogo a farmacia, abarrotes, ferretería, restaurante, etc.
             </p>
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between mt-3">
               <div>
-                <span className="text-[11px] text-slate-500 font-mono block">Rubro Actual</span>
-                <span className="text-sm font-black text-emerald-400 font-mono">{currentRubro}</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Rubro Actual</span>
+                <span className="text-base font-black text-blue-600">{currentRubro}</span>
               </div>
               <button
                 type="button"
                 onClick={onOpenRubroModal}
-                className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl transition"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
               >
                 Cambiar Rubro
               </button>
             </div>
           </div>
 
-          <div className="bg-slate-900/80 border border-slate-800/80 p-5 rounded-2xl space-y-3">
-            <h3 className="text-sm font-black text-white font-mono flex items-center gap-2">
-              <Wallet className="w-4 h-4 text-sky-400" />
+          <div className="bg-white border border-slate-200/90 p-6 rounded-3xl space-y-3 shadow-xs">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-emerald-600" />
               Arqueo y Cierre de Caja
             </h3>
-            <p className="text-xs text-slate-400">
-              Apertura de turno, control de ingresos/egresos y balance de efectivo en gaveta.
+            <p className="text-xs text-slate-500">
+              Apertura de turno, control de ingresos/egresos y balance de efectivo en gaveta con impresión térmica.
             </p>
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between mt-3">
               <div>
-                <span className="text-[11px] text-slate-500 font-mono block">Módulo</span>
-                <span className="text-sm font-black text-sky-300 font-mono">Caja Chica POS</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Módulo</span>
+                <span className="text-base font-black text-emerald-700">Caja Chica POS</span>
               </div>
               <button
                 type="button"
                 onClick={onOpenCloseCash}
-                className="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-slate-950 font-black text-xs rounded-xl transition"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
               >
                 Abrir Arqueo
               </button>
@@ -907,55 +1037,55 @@ export default function SuperAdminView({
         </div>
       )}
 
-      {/* ── 7. SLIDE-OVER DRAWER: PROVISIONAR TENANT (ALTA EN 3 PASOS) ── */}
+      {/* ── 7. SLIDE-OVER DRAWER: PROVISIONAR TENANT ── */}
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-lg bg-slate-900 border-l border-slate-800 h-full overflow-y-auto p-6 flex flex-col justify-between shadow-2xl text-slate-100">
+        <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="w-full max-w-lg bg-white h-full overflow-y-auto p-6 flex flex-col justify-between shadow-2xl text-slate-800 border-l border-slate-200">
             
             {/* Header del Drawer */}
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs">
                     <Plus className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-white font-mono">Provisionar Tenant</h3>
-                    <p className="text-xs text-slate-400">Despliegue de nuevo negocio en GLORYPOS Cloud</p>
+                    <h3 className="text-base font-bold text-slate-900">Provisionar Nuevo Tenant</h3>
+                    <p className="text-xs text-slate-500">Alta y despliegue en GLORYPOS Cloud</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                  className="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Formulario */}
-              <form id="drawerForm" onSubmit={handleDeployTenant} className="space-y-4 pt-4 text-xs font-mono">
+              <form id="drawerForm" onSubmit={handleDeployTenant} className="space-y-4 pt-4 text-xs">
                 
                 {/* 1. Nombre del Negocio */}
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">Nombre Comercial *</label>
+                  <label className="text-slate-700 font-bold block mb-1">Nombre Comercial *</label>
                   <input
                     type="text"
                     required
                     placeholder="Ej. Farmacia Santa María"
                     value={drawerData.nombre}
                     onChange={e => handleNombreChange(e.target.value)}
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   />
                 </div>
 
                 {/* 2. Subdominio / Slug */}
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">
+                  <label className="text-slate-700 font-bold block mb-1">
                     Subdominio Único (Tenant Slug) *
                   </label>
-                  <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500/30">
-                    <span className="pl-3 text-slate-500 select-none">https://</span>
+                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/30">
+                    <span className="pl-3 text-slate-400 select-none font-mono">https://</span>
                     <input
                       type="text"
                       required
@@ -965,34 +1095,34 @@ export default function SuperAdminView({
                         setIsManualSlug(true);
                         setDrawerData(prev => ({ ...prev, slug: slugify(e.target.value) }));
                       }}
-                      className="w-full p-2.5 bg-transparent text-emerald-400 font-bold focus:outline-none"
+                      className="w-full p-2.5 bg-transparent text-blue-600 font-mono font-bold focus:outline-none"
                     />
-                    <span className="pr-3 text-slate-500 select-none">.glorypos.bo</span>
+                    <span className="pr-3 text-slate-400 select-none font-mono">.glorypos.bo</span>
                   </div>
-                  <span className="text-[10px] text-emerald-400/80 mt-1 block">
-                    ✓ Subdominio web para producción e identificador local.
+                  <span className="text-[10px] text-blue-600 font-semibold mt-1 block">
+                    ✓ Subdominio web para producción e identificador de acceso local.
                   </span>
                 </div>
 
                 {/* 3. NIT / CI y Ciudad */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="text-slate-300 font-bold block mb-1">NIT / CI *</label>
+                    <label className="text-slate-700 font-bold block mb-1">NIT / CI *</label>
                     <input
                       type="text"
                       required
                       placeholder="Ej. 1029384012"
                       value={drawerData.nit_ci}
                       onChange={e => setDrawerData(prev => ({ ...prev, nit_ci: e.target.value }))}
-                      className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-slate-300 font-bold block mb-1">Ciudad (Bolivia)</label>
+                    <label className="text-slate-700 font-bold block mb-1">Ciudad (Bolivia)</label>
                     <select
                       value={drawerData.ciudad}
                       onChange={e => setDrawerData(prev => ({ ...prev, ciudad: e.target.value }))}
-                      className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                     >
                       {CIUDADES.map(c => (
                         <option key={c} value={c}>{c}</option>
@@ -1003,11 +1133,11 @@ export default function SuperAdminView({
 
                 {/* 4. Rubro Comercial */}
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">Rubro Comercial</label>
+                  <label className="text-slate-700 font-bold block mb-1">Rubro Comercial</label>
                   <select
                     value={drawerData.rubro}
                     onChange={e => setDrawerData(prev => ({ ...prev, rubro: e.target.value }))}
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   >
                     {RUBROS.map(r => (
                       <option key={r.id} value={r.id}>{r.icon} {r.label}</option>
@@ -1016,53 +1146,53 @@ export default function SuperAdminView({
                 </div>
 
                 {/* 5. Contacto & Usuario Admin */}
-                <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2.5">
-                  <span className="text-[11px] font-bold text-slate-400 block border-b border-slate-800 pb-1">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5">
+                  <span className="text-[11px] font-bold text-slate-600 block border-b border-slate-200 pb-1">
                     Cuenta del Administrador
                   </span>
                   
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-slate-400 block mb-0.5">Nombre Dueño</label>
+                      <label className="text-slate-500 block mb-0.5">Nombre Dueño</label>
                       <input
                         type="text"
                         placeholder="Carlos"
                         value={drawerData.adminNombre}
                         onChange={e => setDrawerData(prev => ({ ...prev, adminNombre: e.target.value }))}
-                        className="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-900"
                       />
                     </div>
                     <div>
-                      <label className="text-slate-400 block mb-0.5">WhatsApp (+591)</label>
+                      <label className="text-slate-500 block mb-0.5">WhatsApp (+591)</label>
                       <input
                         type="tel"
                         placeholder="77012345"
                         value={drawerData.telefono}
                         onChange={e => setDrawerData(prev => ({ ...prev, telefono: e.target.value }))}
-                        className="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-slate-400 block mb-0.5">Correo Login</label>
+                      <label className="text-slate-500 block mb-0.5">Correo Login</label>
                       <input
                         type="email"
                         placeholder="admin@empresa.bo"
                         value={drawerData.email}
                         onChange={e => setDrawerData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono"
                       />
                     </div>
                     <div>
-                      <label className="text-slate-400 block mb-0.5">PIN Caja (4 dígitos)</label>
+                      <label className="text-slate-500 block mb-0.5">PIN Caja (4 dígitos)</label>
                       <input
                         type="text"
                         maxLength={4}
                         value={drawerData.pin}
                         onChange={e => setDrawerData(prev => ({ ...prev, pin: e.target.value }))}
-                        className="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-center font-bold"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-center font-bold font-mono"
                       />
                     </div>
                   </div>
@@ -1071,11 +1201,11 @@ export default function SuperAdminView({
                 {/* 6. Plan Asignado */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="text-slate-300 font-bold block mb-1">Plan</label>
+                    <label className="text-slate-700 font-bold block mb-1">Plan</label>
                     <select
                       value={drawerData.plan_tipo}
                       onChange={e => setDrawerData(prev => ({ ...prev, plan_tipo: e.target.value }))}
-                      className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-bold"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-blue-700 font-bold"
                     >
                       <option value="TRIAL">Prueba (30 días)</option>
                       <option value="BASICO">Básico (Bs. 150/mes)</option>
@@ -1084,11 +1214,11 @@ export default function SuperAdminView({
                     </select>
                   </div>
                   <div>
-                    <label className="text-slate-300 font-bold block mb-1">Duración</label>
+                    <label className="text-slate-700 font-bold block mb-1">Duración</label>
                     <select
                       value={drawerData.duracion_dias}
                       onChange={e => setDrawerData(prev => ({ ...prev, duracion_dias: Number(e.target.value) }))}
-                      className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800"
                     >
                       <option value={30}>30 Días (1 Mes)</option>
                       <option value={90}>90 Días (Trimestre)</option>
@@ -1098,62 +1228,49 @@ export default function SuperAdminView({
                   </div>
                 </div>
 
-                {/* 7. Módulos Asignados (El SuperAdmin decide qué tendrá el cliente) */}
-                <div className="p-3.5 bg-slate-950/90 border border-slate-800 rounded-xl space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <div>
-                      <span className="text-xs font-black text-emerald-400 font-mono block">
-                        ⚙️ Módulos Autorizados ({drawerData.modulos_activos?.length || 0}/16)
-                      </span>
-                      <span className="text-[10px] text-slate-400">
-                        El SuperAdmin define qué módulos verá este cliente en su menú lateral
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Presets de selección rápida */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                      Plantillas Rápidas (Presets):
+                {/* 7. Módulos asignados */}
+                <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <label className="text-slate-800 font-bold">Módulos Habilitados</label>
+                    <span className="text-[10px] text-blue-600 font-bold font-mono">
+                      {drawerData.modulos_activos.length} de {ALL_CLIENT_MODULES.length}
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {Object.keys(MODULE_PRESETS).map(key => (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => applyDrawerPreset(key)}
-                          className="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-emerald-500/50 transition"
-                        >
-                          {MODULE_PRESETS[key].name}
-                        </button>
-                      ))}
-                    </div>
                   </div>
 
-                  {/* Lista de Checkboxes de los 16 módulos */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-52 overflow-y-auto pr-1">
+                  <div className="flex flex-wrap gap-1">
+                    {Object.keys(MODULE_PRESETS).map(key => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => applyDrawerPreset(key)}
+                        className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 transition border border-slate-200"
+                      >
+                        {MODULE_PRESETS[key].name}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
                     {ALL_CLIENT_MODULES.map(mod => {
-                      const isChecked = drawerData.modulos_activos?.includes(mod.id);
+                      const isChecked = drawerData.modulos_activos.includes(mod.id);
                       return (
                         <label
                           key={mod.id}
                           onClick={() => toggleDrawerModule(mod.id)}
-                          className={`flex items-center gap-2 p-2 rounded-lg border text-xs cursor-pointer transition select-none ${
+                          className={`flex items-center gap-2 p-2 rounded-xl border text-[11px] cursor-pointer transition select-none ${
                             isChecked
-                              ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300 font-bold'
-                              : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                              ? 'bg-blue-50/80 border-blue-300 text-blue-900 font-bold'
+                              : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-800'
                           }`}
                         >
                           <input
                             type="checkbox"
                             checked={isChecked}
-                            onChange={() => {}} // Manejado por onClick del label
-                            className="rounded border-slate-700 text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-slate-800"
+                            onChange={() => {}}
+                            className="rounded border-slate-300 text-blue-600 focus:ring-0"
                           />
                           <span className="text-sm">{mod.icon}</span>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[11px] truncate leading-tight">{mod.label}</p>
-                          </div>
+                          <span className="truncate">{mod.label}</span>
                         </label>
                       );
                     })}
@@ -1164,11 +1281,11 @@ export default function SuperAdminView({
             </div>
 
             {/* Footer del Drawer */}
-            <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-2">
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="px-4 py-2.5 text-slate-400 hover:text-white font-mono text-xs rounded-xl hover:bg-slate-800 transition"
+                className="px-4 py-2.5 text-slate-500 hover:text-slate-800 font-bold text-xs rounded-xl hover:bg-slate-100 transition"
               >
                 Cancelar
               </button>
@@ -1177,7 +1294,7 @@ export default function SuperAdminView({
                 type="submit"
                 form="drawerForm"
                 disabled={isDeploying}
-                className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-mono font-black text-xs rounded-xl shadow-lg transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                className={`px-5 py-2.5 ${theme.btnPrimary} font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2 disabled:opacity-50 cursor-pointer`}
               >
                 {isDeploying ? (
                   <>
@@ -1199,48 +1316,48 @@ export default function SuperAdminView({
 
       {/* ── 8. MODAL DE CREDENCIALES & WHATSAPP ── */}
       {credentialsModalClient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-slate-900 rounded-3xl max-w-md w-full p-6 text-slate-100 space-y-4 shadow-2xl relative border border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 text-slate-800 space-y-4 shadow-2xl relative border border-slate-200">
             <button
               onClick={() => setCredentialsModalClient(null)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="text-center space-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2 border border-emerald-500/30">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 border border-emerald-200 shadow-xs">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
-              <h3 className="text-lg font-black text-white font-mono">Tenant Desplegado</h3>
-              <p className="text-xs text-slate-400">
-                Credenciales listas para entregar a <strong className="text-emerald-400">{credentialsModalClient.nombre}</strong>
+              <h3 className="text-lg font-bold text-slate-900">Tenant Desplegado con Éxito</h3>
+              <p className="text-xs text-slate-500">
+                Credenciales listas para entregar a <strong className="text-slate-900">{credentialsModalClient.nombre}</strong>
               </p>
             </div>
 
             {/* Tarjeta con los datos de acceso */}
-            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-2 text-xs font-mono">
-              <div className="flex justify-between items-center pb-1.5 border-b border-slate-800">
-                <span className="text-slate-400">Subdominio Web:</span>
-                <span className="text-emerald-400 font-bold">https://{credentialsModalClient.slug}.glorypos.bo</span>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 text-xs">
+              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
+                <span className="text-slate-500">Subdominio Web:</span>
+                <span className="text-blue-600 font-bold font-mono">https://{credentialsModalClient.slug}.glorypos.bo</span>
               </div>
-              <div className="flex justify-between items-center pb-1.5 border-b border-slate-800">
-                <span className="text-slate-400">Identificador Local:</span>
-                <span className="text-white font-bold">{credentialsModalClient.slug}</span>
+              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
+                <span className="text-slate-500">Identificador Local:</span>
+                <span className="text-slate-900 font-bold font-mono">{credentialsModalClient.slug}</span>
               </div>
-              <div className="flex justify-between items-center pb-1.5 border-b border-slate-800">
-                <span className="text-slate-400">Usuario / Correo:</span>
-                <span className="text-white">{credentialsModalClient.email}</span>
+              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
+                <span className="text-slate-500">Usuario / Correo:</span>
+                <span className="text-slate-900 font-mono">{credentialsModalClient.email}</span>
               </div>
-              <div className="flex justify-between items-center pb-1.5 border-b border-slate-800">
-                <span className="text-slate-400">Contraseña Temporal:</span>
-                <span className="text-white font-black bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
+                <span className="text-slate-500">Contraseña:</span>
+                <span className="text-slate-900 font-bold bg-white px-2 py-0.5 rounded border border-slate-200 font-mono">
                   {credentialsModalClient.rawPassword || 'admin'}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">PIN Caja POS:</span>
-                <span className="text-white font-black bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                <span className="text-slate-500">PIN Caja POS:</span>
+                <span className="text-blue-600 font-black bg-white px-2 py-0.5 rounded border border-slate-200 font-mono">
                   {credentialsModalClient.rawPin || '1234'}
                 </span>
               </div>
@@ -1252,7 +1369,7 @@ export default function SuperAdminView({
                 href={`https://wa.me/591${credentialsModalClient.telefono}?text=${getWhatsAppMessage(credentialsModalClient)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer font-mono"
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>Enviar Credenciales por WhatsApp (+591 {credentialsModalClient.telefono})</span>
@@ -1266,12 +1383,12 @@ export default function SuperAdminView({
                   setCopiedToast(true);
                   setTimeout(() => setCopiedToast(false), 2500);
                 }}
-                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 {copiedToast ? (
                   <>
-                    <Check className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-400 font-bold">¡Copiado al Portapapeles!</span>
+                    <CheckCheck className="w-4 h-4 text-emerald-600" />
+                    <span className="text-emerald-700 font-bold">¡Copiado al Portapapeles!</span>
                   </>
                 ) : (
                   <>
@@ -1285,32 +1402,32 @@ export default function SuperAdminView({
         </div>
       )}
 
-      {/* ── 9. MODAL EDITAR MÓDULOS DE CLIENTE EXISTENTE (SUPERADMIN) ── */}
+      {/* ── 9. MODAL EDITAR MÓDULOS DE CLIENTE EXISTENTE ── */}
       {editingModulesClient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-slate-900 rounded-3xl max-w-lg w-full p-6 text-slate-100 space-y-4 shadow-2xl relative border border-slate-800 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 text-slate-800 space-y-4 shadow-2xl relative border border-slate-200 flex flex-col max-h-[90vh]">
             <button
               onClick={() => setEditingModulesClient(null)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Layers className="w-5 h-5 text-blue-400" />
-                <h3 className="text-base font-black text-white font-mono">
+                <Layers className="w-5 h-5 text-blue-600" />
+                <h3 className="text-base font-bold text-slate-900">
                   Módulos Autorizados: {editingModulesClient.nombre}
                 </h3>
               </div>
-              <p className="text-xs text-slate-400">
-                Selecciona qué módulos tendrá activos este cliente en su menú lateral.
+              <p className="text-xs text-slate-500">
+                Selecciona qué módulos estarán activos en el menú lateral de esta empresa.
               </p>
             </div>
 
             {/* Presets */}
             <div className="space-y-1.5 pt-1">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                 Aplicar Plantilla Rápida:
               </span>
               <div className="flex flex-wrap gap-1.5">
@@ -1319,7 +1436,7 @@ export default function SuperAdminView({
                     key={key}
                     type="button"
                     onClick={() => applyEditingPreset(key)}
-                    className="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 transition"
                   >
                     {MODULE_PRESETS[key].name}
                   </button>
@@ -1337,22 +1454,22 @@ export default function SuperAdminView({
                     onClick={() => toggleEditingModule(mod.id)}
                     className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition select-none ${
                       isChecked
-                        ? 'bg-blue-950/40 border-blue-500/50 text-blue-200 font-bold'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-blue-50/80 border-blue-300 text-blue-900 font-bold'
+                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-800'
                     }`}
                   >
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => {}}
-                      className="rounded border-slate-700 text-blue-500 focus:ring-0 focus:ring-offset-0 bg-slate-800 mt-0.5"
+                      className="rounded border-slate-300 text-blue-600 focus:ring-0 mt-0.5"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs flex items-center gap-1.5">
                         <span>{mod.icon}</span>
                         <span className="truncate">{mod.label}</span>
                       </p>
-                      <p className="text-[10px] text-slate-500 font-normal mt-0.5">{mod.desc}</p>
+                      <p className="text-[10px] text-slate-400 font-normal mt-0.5 leading-tight">{mod.desc}</p>
                     </div>
                   </label>
                 );
@@ -1360,15 +1477,15 @@ export default function SuperAdminView({
             </div>
 
             {/* Footer */}
-            <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-              <span className="text-xs text-slate-400 font-mono">
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-xs text-slate-500 font-mono">
                 {editingModulesList.length} de {ALL_CLIENT_MODULES.length} módulos seleccionados
               </span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setEditingModulesClient(null)}
-                  className="px-3.5 py-2 text-slate-400 hover:text-white font-mono text-xs rounded-xl hover:bg-slate-800 transition"
+                  className="px-3.5 py-2 text-slate-500 hover:text-slate-800 font-bold text-xs rounded-xl hover:bg-slate-100 transition"
                 >
                   Cancelar
                 </button>
@@ -1376,7 +1493,7 @@ export default function SuperAdminView({
                   type="button"
                   onClick={handleSaveClientModules}
                   disabled={isSavingModules}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-mono font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
                   {isSavingModules ? 'Guardando...' : 'Guardar Módulos'}
                 </button>

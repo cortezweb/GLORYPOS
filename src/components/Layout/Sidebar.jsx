@@ -71,17 +71,17 @@ export default function Sidebar({
         
         {/* Header */}
         <div className="p-4 pb-3 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white text-base shadow-sm">
-              🐱
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white text-base shadow-md shadow-blue-500/20">
+              <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <div className="flex items-baseline space-x-0.5">
-                <span className="text-xl font-black text-emerald-600">Tuk</span>
-                <span className="text-xl font-black text-blue-700">Fac</span>
+              <div className="flex items-baseline">
+                <span className="text-xl font-black tracking-tight text-slate-900">GLORY</span>
+                <span className="text-xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-0.5">POS</span>
               </div>
               <h2 className="text-[10px] font-black uppercase text-slate-700 truncate max-w-[180px]">
-                {empresa?.nombre || 'EMPRESA DEMO'}
+                {empresa?.nombre || 'GLORYPOS BOLIVIA'}
               </h2>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function Sidebar({
             type="button"
             onClick={() => handleNav('inicio')}
             className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-bold transition text-left ${
-              currentView === 'inicio' ? 'bg-[#00c950] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100'
+              currentView === 'inicio' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20' : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
             <Home className="w-4 h-4" />
@@ -115,14 +115,14 @@ export default function Sidebar({
               type="button"
               onClick={() => handleNav('superadmin')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition text-left ${
-                ['superadmin', 'admin_dashboard'].includes(currentView) ? 'bg-slate-900 text-white font-bold' : 'text-slate-700 hover:bg-slate-100'
+                ['superadmin', 'admin_dashboard'].includes(currentView) ? 'bg-gradient-to-r from-slate-900 to-indigo-950 text-white font-bold shadow-sm' : 'text-slate-700 hover:bg-slate-100'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <LayoutDashboard className="w-4 h-4 text-emerald-500" />
+                <LayoutDashboard className={`w-4 h-4 ${['superadmin', 'admin_dashboard'].includes(currentView) ? 'text-indigo-400' : 'text-indigo-600'}`} />
                 <span>Admin dashboard</span>
               </div>
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+              <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-mono">
                 SaaS
               </span>
             </button>

@@ -72,7 +72,7 @@ export function AuthProvider({ children }) {
     loadData();
   }, [loadData]);
 
-  // Cambiar de inquilino / empresa en caliente (estilo Tukifac en local)
+  // Cambiar de inquilino / empresa en caliente (Multi-Tenant GLORYPOS)
   const switchTenant = async (newSlug) => {
     if (!newSlug || newSlug.trim() === '') return { success: false, error: 'Ingresa un identificador' };
     const clean = newSlug.trim().toLowerCase();

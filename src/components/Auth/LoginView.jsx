@@ -20,7 +20,7 @@ export default function LoginView({ onGoToRegister }) {
     loginWithCredentials 
   } = useAuth();
 
-  // Modo de acceso: 'credentials' (SaaS estándar estilo Tukifac) o 'pin' (Cajero rápido)
+  // Modo de acceso: 'credentials' (SaaS estándar) o 'pin' (Cajero rápido)
   const [mode, setMode] = useState('credentials');
   const [companyIdInput, setCompanyIdInput] = useState(tenantSlug || 'admin');
   const [isApplyingTenant, setIsApplyingTenant] = useState(false);
@@ -254,21 +254,22 @@ export default function LoginView({ onGoToRegister }) {
         )}
       </header>
 
-      {/* Main Login Card (Inspirado en Tukifac SaaS) */}
+      {/* Main Login Card (GLORYPOS SaaS) */}
       <main className="max-w-md mx-auto w-full my-auto py-6">
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-200/80 flex flex-col space-y-5">
           
-          {/* Logo Central Tukifac Style */}
+          {/* Logo Central GLORYPOS */}
           <div className="flex flex-col items-center space-y-2 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-emerald-600/30">
-              <Building2 className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-blue-600/30">
+              <Sparkles className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                {empresa?.nombre || 'GLORYPOS SaaS'}
-              </h1>
+              <div className="flex items-baseline justify-center">
+                <span className="text-2xl font-black tracking-tight text-slate-900">GLORY</span>
+                <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-0.5">POS</span>
+              </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Inicia sesión en tu empresa
+                {empresa?.nombre ? `Acceso a ${empresa.nombre}` : 'Inicia sesión en tu espacio de trabajo'}
               </p>
             </div>
           </div>
@@ -286,14 +287,14 @@ export default function LoginView({ onGoToRegister }) {
             </div>
           )}
 
-          {/* Toggle Modo: Correo & Clave (Tukifac) vs PIN Rápido (POS) */}
+          {/* Toggle Modo: Correo & Clave vs PIN Rápido (POS) */}
           <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
             <button
               type="button"
               onClick={() => { setMode('credentials'); setErrorMsg(null); }}
               className={`flex-1 py-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 ${
                 mode === 'credentials'
-                  ? 'bg-white text-emerald-700 shadow-xs'
+                  ? 'bg-white text-blue-700 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -305,7 +306,7 @@ export default function LoginView({ onGoToRegister }) {
               onClick={() => { setMode('pin'); setErrorMsg(null); }}
               className={`flex-1 py-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 ${
                 mode === 'pin'
-                  ? 'bg-white text-emerald-700 shadow-xs'
+                  ? 'bg-white text-blue-700 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -330,12 +331,12 @@ export default function LoginView({ onGoToRegister }) {
           )}
 
           {/* ======================================================== */}
-          {/* MODO 1: CREDENCIALES ESTILO TUKIFAC                      */}
+          {/* MODO 1: CREDENCIALES EMPRESA                            */}
           {/* ======================================================== */}
           {mode === 'credentials' && (
             <form onSubmit={handleCredentialsSubmit} className="space-y-3.5">
               
-              {/* CAMPO 1: IDENTIFICADOR DE EMPRESA (IDÉNTICO A TUKIFAC) */}
+              {/* CAMPO 1: IDENTIFICADOR DE EMPRESA */}
               <div>
                 <label className="text-[11px] font-bold text-slate-700 block mb-1">
                   Identificador de empresa
@@ -345,15 +346,15 @@ export default function LoginView({ onGoToRegister }) {
                 {detectedSubdomain ? (
                   <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
                     <div className="flex items-center gap-2">
-                      <Store className="w-4 h-4 text-emerald-600" />
+                      <Store className="w-4 h-4 text-blue-600" />
                       <span className="font-mono font-bold text-slate-900">{detectedSubdomain}</span>
                     </div>
-                    <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                       Subdominio Verificado
                     </span>
                   </div>
                 ) : (
-                  /* En desarrollo local: Campo editable exactamente como Tukifac */
+                  /* En desarrollo local: Campo editable */
                   <div>
                     <div className="relative flex items-center">
                       <Store className="w-4 h-4 text-slate-400 absolute left-3" />
@@ -364,19 +365,18 @@ export default function LoginView({ onGoToRegister }) {
                         onChange={(e) => setCompanyIdInput(e.target.value.toLowerCase())}
                         onBlur={handleApplyCompanyId}
                         placeholder="admin"
-                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
                       <button
                         type="button"
                         onClick={handleApplyCompanyId}
                         title="Cargar empresa"
                         disabled={isApplyingTenant}
-                        className="absolute right-2 p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-slate-100 transition"
+                        className="absolute right-2 p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-slate-100 transition"
                       >
-                        <RefreshCw className={`w-3.5 h-3.5 ${isApplyingTenant ? 'animate-spin text-emerald-600' : ''}`} />
+                        <RefreshCw className={`w-3.5 h-3.5 ${isApplyingTenant ? 'animate-spin text-blue-600' : ''}`} />
                       </button>
                     </div>
-                    {/* Texto informativo idéntico al de Tukifac */}
                     <p className="text-[11px] text-slate-400 mt-1.5 leading-tight">
                       Solo en desarrollo local; en producción web usa el subdominio de tu empresa.
                     </p>
@@ -384,20 +384,20 @@ export default function LoginView({ onGoToRegister }) {
                 )}
               </div>
 
-              {/* CAMPO 2: CORREO ELECTRÓNICO */}
+              {/* CAMPO 2: CORREO O USUARIO */}
               <div>
                 <label className="text-[11px] font-bold text-slate-700 block mb-1">
-                  Correo electrónico
+                  Correo Electrónico o Usuario
                 </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <div className="relative flex items-center">
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3" />
                   <input
                     type="text"
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="usuario@empresa.com"
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="admin@glorypos.com"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -407,20 +407,20 @@ export default function LoginView({ onGoToRegister }) {
                 <label className="text-[11px] font-bold text-slate-700 block mb-1">
                   Contraseña
                 </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <div className="relative flex items-center">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="absolute right-2 p-1.5 text-slate-400 hover:text-slate-600 rounded-lg"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -434,11 +434,11 @@ export default function LoginView({ onGoToRegister }) {
                 </div>
               )}
 
-              {/* BOTÓN INGRESAR (VERDE TUKIFAC STYLE) */}
+              {/* BOTÓN INGRESAR */}
               <button
                 type="submit"
                 disabled={isLoggingIn || isLocked}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/20 transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:from-blue-800 active:to-indigo-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/20 transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 <span>{isLoggingIn ? 'Iniciando sesión...' : 'Ingresar'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -603,13 +603,13 @@ export default function LoginView({ onGoToRegister }) {
         </div>
       </main>
 
-      {/* Footer Tukifac Style: "GLORYPOS SaaS @ 2026" */}
+      {/* Footer: "GLORYPOS SaaS @ 2026" */}
       <footer className="max-w-md mx-auto w-full text-center space-y-2 pb-2">
         {onGoToRegister && (
           <button
             type="button"
             onClick={onGoToRegister}
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
           >
             <UserPlus className="w-3.5 h-3.5" />
             ¿Quieres registrar una nueva empresa? Haz clic aquí →

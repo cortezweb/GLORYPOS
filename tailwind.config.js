@@ -20,7 +20,7 @@ export default {
           violet: '#7c3aed',
           purple: '#8b5cf6',
         },
-        tukifac: {
+        glorypos: {
           50: '#eef2ff',
           100: '#e0e7ff',
           500: '#6366f1',

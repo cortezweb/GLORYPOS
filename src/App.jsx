@@ -63,7 +63,7 @@ import RegisterView from './components/Auth/RegisterView';
 function MainShell() {
   const { isExpired, currentUser, isAuthenticated, loading, empresa, logout } = useAuth();
 
-  // Navigation State (Por defecto inicia en la vista Inicio estilo Tukifac)
+  // Navigation State (Por defecto inicia en la vista Inicio)
   const [currentView, setCurrentView] = useState('inicio');
   const [searchTerm, setSearchTerm] = useState('');
   const [showRegister, setShowRegister] = useState(false);
@@ -280,7 +280,7 @@ function MainShell() {
               {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
               {['administracion', 'admin', 'configuracion'].includes(currentView) && <AdministracionView />}
               {['modulos'].includes(currentView) && <ModulosView />}
-              {/* Pantalla de Inicio (Réplica idéntica de Tukifac) */}
+              {/* Pantalla de Inicio GLORYPOS */}
               {currentView === 'inicio' && (
                 <InicioView 
                   onSelectView={(v) => setCurrentView(v)}

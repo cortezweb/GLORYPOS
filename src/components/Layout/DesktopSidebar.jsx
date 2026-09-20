@@ -65,41 +65,46 @@ export default function DesktopSidebar({
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 hidden lg:flex select-none z-30 font-sans shadow-xs">
       
-      {/* ── 1. HEADER: BRAND LOGO & NOMBRE DE EMPRESA (TUKIFAC STYLE) ── */}
+      {/* ── 1. HEADER: BRAND LOGO & NOMBRE DE EMPRESA (GLORYPOS SAAS) ── */}
       <div className="p-4 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2 mb-1.5 cursor-pointer" onClick={() => onSelectView('inicio')}>
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-black text-white text-base shadow-sm">
-            <span className="text-xl">🐱</span>
+        <div className="flex items-center gap-2.5 mb-2 cursor-pointer" onClick={() => onSelectView('inicio')}>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center font-black text-white shadow-md shadow-blue-500/20 group hover:scale-105 transition-transform">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <div className="flex items-baseline space-x-0.5">
-            <span className="text-2xl font-black tracking-tight text-emerald-600">Tuk</span>
-            <span className="text-2xl font-black tracking-tight text-blue-700">Fac</span>
+          <div>
+            <div className="flex items-baseline">
+              <span className="text-2xl font-black tracking-tight text-slate-900">GLORY</span>
+              <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-0.5">POS</span>
+            </div>
+            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block -mt-1">
+              Cloud System
+            </span>
           </div>
         </div>
         
         {/* Nombre de la empresa en mayúsculas idéntico al screenshot */}
         <h2 className="text-[11px] font-black uppercase tracking-tight text-slate-800 truncate leading-snug">
-          {empresa?.nombre || 'INVERSIONES DORICONTA S.A.C.'}
+          {empresa?.nombre || 'GLORYPOS BOLIVIA S.R.L.'}
         </h2>
         <div className="flex items-center gap-1.5 mt-0.5">
           <span className="text-[10px] text-slate-400 font-mono">NIT: {empresa?.nit_ci || '8472910014'}</span>
           <span className="text-[10px] text-slate-300">•</span>
-          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">
+          <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded">
             {empresa?.plan_tipo || 'PRO'}
           </span>
         </div>
       </div>
 
-      {/* ── 2. NAVEGACIÓN PRINCIPAL (ORDEN EXACTO DE LA IMAGEN) ── */}
+      {/* ── 2. NAVEGACIÓN PRINCIPAL ── */}
       <nav className="flex-1 overflow-y-auto p-2.5 space-y-1 text-xs font-semibold no-scrollbar">
         
-        {/* 1. INICIO (Activo: Cápsula verde brillante con texto blanco e icono Home) */}
+        {/* 1. INICIO */}
         <button
           type="button"
           onClick={() => onSelectView('inicio')}
           className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition font-bold text-left ${
             currentView === 'inicio'
-              ? 'bg-[#00c950] text-white shadow-sm'
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
           }`}
         >
@@ -114,15 +119,15 @@ export default function DesktopSidebar({
             onClick={() => onSelectView('superadmin')}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
               ['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView)
-                ? 'bg-slate-900 text-white font-bold'
+                ? 'bg-gradient-to-r from-slate-900 to-indigo-950 text-white font-bold shadow-sm'
                 : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+              <LayoutDashboard className={`w-4 h-4 ${['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView) ? 'text-indigo-400' : 'text-indigo-600'}`} />
               <span>Admin dashboard</span>
             </div>
-            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-mono">
               SaaS
             </span>
           </button>

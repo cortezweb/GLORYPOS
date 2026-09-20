@@ -1,5 +1,5 @@
 -- ==============================================================================
--- GLORYPOS / TUKIFAC BOLIVIA: MIGRACIÓN SUPABASE CLOUD MULTI-TENANT
+-- GLORYPOS BOLIVIA: MIGRACIÓN SUPABASE CLOUD MULTI-TENANT
 -- Copia y ejecuta este script en el SQL Editor de tu Dashboard de Supabase
 -- (https://supabase.com/dashboard/project/zeftqkwnogcrbklolwzs/sql)
 -- ==============================================================================

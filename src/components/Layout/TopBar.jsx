@@ -60,7 +60,7 @@ export default function TopBar({
 
   const handleSupportClick = () => {
     const phone = '59177012345';
-    const msg = encodeURIComponent(`Hola soporte de ${empresa?.nombre || 'Tukifac/GLORYPOS'}, necesito asistencia con mi cuenta.`);
+    const msg = encodeURIComponent(`Hola soporte de ${empresa?.nombre || 'GLORYPOS'}, necesito asistencia con mi cuenta.`);
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
@@ -71,9 +71,12 @@ export default function TopBar({
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 font-sans select-none shadow-xs">
       
-      {/* ── TOP BANNER VERDE SUPERIOR (TUKIFAC STYLE) ── */}
-      <div className="bg-[#00c950] text-white text-[10px] font-bold py-1 px-4 flex items-center justify-center tracking-wider uppercase font-mono shadow-inner">
-        <span>WWW.TUKIFAC.COM — TU ALIADO EN FACTURACIÓN & POS</span>
+      {/* ── TOP BANNER SUPERIOR (GLORYPOS SAAS) ── */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-blue-100 text-[10px] font-bold py-1 px-4 flex items-center justify-center tracking-wider uppercase font-mono border-b border-blue-900/40 shadow-xs">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+          <span>WWW.GLORYPOS.COM — PLATAFORMA CLOUD DE FACTURACIÓN & PUNTO DE VENTA</span>
+        </div>
       </div>
 
       {/* ── MAIN TOPBAR BARRA PRINCIPAL ── */}
@@ -158,11 +161,11 @@ export default function TopBar({
         {/* Right Section: Soporte, Modo Demo, Carrito, Notificaciones, Avatar */}
         <div className="flex items-center gap-2 sm:gap-3">
           
-          {/* Botón Verde: Soporte WhatsApp (Exact from Image) */}
+          {/* Botón: Soporte WhatsApp */}
           <button
             type="button"
             onClick={handleSupportClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00c950] hover:bg-emerald-600 text-white text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
           >
             <MessageSquare className="w-3.5 h-3.5 fill-white" />
             <span className="hidden sm:inline">Soporte</span>
@@ -206,25 +209,25 @@ export default function TopBar({
             </span>
           </button>
 
-          {/* Campana de Notificaciones con Badge (56) (Exact from Image) */}
+          {/* Campana de Notificaciones con Badge */}
           <button
             type="button"
-            title="56 notificaciones pendientes"
-            onClick={() => alert('Tienes 56 comprobantes y avisos en el centro de notificaciones.')}
+            title="Avisos del sistema"
+            onClick={() => alert('No hay comprobantes pendientes en cola de contingencia.')}
             className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 px-1 min-w-[16px] h-4 rounded-full bg-[#00c950] text-white text-[9px] font-black flex items-center justify-center shadow-xs">
-              56
+            <span className="absolute top-1 right-1 px-1 min-w-[16px] h-4 rounded-full bg-blue-600 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
+              0
             </span>
           </button>
 
-          {/* Avatar del Usuario: AD con Menú Desplegable (Exact from Image) */}
+          {/* Avatar del Usuario */}
           <div className="relative" ref={userMenuRef}>
             <button
               type="button"
               onClick={() => setIsUserMenuOpen(prev => !prev)}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-800 font-black text-xs flex items-center justify-center border border-slate-300 transition cursor-pointer shadow-xs"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs flex items-center justify-center border border-blue-200 transition cursor-pointer shadow-xs"
               title={`${currentUser?.nombre || 'Administrador'} (${currentUser?.rol || 'ADMIN'})`}
             >
               {initials}
@@ -234,17 +237,17 @@ export default function TopBar({
             {isUserMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 p-3 animate-fadeIn">
                 <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                  <div className="w-10 h-10 rounded-full bg-slate-800 text-white font-bold text-sm flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center shadow-sm">
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-slate-900 truncate">
                       {currentUser?.nombre || 'Administrador'}
                     </p>
-                    <p className="text-[10px] text-slate-500 truncate">
-                      {currentUser?.email || 'admin@tukifac.bo'}
+                    <p className="text-[10px] text-slate-500 truncate font-mono">
+                      {currentUser?.email || 'admin@glorypos.com'}
                     </p>
-                    <span className="inline-block mt-0.5 px-1.5 py-0.2 bg-emerald-50 text-emerald-700 text-[9px] font-bold rounded">
+                    <span className="inline-block mt-0.5 px-1.5 py-0.2 bg-blue-50 text-blue-700 text-[9px] font-bold rounded">
                       {currentUser?.rol || 'SUPERADMIN'}
                     </span>
                   </div>

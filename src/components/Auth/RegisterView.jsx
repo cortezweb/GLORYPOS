@@ -258,7 +258,7 @@ export default function RegisterView({ onGoToLogin }) {
                     <span className="pr-3 text-slate-400 text-xs font-mono select-none">.glorypos.bo</span>
                   </div>
                   <p className="text-[10px] text-slate-400 mt-1">
-                    Tu subdominio web único y tu identificador de acceso local estilo Tukifac.
+                    Tu subdominio web único y tu identificador de acceso local en GLORYPOS.
                   </p>
                   <FieldError msg={errors.slug} />
                 </div>
