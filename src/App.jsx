@@ -34,6 +34,7 @@ import SubscriptionView from './components/Subscription/SubscriptionView';
 import ExpiredScreen from './components/Subscription/ExpiredScreen';
 import CloseCashModal from './components/CashRegister/CloseCashModal';
 import DesktopDashboardModal from './components/Dashboard/DesktopDashboardModal';
+import InicioView from './components/Dashboard/InicioView';
 
 // New Stitch Views
 import TiendaVirtualView from './components/Store/TiendaVirtualView';
@@ -43,12 +44,17 @@ import DocumentosAvanzadosView from './components/AdvancedDocs/DocumentosAvanzad
 import AdministracionView from './components/Admin/AdministracionView';
 import SuperAdminView from './components/Admin/SuperAdminView';
 import ModulosView from './components/Modules/ModulosView';
+import ContabilidadView from './components/Accounting/ContabilidadView';
+import RestauranteView from './components/Restaurant/RestauranteView';
+import FarmaciaView from './components/Pharmacy/FarmaciaView';
+import HotelesView from './components/Hotels/HotelesView';
 
 // Ventas Sub-Windows
 import ComprobantesView from './components/Sales/ComprobantesView';
 import NotasVentaView from './components/Sales/NotasVentaView';
 import CotizacionesView from './components/Sales/CotizacionesView';
 import CajaChicaView from './components/Sales/CajaChicaView';
+import ComprobantesPendientesView from './components/Sales/ComprobantesPendientesView';
 
 // Auth Screens
 import LoginView from './components/Auth/LoginView';
@@ -57,8 +63,8 @@ import RegisterView from './components/Auth/RegisterView';
 function MainShell() {
   const { isExpired, currentUser, isAuthenticated, loading, empresa, logout } = useAuth();
 
-  // Navigation State
-  const [currentView, setCurrentView] = useState('pos');
+  // Navigation State (Por defecto inicia en la vista Inicio estilo Tukifac)
+  const [currentView, setCurrentView] = useState('inicio');
   const [searchTerm, setSearchTerm] = useState('');
   const [showRegister, setShowRegister] = useState(false);
 
@@ -184,6 +190,7 @@ function MainShell() {
           onLockTerminal={() => setIsTerminalLocked(true)}
           currentRubro={currentRubro}
           onOpenRubroModal={() => setIsRubroModalOpen(true)}
+          onSelectView={(v) => setCurrentView(v)}
         />
 
         {/* Trial Countdown Banner */}
@@ -273,7 +280,24 @@ function MainShell() {
               {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
               {['administracion', 'admin', 'configuracion'].includes(currentView) && <AdministracionView />}
               {['modulos'].includes(currentView) && <ModulosView />}
-              {['superadmin', 'admin_dashboard', 'dashboard', 'inicio'].includes(currentView) && (
+              {/* Pantalla de Inicio (Réplica idéntica de Tukifac) */}
+              {currentView === 'inicio' && (
+                <InicioView 
+                  onSelectView={(v) => setCurrentView(v)}
+                  onOpenCloseCash={() => setIsCloseCashOpen(true)}
+                  onOpenReceipt={(venta) => setActiveTicketSale(venta)}
+                />
+              )}
+
+              {/* Módulos Especializados */}
+              {['contabilidad'].includes(currentView) && <ContabilidadView />}
+              {['restaurante'].includes(currentView) && <RestauranteView onSelectSubView={(v) => setCurrentView(v)} />}
+              {['farmacia'].includes(currentView) && <FarmaciaView />}
+              {['hoteles'].includes(currentView) && <HotelesView />}
+              {['comprobantes_pendientes', 'pendientes'].includes(currentView) && <ComprobantesPendientesView />}
+
+              {/* Consola SuperAdmin SaaS */}
+              {['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView) && (
                 <SuperAdminView
                   onSelectView={(v) => setCurrentView(v)}
                   onOpenCloseCash={() => setIsCloseCashOpen(true)}
@@ -284,8 +308,8 @@ function MainShell() {
 
               {/* Fallback de Seguridad: Evita pantallas en blanco / plomo si una vista no existe */}
               {![
-                'pos',
-                'superadmin', 'admin_dashboard', 'dashboard', 'inicio',
+                'pos', 'inicio',
+                'superadmin', 'admin_dashboard', 'dashboard',
                 'ventas_comprobantes', 'comprobantes', 'sales',
                 'ventas_notas', 'notas_venta', 'notas',
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',
@@ -299,10 +323,14 @@ function MainShell() {
                 'tienda_virtual', 'catalogo_online', 'tienda',
                 'finanzas',
                 'guias_remision', 'guias', 'despacho',
+                'comprobantes_pendientes', 'pendientes',
                 'documentos_avanzados', 'documentos',
+                'contabilidad',
+                'restaurante',
+                'farmacia',
+                'hoteles',
                 'administracion', 'admin', 'configuracion',
-                'modulos',
-                'admin_dashboard', 'dashboard'
+                'modulos'
               ].includes(currentView) && (
                 <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 space-y-4 shadow-sm">
                   <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">

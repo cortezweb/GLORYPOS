@@ -158,6 +158,11 @@ export const tenantService = {
         direccion: 'Av. Monseñor Rivero #240',
         telefono: '77012345',
         estado_suscripcion: 'ACTIVO',
+        modulos_activos: [
+          'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
+          'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
+          'contabilidad', 'reportes', 'tienda_virtual', 'restaurante', 'farmacia', 'hoteles'
+        ]
       };
     }
 
@@ -194,7 +199,7 @@ export const tenantService = {
   },
 
   /**
-   * Registra una nueva empresa en el SaaS
+   * Registra una nueva empresa en el SaaS con sus módulos decididos por el SuperAdmin
    */
   async registerTenant(empresaData) {
     const slug = slugify(empresaData.slug || empresaData.nombre);
@@ -211,6 +216,11 @@ export const tenantService = {
       direccion: empresaData.direccion || '',
       telefono: empresaData.telefono || '',
       email: empresaData.email || '',
+      modulos_activos: empresaData.modulos_activos || [
+        'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
+        'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
+        'contabilidad', 'reportes', 'tienda_virtual'
+      ],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -219,7 +229,27 @@ export const tenantService = {
     if (isSupabaseConfigured && navigator.onLine && supabase) {
       try {
         const { error } = await supabase.from('empresas').insert(newEmpresa);
-        if (error) console.warn('[tenantService] Error al guardar en Supabase:', error);
+        if (error) {
+          // Si falló por columnas que aún no existen en el schema remoto (slug, modulos_activos),
+          // guardar con las columnas base garantizadas para que no se pierda el registro en la nube
+          const sanitized = {
+            id: newEmpresa.id,
+            nombre: newEmpresa.nombre,
+            nit_ci: newEmpresa.nit_ci,
+            rubro: newEmpresa.rubro,
+            plan_tipo: newEmpresa.plan_tipo,
+            ciudad: newEmpresa.ciudad,
+            direccion: newEmpresa.direccion,
+            telefono: newEmpresa.telefono,
+            email: newEmpresa.email,
+            created_at: newEmpresa.created_at,
+            updated_at: newEmpresa.updated_at
+          };
+          const fallbackRes = await supabase.from('empresas').insert(sanitized);
+          if (fallbackRes.error) {
+            console.warn('[tenantService] Error al guardar empresa sanitizada en Supabase:', fallbackRes.error);
+          }
+        }
       } catch (err) {
         console.warn('[tenantService] Excepción al guardar en Supabase:', err);
       }
@@ -238,5 +268,38 @@ export const tenantService = {
 
     this.setActiveTenantSlug(slug);
     return newEmpresa;
+  },
+
+  /**
+   * Actualiza los módulos activos asignados a una empresa
+   */
+  async updateTenantModules(slug, modulos_activos) {
+    const clean = slugify(slug);
+    if (!clean) return { success: false, error: 'Slug inválido' };
+
+    try {
+      // 1. Si es la activa en Dexie
+      const active = await db.config_empresa.get('empresa_activa');
+      if (active && (active.slug === clean || clean === 'admin')) {
+        await db.config_empresa.update('empresa_activa', { modulos_activos });
+      }
+
+      // 2. En Supabase si está configurado y la columna existe
+      if (isSupabaseConfigured && navigator.onLine && supabase) {
+        try {
+          await supabase
+            .from('empresas')
+            .update({ modulos_activos, updated_at: new Date().toISOString() })
+            .eq('id', active?.id || 'empresa_activa');
+        } catch (sErr) {
+          console.warn('[tenantService] Supabase modulos_activos pendiente de migración SQL:', sErr);
+        }
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error('[tenantService] Error al actualizar módulos:', err);
+      return { success: false, error: err.message };
+    }
   }
 };

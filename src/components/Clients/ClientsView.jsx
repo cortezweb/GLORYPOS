@@ -5,6 +5,7 @@ import {
   Building2, UserCheck, AlertTriangle, ArrowUpRight, DollarSign
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 
 export default function ClientsView() {
   const [clientes, setClientes] = useState([]);
@@ -63,6 +64,7 @@ export default function ClientsView() {
     setIsModalOpen(false);
     await loadClientes();
     showToast('Cliente registrado exitosamente');
+    syncService.triggerBackgroundSync();
   };
 
   const filtered = clientes.filter(c => {

@@ -24,6 +24,52 @@ const RUBROS = [
 
 const CIUDADES = ['Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Oruro', 'Potosí', 'Beni', 'Pando'];
 
+export const ALL_CLIENT_MODULES = [
+  { id: 'preventa', label: 'Preventa & Cotizaciones', icon: '📝', desc: 'Cotizaciones, proformas y pedidos' },
+  { id: 'ventas', label: 'Ventas & Facturación (POS)', icon: '🛒', desc: 'Caja rápida, facturas SIAT / SUNAT y boletas' },
+  { id: 'compras', label: 'Compras & Proveedores', icon: '🛍️', desc: 'Facturas de compras y proveedores' },
+  { id: 'clientes', label: 'Directorio de Clientes', icon: '👥', desc: 'Directorio, cuentas y crédito' },
+  { id: 'productos', label: 'Productos / Servicios', icon: '🏷️', desc: 'Catálogo con variantes, códigos y precios' },
+  { id: 'inventario', label: 'Inventario & Kardex', icon: '📦', desc: 'Stock valorizado y ajustes de merma' },
+  { id: 'finanzas', label: 'Finanzas & Caja Chica', icon: '💵', desc: 'Arqueos, movimientos de turno e ingresos/egresos' },
+  { id: 'guias_remision', label: 'Guías de Remisión', icon: '🚚', desc: 'Guías de despacho electrónicas' },
+  { id: 'comprobantes_pendientes', label: 'Comprobantes Pendientes', icon: '⏳', desc: 'Cola offline y contingencia' },
+  { id: 'documentos_avanzados', label: 'Comprobantes Avanzados', icon: '📄', desc: 'Retenciones, percepciones y especiales' },
+  { id: 'contabilidad', label: 'Contabilidad & Libros', icon: '🧮', desc: 'Exportación PLE, SIAT y resúmenes' },
+  { id: 'reportes', label: 'Reportes & Analíticas', icon: '📊', desc: 'Métricas de ventas, utilidades y Excel' },
+  { id: 'tienda_virtual', label: 'Tienda Virtual', icon: '🌐', desc: 'Catálogo online y pedidos WhatsApp' },
+  { id: 'restaurante', label: 'Restaurante / Mesas', icon: '🍽️', desc: 'Comandas, salones y cocina' },
+  { id: 'farmacia', label: 'Farmacia & Botica', icon: '💊', desc: 'Lotes, vencimientos y boticas' },
+  { id: 'hoteles', label: 'Hoteles & Hospedajes', icon: '🏨', desc: 'Recepción y habitaciones' },
+];
+
+export const MODULE_PRESETS = {
+  FULL: {
+    name: 'Full Suite (16)',
+    ids: ALL_CLIENT_MODULES.map(m => m.id)
+  },
+  RETAIL: {
+    name: 'Comercio / Retail',
+    ids: ['preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'reportes', 'tienda_virtual']
+  },
+  GASTRONOMIA: {
+    name: 'Restaurante',
+    ids: ['ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'restaurante', 'reportes']
+  },
+  FARMACIA: {
+    name: 'Farmacia',
+    ids: ['ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'farmacia', 'guias_remision', 'reportes']
+  },
+  HOTEL: {
+    name: 'Hoteles',
+    ids: ['ventas', 'clientes', 'productos', 'finanzas', 'hoteles', 'reportes']
+  },
+  FACTURACION: {
+    name: 'Facturación Básica',
+    ids: ['preventa', 'ventas', 'clientes', 'productos', 'reportes']
+  }
+};
+
 export default function SuperAdminView({
   onSelectView,
   onOpenCloseCash,
@@ -173,14 +219,13 @@ export default function SuperAdminView({
     pin: '1234',
     plan_tipo: 'PROFESIONAL',
     duracion_dias: 30,
-    modulos: {
-      siat: true,
-      inventario: true,
-      kardex: true,
-      balanza: false,
-      tienda: false
-    }
+    modulos_activos: MODULE_PRESETS.FULL.ids
   });
+
+  // Modal para editar módulos de un cliente ya existente
+  const [editingModulesClient, setEditingModulesClient] = useState(null);
+  const [editingModulesList, setEditingModulesList] = useState([]);
+  const [isSavingModules, setIsSavingModules] = useState(false);
 
   // Modal de credenciales generadas
   const [credentialsModalClient, setCredentialsModalClient] = useState(null);
@@ -228,16 +273,69 @@ export default function SuperAdminView({
       pin: '1234',
       plan_tipo: 'PROFESIONAL',
       duracion_dias: 30,
-      modulos: {
-        siat: true,
-        inventario: true,
-        kardex: true,
-        balanza: false,
-        tienda: false
-      }
+      modulos_activos: MODULE_PRESETS.FULL.ids
     });
     setIsManualSlug(false);
     setIsDrawerOpen(true);
+  };
+
+  const toggleDrawerModule = (moduleId) => {
+    setDrawerData(prev => {
+      const exists = prev.modulos_activos.includes(moduleId);
+      const updated = exists 
+        ? prev.modulos_activos.filter(m => m !== moduleId)
+        : [...prev.modulos_activos, moduleId];
+      return { ...prev, modulos_activos: updated };
+    });
+  };
+
+  const applyDrawerPreset = (presetKey) => {
+    if (MODULE_PRESETS[presetKey]) {
+      setDrawerData(prev => ({
+        ...prev,
+        modulos_activos: [...MODULE_PRESETS[presetKey].ids]
+      }));
+    }
+  };
+
+  // ── Handlers de Edición de Módulos de Cliente Existente ─────────────────
+  const handleOpenEditModules = (client) => {
+    setEditingModulesClient(client);
+    setEditingModulesList(client.modulos_activos || MODULE_PRESETS.FULL.ids);
+  };
+
+  const toggleEditingModule = (moduleId) => {
+    setEditingModulesList(prev => {
+      const exists = prev.includes(moduleId);
+      return exists ? prev.filter(m => m !== moduleId) : [...prev, moduleId];
+    });
+  };
+
+  const applyEditingPreset = (presetKey) => {
+    if (MODULE_PRESETS[presetKey]) {
+      setEditingModulesList([...MODULE_PRESETS[presetKey].ids]);
+    }
+  };
+
+  const handleSaveClientModules = async () => {
+    if (!editingModulesClient) return;
+    setIsSavingModules(true);
+    try {
+      const res = await tenantService.updateTenantModules(editingModulesClient.slug, editingModulesList);
+      if (res.success) {
+        setClientCompanies(prev => prev.map(c => 
+          c.id === editingModulesClient.id ? { ...c, modulos_activos: editingModulesList } : c
+        ));
+        showToast(`Módulos de "${editingModulesClient.nombre}" actualizados correctamente`);
+        setEditingModulesClient(null);
+      } else {
+        alert('Error al actualizar módulos: ' + res.error);
+      }
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      setIsSavingModules(false);
+    }
   };
 
   const handleNombreChange = (val) => {
@@ -256,6 +354,11 @@ export default function SuperAdminView({
       return;
     }
 
+    if (!drawerData.modulos_activos || drawerData.modulos_activos.length === 0) {
+      alert('Por favor selecciona al menos un módulo para este cliente.');
+      return;
+    }
+
     setIsDeploying(true);
 
     try {
@@ -264,7 +367,7 @@ export default function SuperAdminView({
       const expiry = new Date();
       expiry.setDate(expiry.getDate() + duracion);
 
-      // 1. Registrar empresa vía tenantService
+      // 1. Registrar empresa vía tenantService con los módulos decididos por el SuperAdmin
       const newEmpresa = await tenantService.registerTenant({
         nombre: drawerData.nombre.trim(),
         slug: drawerData.slug.trim().toLowerCase(),
@@ -275,6 +378,7 @@ export default function SuperAdminView({
         email: drawerData.email.trim().toLowerCase(),
         adminNombre: drawerData.adminNombre.trim() || 'Administrador',
         plan_tipo: drawerData.plan_tipo,
+        modulos_activos: drawerData.modulos_activos
       });
 
       // 2. Registrar usuario administrador
@@ -690,6 +794,17 @@ export default function SuperAdminView({
                               <span>Acceder</span>
                             </button>
 
+                            {/* Botón Gestionar Módulos Decididos por el SuperAdmin */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditModules(client)}
+                              title="Configurar módulos asignados a este cliente"
+                              className="px-2.5 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
+                            >
+                              <Layers className="w-3 h-3" />
+                              <span>Módulos</span>
+                            </button>
+
                             {/* Botón Credenciales */}
                             <button
                               type="button"
@@ -983,6 +1098,68 @@ export default function SuperAdminView({
                   </div>
                 </div>
 
+                {/* 7. Módulos Asignados (El SuperAdmin decide qué tendrá el cliente) */}
+                <div className="p-3.5 bg-slate-950/90 border border-slate-800 rounded-xl space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <div>
+                      <span className="text-xs font-black text-emerald-400 font-mono block">
+                        ⚙️ Módulos Autorizados ({drawerData.modulos_activos?.length || 0}/16)
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        El SuperAdmin define qué módulos verá este cliente en su menú lateral
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Presets de selección rápida */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                      Plantillas Rápidas (Presets):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {Object.keys(MODULE_PRESETS).map(key => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => applyDrawerPreset(key)}
+                          className="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-emerald-500/50 transition"
+                        >
+                          {MODULE_PRESETS[key].name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Lista de Checkboxes de los 16 módulos */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-52 overflow-y-auto pr-1">
+                    {ALL_CLIENT_MODULES.map(mod => {
+                      const isChecked = drawerData.modulos_activos?.includes(mod.id);
+                      return (
+                        <label
+                          key={mod.id}
+                          onClick={() => toggleDrawerModule(mod.id)}
+                          className={`flex items-center gap-2 p-2 rounded-lg border text-xs cursor-pointer transition select-none ${
+                            isChecked
+                              ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300 font-bold'
+                              : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {}} // Manejado por onClick del label
+                            className="rounded border-slate-700 text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-slate-800"
+                          />
+                          <span className="text-sm">{mod.icon}</span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[11px] truncate leading-tight">{mod.label}</p>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
               </form>
             </div>
 
@@ -1103,6 +1280,107 @@ export default function SuperAdminView({
                   </>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 9. MODAL EDITAR MÓDULOS DE CLIENTE EXISTENTE (SUPERADMIN) ── */}
+      {editingModulesClient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-slate-900 rounded-3xl max-w-lg w-full p-6 text-slate-100 space-y-4 shadow-2xl relative border border-slate-800 flex flex-col max-h-[90vh]">
+            <button
+              onClick={() => setEditingModulesClient(null)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Layers className="w-5 h-5 text-blue-400" />
+                <h3 className="text-base font-black text-white font-mono">
+                  Módulos Autorizados: {editingModulesClient.nombre}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-400">
+                Selecciona qué módulos tendrá activos este cliente en su menú lateral.
+              </p>
+            </div>
+
+            {/* Presets */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                Aplicar Plantilla Rápida:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {Object.keys(MODULE_PRESETS).map(key => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => applyEditingPreset(key)}
+                    className="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                  >
+                    {MODULE_PRESETS[key].name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Checkboxes de los 16 módulos */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto pr-1 flex-1 max-h-80">
+              {ALL_CLIENT_MODULES.map(mod => {
+                const isChecked = editingModulesList.includes(mod.id);
+                return (
+                  <label
+                    key={mod.id}
+                    onClick={() => toggleEditingModule(mod.id)}
+                    className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition select-none ${
+                      isChecked
+                        ? 'bg-blue-950/40 border-blue-500/50 text-blue-200 font-bold'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => {}}
+                      className="rounded border-slate-700 text-blue-500 focus:ring-0 focus:ring-offset-0 bg-slate-800 mt-0.5"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs flex items-center gap-1.5">
+                        <span>{mod.icon}</span>
+                        <span className="truncate">{mod.label}</span>
+                      </p>
+                      <p className="text-[10px] text-slate-500 font-normal mt-0.5">{mod.desc}</p>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Footer */}
+            <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+              <span className="text-xs text-slate-400 font-mono">
+                {editingModulesList.length} de {ALL_CLIENT_MODULES.length} módulos seleccionados
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingModulesClient(null)}
+                  className="px-3.5 py-2 text-slate-400 hover:text-white font-mono text-xs rounded-xl hover:bg-slate-800 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveClientModules}
+                  disabled={isSavingModules}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-mono font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {isSavingModules ? 'Guardando...' : 'Guardar Módulos'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

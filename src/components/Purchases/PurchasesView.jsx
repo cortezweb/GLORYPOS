@@ -5,6 +5,7 @@ import {
   Calendar, FileText, Check, AlertCircle, TrendingUp
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 
 export default function PurchasesView() {
   const [proveedores, setProveedores] = useState([]);
@@ -115,6 +116,7 @@ export default function PurchasesView() {
     setNumeroFactura('');
     await loadData();
     showToast(`¡Stock actualizado! +${cantNum} uds ingresadas a ${prod?.nombre}.`);
+    syncService.triggerBackgroundSync();
   };
 
   const filteredCompras = useMemo(() => {

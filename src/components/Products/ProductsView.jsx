@@ -6,6 +6,7 @@ import {
   Scale, Pill, Shirt, Beef, IceCream, Store, Wrench, Check
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 import { RUBROS_CONFIG } from '../../db/rubros';
 import ProductsSubNav from './ProductsSubNav';
 
@@ -204,14 +205,17 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     setIsEditProductModalOpen(false);
     await loadData();
     showToast(`Producto ${editForm.nombre} actualizado`);
+    syncService.triggerBackgroundSync();
   };
 
   const handleDeleteProduct = async (prod, e) => {
     e.stopPropagation();
     if (confirm(`¿Eliminar producto "${prod.nombre}" del catálogo?`)) {
       await db.productos_tienda.delete(prod.id);
+      syncService.addToQueue('productos', 'delete', { id: prod.id });
       await loadData();
       showToast('Producto eliminado');
+      syncService.triggerBackgroundSync();
     }
   };
 
@@ -264,6 +268,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     setIsMasterModalOpen(false);
     await loadData();
     showToast(`Producto agregado desde Catálogo Maestro: ${newProd.nombre}`);
+    syncService.triggerBackgroundSync();
   };
 
   const handleCreateCustom = async (e) => {
@@ -333,6 +338,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
     setShowCustomVariants(false);
     await loadData();
     showToast(`Producto creado: ${newCustom.nombre}`);
+    syncService.triggerBackgroundSync();
   };
 
   const toggleArrayItem = (setter, currentList, item) => {

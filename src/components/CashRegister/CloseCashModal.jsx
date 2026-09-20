@@ -4,6 +4,7 @@ import {
   Printer, ArrowLeft, Banknote, ShieldCheck 
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 import { useAuth } from '../../context/AuthContext';
 
 export default function CloseCashModal({ isOpen, onClose }) {
@@ -67,6 +68,26 @@ export default function CloseCashModal({ isOpen, onClose }) {
     Number(counts.monedas || 0);
 
   const diferencia = totalContado - ventasStats.efectivo;
+
+  const handleConfirmArqueo = async () => {
+    try {
+      if (db.movimientos_caja) {
+        await db.movimientos_caja.add({
+          id: `mov-${Date.now()}`,
+          fecha: new Date().toISOString(),
+          tipo: 'CIERRE',
+          monto: totalContado,
+          motivo: `Arqueo y Cierre de Turno (Sistema: ${ventasStats.total.toFixed(2)}, Físico: ${totalContado.toFixed(2)}, Dif: ${diferencia.toFixed(2)})`,
+          comprobante: `ARQ-${Date.now().toString().slice(-6)}`,
+          responsable: 'Carlos Gutiérrez'
+        });
+      }
+      syncService.triggerBackgroundSync();
+    } catch (e) {
+      console.warn('Error al guardar arqueo:', e);
+    }
+    setStep('SUMMARY');
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
@@ -282,7 +303,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
             </div>
 
             <button
-              onClick={() => setStep('SUMMARY')}
+              onClick={handleConfirmArqueo}
               className="w-full bg-gradient-to-r from-blue-600 to-[#7c3aed] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:opacity-95 transition"
             >
               Confirmar Arqueo y Emitir Comprobante

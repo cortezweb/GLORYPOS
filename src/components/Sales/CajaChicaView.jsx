@@ -4,6 +4,7 @@ import {
   Lock, Printer, RefreshCw, AlertTriangle, CheckCircle2, Clock, Calendar 
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
 
 export default function CajaChicaView({ onSelectSubView, onOpenCloseCash }) {
@@ -81,6 +82,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash }) {
     await loadData();
     setIsNewMovementModalOpen(false);
     setMovementForm({ tipo: 'EGRESO', monto: '', motivo: '', comprobante: '' });
+    syncService.triggerBackgroundSync();
   };
 
   return (

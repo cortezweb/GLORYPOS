@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, LayoutDashboard, ShoppingCart, ShoppingBag, Globe, 
   Truck, Users, Tag, Boxes, Wallet, Send, FileCode, BarChart3, 
-  Settings, Layers, Sparkles, Lock, PlayCircle, LogOut, ChevronRight
+  Settings, Layers, Sparkles, Lock, PlayCircle, LogOut, ChevronDown, ChevronRight,
+  Calculator, UtensilsCrossed, Pill, BedDouble, Clock, FileText
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -14,203 +15,660 @@ export default function DesktopSidebar({
   onOpenRubroModal,
   currentRubro
 }) {
-  const { empresa, currentUser, logout, diasRestantes, isExpired, cambiarPlan, setTrialDays, simularVencimiento } = useAuth();
-  const initialLetter = (currentUser?.nombre || empresa?.propietario || empresa?.nombre || 'G').charAt(0).toUpperCase();
+  const { empresa, currentUser, logout, diasRestantes, isExpired, tenantSlug } = useAuth();
 
-  const menuItems = [
-    { id: 'inicio', label: 'Inicio', icon: Home, action: () => onSelectView('inicio') },
-    { id: 'rubro', label: `Rubro: ${currentRubro === 'FERRETERIA' ? 'Ferretería' : currentRubro === 'FARMACIA' ? 'Farmacia' : currentRubro === 'ROPA' ? 'Ropa & Calzado' : currentRubro === 'CARNICERIA' ? 'Carnicería' : currentRubro === 'HELADERIA' ? 'Heladería' : 'Minimarket'}`, icon: Sparkles, action: onOpenRubroModal, highlight: true },
-    { id: 'admin_dashboard', label: 'Admin dashboard', icon: LayoutDashboard, action: () => onSelectView('superadmin'), badge: 'SaaS' },
-    { id: 'preventa', label: 'Pre venta', icon: FileCode, action: () => onSelectView('ventas_cotizaciones') },
-    { id: 'pos', label: 'Ventas', icon: ShoppingCart, action: () => onSelectView('pos') },
-    { id: 'tienda_virtual', label: 'Tienda virtual', icon: Globe, action: () => onSelectView('tienda_virtual') },
-    { id: 'purchases', label: 'Compras', icon: ShoppingBag, action: () => onSelectView('purchases') },
-    { id: 'clients', label: 'Clientes', icon: Users, action: () => onSelectView('clients') },
-    { id: 'productos', label: 'Productos', icon: Tag, action: () => onSelectView('productos') },
-    { id: 'inventory', label: 'Inventario', icon: Boxes, action: () => onSelectView('inventory') },
-    { id: 'finanzas', label: 'Finanzas', icon: Wallet, action: () => onSelectView('finanzas') },
-    { id: 'guias_remision', label: 'Guías de remisión', icon: Send, action: () => onSelectView('guias_remision') },
-    { id: 'documentos_avanzados', label: 'Documentos avanzados', icon: FileCode, action: () => onSelectView('documentos_avanzados') },
-    { id: 'reports', label: 'Reportes', icon: BarChart3, action: () => onSelectView('reports') },
-    { id: 'administracion', label: 'Administración', icon: Settings, action: () => onSelectView('administracion') },
-    { id: 'modulos', label: 'Módulos', icon: Layers, action: () => onSelectView('modulos') },
-    { id: 'subscription', label: 'Planes & Suscripción', icon: Sparkles, action: () => onSelectView('subscription'), badge: `${diasRestantes}d` },
+  // Estado de apertura de los acordeones del menú lateral
+  const [expandedMenus, setExpandedMenus] = useState({
+    ventas: true,
+    productos: false,
+    preventa: false,
+    compras: false,
+    clientes: false,
+    inventario: false,
+    finanzas: false,
+    guias_remision: false,
+    comprobantes_pendientes: false,
+    documentos_avanzados: false,
+    contabilidad: false,
+    reportes: false,
+    tienda_virtual: false,
+    restaurante: false,
+    farmacia: false,
+    hoteles: false
+  });
+
+  const toggleMenu = (menuId) => {
+    setExpandedMenus(prev => ({ ...prev, [menuId]: !prev[menuId] }));
+  };
+
+  // Permisos: Superadmin ve todo; cliente solo ve modulos_activos
+  const isSuperAdmin = tenantSlug === 'admin' || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
+  const allowedModules = empresa?.modulos_activos || [
+    'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
+    'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
+    'contabilidad', 'reportes', 'tienda_virtual'
   ];
 
-  const [isVentasExpanded, setIsVentasExpanded] = React.useState(true);
+  const hasModule = (modId) => isSuperAdmin || allowedModules.includes(modId);
 
-  const ventasSubItems = [
-    { id: 'ventas_caja', label: 'Caja Chica / Turno', view: 'ventas_caja' },
-    { id: 'pos', label: 'Nueva Venta', view: 'pos' },
-    { id: 'ventas_comprobantes', label: 'Comprobantes Emitidos', view: 'ventas_comprobantes' },
-    { id: 'ventas_notas', label: 'Notas de Venta', view: 'ventas_notas' },
-    { id: 'ventas_cotizaciones', label: 'Cotizaciones / Pedidos', view: 'ventas_cotizaciones' },
-  ];
+  // Auto-expandir el menú si la vista actual pertenece a ese módulo
+  useEffect(() => {
+    if (['pos', 'ventas_comprobantes', 'ventas_notas', 'ventas_caja'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, ventas: true }));
+    } else if (['productos'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, productos: true }));
+    } else if (['ventas_cotizaciones', 'cotizaciones', 'preventa'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, preventa: true }));
+    }
+  }, [currentView]);
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 hidden lg:flex select-none z-30">
-      {/* Header */}
-      <div className="p-4 pb-3 border-b border-gray-100">
-        <div className="flex items-center space-x-1 mb-1">
-          <span className="text-2xl font-black tracking-tight text-[#2563eb]">GLORY</span>
-          <span className="text-2xl font-black tracking-tight text-[#712ae2]">POS</span>
-          <span className="inline-block w-2 h-2 rounded-full bg-[#8b5cf6] ml-0.5 self-end mb-1"></span>
+    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 hidden lg:flex select-none z-30 font-sans shadow-xs">
+      
+      {/* ── 1. HEADER: BRAND LOGO & NOMBRE DE EMPRESA (TUKIFAC STYLE) ── */}
+      <div className="p-4 pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2 mb-1.5 cursor-pointer" onClick={() => onSelectView('inicio')}>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-black text-white text-base shadow-sm">
+            <span className="text-xl">🐱</span>
+          </div>
+          <div className="flex items-baseline space-x-0.5">
+            <span className="text-2xl font-black tracking-tight text-emerald-600">Tuk</span>
+            <span className="text-2xl font-black tracking-tight text-blue-700">Fac</span>
+          </div>
         </div>
         
-        <h2 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 truncate">
-          {empresa?.nombre || 'CORPORACIÓN INDUSTRIAL BOLIVIA'}
+        {/* Nombre de la empresa en mayúsculas idéntico al screenshot */}
+        <h2 className="text-[11px] font-black uppercase tracking-tight text-slate-800 truncate leading-snug">
+          {empresa?.nombre || 'INVERSIONES DORICONTA S.A.C.'}
         </h2>
-        <div className="flex items-center gap-1.5 mt-1">
-          <span className="text-[10px] text-gray-500 font-medium">NIT: {empresa?.nit_ci}</span>
-          <span className="text-[10px] text-gray-300">•</span>
-          <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
-            isExpired ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800'
-          }`}>
-            {isExpired ? 'Vencido' : `${diasRestantes} días`}
+        <div className="flex items-center gap-1.5 mt-0.5">
+          <span className="text-[10px] text-slate-400 font-mono">NIT: {empresa?.nit_ci || '8472910014'}</span>
+          <span className="text-[10px] text-slate-300">•</span>
+          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">
+            {empresa?.plan_tipo || 'PRO'}
           </span>
         </div>
       </div>
 
-      {/* Navigation Links (Full List) */}
-      <nav className="flex-1 overflow-y-auto p-2.5 space-y-0.5 text-xs font-semibold no-scrollbar">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
+      {/* ── 2. NAVEGACIÓN PRINCIPAL (ORDEN EXACTO DE LA IMAGEN) ── */}
+      <nav className="flex-1 overflow-y-auto p-2.5 space-y-1 text-xs font-semibold no-scrollbar">
+        
+        {/* 1. INICIO (Activo: Cápsula verde brillante con texto blanco e icono Home) */}
+        <button
+          type="button"
+          onClick={() => onSelectView('inicio')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition font-bold text-left ${
+            currentView === 'inicio'
+              ? 'bg-[#00c950] text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Home className="w-4 h-4" />
+          <span>Inicio</span>
+        </button>
 
-          // Special Accordion Submenu for 'pos' (Ventas)
-          if (item.id === 'pos') {
-            return (
-              <div key="desktop_ventas_accordion" className="rounded-xl bg-blue-50/50 border border-blue-100 overflow-hidden my-1">
+        {/* 2. ADMIN DASHBOARD (Consola SaaS para SuperAdmin) */}
+        {isSuperAdmin && (
+          <button
+            type="button"
+            onClick={() => onSelectView('superadmin')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+              ['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView)
+                ? 'bg-slate-900 text-white font-bold'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+              <span>Admin dashboard</span>
+            </div>
+            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+              SaaS
+            </span>
+          </button>
+        )}
+
+        {/* 3. PREVENTA (Acordeón con Cotizaciones y Pedidos) */}
+        {hasModule('preventa') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('preventa')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <FileCode className="w-4 h-4 text-slate-500" />
+                <span>Preventa</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.preventa ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.preventa && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => setIsVentasExpanded(!isVentasExpanded)}
-                  className="w-full flex items-center justify-between px-3 py-2 bg-blue-50 text-[#2563eb] font-semibold transition text-left"
+                  onClick={() => onSelectView('ventas_cotizaciones')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['ventas_cotizaciones', 'cotizaciones'].includes(currentView)
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
                 >
-                  <div className="flex items-center space-x-2.5">
-                    <Icon className="w-4 h-4 text-[#2563eb]" />
-                    <span>Ventas</span>
-                  </div>
-                  <svg 
-                    className={`w-3.5 h-3.5 text-[#2563eb] stroke-current transition-transform duration-200 ${
-                      isVentasExpanded ? 'rotate-180' : ''
-                    }`} 
-                    fill="none" 
-                    strokeWidth="2" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  • Cotizaciones / Pedidos
                 </button>
-
-                {isVentasExpanded && (
-                  <div className="pl-6 pr-2 py-1 space-y-0.5 bg-white/80 border-t border-blue-50">
-                    {ventasSubItems.map((sub) => {
-                      const isSubActive = currentView === sub.view;
-                      return (
-                        <button
-                          key={sub.id}
-                          onClick={() => onSelectView(sub.view)}
-                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] transition text-left ${
-                            isSubActive
-                              ? 'bg-gradient-to-r from-[#2563eb] to-[#7c3aed] text-white font-semibold shadow-xs'
-                              : 'text-gray-600 hover:bg-gray-100'
-                          }`}
-                        >
-                          <div className="flex items-center space-x-2">
-                            {isSubActive ? (
-                              <svg className="w-3 h-3 stroke-current flex-shrink-0" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            ) : (
-                              <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                            )}
-                            <span>{sub.label}</span>
-                          </div>
-                          {isSubActive && (
-                            <span className="text-[9px] bg-white/20 px-1 py-0.2 rounded font-bold uppercase tracking-wider">
-                              Activo
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
               </div>
-            );
-          }
+            )}
+          </div>
+        )}
 
-          const isActive = currentView === item.id || 
-            (item.id === 'inicio' && currentView === 'inicio') ||
-            (item.id === 'admin_dashboard' && ['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView));
-          return (
+        {/* 4. VENTAS (Acordeón con Nueva Venta POS, Comprobantes, Notas, Caja) */}
+        {hasModule('ventas') && (
+          <div>
             <button
-              key={item.id}
-              onClick={item.action}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
-                isActive
-                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50/80 text-[#2563eb] border border-blue-100/60 shadow-xs font-bold'
-                  : 'text-gray-600 hover:bg-slate-50 hover:text-slate-900'
-              }`}
+              type="button"
+              onClick={() => toggleMenu('ventas')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
             >
-              <div className="flex items-center space-x-2.5">
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#2563eb]' : 'text-gray-400'}`} />
-                <span>{item.label}</span>
+              <div className="flex items-center gap-2.5">
+                <FileText className="w-4 h-4 text-slate-500" />
+                <span>Ventas</span>
               </div>
-              {item.badge && (
-                <span className="text-[10px] font-bold px-1.5 py-0.2 bg-amber-100 text-amber-800 rounded">
-                  {item.badge}
-                </span>
-              )}
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.ventas ? 'rotate-180' : ''}`} />
             </button>
-          );
-        })}
+            {expandedMenus.ventas && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('pos')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'pos'
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Punto de Venta (POS)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('ventas_comprobantes')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['ventas_comprobantes', 'comprobantes'].includes(currentView)
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Comprobantes Emitidos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('ventas_notas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['ventas_notas', 'notas_venta'].includes(currentView)
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Notas de Venta
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('ventas_caja')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'ventas_caja'
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Caja Chica / Turnos
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Tutoriales en YouTube banner */}
-        <div className="pt-2 pb-1">
-          <a 
-            href="https://youtube.com" 
-            target="_blank" 
-            rel="noreferrer"
-            className="flex items-center space-x-2.5 p-2 rounded-xl bg-violet-50/70 hover:bg-violet-100/70 border border-violet-100 transition"
-          >
-            <div className="w-6 h-6 rounded-lg bg-[#ba1a1a] flex items-center justify-center flex-shrink-0 text-white shadow-xs">
-              <PlayCircle className="w-4 h-4 fill-white text-[#ba1a1a]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-bold text-gray-900 leading-tight">Tutoriales en YouTube</p>
-            </div>
-          </a>
-        </div>
+        {/* 5. COMPRAS (Acordeón) */}
+        {hasModule('compras') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('compras')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <ShoppingBag className="w-4 h-4 text-slate-500" />
+                <span>Compras</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.compras ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.compras && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('purchases')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'purchases' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Registro de Compras
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 6. CLIENTES (Acordeón) */}
+        {hasModule('clientes') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('clientes')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Users className="w-4 h-4 text-slate-500" />
+                <span>Clientes</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.clientes ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.clientes && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('clients')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'clients' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Directorio de Clientes
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 7. PRODUCTOS / SERVICIOS (Acordeón) */}
+        {hasModule('productos') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('productos')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Tag className="w-4 h-4 text-slate-500" />
+                <span>Productos/Servicios</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.productos ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.productos && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('productos')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'productos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Catálogo & Precios
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 8. INVENTARIO (Acordeón) */}
+        {hasModule('inventario') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('inventario')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Boxes className="w-4 h-4 text-slate-500" />
+                <span>Inventario</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.inventario ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.inventario && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('inventory')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'inventory' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Stock & Kardex
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 9. FINANZAS (Acordeón) */}
+        {hasModule('finanzas') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('finanzas')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Wallet className="w-4 h-4 text-slate-500" />
+                <span>Finanzas</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.finanzas ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.finanzas && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('finanzas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'finanzas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Cuentas & Movimientos
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 10. GUÍAS DE REMISIÓN (Acordeón) */}
+        {hasModule('guias_remision') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('guias_remision')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Send className="w-4 h-4 text-slate-500" />
+                <span>Guías de remisión</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.guias_remision ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.guias_remision && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('guias_remision')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'guias_remision' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Guías Electrónicas
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 11. COMPROBANTES PENDIENTES (Acordeón) */}
+        {hasModule('comprobantes_pendientes') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('comprobantes_pendientes')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Clock className="w-4 h-4 text-slate-500" />
+                <span>Comprobantes pendientes</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.comprobantes_pendientes ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.comprobantes_pendientes && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('comprobantes_pendientes')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'comprobantes_pendientes' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Cola Offline & Contingencia
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 12. COMPROBANTES AVANZADOS (Acordeón) */}
+        {hasModule('documentos_avanzados') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('documentos_avanzados')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <FileCode className="w-4 h-4 text-slate-500" />
+                <span>Comprobantes avanzados</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.documentos_avanzados ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.documentos_avanzados && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('documentos_avanzados')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'documentos_avanzados' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Retenciones & Percepciones
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 13. CONTABILIDAD (Acordeón) */}
+        {hasModule('contabilidad') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('contabilidad')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Calculator className="w-4 h-4 text-slate-500" />
+                <span>Contabilidad</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.contabilidad ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.contabilidad && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('contabilidad')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'contabilidad' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Libros Oficiales SIAT/PLE
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 14. REPORTES (Acordeón) */}
+        {hasModule('reportes') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('reportes')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <BarChart3 className="w-4 h-4 text-slate-500" />
+                <span>Reportes</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.reportes ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.reportes && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reports')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'reports' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reporte de Ventas & Analíticas
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 15. TIENDA VIRTUAL (Acordeón) */}
+        {hasModule('tienda_virtual') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('tienda_virtual')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Globe className="w-4 h-4 text-slate-500" />
+                <span>Tienda Virtual</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.tienda_virtual ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.tienda_virtual && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('tienda_virtual')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'tienda_virtual' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Catálogo Online Web
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 16. RESTAURANTE (Acordeón) */}
+        {hasModule('restaurante') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('restaurante')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <UtensilsCrossed className="w-4 h-4 text-slate-500" />
+                <span>Restaurante</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.restaurante ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.restaurante && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('restaurante')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'restaurante' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Mesas, Salones & Comandas
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 17. FARMACIA (Acordeón) */}
+        {hasModule('farmacia') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('farmacia')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <Pill className="w-4 h-4 text-slate-500" />
+                <span>Farmacia</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.farmacia ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.farmacia && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('farmacia')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'farmacia' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Control de Lotes & Vencimientos
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 18. HOTELES (Acordeón) */}
+        {hasModule('hoteles') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('hoteles')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <BedDouble className="w-4 h-4 text-slate-500" />
+                <span>Hoteles</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.hoteles ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.hoteles && (
+              <div className="pl-8 pr-2 py-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('hoteles')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'hoteles' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Habitaciones & Check-in
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
       </nav>
 
-      {/* Footer Profile & Logout */}
-      <footer className="p-3 border-t border-gray-100 bg-gray-50/60">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#2563eb] to-[#8b5cf6] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-              {currentUser?.nombre ? currentUser.nombre.charAt(0).toUpperCase() : initialLetter}
-            </div>
-            <div className="leading-tight min-w-0">
-              <p className="text-xs font-bold text-gray-900 truncate max-w-[120px]">
-                {currentUser?.nombre || empresa?.propietario || 'Carlos Gutiérrez'}
-              </p>
-              <p className="text-[10px] text-gray-400 font-medium">
-                {currentUser?.rol ? (currentUser.rol === 'ADMIN' ? 'Administrador' : 'Cajero Activo') : 'Administrador'}
-              </p>
-            </div>
+      {/* ── 3. FOOTER DEL MENÚ LATERAL ── */}
+      <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+            {currentUser?.nombre?.charAt(0) || 'U'}
           </div>
-
-          <button
-            onClick={() => {
-              logout();
-            }}
-            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
-            title="Cerrar Sesión"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-slate-800 truncate">{currentUser?.nombre || 'Usuario'}</p>
+            <p className="text-[10px] text-slate-400 truncate">{currentUser?.rol || 'OPERADOR'}</p>
+          </div>
         </div>
-      </footer>
+
+        <button
+          type="button"
+          onClick={logout}
+          title="Cerrar sesión"
+          className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-white transition"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
+      </div>
+
     </aside>
   );
 }

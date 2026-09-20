@@ -7,6 +7,7 @@ import {
   AlertCircle, History
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { syncService } from '../../services/syncService';
 import ProductsSubNav from '../Products/ProductsSubNav';
 
 export default function InventoryView({ onOpenScanner, onSelectSubView }) {
@@ -160,6 +161,7 @@ export default function InventoryView({ onOpenScanner, onSelectSubView }) {
 
     await loadData();
     showToast(`+1 unidad agregada a ${prod.nombre} (Stock: ${newStockVal})`);
+    syncService.triggerBackgroundSync();
   };
 
   // Open Kardex modal for product
@@ -206,6 +208,7 @@ export default function InventoryView({ onOpenScanner, onSelectSubView }) {
     setIsKardexModalOpen(false);
     await loadData();
     showToast(`Ajuste registrado: ${kardexTipo} de ${kardexCantidad} uds en ${selectedProductForKardex.nombre}`);
+    syncService.triggerBackgroundSync();
   };
 
   // Open Edit Product Modal
@@ -242,6 +245,7 @@ export default function InventoryView({ onOpenScanner, onSelectSubView }) {
     setIsEditProductModalOpen(false);
     await loadData();
     showToast(`Producto ${editForm.nombre} actualizado`);
+    syncService.triggerBackgroundSync();
   };
 
   // Delete product
@@ -249,8 +253,10 @@ export default function InventoryView({ onOpenScanner, onSelectSubView }) {
     e.stopPropagation();
     if (confirm(`¿Eliminar producto "${prod.nombre}" del catálogo?`)) {
       await db.productos_tienda.delete(prod.id);
+      syncService.addToQueue('productos', 'delete', { id: prod.id });
       await loadData();
       showToast(`Producto eliminado`);
+      syncService.triggerBackgroundSync();
     }
   };
 
