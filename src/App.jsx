@@ -283,8 +283,20 @@ function MainShell() {
               {/* Operaciones & Clientes */}
               {['clients', 'clientes'].includes(currentView) && <ClientsView />}
               {['purchases', 'compras'].includes(currentView) && <PurchasesView />}
-              {['reports', 'reportes'].includes(currentView) && (
-                <ReportsView onOpenReceipt={(venta) => setActiveTicketSale(venta)} />
+
+              {/* Reportes Especializados (6 Ventanas) */}
+              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab'].includes(currentView) && (
+                <ReportsView 
+                  initialTab={
+                    currentView === 'reporte_productos' ? 'productos' :
+                    ['ventas_por_producto', 'reporte_ventas_producto'].includes(currentView) ? 'ventas_producto' :
+                    currentView === 'reporte_compras' ? 'compras' :
+                    currentView === 'reporte_kardex' ? 'kardex' :
+                    ['reporte_caja', 'reporte_cajas_tab'].includes(currentView) ? 'caja' :
+                    'ventas'
+                  }
+                  onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
+                />
               )}
               {['subscription', 'suscripcion', 'planes'].includes(currentView) && <SubscriptionView />}
               
@@ -335,7 +347,7 @@ function MainShell() {
                 'inventory', 'inventario', 'kardex',
                 'clients', 'clientes',
                 'purchases', 'compras',
-                'reports', 'reportes',
+                'reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_cajas_tab',
                 'subscription', 'suscripcion', 'planes',
                 'tienda_virtual', 'catalogo_online', 'tienda',
                 'finanzas',

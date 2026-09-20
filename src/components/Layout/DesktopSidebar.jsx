@@ -59,6 +59,8 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, productos: true }));
     } else if (['ventas_cotizaciones', 'cotizaciones', 'preventa'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, preventa: true }));
+    } else if (['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_caja'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, reportes: true }));
     }
   }, [currentView]);
 
@@ -538,12 +540,57 @@ export default function DesktopSidebar({
               <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => onSelectView('reports')}
+                  onClick={() => onSelectView('reporte_ventas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'reports' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['reports', 'reportes', 'reporte_ventas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Reporte de Ventas & Analíticas
+                  • Reporte de Ventas
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reporte_productos')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'reporte_productos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reporte de Productos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('ventas_por_producto')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['ventas_por_producto', 'reporte_ventas_producto'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Ventas por Producto
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reporte_compras')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'reporte_compras' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reporte de Compras
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reporte_kardex')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'reporte_kardex' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reporte de Kardex
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reporte_caja')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['reporte_caja', 'reporte_cajas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reporte de Caja
                 </button>
               </div>
             )}
