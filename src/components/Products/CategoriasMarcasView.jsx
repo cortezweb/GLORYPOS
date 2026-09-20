@@ -12,8 +12,14 @@ const DEFAULT_MARCAS = [
   'PepsiCo', 'Unilever', 'Colgate-Palmolive', 'Gloria', 'Bimbo'
 ];
 
-export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSelectSubView }) {
-  const [activeTab, setActiveTab] = useState('categorias'); // 'categorias' | 'marcas'
+export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSelectSubView, initialTab = 'categorias' }) {
+  const [activeTab, setActiveTab] = useState(initialTab === 'marcas' ? 'marcas' : 'categorias'); // 'categorias' | 'marcas'
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab === 'marcas' ? 'marcas' : 'categorias');
+    }
+  }, [initialTab]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState([]);
   const [marcas, setMarcas] = useState([]);
@@ -133,7 +139,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen">
       {/* Sub-navegación de Productos */}
-      <ProductsSubNav currentSubView="categorias_marcas" onSelectSubView={onSelectSubView} />
+      <ProductsSubNav currentSubView={activeTab} onSelectSubView={onSelectSubView} />
 
       <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
         

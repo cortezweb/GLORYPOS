@@ -255,10 +255,19 @@ export default function Sidebar({
               {expandedMenus.productos && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
                   <button type="button" onClick={() => handleNav('productos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
-                    • Catálogo de Productos
+                    • Productos
                   </button>
-                  <button type="button" onClick={() => handleNav('categorias_marcas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
-                    • Mis Categorías y Marcas
+                  <button type="button" onClick={() => handleNav('combos_promociones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Combos y Promociones
+                  </button>
+                  <button type="button" onClick={() => handleNav('servicios')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Servicios
+                  </button>
+                  <button type="button" onClick={() => handleNav('categorias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Categorías
+                  </button>
+                  <button type="button" onClick={() => handleNav('marcas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Marcas
                   </button>
                   <button type="button" onClick={() => handleNav('inventory')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Stock & Kardex

@@ -61,6 +61,10 @@ import MembresiasView from './components/Sales/MembresiasView';
 import PedidosWebView from './components/Sales/PedidosWebView';
 import CuentasPorCobrarView from './components/Sales/CuentasPorCobrarView';
 
+// Productos Sub-Windows
+import CombosPromocionesView from './components/Products/CombosPromocionesView';
+import ServiciosView from './components/Products/ServiciosView';
+
 // Auth Screens
 import LoginView from './components/Auth/LoginView';
 import RegisterView from './components/Auth/RegisterView';
@@ -284,7 +288,7 @@ function MainShell() {
                 />
               )}
 
-              {/* Catálogo, Categorías y Kardex */}
+              {/* Catálogo, Combos, Servicios, Categorías y Kardex */}
               {['productos', 'products'].includes(currentView) && (
                 <ProductsView 
                   currentRubro={currentRubro}
@@ -292,9 +296,21 @@ function MainShell() {
                   onOpenScanner={() => setIsScannerOpen(true)} 
                 />
               )}
+              {['combos_promociones', 'combos', 'promociones'].includes(currentView) && (
+                <CombosPromocionesView 
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
+                  onOpenPosWithCart={() => setCurrentView('pos')} 
+                />
+              )}
+              {['servicios', 'services'].includes(currentView) && (
+                <ServiciosView 
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
+                />
+              )}
               {['categorias_marcas', 'categorias', 'marcas'].includes(currentView) && (
                 <CategoriasMarcasView 
                   currentRubro={currentRubro}
+                  initialTab={currentView === 'marcas' ? 'marcas' : 'categorias'}
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                 />
               )}
@@ -381,7 +397,7 @@ function MainShell() {
                 'ventas_notas', 'notas_venta', 'notas',
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',
                 'ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja',
-                'productos', 'products', 'categorias_marcas', 'categorias', 'marcas',
+                'productos', 'products', 'combos_promociones', 'combos', 'promociones', 'servicios', 'services', 'categorias_marcas', 'categorias', 'marcas',
                 'inventory', 'inventario', 'kardex',
                 'clients', 'clientes',
                 'purchases', 'compras', 'nueva_compra', 'compras_historial', 'proveedores',

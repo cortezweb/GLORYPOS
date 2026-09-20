@@ -385,19 +385,46 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('productos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'productos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['productos', 'products'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Catálogo de Productos
+                  • Productos
                 </button>
                 <button
                   type="button"
-                  onClick={() => onSelectView('categorias_marcas')}
+                  onClick={() => onSelectView('combos_promociones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['categorias_marcas', 'categorias', 'marcas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['combos_promociones', 'combos', 'promociones'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Mis Categorías y Marcas
+                  • Combos y Promociones
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('servicios')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['servicios', 'services'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Servicios
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('categorias')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['categorias', 'categorias_marcas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Categorías
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('marcas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'marcas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Marcas
                 </button>
               </div>
             )}
