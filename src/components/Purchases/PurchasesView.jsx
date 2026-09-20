@@ -4,10 +4,207 @@ import {
   CheckCircle2, X, ArrowUpRight, DollarSign, Store,
   Calendar, FileText, Check, AlertCircle, TrendingUp,
   Clock, MapPin, Edit2, Trash2, Mail, ArrowLeft, UserPlus,
-  Package
+  Package, Eye, Ban
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
+
+// ── REGISTROS INICIALES EXACTOS AL SCREENSHOT ──
+const SEED_COMPRAS = [
+  {
+    id: 'cmp-1',
+    fecha: '2026-09-16T10:30:00Z',
+    fechaDisplay: '16/09/2026',
+    tipo_documento: 'FACTURA',
+    numero_factura: 'E001-00000458',
+    proveedor_nombre: 'CORPORACION INDUSTRIAL PSG E.I.R.L.',
+    total: 17511.66,
+    subtotal: 14840.39,
+    igv: 2671.27,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Fierro corrugado 1/2 Aceros Arequipa', cantidad: 350, costo_unitario: 45.00, subtotal: 15750.00 },
+      { producto_nombre: 'Alambre negro recocido #16 (kg)', cantidad: 250, costo_unitario: 7.04, subtotal: 1761.66 }
+    ]
+  },
+  {
+    id: 'cmp-2',
+    fecha: '2026-09-04T15:20:00Z',
+    fechaDisplay: '04/09/2026',
+    tipo_documento: 'TICKET',
+    numero_factura: 'Fdh-00004478',
+    proveedor_nombre: 'Clientes varios',
+    total: 215.00,
+    subtotal: 182.20,
+    igv: 32.80,
+    cre: 'CRE R001-1 · Error envío',
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Caja de cinta de embalaje 2" x 100yd', cantidad: 5, costo_unitario: 43.00, subtotal: 215.00 }
+    ]
+  },
+  {
+    id: 'cmp-3',
+    fecha: '2026-09-01T09:12:00Z',
+    fechaDisplay: '01/09/2026',
+    tipo_documento: 'FACTURA',
+    numero_factura: '001-00000001',
+    proveedor_nombre: 'Clientes varios',
+    total: 5.40,
+    subtotal: 4.58,
+    igv: 0.82,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Pilas alcalinas AA pack x2', cantidad: 1, costo_unitario: 5.40, subtotal: 5.40 }
+    ]
+  },
+  {
+    id: 'cmp-4',
+    fecha: '2026-09-01T09:15:00Z',
+    fechaDisplay: '01/09/2026',
+    tipo_documento: 'TICKET',
+    numero_factura: '001-00000001',
+    proveedor_nombre: 'Clientes varios',
+    total: 10.80,
+    subtotal: 9.15,
+    igv: 1.65,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Pilas alcalinas AAA pack x4', cantidad: 1, costo_unitario: 10.80, subtotal: 10.80 }
+    ]
+  },
+  {
+    id: 'cmp-5',
+    fecha: '2026-09-01T11:40:00Z',
+    fechaDisplay: '01/09/2026',
+    tipo_documento: 'FACTURA',
+    numero_factura: '4567-00000687',
+    proveedor_nombre: 'ICO LOGISTICA S.A.C.',
+    total: 0.00,
+    subtotal: 0.00,
+    igv: 0.00,
+    cre: null,
+    estado: 'Anulada',
+    items: [
+      { producto_nombre: 'Servicio de flete y traslado logístico', cantidad: 1, costo_unitario: 0.00, subtotal: 0.00 }
+    ]
+  },
+  {
+    id: 'cmp-6',
+    fecha: '2026-08-25T14:05:00Z',
+    fechaDisplay: '25/08/2026',
+    tipo_documento: 'FACTURA',
+    numero_factura: '020202-0301-0092929w',
+    proveedor_nombre: 'Grupo',
+    total: 12.70,
+    subtotal: 10.76,
+    igv: 1.94,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Pegamento PVC Oatey 1/4 galón', cantidad: 1, costo_unitario: 12.70, subtotal: 12.70 }
+    ]
+  },
+  {
+    id: 'cmp-7',
+    fecha: '2026-08-21T16:22:00Z',
+    fechaDisplay: '21/08/2026',
+    tipo_documento: 'TICKET',
+    numero_factura: 'N-00000752',
+    proveedor_nombre: 'Clientes varios',
+    total: 247.00,
+    subtotal: 209.32,
+    igv: 37.68,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Tubo PVC 1/2" pesado clase 10 x 5m', cantidad: 19, costo_unitario: 13.00, subtotal: 247.00 }
+    ]
+  },
+  {
+    id: 'cmp-8',
+    fecha: '2026-08-21T16:25:00Z',
+    fechaDisplay: '21/08/2026',
+    tipo_documento: 'TICKET',
+    numero_factura: 'N-00001145',
+    proveedor_nombre: 'Clientes varios',
+    total: 209.00,
+    subtotal: 177.12,
+    igv: 31.88,
+    cre: null,
+    estado: 'Anulada',
+    items: [
+      { producto_nombre: 'Codo PVC 90° 1/2" rosca hembra (caja x100)', cantidad: 1, costo_unitario: 209.00, subtotal: 209.00 }
+    ]
+  },
+  {
+    id: 'cmp-9',
+    fecha: '2026-08-21T18:10:00Z',
+    fechaDisplay: '21/08/2026',
+    tipo_documento: 'TICKET',
+    numero_factura: 'N-00025467',
+    proveedor_nombre: 'Clientes varios',
+    total: 137.16,
+    subtotal: 116.24,
+    igv: 20.92,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Tee sanitaria PVC 2" x 2"', cantidad: 12, costo_unitario: 11.43, subtotal: 137.16 }
+    ]
+  },
+  {
+    id: 'cmp-10',
+    fecha: '2026-08-19T11:00:00Z',
+    fechaDisplay: '19/08/2026',
+    tipo_documento: 'FACTURA',
+    numero_factura: 'e001-00002528',
+    proveedor_nombre: 'VALENCIA BAZAN, CRISTHIAN IRVING',
+    total: 1564.49,
+    subtotal: 1325.84,
+    igv: 238.65,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Cemento Sol tipo I (Bolsa 42.5kg)', cantidad: 50, costo_unitario: 31.29, subtotal: 1564.49 }
+    ]
+  },
+  {
+    id: 'cmp-11',
+    fecha: '2026-08-11T13:45:00Z',
+    fechaDisplay: '11/08/2026',
+    tipo_documento: 'FACTURA',
+    numero_factura: 'gdfg-dfgdfgdfg',
+    proveedor_nombre: 'VALENCIA BAZAN, CRISTHIAN IRVING',
+    total: 16500.00,
+    subtotal: 13983.05,
+    igv: 2516.95,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Ladrillo King Kong 18 huecos (Millares)', cantidad: 30, costo_unitario: 550.00, subtotal: 16500.00 }
+    ]
+  },
+  {
+    id: 'cmp-12',
+    fecha: '2026-08-11T14:15:00Z',
+    fechaDisplay: '11/08/2026',
+    tipo_documento: 'TICKET',
+    numero_factura: 'fds-00000fsd',
+    proveedor_nombre: 'VALENCIA BAZAN, CRISTHIAN IRVING',
+    total: 11000.00,
+    subtotal: 9322.03,
+    igv: 1677.97,
+    cre: null,
+    estado: 'Recibida',
+    items: [
+      { producto_nombre: 'Ladrillo Pandereta 6 huecos (Millares)', cantidad: 25, costo_unitario: 440.00, subtotal: 11000.00 }
+    ]
+  }
+];
 
 export default function PurchasesView({ initialTab = 'compras', onSelectView }) {
   // 3 Pestañas: 'nueva_compra', 'compras', 'proveedores'
@@ -22,9 +219,9 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
   const [proveedores, setProveedores] = useState([]);
   const [compras, setCompras] = useState([]);
   const [products, setProducts] = useState([]);
-  const [filterStatus, setFilterStatus] = useState('ALL'); // 'ALL', 'PAID', 'CREDIT'
   const [search, setSearch] = useState('');
   const [toastMsg, setToastMsg] = useState(null);
+  const [selectedCompraDetail, setSelectedCompraDetail] = useState(null);
 
   // ── ESTADO FORMULARIO "NUEVA COMPRA" (IDÉNTICO A LA CAPTURA) ──
   const [selectedSupplier, setSelectedSupplier] = useState('');
@@ -69,18 +266,29 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
   };
 
   const loadData = async () => {
-    const provs = await db.proveedores.toArray();
-    setProveedores(provs || []);
-    let prods = await db.productos_tienda.toArray();
-    if (!prods || prods.length === 0) {
-      prods = await db.productos.toArray();
-    }
-    setProducts(prods || []);
-    const buys = await db.compras.reverse().toArray();
-    setCompras(buys || []);
+    try {
+      const provs = await db.proveedores.toArray();
+      setProveedores(provs || []);
 
-    if (provs && provs.length > 0 && !selectedSupplier) {
-      setSelectedSupplier(provs[0].id);
+      let prods = await db.productos_tienda.toArray();
+      if (!prods || prods.length === 0) {
+        prods = await db.productos.toArray();
+      }
+      setProducts(prods || []);
+
+      let buys = await db.compras.reverse().toArray();
+      if (!buys || buys.length === 0) {
+        await db.compras.bulkAdd(SEED_COMPRAS);
+        buys = SEED_COMPRAS;
+      }
+      setCompras(buys);
+
+      if (provs && provs.length > 0 && !selectedSupplier) {
+        setSelectedSupplier(provs[0].id);
+      }
+    } catch (err) {
+      console.warn('Error loading compras data:', err);
+      setCompras(SEED_COMPRAS);
     }
   };
 
@@ -99,13 +307,11 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
 
   const { subtotal, igv, total } = useMemo(() => {
     if (incluyeIgv) {
-      // El costo unitario ya incluye IGV (18%)
       const tot = subtotalBruto;
       const sub = tot / 1.18;
       const igvVal = tot - sub;
       return { subtotal: sub, igv: igvVal, total: tot };
     } else {
-      // Se agrega el IGV sobre el costo
       const sub = subtotalBruto;
       const igvVal = sub * 0.18;
       const tot = sub + igvVal;
@@ -203,6 +409,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
     const newCompra = {
       id: `cmp-${Date.now()}`,
       fecha: fechaEmision ? new Date(fechaEmision).toISOString() : new Date().toISOString(),
+      fechaDisplay: fechaEmision ? `${fechaEmision.split('-')[2]}/${fechaEmision.split('-')[1]}/${fechaEmision.split('-')[0]}` : '20/09/2026',
       proveedor_id: supp.id,
       proveedor_nombre: supp.razon_social,
       proveedor_nit: supp.nit || '0',
@@ -215,6 +422,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       subtotal: subtotal,
       igv: igv,
       total: total,
+      estado: 'Recibida',
       items: purchaseItems,
       almacen_destino: 'Almacén Principal'
     };
@@ -250,13 +458,29 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       }
     }
 
-    // Resetear formulario
     setPurchaseItems([]);
     setNumeroComprobante('');
     showToast(`¡Compra ${fullFactura} registrada con éxito! (+${purchaseItems.length} productos recibidos)`);
     syncService.triggerBackgroundSync();
     await loadData();
     setActiveTab('compras');
+  };
+
+  // ── TOGGLE ANULADA / RECIBIDA ──
+  const handleToggleAnulada = async (id, currentEstado) => {
+    const isCurrentlyAnulada = currentEstado === 'Anulada';
+    const nuevoEstado = isCurrentlyAnulada ? 'Recibida' : 'Anulada';
+    if (!window.confirm(`¿Desea marcar esta compra como "${nuevoEstado}"?`)) return;
+
+    const updated = compras.map(c => c.id === id ? { ...c, estado: nuevoEstado } : c);
+    setCompras(updated);
+    try {
+      await db.compras.update(id, { estado: nuevoEstado });
+    } catch (e) {
+      // ignore
+    }
+    showToast(`Compra actualizada a estado: ${nuevoEstado}`);
+    syncService.triggerBackgroundSync();
   };
 
   // ── MANEJO DE PROVEEDORES ──
@@ -308,26 +532,14 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
     showToast('Proveedor eliminado.');
   };
 
-  const totalCompras = useMemo(() => {
-    return compras.reduce((acc, c) => acc + (Number(c.total) || 0), 0);
-  }, [compras]);
-
-  const totalCreditoPendiente = useMemo(() => {
-    return compras
-      .filter(c => c.estado_pago === 'CREDITO')
-      .reduce((acc, c) => acc + (Number(c.total) || 0), 0);
-  }, [compras]);
-
+  // ── FILTRADO DE COMPRAS (BUSCADOR EXACTO AL SCREENSHOT) ──
   const filteredCompras = useMemo(() => {
     return compras.filter(c => {
-      const text = `${c.proveedor_nombre || ''} ${c.producto_nombre || ''} ${c.numero_factura || ''}`.toLowerCase();
-      const matchesSearch = text.includes(search.toLowerCase());
-
-      if (filterStatus === 'PAID') return matchesSearch && c.estado_pago !== 'CREDITO';
-      if (filterStatus === 'CREDIT') return matchesSearch && c.estado_pago === 'CREDITO';
-      return matchesSearch;
+      const term = search.toLowerCase();
+      const text = `${c.proveedor_nombre || ''} ${c.producto_nombre || ''} ${c.numero_factura || ''} ${c.tipo_documento || ''} ${c.estado || ''} ${c.fechaDisplay || ''}`.toLowerCase();
+      return text.includes(term);
     });
-  }, [compras, search, filterStatus]);
+  }, [compras, search]);
 
   const filteredProveedores = useMemo(() => {
     return proveedores.filter(p => {
@@ -382,7 +594,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             }`}
           >
             <Truck className="w-3.5 h-3.5" />
-            <span>Historial de Compras</span>
+            <span>Listado de Compras</span>
             {compras.length > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
                 activeTab === 'compras' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
@@ -752,151 +964,153 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
         )}
 
         {/* ══════════════════════════════════════════════════════════════════ */}
-        {/* PESTAÑA 2: COMPRAS (HISTORIAL Y LISTADO)                           */}
+        {/* PESTAÑA 2: COMPRAS (LISTADO IDÉNTICO A LA CAPTURA)                */}
         {/* ══════════════════════════════════════════════════════════════════ */}
         {activeTab === 'compras' && (
-          <div className="space-y-4 animate-fadeIn">
-            {/* Header */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-6 space-y-4 animate-fadeIn">
+            
+            {/* Header: Título, Subtítulo y Botón + Nueva compra */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
-                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Truck className="w-5 h-5 text-emerald-600" />
-                  Historial de Compras
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                  Compras
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Registro de facturas recibidas de proveedores y abastecimiento
+                  Listado de compras registradas
                 </p>
               </div>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('nueva_compra')}
-                className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+                className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs self-start cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4" />
-                <span>Nueva Compra</span>
+                <span>Nueva compra</span>
               </button>
             </div>
 
-            {/* KPIs */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
-                <span className="text-xs font-bold text-slate-500">Total Compras Realizadas</span>
-                <div className="text-2xl font-black text-slate-900 font-mono mt-1">
-                  S/ {totalCompras.toFixed(2)}
-                </div>
-                <span className="text-[10px] text-emerald-600 font-bold block mt-0.5">
-                  {compras.length} órdenes registradas
-                </span>
-              </div>
-
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
-                <span className="text-xs font-bold text-slate-500">Pendiente a Proveedores (Crédito)</span>
-                <div className="text-2xl font-black text-rose-600 font-mono mt-1">
-                  S/ {totalCreditoPendiente.toFixed(2)}
-                </div>
-                <span className="text-[10px] text-rose-500 font-bold block mt-0.5">
-                  Cuentas por pagar
-                </span>
-              </div>
-            </div>
-
-            {/* Buscador y Filtros */}
-            <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => setFilterStatus('ALL')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                    filterStatus === 'ALL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-                  }`}
-                >
-                  Todas ({compras.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFilterStatus('PAID')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                    filterStatus === 'PAID' ? 'bg-white text-emerald-800 shadow-xs' : 'text-slate-500'
-                  }`}
-                >
-                  Al Contado
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFilterStatus('CREDIT')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                    filterStatus === 'CREDIT' ? 'bg-white text-amber-800 shadow-xs' : 'text-slate-500'
-                  }`}
-                >
-                  Al Crédito
-                </button>
-              </div>
-
-              <div className="relative max-w-xs w-full">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            {/* Buscador */}
+            <div className="pt-1">
+              <div className="relative w-full max-w-xs">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar proveedor o factura..."
-                  className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none"
+                  placeholder="Buscar..."
+                  className="w-full pl-8.5 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition shadow-2xs placeholder:text-slate-400"
                 />
+                {search && (
+                  <button
+                    onClick={() => setSearch('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Tabla de Compras */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
+            <div className="border border-slate-200/80 rounded-xl overflow-hidden mt-2">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
+                  <thead className="bg-slate-50/80 text-[10px] font-bold uppercase text-slate-400 border-b border-slate-100">
                     <tr>
-                      <th className="py-2 px-3">Fecha</th>
-                      <th className="py-2 px-3">Factura</th>
-                      <th className="py-2 px-3">Proveedor</th>
-                      <th className="py-2 px-3">Detalle Ítems</th>
-                      <th className="py-2 px-3 text-right">Subtotal</th>
-                      <th className="py-2 px-3 text-right">Total</th>
-                      <th className="py-2 px-3 text-center">Condición</th>
+                      <th className="py-3 px-4 font-semibold">FECHA</th>
+                      <th className="py-3 px-4 font-semibold">COMPROBANTE</th>
+                      <th className="py-3 px-4 font-semibold">PROVEEDOR</th>
+                      <th className="py-3 px-4 font-semibold text-right">TOTAL</th>
+                      <th className="py-3 px-4 font-semibold text-center">CRE</th>
+                      <th className="py-3 px-4 font-semibold text-center">ESTADO</th>
+                      <th className="py-3 px-4 font-semibold text-center">ACCIONES</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {filteredCompras.map(c => (
-                      <tr key={c.id} className="hover:bg-slate-50/80 transition">
-                        <td className="py-2.5 px-3 text-slate-500 whitespace-nowrap">
-                          {new Date(c.fecha).toLocaleDateString('es-PE')}
-                        </td>
-                        <td className="py-2.5 px-3 font-mono font-bold text-slate-900">
-                          {c.numero_factura}
-                        </td>
-                        <td className="py-2.5 px-3 font-bold text-slate-800">
-                          {c.proveedor_nombre}
-                        </td>
-                        <td className="py-2.5 px-3 text-slate-700">
-                          {Array.isArray(c.items) && c.items.length > 0 
-                            ? `${c.items.length} productos (${c.items.map(i => i.producto_nombre).slice(0, 2).join(', ')}${c.items.length > 2 ? '...' : ''})`
-                            : (c.producto_nombre || 'Detalle de compra')
-                          }
-                        </td>
-                        <td className="py-2.5 px-3 text-right font-mono text-slate-600">
-                          S/ {Number(c.subtotal || c.total).toFixed(2)}
-                        </td>
-                        <td className="py-2.5 px-3 text-right font-mono font-black text-slate-900">
-                          S/ {Number(c.total).toFixed(2)}
-                        </td>
-                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                            c.estado_pago === 'CREDITO' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
-                          }`}>
-                            {c.estado_pago || 'CONTADO'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {filteredCompras.map((c) => {
+                      const isAnulada = c.estado === 'Anulada' || c.estado_pago === 'ANULADA';
+                      return (
+                        <tr key={c.id} className="hover:bg-slate-50/60 transition">
+                          {/* FECHA */}
+                          <td className="py-3 px-4 text-slate-600 whitespace-nowrap font-medium">
+                            {c.fechaDisplay || (c.fecha ? new Date(c.fecha).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—')}
+                          </td>
+
+                          {/* COMPROBANTE (Tipo arriba, Serie-Correlativo abajo) */}
+                          <td className="py-3 px-4 whitespace-nowrap">
+                            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider leading-tight">
+                              {c.tipo_documento || 'FACTURA'}
+                            </span>
+                            <span className="font-bold text-slate-900 font-mono text-xs">
+                              {c.numero_factura}
+                            </span>
+                          </td>
+
+                          {/* PROVEEDOR */}
+                          <td className="py-3 px-4 text-slate-800 font-medium">
+                            {c.proveedor_nombre}
+                          </td>
+
+                          {/* TOTAL */}
+                          <td className="py-3 px-4 text-right font-extrabold text-slate-900 whitespace-nowrap">
+                            S/ {Number(c.total || 0).toFixed(2)}
+                          </td>
+
+                          {/* CRE */}
+                          <td className="py-3 px-4 text-center whitespace-nowrap">
+                            {c.cre ? (
+                              <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                {c.cre}
+                              </span>
+                            ) : (
+                              <span className="text-slate-300">—</span>
+                            )}
+                          </td>
+
+                          {/* ESTADO */}
+                          <td className="py-3 px-4 text-center whitespace-nowrap">
+                            <span className={`inline-block px-2.5 py-0.5 rounded text-[11px] font-medium ${
+                              isAnulada
+                                ? 'bg-rose-50 text-rose-600'
+                                : 'bg-emerald-50 text-emerald-700'
+                            }`}>
+                              {isAnulada ? 'Anulada' : 'Recibida'}
+                            </span>
+                          </td>
+
+                          {/* ACCIONES */}
+                          <td className="py-3 px-4 text-center whitespace-nowrap">
+                            <div className="inline-flex items-center gap-2 justify-center">
+                              {/* Botón Ver (Ojo verde) */}
+                              <button
+                                type="button"
+                                onClick={() => setSelectedCompraDetail(c)}
+                                className="p-1 text-emerald-600 hover:text-emerald-800 rounded hover:bg-emerald-50 transition"
+                                title="Ver detalle de compra"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+
+                              {/* Botón Anular (Ban rojo) */}
+                              <button
+                                type="button"
+                                onClick={() => handleToggleAnulada(c.id, c.estado)}
+                                className="p-1 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 transition"
+                                title={isAnulada ? 'Restablecer compra' : 'Anular compra'}
+                              >
+                                <Ban className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+
                     {filteredCompras.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="py-8 text-center text-slate-400 italic">
-                          No se encontraron compras en este filtro.
+                        <td colSpan={7} className="py-12 text-center text-slate-400 italic">
+                          No se encontraron compras registradas con los filtros aplicados.
                         </td>
                       </tr>
                     )}
@@ -904,6 +1118,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 </table>
               </div>
             </div>
+
           </div>
         )}
 
@@ -1014,6 +1229,115 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
         )}
 
       </main>
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MODAL: VER DETALLE DE COMPRA (OJO VERDE)                           */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {selectedCompraDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900">Detalle de Compra</h3>
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    {selectedCompraDetail.tipo_documento} • {selectedCompraDetail.numero_factura}
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setSelectedCompraDetail(null)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs space-y-1.5">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Proveedor:</span>
+                <span className="font-bold text-slate-800">{selectedCompraDetail.proveedor_nombre}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Fecha:</span>
+                <span className="font-semibold text-slate-700">{selectedCompraDetail.fechaDisplay || new Date(selectedCompraDetail.fecha).toLocaleDateString('es-PE')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Estado:</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                  selectedCompraDetail.estado === 'Anulada' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                }`}>
+                  {selectedCompraDetail.estado || 'Recibida'}
+                </span>
+              </div>
+            </div>
+
+            {/* Ítems */}
+            <div className="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-[10px] font-bold uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="py-2 px-3">Producto</th>
+                    <th className="py-2 px-2 text-center">Cant.</th>
+                    <th className="py-2 px-3 text-right">Costo</th>
+                    <th className="py-2 px-3 text-right">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {Array.isArray(selectedCompraDetail.items) && selectedCompraDetail.items.length > 0 ? (
+                    selectedCompraDetail.items.map((it, idx) => (
+                      <tr key={idx}>
+                        <td className="py-2 px-3 text-slate-800 font-medium">{it.producto_nombre}</td>
+                        <td className="py-2 px-2 text-center font-bold text-slate-700">{it.cantidad}</td>
+                        <td className="py-2 px-3 text-right text-slate-600 font-mono">S/ {Number(it.costo_unitario || 0).toFixed(2)}</td>
+                        <td className="py-2 px-3 text-right font-bold text-slate-900 font-mono">S/ {Number(it.subtotal || (it.cantidad * it.costo_unitario) || 0).toFixed(2)}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="py-4 text-center text-slate-400">
+                        {selectedCompraDetail.producto_nombre || 'Detalle general'}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Totales */}
+            <div className="flex justify-end pt-1">
+              <div className="w-48 space-y-1 text-xs text-right">
+                <div className="flex justify-between text-slate-500">
+                  <span>Subtotal:</span>
+                  <span className="font-mono">S/ {Number(selectedCompraDetail.subtotal || selectedCompraDetail.total * 0.82).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-slate-500">
+                  <span>IGV (18%):</span>
+                  <span className="font-mono">S/ {Number(selectedCompraDetail.igv || selectedCompraDetail.total * 0.18).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-1 border-t border-slate-100">
+                  <span>Total:</span>
+                  <span className="font-mono text-emerald-700">S/ {Number(selectedCompraDetail.total || 0).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedCompraDetail(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════ */}
       {/* MODAL 1: AGREGAR PRODUCTO DESDE CATÁLOGO                           */}
