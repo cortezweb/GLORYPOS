@@ -15,27 +15,34 @@ function getAudioContext() {
   return audioCtx;
 }
 
-// 1. Supermarket Laser Scanner Beep (Exact Honeywell / Zebra 1760Hz pitch)
+// 1. Supermarket Laser Scanner Beep (Exact Honeywell / Zebra / Datalogic pitch)
 export function playSupermarketBeep() {
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
 
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
+    // Frecuencia estándar de escáner láser de supermercado: 2093Hz (C7)
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(1760, ctx.currentTime); // A6 note
-    osc.frequency.setValueAtTime(1860, ctx.currentTime + 0.03);
+    osc.frequency.setValueAtTime(2093, now);
 
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    // Envolvente rápida sin clics (ataque 5ms, decaimiento exponencial 75ms)
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.3, now + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
 
     osc.connect(gain);
     gain.connect(ctx.destination);
 
-    osc.start();
-    osc.stop(ctx.currentTime + 0.08);
+    osc.start(now);
+    osc.stop(now + 0.08);
   } catch (e) {
     console.warn('Audio not allowed yet', e);
   }

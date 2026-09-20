@@ -364,12 +364,31 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* Tienda Virtual */}
+          {/* Tienda Virtual (Acordeón) */}
           {hasModule('tienda_virtual') && (
-            <button type="button" onClick={() => handleNav('tienda_virtual')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
-              <Globe className="w-4 h-4 text-slate-500" />
-              <span>Tienda Virtual</span>
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMenu('tienda_virtual')}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Globe className="w-4 h-4 text-slate-500" />
+                  <span>Tienda Virtual</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedMenus.tienda_virtual ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedMenus.tienda_virtual && (
+                <div className="pl-8 pr-2 py-1 space-y-0.5">
+                  <button type="button" onClick={() => handleNav('tienda_virtual')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Catálogo Online Web
+                  </button>
+                  <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Pedidos Web
+                  </button>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Restaurante */}

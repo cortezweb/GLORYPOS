@@ -45,7 +45,6 @@ export function useBarcodeGunScanner({ onBarcodeScanned } = {}) {
             let prod = await db.productos_tienda.where('codigo_barras').equals(barcode).first();
 
             if (prod) {
-              playSupermarketBeep();
               triggerHaptic(25);
               addToCart(prod);
               if (onBarcodeScanned) {
@@ -67,7 +66,6 @@ export function useBarcodeGunScanner({ onBarcodeScanned } = {}) {
                 activo: true
               };
               await db.productos_tienda.add(newShopProd);
-              playSupermarketBeep();
               triggerHaptic(25);
               addToCart(newShopProd);
               if (onBarcodeScanned) {

@@ -61,6 +61,8 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, preventa: true }));
     } else if (['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_caja'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, reportes: true }));
+    } else if (['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, tienda_virtual: true }));
     }
   }, [currentView]);
 
@@ -706,10 +708,19 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('tienda_virtual')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'tienda_virtual' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Catálogo Online Web
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('pedidos_web')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['pedidos_web', 'pedidosweb'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Pedidos Web
                 </button>
               </div>
             )}

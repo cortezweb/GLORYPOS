@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- GLORYPOS BOLIVIA - ESQUEMA COMPLETO Y MIGRACIÓN SUPABASE (POSTGRESQL)
--- Copia y ejecuta este script en el SQL Editor de tu Dashboard de Supabase:
--- https://supabase.com/dashboard/project/zeftqkwnogcrbklolwzs/sql
+-- Proyecto: https://supabase.com/dashboard/project/zeftqkwnogcrbklolwzs/sql
+-- Soporte Multi-Tenant, SaaS, Offline-First y Módulos Avanzados
 -- ==============================================================================
 
 -- ── 1. EXTENDER TABLA 'empresas' (MULTI-TENANT & SAAS) ────────────────────────

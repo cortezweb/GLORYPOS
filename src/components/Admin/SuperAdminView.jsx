@@ -5,8 +5,9 @@ import {
   AlertCircle, Clock, Sparkles, DollarSign, Lock, Mail, Phone, ArrowUpRight,
   LogOut, RefreshCw, X, FileText, ShoppingCart, Wallet, Send, Terminal,
   Layers, Zap, UserCheck, PhoneCall, CheckSquare, SlidersHorizontal, KeyRound,
-  Palette, Laptop, CheckCheck
+  Palette, Laptop, CheckCheck, LayoutDashboard
 } from 'lucide-react';
+import AdminDashboardView from './AdminDashboardView';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { tenantService, slugify } from '../../services/tenantService';
@@ -156,8 +157,8 @@ export default function SuperAdminView({
     localStorage.setItem('glorypos_admin_theme', newTheme);
   };
 
-  // Pestañas de la consola: 'tenants' (directorio) | 'usuarios' | 'operativo'
-  const [activeTab, setActiveTab] = useState('tenants');
+  // Pestañas de la consola: 'dashboard' (ejecutivo) | 'tenants' (directorio) | 'usuarios' | 'operativo'
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   // Estado del listado de empresas / tenants
   const [clientCompanies, setClientCompanies] = useState([
@@ -561,10 +562,89 @@ export default function SuperAdminView({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-800 p-4 sm:p-6 space-y-6 font-sans antialiased select-none pb-24">
+    <div className="min-h-screen bg-slate-50/70 text-slate-800 p-3 sm:p-5 space-y-4 font-sans antialiased select-none pb-24">
       
-      {/* ── 1. HEADER EJECUTIVO MODERNO ── */}
-      <div className={`rounded-3xl p-5 sm:p-6 shadow-xl border ${theme.headerBg} flex flex-wrap items-center justify-between gap-4 transition-all duration-300`}>
+      {/* ── 0. BARRA SUPERIOR DE CONSOLA / SELECCIÓN DE VISTA ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-2xs">
+        <div className="flex items-center gap-1 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => setActiveTab('dashboard')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'dashboard'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <LayoutDashboard className={`w-3.5 h-3.5 ${activeTab === 'dashboard' ? 'text-emerald-400' : 'text-slate-500'}`} />
+            <span>Dashboard</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('tenants')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'tenants'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <Building2 className={`w-3.5 h-3.5 ${activeTab === 'tenants' ? 'text-blue-400' : 'text-slate-500'}`} />
+            <span>Tenants & Empresas ({clientCompanies.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('usuarios')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'usuarios'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <Users className={`w-3.5 h-3.5 ${activeTab === 'usuarios' ? 'text-purple-400' : 'text-slate-500'}`} />
+            <span>Directorio de Usuarios</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('operativo')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'operativo'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <SlidersHorizontal className={`w-3.5 h-3.5 ${activeTab === 'operativo' ? 'text-indigo-400' : 'text-slate-500'}`} />
+            <span>Configuración</span>
+          </button>
+        </div>
+
+        {activeTab !== 'dashboard' && (
+          <button
+            type="button"
+            onClick={handleOpenDrawer}
+            className={`px-3.5 py-1.5 ${theme.btnPrimary} active:scale-95 text-xs font-black rounded-xl transition flex items-center gap-1.5 cursor-pointer`}
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Nuevo Tenant</span>
+          </button>
+        )}
+      </div>
+
+      {/* ── 1. VISTA DASHBOARD EJECUTIVO (SEGÚN IMAGEN DE REFERENCIA) ── */}
+      {activeTab === 'dashboard' && (
+        <AdminDashboardView 
+          onSelectView={onSelectView} 
+          onOpenCloseCash={onOpenCloseCash} 
+        />
+      )}
+
+      {/* ── SECCIONES SAAS (SOLO VISIBLES AL GESTIONAR TENANTS / USUARIOS / CONFIG) ── */}
+      {activeTab !== 'dashboard' && (
+        <>
+          {/* ── 1. HEADER EJECUTIVO MODERNO ── */}
+          <div className={`rounded-3xl p-5 sm:p-6 shadow-xl border ${theme.headerBg} flex flex-wrap items-center justify-between gap-4 transition-all duration-300`}>
         
         {/* Left: Branding & Status */}
         <div className="flex items-center gap-3.5">
@@ -721,48 +801,6 @@ export default function SuperAdminView({
             Supabase Postgres + Cloudflare
           </div>
         </div>
-      </div>
-
-      {/* ── 3. TABS DE NAVEGACIÓN SEGMENTADA ── */}
-      <div className="bg-white p-1.5 rounded-2xl border border-slate-200/90 flex items-center gap-1 shadow-xs max-w-xl">
-        <button
-          type="button"
-          onClick={() => setActiveTab('tenants')}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
-            activeTab === 'tenants'
-              ? `${theme.activeTab}`
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          <Building2 className="w-4 h-4" />
-          <span>Tenants & Empresas ({clientCompanies.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('usuarios')}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
-            activeTab === 'usuarios'
-              ? `${theme.activeTab}`
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>Directorio de Usuarios</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('operativo')}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
-            activeTab === 'operativo'
-              ? `${theme.activeTab}`
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          <SlidersHorizontal className="w-4 h-4" />
-          <span>Configuración</span>
-        </button>
       </div>
 
       {/* Notificación Toast */}
@@ -1035,6 +1073,8 @@ export default function SuperAdminView({
             </div>
           </div>
         </div>
+      )}
+      </>
       )}
 
       {/* ── 7. SLIDE-OVER DRAWER: PROVISIONAR TENANT ── */}

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { playSupermarketBeep } from '../utils/audio';
 
 const CartContext = createContext();
 
@@ -25,6 +26,7 @@ export function CartProvider({ children }) {
   const addToCart = (product, presentacion = null, qtyToAdd = 1, customDetails = null) => {
     triggerHaptic(15);
     triggerBump();
+    playSupermarketBeep();
 
     const presId = presentacion ? presentacion.id : 'u';
     const presNombre = presentacion ? presentacion.nombre : 'Unidad';
@@ -81,6 +83,10 @@ export function CartProvider({ children }) {
   const updateQuantity = (itemIdOrProdId, deltaOrPresId, maybeDelta) => {
     triggerHaptic(12);
     triggerBump();
+    const deltaVal = typeof deltaOrPresId === 'number' ? deltaOrPresId : maybeDelta;
+    if (deltaVal > 0) {
+      playSupermarketBeep();
+    }
 
     setItems((prev) => {
       return prev

@@ -1,412 +1,474 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Award, Search, Plus, Calendar, CheckCircle2, 
-  AlertTriangle, X, User, DollarSign, Clock, RefreshCw,
-  Sparkles, Check, Trash2, Phone
+  CreditCard, RotateCw, Plus, ChevronDown, Search, X, 
+  CheckCircle2, Clock, Trash2, Edit, AlertCircle, Calendar
 } from 'lucide-react';
-import { db } from '../../db/dexie';
 import SalesSubNav from './SalesSubNav';
-
-const DEFAULT_MEMBRESIAS = [
-  {
-    id: 'mem-1',
-    socio_nombre: 'Rodrigo Mendoza Paz',
-    ci_nit: '4829103',
-    telefono: '77019283',
-    plan: 'Plan Premium Anual',
-    fecha_inicio: '2026-01-15',
-    fecha_vencimiento: '2027-01-15',
-    monto_cuota: 1800.00,
-    estado: 'ACTIVO',
-    beneficios: 'Acceso total + descuento 15% en compras'
-  },
-  {
-    id: 'mem-2',
-    socio_nombre: 'Mariana Suarez Vega',
-    ci_nit: '6819201',
-    telefono: '78192834',
-    plan: 'Membresía Mensual VIP',
-    fecha_inicio: '2026-08-01',
-    fecha_vencimiento: '2026-09-01',
-    monto_cuota: 190.00,
-    estado: 'VENCIDO',
-    beneficios: 'Entrada ilimitada + locker'
-  },
-  {
-    id: 'mem-3',
-    socio_nombre: 'Carlos Villarroel',
-    ci_nit: '5910293',
-    telefono: '79018273',
-    plan: 'Plan Trimestral Familiar',
-    fecha_inicio: '2026-07-10',
-    fecha_vencimiento: '2026-10-10',
-    monto_cuota: 520.00,
-    estado: 'ACTIVO',
-    beneficios: 'Hasta 4 miembros registrados'
-  }
-];
+import { db } from '../../db/dexie';
 
 export default function MembresiasView({ onSelectSubView }) {
   const [membresias, setMembresias] = useState([]);
-  const [search, setSearch] = useState('');
-  const [filterEstado, setFilterEstado] = useState('ALL'); // 'ALL', 'ACTIVO', 'VENCIDO'
+  const [filterEstado, setFilterEstado] = useState('TODOS'); // 'TODOS', 'ACTIVA', 'PAUSADA', 'VENCIDA'
+  const [sucursal, setSucursal] = useState('TODAS');
+  const [searchCliente, setSearchCliente] = useState('');
+  const [proximoCobro, setProximoCobro] = useState('TODOS');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Form nueva membresía
-  const [formSocio, setFormSocio] = useState('');
-  const [formCi, setFormCi] = useState('');
-  const [formTelefono, setFormTelefono] = useState('');
-  const [formPlan, setFormPlan] = useState('Membresía Mensual VIP');
-  const [formMonto, setFormMonto] = useState('190.00');
-  const [formDias, setFormDias] = useState('30');
+  // Form State
+  const [clientList, setClientList] = useState([]);
+  const [formData, setFormData] = useState({
+    cliente_nombre: '',
+    cliente_doc: '',
+    plan_nombre: 'Membresía Mensual VIP',
+    sucursal: 'Principal',
+    monto_cuota: '150.00',
+    frecuencia: 'Mensual',
+    fecha_inicio: new Date().toISOString().split('T')[0],
+    proximo_cobro: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+    estado: 'Activa'
+  });
+
+  const loadData = async () => {
+    setIsRefreshing(true);
+    try {
+      const saved = localStorage.getItem('glorypos_membresias_v2');
+      if (saved) {
+        setMembresias(JSON.parse(saved));
+      } else {
+        setMembresias([]);
+      }
+      const clients = await db.clientes.toArray();
+      setClientList(clients);
+    } catch (e) {
+      console.warn('Error loading membresias:', e);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 350);
+    }
+  };
 
   useEffect(() => {
-    const saved = localStorage.getItem('glorypos_membresias');
-    if (saved) {
-      try {
-        setMembresias(JSON.parse(saved));
-      } catch (e) {
-        setMembresias(DEFAULT_MEMBRESIAS);
-      }
-    } else {
-      setMembresias(DEFAULT_MEMBRESIAS);
-      localStorage.setItem('glorypos_membresias', JSON.stringify(DEFAULT_MEMBRESIAS));
-    }
+    loadData();
   }, []);
+
+  const formatSoles = (amount) => {
+    const val = Number(amount) || 0;
+    return `S/ ${val.toFixed(2)}`;
+  };
+
+  // Filtrado
+  const filtered = membresias.filter(m => {
+    // Filtro por Estado
+    if (filterEstado !== 'TODOS' && m.estado?.toUpperCase() !== filterEstado) {
+      return false;
+    }
+    // Filtro por Sucursal
+    if (sucursal !== 'TODAS' && m.sucursal?.toUpperCase() !== sucursal) {
+      return false;
+    }
+    // Filtro por Cliente
+    if (searchCliente.trim()) {
+      const q = searchCliente.toLowerCase();
+      const matchCli = m.cliente_nombre?.toLowerCase().includes(q) || m.cliente_doc?.toLowerCase().includes(q);
+      if (!matchCli) return false;
+    }
+    return true;
+  });
 
   const handleCreate = (e) => {
     e.preventDefault();
-    if (!formSocio.trim()) return;
-
-    const hoy = new Date();
-    const venc = new Date(hoy);
-    venc.setDate(venc.getDate() + Number(formDias));
+    if (!formData.cliente_nombre.trim()) {
+      alert('Por favor ingresa el nombre del cliente');
+      return;
+    }
 
     const nueva = {
       id: `mem-${Date.now()}`,
-      socio_nombre: formSocio.trim(),
-      ci_nit: formCi.trim() || 'S/N',
-      telefono: formTelefono.trim() || 'N/A',
-      plan: formPlan,
-      fecha_inicio: hoy.toISOString().split('T')[0],
-      fecha_vencimiento: venc.toISOString().split('T')[0],
-      monto_cuota: Number(formMonto) || 0,
-      estado: 'ACTIVO',
-      beneficios: 'Acceso autorizado al establecimiento'
+      cliente_nombre: formData.cliente_nombre.trim(),
+      cliente_doc: formData.cliente_doc.trim() || 'S/N',
+      plan_nombre: formData.plan_nombre.trim(),
+      sucursal: formData.sucursal,
+      monto_cuota: Number(formData.monto_cuota) || 0,
+      frecuencia: formData.frecuencia,
+      fecha_inicio: formData.fecha_inicio,
+      proximo_cobro: formData.proximo_cobro,
+      estado: formData.estado || 'Activa'
     };
 
     const updated = [nueva, ...membresias];
     setMembresias(updated);
-    localStorage.setItem('glorypos_membresias', JSON.stringify(updated));
-
+    localStorage.setItem('glorypos_membresias_v2', JSON.stringify(updated));
     setIsModalOpen(false);
-    setFormSocio('');
-    setFormCi('');
-    setFormTelefono('');
-  };
-
-  const handleRenovar = (id) => {
-    const updated = membresias.map(m => {
-      if (m.id === id) {
-        const hoy = new Date();
-        const venc = new Date(hoy);
-        venc.setDate(venc.getDate() + 30);
-        return {
-          ...m,
-          estado: 'ACTIVO',
-          fecha_inicio: hoy.toISOString().split('T')[0],
-          fecha_vencimiento: venc.toISOString().split('T')[0]
-        };
-      }
-      return m;
+    setFormData({
+      cliente_nombre: '',
+      cliente_doc: '',
+      plan_nombre: 'Membresía Mensual VIP',
+      sucursal: 'Principal',
+      monto_cuota: '150.00',
+      frecuencia: 'Mensual',
+      fecha_inicio: new Date().toISOString().split('T')[0],
+      proximo_cobro: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+      estado: 'Activa'
     });
-    setMembresias(updated);
-    localStorage.setItem('glorypos_membresias', JSON.stringify(updated));
   };
 
   const handleDelete = (id) => {
-    if (!window.confirm('¿Deseas eliminar el registro de esta membresía?')) return;
-    const updated = membresias.filter(m => m.id !== id);
-    setMembresias(updated);
-    localStorage.setItem('glorypos_membresias', JSON.stringify(updated));
+    if (window.confirm('¿Deseas eliminar este registro de membresía?')) {
+      const updated = membresias.filter(m => m.id !== id);
+      setMembresias(updated);
+      localStorage.setItem('glorypos_membresias_v2', JSON.stringify(updated));
+    }
   };
 
-  const filtered = membresias.filter(m => {
-    const textMatch = `${m.socio_nombre} ${m.ci_nit} ${m.plan}`.toLowerCase().includes(search.toLowerCase());
-    if (filterEstado === 'ACTIVO') return textMatch && m.estado === 'ACTIVO';
-    if (filterEstado === 'VENCIDO') return textMatch && m.estado === 'VENCIDO';
-    return textMatch;
-  });
-
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans">
-      <SalesSubNav currentSubView="membresias" onSelectSubView={onSelectSubView} />
+    <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans pb-16">
+      
+      {/* Sub-navegación si se navega desde Ventas */}
+      {onSelectSubView && (
+        <SalesSubNav currentSubView="membresias" onSelectSubView={onSelectSubView} />
+      )}
 
-      <main className="max-w-6xl mx-auto w-full p-3 sm:p-5 space-y-4">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-                <Award className="w-4 h-4" />
-              </div>
-              <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
-                Membresías & Suscripciones
-              </h1>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Control de cuotas mensuales, socios afiliados, vencimientos y planes periódicos
-            </p>
+      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+        
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* 1. CABECERA: TÍTULO, SELECTOR DE ESTADOS & BOTÓN NUEVA MEMBRESÍA     */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+          
+          {/* Left: Icono verde y Título */}
+          <div className="flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-emerald-600" />
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Membresías y cuotas
+            </h1>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm shadow-purple-500/20 active:scale-95 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nueva Membresía</span>
-          </button>
+          {/* Right: Filtro Estado, Botón Actualizar & Botón Nueva Membresía */}
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            
+            {/* Dropdown: Todos los estados ⌄ */}
+            <div className="relative">
+              <select
+                value={filterEstado}
+                onChange={e => setFilterEstado(e.target.value)}
+                className="appearance-none bg-white border border-slate-200 rounded-lg pl-3 pr-8 py-2 text-xs font-medium text-slate-700 shadow-2xs focus:outline-none cursor-pointer"
+              >
+                <option value="TODOS">Todos los estados</option>
+                <option value="ACTIVA">Activas</option>
+                <option value="PAUSADA">Pausadas</option>
+                <option value="VENCIDA">Vencidas</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+
+            {/* Botón Actualizar */}
+            <button
+              type="button"
+              onClick={loadData}
+              disabled={isRefreshing}
+              className="px-3 py-2 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-medium text-xs rounded-lg shadow-2xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              <RotateCw className={`w-3.5 h-3.5 text-slate-500 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span>Actualizar</span>
+            </button>
+
+            {/* Botón Principal: + Nueva membresía */}
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nueva membresía</span>
+            </button>
+
+          </div>
         </div>
 
-        {/* 3 KPIs */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-slate-400">Total Socios / Afiliados</span>
-            <div className="text-2xl font-black text-slate-900 font-mono">{membresias.length}</div>
-            <p className="text-[10px] text-slate-400">Planes registrados</p>
-          </div>
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-emerald-600">Membresías Activas</span>
-            <div className="text-2xl font-black text-emerald-600 font-mono">
-              {membresias.filter(m => m.estado === 'ACTIVO').length}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* 2. BARRA DE FILTROS: SUCURSAL, CLIENTE & PRÓXIMO COBRO               */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+          
+          {/* Campo 1: SUCURSAL (2 cols) */}
+          <div className="sm:col-span-2 space-y-1">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              SUCURSAL
+            </label>
+            <div className="relative">
+              <select
+                value={sucursal}
+                onChange={e => setSucursal(e.target.value)}
+                className="w-full appearance-none bg-white border border-slate-200 rounded-lg pl-3 pr-7 py-2 text-xs font-medium text-slate-700 shadow-2xs focus:outline-none cursor-pointer"
+              >
+                <option value="TODAS">Todas</option>
+                <option value="PRINCIPAL">Principal</option>
+                <option value="ALMACEN">Almacén</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
-            <p className="text-[10px] text-slate-400">Al corriente de pago</p>
-          </div>
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-rose-600">Por Vencer / Vencidas</span>
-            <div className="text-2xl font-black text-rose-600 font-mono">
-              {membresias.filter(m => m.estado === 'VENCIDO').length}
-            </div>
-            <p className="text-[10px] text-slate-400">Requieren renovación</p>
-          </div>
-        </div>
-
-        {/* Buscador y Filtros */}
-        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
-            <button
-              type="button"
-              onClick={() => setFilterEstado('ALL')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                filterEstado === 'ALL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              Todos ({membresias.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterEstado('ACTIVO')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                filterEstado === 'ACTIVO' ? 'bg-white text-emerald-800 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              Activos
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterEstado('VENCIDO')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                filterEstado === 'VENCIDO' ? 'bg-white text-rose-800 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              Vencidos
-            </button>
           </div>
 
-          <div className="relative max-w-xs w-full">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          {/* Campo 2: CLIENTE (8 cols) */}
+          <div className="sm:col-span-8 space-y-1">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              CLIENTE
+            </label>
             <input
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar socio, CI o plan..."
-              className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none"
+              value={searchCliente}
+              onChange={e => setSearchCliente(e.target.value)}
+              placeholder="Nombre, razón social o documento..."
+              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
+
+          {/* Campo 3: PRÓXIMO COBRO (2 cols) */}
+          <div className="sm:col-span-2 space-y-1">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              PRÓXIMO COBRO
+            </label>
+            <div className="relative">
+              <select
+                value={proximoCobro}
+                onChange={e => setProximoCobro(e.target.value)}
+                className="w-full appearance-none bg-white border border-slate-200 rounded-lg pl-3 pr-7 py-2 text-xs font-medium text-slate-700 shadow-2xs focus:outline-none cursor-pointer"
+              >
+                <option value="TODOS">Todos</option>
+                <option value="HOY">Hoy</option>
+                <option value="SEMANA">Esta semana</option>
+                <option value="MES">Este mes</option>
+                <option value="VENCIDOS">Vencidos</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
         </div>
 
-        {/* Lista de Membresías */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filtered.map(m => {
-            const isActivo = m.estado === 'ACTIVO';
-            return (
-              <div key={m.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3 flex flex-col justify-between hover:border-purple-300 transition">
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-sm truncate">{m.socio_nombre}</h3>
-                      <p className="text-[10px] text-slate-400 font-mono">CI/NIT: {m.ci_nit}</p>
-                    </div>
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
-                      isActivo ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                    }`}>
-                      {m.estado}
-                    </span>
-                  </div>
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* 3. PANEL CONTENEDOR DE DATOS CON TOTAL Y ESTADO VACÍO               */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-6 min-h-[300px] flex flex-col justify-start">
+          
+          {/* Contador superior izquierdo: Total: X */}
+          <div className="text-xs text-slate-400 font-semibold mb-4">
+            Total: {filtered.length}
+          </div>
 
-                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Plan:</span>
-                      <span className="font-bold text-purple-700">{m.plan}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Cuota:</span>
-                      <span className="font-mono font-bold text-slate-900">Bs. {Number(m.monto_cuota).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Vencimiento:</span>
-                      <span className="font-mono font-bold text-slate-700">{m.fecha_vencimiento}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-                  <button
-                    type="button"
-                    onClick={() => handleRenovar(m.id)}
-                    className="flex-1 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    <span>Renovar</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(m.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 transition rounded-xl hover:bg-rose-50"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-
+          {/* Estado vacío cuando no hay membresías */}
           {filtered.length === 0 && (
-            <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
-              <Award className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-xs font-bold text-slate-600">No se encontraron membresías</p>
+            <div className="flex-1 flex items-center justify-center py-16 text-center">
+              <p className="text-sm text-slate-500 font-medium">
+                No hay membresías registradas.
+              </p>
             </div>
           )}
+
+          {/* Tabla cuando existen membresías */}
+          {filtered.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-[10px] font-bold uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="py-2.5 px-4">CLIENTE</th>
+                    <th className="py-2.5 px-4">MEMBRESÍA / PLAN</th>
+                    <th className="py-2.5 px-4">SUCURSAL</th>
+                    <th className="py-2.5 px-4 text-right">MONTO / CUOTA</th>
+                    <th className="py-2.5 px-4 text-center">FRECUENCIA</th>
+                    <th className="py-2.5 px-4 text-center">PRÓXIMO COBRO</th>
+                    <th className="py-2.5 px-4 text-center">ESTADO</th>
+                    <th className="py-2.5 px-4 text-center">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filtered.map(mem => (
+                    <tr key={mem.id} className="hover:bg-slate-50/60 transition">
+                      <td className="py-3 px-4 font-semibold text-slate-900">
+                        {mem.cliente_nombre}
+                        <span className="text-[10px] text-slate-400 font-normal block">Doc: {mem.cliente_doc}</span>
+                      </td>
+                      <td className="py-3 px-4 font-medium text-slate-700">{mem.plan_nombre}</td>
+                      <td className="py-3 px-4 text-slate-500">{mem.sucursal}</td>
+                      <td className="py-3 px-4 text-right font-bold text-slate-900">{formatSoles(mem.monto_cuota)}</td>
+                      <td className="py-3 px-4 text-center text-slate-600">{mem.frecuencia}</td>
+                      <td className="py-3 px-4 text-center text-slate-600 font-mono text-[11px]">{mem.proximo_cobro}</td>
+                      <td className="py-3 px-4 text-center">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          mem.estado === 'Activa' 
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                            : 'bg-slate-100 text-slate-600'
+                        }`}>
+                          {mem.estado}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(mem.id)}
+                          className="p-1 text-slate-400 hover:text-rose-600 transition"
+                          title="Eliminar"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
         </div>
+
       </main>
 
-      {/* Modal Nueva Membresía */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* 4. MODAL: REGISTRAR NUEVA MEMBRESÍA                                 */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-3xl w-full max-w-sm p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-900">Registrar Nueva Membresía</h3>
-              <button 
-                type="button" 
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200">
+            
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#00a650] text-white">
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5" />
+                <h3 className="font-bold text-base">Nueva Membresía / Cuota</h3>
+              </div>
+              <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 text-white" />
               </button>
             </div>
 
-            <form onSubmit={handleCreate} className="space-y-3">
+            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Nombre del Socio *</label>
+                <label className="text-slate-700 font-bold block mb-1">Cliente *</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ej. Rodrigo Mendoza"
-                  value={formSocio}
-                  onChange={(e) => setFormSocio(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none"
+                  placeholder="Nombre completo o razón social"
+                  value={formData.cliente_nombre}
+                  onChange={e => setFormData({ ...formData, cliente_nombre: e.target.value })}
+                  list="clients-list"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 />
+                <datalist id="clients-list">
+                  {clientList.map(c => (
+                    <option key={c.id} value={c.razon_social} />
+                  ))}
+                </datalist>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">CI / NIT</label>
+                  <label className="text-slate-700 font-bold block mb-1">Documento (DNI/RUC)</label>
                   <input
                     type="text"
-                    placeholder="4829102"
-                    value={formCi}
-                    onChange={(e) => setFormCi(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                    placeholder="Doc identidad"
+                    value={formData.cliente_doc}
+                    onChange={e => setFormData({ ...formData, cliente_doc: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Teléfono</label>
-                  <input
-                    type="text"
-                    placeholder="77012345"
-                    value={formTelefono}
-                    onChange={(e) => setFormTelefono(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
-                  />
+                  <label className="text-slate-700 font-bold block mb-1">Sucursal</label>
+                  <select
+                    value={formData.sucursal}
+                    onChange={e => setFormData({ ...formData, sucursal: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none cursor-pointer"
+                  >
+                    <option value="Principal">Principal</option>
+                    <option value="Almacén">Almacén</option>
+                  </select>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Plan / Membresía</label>
-                <select
-                  value={formPlan}
-                  onChange={(e) => setFormPlan(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none"
-                >
-                  <option value="Membresía Mensual VIP">Membresía Mensual VIP (30 días)</option>
-                  <option value="Plan Trimestral Familiar">Plan Trimestral Familiar (90 días)</option>
-                  <option value="Plan Premium Anual">Plan Premium Anual (365 días)</option>
-                  <option value="Pase Semanal Estudiante">Pase Semanal Estudiante (7 días)</option>
-                </select>
+                <label className="text-slate-700 font-bold block mb-1">Nombre del Plan / Cuota *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ej. Membresía Mensual VIP, Cuota Club"
+                  value={formData.plan_nombre}
+                  onChange={e => setFormData({ ...formData, plan_nombre: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Importe Cuota (Bs.)</label>
+                  <label className="text-slate-700 font-bold block mb-1">Monto de la Cuota (S/) *</label>
                   <input
                     type="number"
-                    step="5"
-                    value={formMonto}
-                    onChange={(e) => setFormMonto(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                    step="0.01"
+                    required
+                    value={formData.monto_cuota}
+                    onChange={e => setFormData({ ...formData, monto_cuota: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Duración (Días)</label>
+                  <label className="text-slate-700 font-bold block mb-1">Frecuencia</label>
+                  <select
+                    value={formData.frecuencia}
+                    onChange={e => setFormData({ ...formData, frecuencia: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none cursor-pointer"
+                  >
+                    <option value="Mensual">Mensual</option>
+                    <option value="Quincenal">Quincenal</option>
+                    <option value="Anual">Anual</option>
+                    <option value="Semanal">Semanal</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-slate-700 font-bold block mb-1">Fecha de Inicio</label>
                   <input
-                    type="number"
-                    value={formDias}
-                    onChange={(e) => setFormDias(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none"
+                    type="date"
+                    value={formData.fecha_inicio}
+                    onChange={e => setFormData({ ...formData, fecha_inicio: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-700 font-bold block mb-1">Próximo Cobro</label>
+                  <input
+                    type="date"
+                    value={formData.proximo_cobro}
+                    onChange={e => setFormData({ ...formData, proximo_cobro: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+                  className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl font-bold transition"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition shadow-md shadow-purple-600/20"
+                  className="px-5 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold rounded-xl shadow-xs transition cursor-pointer"
                 >
                   Guardar Membresía
                 </button>
               </div>
+
             </form>
+
           </div>
         </div>
       )}
+
     </div>
   );
 }

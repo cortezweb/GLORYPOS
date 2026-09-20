@@ -85,6 +85,24 @@ db.version(7).stores({
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
+// v8: soporte para membresías y pedidos web
+db.version(8).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {

@@ -350,8 +350,13 @@ function MainShell() {
               )}
               {['subscription', 'suscripcion', 'planes'].includes(currentView) && <SubscriptionView />}
               
-              {/* Vistas Avanzadas & Complementarias */}
-              {['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView) && <TiendaVirtualView />}
+              {['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView) && (
+                <TiendaVirtualView 
+                  initialTab="catalogo"
+                  onSelectView={(v) => setCurrentView(v)}
+                  onOpenPosWithCart={() => setCurrentView('pos')}
+                />
+              )}
               {['finanzas'].includes(currentView) && (
                 <FinanzasView onOpenCloseCash={() => setIsCloseCashOpen(true)} />
               )}

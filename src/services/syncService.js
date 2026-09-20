@@ -127,6 +127,10 @@ export const syncService = {
       kardex: 0,
       caja_chica: 0,
       compras: 0,
+      proveedores: 0,
+      cotizaciones: 0,
+      membresias: 0,
+      pedidos_web: 0,
       errors: []
     };
 
@@ -333,6 +337,174 @@ export const syncService = {
         }
       } catch (cjErr) {
         summary.errors.push({ tabla: 'caja_chica', error: cjErr.message });
+      }
+
+      // 8. Sincronizar Compras
+      try {
+        if (db.compras) {
+          const localCompras = await db.compras.toArray();
+          if (localCompras.length > 0) {
+            const payload = localCompras.map(c => ({
+              id: String(c.id),
+              empresa_id: empresaId,
+              fecha: c.fecha || new Date().toISOString(),
+              proveedor_id: c.proveedor_id ? String(c.proveedor_id) : null,
+              proveedor_nombre: c.proveedor_nombre || 'Proveedor',
+              proveedor_nit: c.proveedor_nit || '0',
+              numero_factura: c.numero_factura || 'FC-001',
+              tipo_documento: c.tipo_documento || 'FACTURA',
+              serie: c.serie || 'F001',
+              subtotal: Number(c.subtotal || c.total) || 0,
+              igv: Number(c.igv) || 0,
+              total: Number(c.total) || 0,
+              incluye_igv: Boolean(c.incluye_igv),
+              items: Array.isArray(c.items) ? c.items : [],
+              estado_pago: c.estado_pago || 'CONTADO',
+              metodo_pago: c.metodo_pago || 'CONTADO',
+              almacen_destino: c.almacen_destino || 'Almacén Principal'
+            }));
+
+            const { error: cmpErr } = await supabase.from('compras').upsert(payload, { onConflict: 'id' });
+            if (cmpErr) {
+              summary.errors.push({ tabla: 'compras', error: cmpErr.message });
+            } else {
+              summary.compras = payload.length;
+            }
+          }
+        }
+      } catch (cmpE) {
+        summary.errors.push({ tabla: 'compras', error: cmpE.message });
+      }
+
+      // 9. Sincronizar Proveedores
+      try {
+        if (db.proveedores) {
+          const localProvs = await db.proveedores.toArray();
+          if (localProvs.length > 0) {
+            const payload = localProvs.map(p => ({
+              id: String(p.id),
+              empresa_id: empresaId,
+              razon_social: p.razon_social || 'Proveedor',
+              nit: p.nit || '0',
+              telefono: p.telefono || null,
+              ciudad: p.ciudad || null,
+              direccion: p.direccion || null,
+              contacto: p.contacto || null,
+              rubro: p.rubro || 'General'
+            }));
+
+            const { error: provErr } = await supabase.from('proveedores').upsert(payload, { onConflict: 'id' });
+            if (provErr) {
+              summary.errors.push({ tabla: 'proveedores', error: provErr.message });
+            } else {
+              summary.proveedores = payload.length;
+            }
+          }
+        }
+      } catch (prvE) {
+        summary.errors.push({ tabla: 'proveedores', error: prvE.message });
+      }
+
+      // 10. Sincronizar Cotizaciones
+      try {
+        if (db.cotizaciones) {
+          const localCotiz = await db.cotizaciones.toArray();
+          if (localCotiz.length > 0) {
+            const payload = localCotiz.map(c => ({
+              id: String(c.id),
+              empresa_id: empresaId,
+              fecha: c.fecha || new Date().toISOString(),
+              correlativo: c.correlativo || `CT01-${Date.now()}`,
+              cliente_nombre: c.cliente_nombre || 'Cliente',
+              cliente_ci_nit: c.cliente_ci_nit || '0',
+              cliente_telefono: c.cliente_telefono || null,
+              validez_dias: Number(c.validez_dias) || 15,
+              condiciones: c.condiciones || null,
+              items: Array.isArray(c.items) ? c.items : [],
+              descuento: Number(c.descuento) || 0,
+              total: Number(c.total) || 0,
+              estado: c.estado || 'Borrador'
+            }));
+
+            const { error: cotErr } = await supabase.from('cotizaciones').upsert(payload, { onConflict: 'id' });
+            if (cotErr) {
+              summary.errors.push({ tabla: 'cotizaciones', error: cotErr.message });
+            } else {
+              summary.cotizaciones = payload.length;
+            }
+          }
+        }
+      } catch (cotE) {
+        summary.errors.push({ tabla: 'cotizaciones', error: cotE.message });
+      }
+
+      // 11. Sincronizar Membresías
+      try {
+        let localMemb = [];
+        if (db.membresias) {
+          localMemb = await db.membresias.toArray();
+        }
+        if (localMemb.length === 0) {
+          const saved = localStorage.getItem('glorypos_membresias_v2');
+          if (saved) localMemb = JSON.parse(saved);
+        }
+        if (localMemb.length > 0) {
+          const payload = localMemb.map(m => ({
+            id: String(m.id || `mem-${Date.now()}`),
+            empresa_id: empresaId,
+            cliente_nombre: m.cliente_nombre || 'Cliente',
+            cliente_doc: m.cliente_doc || null,
+            plan_nombre: m.plan_nombre || 'Membresía Mensual',
+            sucursal: m.sucursal || 'Principal',
+            monto_cuota: Number(m.monto_cuota) || 0,
+            frecuencia: m.frecuencia || 'Mensual',
+            fecha_inicio: m.fecha_inicio || new Date().toISOString().split('T')[0],
+            proximo_cobro: m.proximo_cobro || null,
+            estado: m.estado || 'Activa'
+          }));
+
+          const { error: memErr } = await supabase.from('membresias').upsert(payload, { onConflict: 'id' });
+          if (memErr) {
+            summary.errors.push({ tabla: 'membresias', error: memErr.message });
+          } else {
+            summary.membresias = payload.length;
+          }
+        }
+      } catch (memE) {
+        summary.errors.push({ tabla: 'membresias', error: memE.message });
+      }
+
+      // 12. Sincronizar Pedidos Web
+      try {
+        let localPedidos = [];
+        if (db.pedidos_web) {
+          localPedidos = await db.pedidos_web.toArray();
+        }
+        if (localPedidos.length === 0) {
+          const saved = localStorage.getItem('glorypos_pedidos_web_v2');
+          if (saved) localPedidos = JSON.parse(saved);
+        }
+        if (localPedidos.length > 0) {
+          const payload = localPedidos.map(p => ({
+            id: String(p.id || `pw-${Date.now()}`),
+            empresa_id: empresaId,
+            fecha: p.fecha || new Date().toISOString(),
+            cliente_nombre: p.cliente_nombre || 'Cliente',
+            telefono: p.telefono || null,
+            total: Number(p.total) || 0,
+            estado: p.estado || 'Nuevo',
+            items: Array.isArray(p.items) ? p.items : []
+          }));
+
+          const { error: pwErr } = await supabase.from('pedidos_web').upsert(payload, { onConflict: 'id' });
+          if (pwErr) {
+            summary.errors.push({ tabla: 'pedidos_web', error: pwErr.message });
+          } else {
+            summary.pedidos_web = payload.length;
+          }
+        }
+      } catch (pwE) {
+        summary.errors.push({ tabla: 'pedidos_web', error: pwE.message });
       }
 
       // Notificar a la interfaz de usuario
