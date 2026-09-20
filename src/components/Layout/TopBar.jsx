@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, 
   Cloud, RefreshCw, LogOut, ChevronDown, MessageSquare, ShoppingCart, 
-  CheckCircle2, ChevronLeft, FileText, ShoppingBag, Store, ExternalLink
+  CheckCircle2, ChevronLeft, FileText, ShoppingBag, Store, ExternalLink, Clock
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
@@ -24,6 +24,26 @@ export default function TopBar({
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState(null);
   const userMenuRef = useRef(null);
+
+  // Reloj y fecha en vivo para la cabecera móvil (idéntico a la imagen)
+  const [currentDateTime, setCurrentDateTime] = useState(() => {
+    const now = new Date();
+    return {
+      date: now.toLocaleDateString('es-BO', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }),
+      time: now.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', hour12: true })
+    };
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      setCurrentDateTime({
+        date: now.toLocaleDateString('es-BO', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }),
+        time: now.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', hour12: true })
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const onSyncDone = () => {
@@ -71,16 +91,58 @@ export default function TopBar({
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 font-sans select-none shadow-xs">
       
-      {/* ── TOP BANNER SUPERIOR (GLORYPOS SAAS) ── */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-blue-100 text-[10px] font-bold py-1 px-4 flex items-center justify-center tracking-wider uppercase font-mono border-b border-blue-900/40 shadow-xs">
+      {/* ── MOBILE HEADER (IDÉNTICO A LAS 5 CAPTURAS DE LA IMAGEN) ── */}
+      <div className="lg:hidden px-3.5 py-2.5 flex items-center justify-between bg-white border-b border-slate-100 shadow-2xs">
+        
+        {/* Izquierda: Reloj + Fecha en 2 líneas */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-2xs">
+            <Clock className="w-4 h-4 text-slate-700" />
+          </div>
+          <div className="flex flex-col text-left leading-tight">
+            <span className="text-[10px] text-slate-500 font-semibold capitalize truncate max-w-[125px]">
+              {currentDateTime.date}
+            </span>
+            <span className="text-xs font-black text-slate-900 font-mono tracking-tight">
+              {currentDateTime.time}
+            </span>
+          </div>
+        </div>
+
+        {/* Centro: Cápsula Verde de Suscripción (Idéntica a la imagen) */}
+        <div 
+          onClick={() => onSelectView && onSelectView('subscription')}
+          className="flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-[#eaf8ef] border border-emerald-400 text-center leading-tight cursor-pointer shadow-2xs active:scale-98 max-w-[155px]"
+        >
+          <span className="text-[9px] font-black text-emerald-800 tracking-tight whitespace-nowrap">
+            Plan: {empresa?.plan_tipo === 'TRIAL' ? 'Ilimitado (Trial)' : (empresa?.plan_tipo || 'Ilimitado')}
+          </span>
+          <span className="text-[8px] font-bold text-emerald-700 whitespace-nowrap">
+            Estado de cobro: Al corriente
+          </span>
+        </div>
+
+        {/* Derecha: Botón Hamburguesa de Menú */}
+        <button 
+          onClick={onOpenSidebar}
+          aria-label="Abrir Menú" 
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-800 hover:bg-slate-100 active:scale-95 transition cursor-pointer"
+          type="button"
+        >
+          <Menu className="w-6 h-6 stroke-[2.2]" />
+        </button>
+      </div>
+
+      {/* ── DESKTOP TOP BANNER SUPERIOR ── */}
+      <div className="hidden lg:flex bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-blue-100 text-[10px] font-bold py-1 px-4 items-center justify-center tracking-wider uppercase font-mono border-b border-blue-900/40 shadow-xs">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
           <span>WWW.GLORYPOS.COM — PLATAFORMA CLOUD DE FACTURACIÓN & PUNTO DE VENTA</span>
         </div>
       </div>
 
-      {/* ── MAIN TOPBAR BARRA PRINCIPAL ── */}
-      <div className="px-3 sm:px-5 py-2 flex items-center justify-between gap-3">
+      {/* ── DESKTOP MAIN TOPBAR BARRA PRINCIPAL ── */}
+      <div className="hidden lg:flex px-5 py-2 items-center justify-between gap-3">
         
         {/* Left Section: Toggle, Shortcuts NC/NV/POS & Subscription Status */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">

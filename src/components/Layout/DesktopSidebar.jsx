@@ -223,7 +223,18 @@ export default function DesktopSidebar({
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Caja Chica / Turnos
+                  • Mis Cajas (Turnos)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reporte_cajas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['reporte_cajas', 'reporte_caja'].includes(currentView)
+                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reporte de Cajas
                 </button>
               </div>
             )}
@@ -313,7 +324,16 @@ export default function DesktopSidebar({
                     currentView === 'productos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Catálogo & Precios
+                  • Catálogo de Productos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('categorias_marcas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['categorias_marcas', 'categorias', 'marcas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Mis Categorías y Marcas
                 </button>
               </div>
             )}

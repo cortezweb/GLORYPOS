@@ -21,6 +21,7 @@ import LockTerminalModal from './components/POS/LockTerminalModal';
 import { useBarcodeGunScanner } from './hooks/useBarcodeGunScanner';
 
 import ProductsView from './components/Products/ProductsView';
+import CategoriasMarcasView from './components/Products/CategoriasMarcasView';
 import InventoryView from './components/Inventory/InventoryView';
 import ScaleModal from './components/POS/ScaleModal';
 import ModifierModal from './components/POS/ModifierModal';
@@ -193,8 +194,10 @@ function MainShell() {
           onSelectView={(v) => setCurrentView(v)}
         />
 
-        {/* Trial Countdown Banner */}
-        <TrialBanner onOpenSubscription={() => setCurrentView('subscription')} />
+        {/* Trial Countdown Banner (Solo Desktop; en móvil se muestra en la cabecera) */}
+        <div className="hidden lg:block">
+          <TrialBanner onOpenSubscription={() => setCurrentView('subscription')} />
+        </div>
 
         {/* Active Main View Container */}
         {currentView === 'pos' ? (
@@ -242,17 +245,31 @@ function MainShell() {
               )}
               {['ventas_caja', 'caja_chica', 'caja'].includes(currentView) && (
                 <CajaChicaView 
+                  defaultTab="mis_cajas"
+                  onSelectSubView={(sub) => setCurrentView(sub)}
+                  onOpenCloseCash={() => setIsCloseCashOpen(true)} 
+                />
+              )}
+              {['reporte_cajas', 'reporte_caja'].includes(currentView) && (
+                <CajaChicaView 
+                  defaultTab="reporte_cajas"
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenCloseCash={() => setIsCloseCashOpen(true)} 
                 />
               )}
 
-              {/* Catálogo y Kardex */}
+              {/* Catálogo, Categorías y Kardex */}
               {['productos', 'products'].includes(currentView) && (
                 <ProductsView 
                   currentRubro={currentRubro}
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                   onOpenScanner={() => setIsScannerOpen(true)} 
+                />
+              )}
+              {['categorias_marcas', 'categorias', 'marcas'].includes(currentView) && (
+                <CategoriasMarcasView 
+                  currentRubro={currentRubro}
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
                 />
               )}
               {['inventory', 'inventario', 'kardex'].includes(currentView) && (
@@ -313,8 +330,8 @@ function MainShell() {
                 'ventas_comprobantes', 'comprobantes', 'sales',
                 'ventas_notas', 'notas_venta', 'notas',
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',
-                'ventas_caja', 'caja_chica', 'caja',
-                'productos', 'products',
+                'ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja',
+                'productos', 'products', 'categorias_marcas', 'categorias', 'marcas',
                 'inventory', 'inventario', 'kardex',
                 'clients', 'clientes',
                 'purchases', 'compras',
@@ -361,16 +378,18 @@ function MainShell() {
           </div>
         )}
 
-        {/* Mobile Fixed Bottom Navigation (Hidden on Desktop) */}
-        <div className="lg:hidden">
-          <BottomNav
-            currentView={currentView}
-            onSelectView={(view) => {
-              setCurrentView(view);
-              setSearchTerm('');
-            }}
-          />
-        </div>
+        {/* Mobile Fixed Bottom Navigation (Oculto en Inicio para ser idéntico al mockup móvil) */}
+        {currentView !== 'inicio' && (
+          <div className="lg:hidden">
+            <BottomNav
+              currentView={currentView}
+              onSelectView={(view) => {
+                setCurrentView(view);
+                setSearchTerm('');
+              }}
+            />
+          </div>
+        )}
       </div>
       {/* END: Main Content Area */}
 

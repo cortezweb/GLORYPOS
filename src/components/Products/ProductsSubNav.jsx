@@ -1,9 +1,10 @@
 import React from 'react';
-import { Tag, Boxes, ArrowLeftRight } from 'lucide-react';
+import { Tag, Boxes, Layers } from 'lucide-react';
 
 export default function ProductsSubNav({ currentSubView, onSelectSubView }) {
   const tabs = [
     { id: 'productos', label: 'Catálogo de Productos', icon: Tag },
+    { id: 'categorias_marcas', label: 'Mis Categorías y Marcas', icon: Layers },
     { id: 'inventory', label: 'Control de Stock & Kardex', icon: Boxes },
   ];
 

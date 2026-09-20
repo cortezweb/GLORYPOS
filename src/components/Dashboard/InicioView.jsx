@@ -232,13 +232,18 @@ export default function InicioView({
           {/* ────────────────────────────────────────────────────────── */}
           <div className="lg:col-span-6 space-y-4">
             
+            {/* Título de sección en móvil */}
+            <div className="lg:hidden px-1 pt-1">
+              <span className="text-xs font-bold text-slate-400">Otras herramientas</span>
+            </div>
+
             {/* Fila superior derecha: Tarjeta 3 (Buscar Docs) y Tarjeta 4 (Reportes) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               
               {/* TARJETA 3: BUSCAR DOCUMENTOS (Gris azulado suave) */}
               <div
                 onClick={() => onSelectView('ventas_comprobantes')}
-                className="group relative rounded-3xl p-6 bg-[#f0f3f8] border border-slate-200/90 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[220px]"
+                className="group relative rounded-3xl p-4 sm:p-6 bg-[#f0f3f8] border border-slate-200/90 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[190px] sm:min-h-[220px]"
               >
                 <div className="flex items-center justify-between">
                   <span className="inline-block px-2.5 py-0.5 rounded-full bg-white text-slate-600 text-[10px] font-bold border border-slate-200 shadow-xs">
@@ -280,7 +285,7 @@ export default function InicioView({
               {/* TARJETA 4: CONSULTAR REPORTES (Lila suave) */}
               <div
                 onClick={() => onSelectView('reports')}
-                className="group relative rounded-3xl p-6 bg-[#f4f3f9] border border-slate-200/90 hover:border-purple-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[220px]"
+                className="group relative rounded-3xl p-4 sm:p-6 bg-[#f4f3f9] border border-slate-200/90 hover:border-purple-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[190px] sm:min-h-[220px]"
               >
                 <div className="flex items-center justify-between">
                   <span className="inline-block px-2.5 py-0.5 rounded-full bg-white text-purple-700 text-[10px] font-bold border border-purple-200 shadow-xs">
