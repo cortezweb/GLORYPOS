@@ -369,8 +369,21 @@ function MainShell() {
                   onOpenPosWithCart={() => setCurrentView('pos')}
                 />
               )}
-              {['finanzas'].includes(currentView) && (
-                <FinanzasView onOpenCloseCash={() => setIsCloseCashOpen(true)} />
+              {['finanzas', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar_finanzas', 'cuentas_por_pagar', 'reportes_caja_finanzas', 'metodos_pago'].includes(currentView) && (
+                <FinanzasView 
+                  initialTab={
+                    currentView === 'ingresos' ? 'ingresos' :
+                    currentView === 'egresos' ? 'egresos' :
+                    currentView === 'cuentas_bancarias' ? 'cuentas_bancarias' :
+                    currentView === 'cuentas_por_cobrar_finanzas' ? 'cuentas_por_cobrar' :
+                    currentView === 'cuentas_por_pagar' ? 'cuentas_por_pagar' :
+                    currentView === 'reportes_caja_finanzas' ? 'reportes_caja' :
+                    currentView === 'metodos_pago' ? 'metodos_pago' :
+                    'caja'
+                  }
+                  onSelectView={(v) => setCurrentView(v)}
+                  onOpenCloseCash={() => setIsCloseCashOpen(true)} 
+                />
               )}
               {['guias_remision', 'guias', 'despacho'].includes(currentView) && <GuiasRemisionView />}
               {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
@@ -421,7 +434,7 @@ function MainShell() {
                 'reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_cajas_tab',
                 'subscription', 'suscripcion', 'planes',
                 'tienda_virtual', 'catalogo_online', 'tienda',
-                'finanzas',
+                'finanzas', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar_finanzas', 'cuentas_por_pagar', 'reportes_caja_finanzas', 'metodos_pago',
                 'guias_remision', 'guias', 'despacho',
                 'comprobantes_pendientes', 'pendientes',
                 'documentos_avanzados', 'documentos',

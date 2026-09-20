@@ -63,6 +63,8 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, reportes: true }));
     } else if (['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, tienda_virtual: true }));
+    } else if (['finanzas', 'caja', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar', 'cuentas_por_pagar', 'reportes_caja', 'metodos_pago'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, finanzas: true }));
     }
   }, [currentView]);
 
@@ -517,12 +519,75 @@ export default function DesktopSidebar({
               <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => onSelectView('finanzas')}
+                  onClick={() => onSelectView('sesiones_caja')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'finanzas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['sesiones_caja', 'finanzas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Cuentas & Movimientos
+                  • Caja
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('ingresos')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'ingresos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Ingresos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('egresos')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'egresos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Egresos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('cuentas_bancarias')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'cuentas_bancarias' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Cuentas Bancarias
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('cuentas_por_cobrar_finanzas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'cuentas_por_cobrar_finanzas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Cuentas por cobrar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('cuentas_por_pagar')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'cuentas_por_pagar' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Cuentas por pagar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reportes_caja_finanzas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'reportes_caja_finanzas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reportes de caja
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('metodos_pago')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'metodos_pago' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Métodos de pago
                 </button>
               </div>
             )}

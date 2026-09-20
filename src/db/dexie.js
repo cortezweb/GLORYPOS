@@ -142,6 +142,33 @@ db.version(10).stores({
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
+// v11: soporte integral para finanzas (sesiones de caja, ingresos, egresos, cuentas bancarias, cuentas por cobrar, cuentas por pagar, métodos de pago)
+db.version(11).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  unidades_medida: 'id, codigo, nombre, simbolo, estado',
+  transferencias_inventario: 'id, fecha, origen, destino, estado',
+  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+  metodos_pago: 'id, nombre, codigo, destino, estado',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
@@ -693,6 +720,121 @@ export async function initDatabase() {
           estado: 'Confirmado',
           notas: 'Traslado inicial'
         }
+      ]);
+    }
+  }
+
+  // ─── Sesiones de Caja (Seed exacto al screenshot media_1789926081566.png) ──
+  if (db.sesiones_caja) {
+    const scCount = await db.sesiones_caja.count();
+    if (scCount === 0) {
+      await db.sesiones_caja.bulkAdd([
+        { id: 'ses-1', usuario: 'Esteffany Cordova', fecha_apertura: '17/9/2026, 22:18:32', fecha_cierre: '—', balance_apertura: 0.00, balance_cierre: null, saldo_actual: 762.60, estado: 'Abierta', arqueo_estado: 'Arqueo' },
+        { id: 'ses-2', usuario: 'Esteffany Cordova', fecha_apertura: '17/9/2026, 16:31:07', fecha_cierre: '17/9/2026, 17:49:17', balance_apertura: 2000.00, balance_cierre: 2968.80, saldo_actual: 1368.80, estado: 'Cerrada', arqueo_estado: 'Ver arqueo' },
+        { id: 'ses-3', usuario: 'Esteffany Cordova', fecha_apertura: '7/9/2026, 12:59:11', fecha_cierre: '17/9/2026, 16:29:54', balance_apertura: 20.00, balance_cierre: 36553.35, saldo_actual: 81026.71, estado: 'Cerrada', arqueo_estado: 'Ver arqueo' },
+        { id: 'ses-4', usuario: 'Esteffany Cordova', fecha_apertura: '4/9/2026, 18:31:49', fecha_cierre: '7/9/2026, 12:33:49', balance_apertura: 10.00, balance_cierre: 638.29, saldo_actual: 11455.88, estado: 'Cerrada', arqueo_estado: 'Hacer arqueo' },
+        { id: 'ses-5', usuario: 'Esteffany Cordova', fecha_apertura: '3/9/2026, 10:28:30', fecha_cierre: '4/9/2026, 18:31:27', balance_apertura: 280.00, balance_cierre: 3465.58, saldo_actual: 3465.58, estado: 'Cerrada', arqueo_estado: 'Hacer arqueo' },
+        { id: 'ses-6', usuario: 'Esteffany Cordova', fecha_apertura: '2/9/2026, 22:19:14', fecha_cierre: '3/9/2026, 10:28:10', balance_apertura: 300.00, balance_cierre: 2321.01, saldo_actual: 2321.01, estado: 'Cerrada', arqueo_estado: 'Hacer arqueo' },
+        { id: 'ses-7', usuario: 'Esteffany Cordova', fecha_apertura: '1/9/2026, 12:51:04', fecha_cierre: '2/9/2026, 22:19:01', balance_apertura: 3000.00, balance_cierre: 3000.00, saldo_actual: 4019.51, estado: 'Cerrada', arqueo_estado: 'Ver arqueo' },
+        { id: 'ses-8', usuario: 'Esteffany Cordova', fecha_apertura: '29/8/2026, 23:36:07', fecha_cierre: '1/9/2026, 12:50:01', balance_apertura: 200.00, balance_cierre: 6393.25, saldo_actual: 6393.25, estado: 'Cerrada', arqueo_estado: 'Hacer arqueo' },
+        { id: 'ses-9', usuario: 'Esteffany Cordova', fecha_apertura: '29/8/2026, 13:24:57', fecha_cierre: '29/8/2026, 23:35:59', balance_apertura: 2000.00, balance_cierre: 2000.00, saldo_actual: 2012.90, estado: 'Cerrada', arqueo_estado: 'Ver arqueo' },
+        { id: 'ses-10', usuario: 'Administrador', fecha_apertura: '19/8/2026, 13:18:02', fecha_cierre: '—', balance_apertura: 10.00, balance_cierre: null, saldo_actual: 712.01, estado: 'Abierta', arqueo_estado: 'Arqueo' },
+        { id: 'ses-11', usuario: 'Administrador', fecha_apertura: '18/8/2026, 13:40:26', fecha_cierre: '18/8/2026, 13:48:12', balance_apertura: 100.00, balance_cierre: 134.00, saldo_actual: 134.00, estado: 'Cerrada', arqueo_estado: 'Ver arqueo' },
+        { id: 'ses-12', usuario: 'Esteffany Cordova', fecha_apertura: '6/8/2026, 15:01:42', fecha_cierre: '29/8/2026, 12:50:59', balance_apertura: 150.00, balance_cierre: 106866.21, saldo_actual: 106866.21, estado: 'Cerrada', arqueo_estado: 'Hacer arqueo' },
+        { id: 'ses-13', usuario: 'Esteffany Cordova', fecha_apertura: '13/7/2026, 16:37:23', fecha_cierre: '6/8/2026, 15:01:34', balance_apertura: 10.00, balance_cierre: 2488.86, saldo_actual: 130380.87, estado: 'Cerrada', arqueo_estado: 'Ver arqueo' },
+        { id: 'ses-14', usuario: 'Administrador', fecha_apertura: '7/7/2026, 11:08:34', fecha_cierre: '18/8/2026, 13:40:05', balance_apertura: 0.00, balance_cierre: 4518.81, saldo_actual: 4518.81, estado: 'Cerrada', arqueo_estado: 'Hacer arqueo' }
+      ]);
+    }
+  }
+
+  // ─── Egresos de Caja (Seed exacto al screenshot media_1789926081553.png) ────
+  if (db.egresos_caja) {
+    const egCount = await db.egresos_caja.count();
+    if (egCount === 0) {
+      await db.egresos_caja.bulkAdd([
+        { id: 'eg-1', fecha: '17/9/2026, 16:39:32', sesion: '#17', categoria: 'Otro egreso', proveedor: '—', documento: 'PIDIO QUE SE DE EN EFECTIVO Y YAPEO', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 150.00 },
+        { id: 'eg-2', fecha: '17/9/2026, 16:38:07', sesion: '#17', categoria: 'Gasto', proveedor: 'PAGO DE 3 BOLSAS', documento: 'PAGO DE BOLSA', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 45.00 },
+        { id: 'eg-3', fecha: '16/9/2026, 12:46:59', sesion: '#14', categoria: 'Anulación venta', badgeCategoria: 'Venta', proveedor: '—', documento: 'F001-00000321', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 33.50 },
+        { id: 'eg-4', fecha: '14/9/2026, 22:07:51', sesion: '#14', categoria: 'Gasto', proveedor: '2 PER', documento: 'DESAY', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 21.00 },
+        { id: 'eg-5', fecha: '14/9/2026, 22:06:46', sesion: '#14', categoria: 'Devolución por nota de crédito', badgeCategoria: 'Venta', proveedor: '—', documento: 'B001-00000718', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 30.00 },
+        { id: 'eg-6', fecha: '18/8/2026, 13:44:41', sesion: '#5', categoria: 'Egreso manual', proveedor: '—', documento: 'Sin referencia', usuario: 'Administrador', metodo_pago: 'Efectivo', monto: 10.00 },
+        { id: 'eg-7', fecha: '18/8/2026, 13:34:10', sesion: '#1', categoria: 'Anulación venta', badgeCategoria: 'Venta', proveedor: '—', documento: 'NV001-00000289', usuario: 'Administrador', metodo_pago: 'Efectivo', monto: 10.00 },
+        { id: 'eg-8', fecha: '6/8/2026, 15:01:16', sesion: '#2', categoria: 'Devolución por anulación', badgeCategoria: 'Venta', proveedor: '—', documento: 'B001-00000002', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 21.75 },
+        { id: 'eg-9', fecha: '17/9/2026, 16:38:58', sesion: '#17', categoria: 'Pago a proveedor', proveedor: 'ADELANTO PARA POLOS A MANUEL.. DEL PEDIDO 550', documento: 'ADELANTO PARA POLOS', usuario: 'Esteffany Cordova', metodo_pago: 'Transferencia', monto: 1500.00 },
+        { id: 'eg-10', fecha: '16/9/2026, 12:52:42', sesion: '#14', categoria: 'Anulación venta', proveedor: 'CASAS MEJIA RAFAEL FERNANDO', documento: 'F001-00000328', usuario: 'Esteffany Cordova', metodo_pago: 'Yape', monto: 103.60 },
+        { id: 'eg-11', fecha: '16/9/2026, 12:50:39', sesion: '#14', categoria: 'Anulación venta', proveedor: 'BASHUA S.A.C.', documento: 'F001-00000329', usuario: 'Esteffany Cordova', metodo_pago: 'Yape', monto: 880.25 },
+        { id: 'eg-12', fecha: '16/9/2026, 12:50:02', sesion: '#14', categoria: 'Compra', badgeCategoria: 'Compra', proveedor: 'CORPORACION INDUSTRIAL PSG E.I.R.L.', documento: 'E001-458', usuario: 'Esteffany Cordova', metodo_pago: 'Yape', monto: 17511.66 },
+        { id: 'eg-13', fecha: '4/9/2026, 18:29:45', sesion: '#11', categoria: 'Devolución por nota de crédito', badgeCategoria: 'Venta', proveedor: '—', documento: 'F001-00000264', usuario: 'Esteffany Cordova', metodo_pago: 'Tarjeta', monto: 89.80 },
+        { id: 'eg-14', fecha: '18/8/2026, 13:31:32', sesion: '#1', categoria: 'Anulación venta', proveedor: 'Público en general', documento: 'B001-00000342', usuario: 'Administrador', metodo_pago: 'Yape', monto: 10.00 }
+      ]);
+    }
+  }
+
+  // ─── Ingresos de Caja (Seed exacto al screenshot media_1789926081562.png) ───
+  if (db.ingresos_caja) {
+    const ingCount = await db.ingresos_caja.count();
+    if (ingCount === 0) {
+      await db.ingresos_caja.bulkAdd([
+        { id: 'ing-1', fecha: '20/9/2026, 2:57:07', sesion: '#18', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'CT-00000002', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 30.40 },
+        { id: 'ing-2', fecha: '18/9/2026, 14:01:19', sesion: '#18', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000457', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 54.90 },
+        { id: 'ing-3', fecha: '18/9/2026, 13:48:31', sesion: '#18', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'B001-00000790', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 145.05 },
+        { id: 'ing-4', fecha: '17/9/2026, 22:32:00', sesion: '#18', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000466', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 496.25 },
+        { id: 'ing-5', fecha: '17/9/2026, 17:12:10', sesion: '#17', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'F001-00000337', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 303.30 },
+        { id: 'ing-6', fecha: '17/9/2026, 17:10:06', sesion: '#17', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000465', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 80.50 },
+        { id: 'ing-7', fecha: '17/9/2026, 16:37:45', sesion: '#17', categoria: 'Otro ingreso', documento: 'OP 328691', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 580.00 },
+        { id: 'ing-8', fecha: '17/9/2026, 12:44:42', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000464', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 53.40 },
+        { id: 'ing-9', fecha: '17/9/2026, 11:22:46', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'B001-00000789', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 3155.60 },
+        { id: 'ing-10', fecha: '17/9/2026, 11:20:10', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'F001-00000336', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 1066.80 },
+        { id: 'ing-11', fecha: '17/9/2026, 9:29:40', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'B001-00000788', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 12.00 },
+        { id: 'ing-12', fecha: '17/9/2026, 7:59:44', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'F001-00000334', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 1007.50 },
+        { id: 'ing-13', fecha: '17/9/2026, 7:50:48', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000461', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 123.60 },
+        { id: 'ing-14', fecha: '17/9/2026, 7:18:00', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000459', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 52.56 },
+        { id: 'ing-15', fecha: '17/9/2026, 7:11:34', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'B001-00000768', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 102.43 },
+        { id: 'ing-16', fecha: '16/9/2026, 20:53:06', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000458', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 119.00 },
+        { id: 'ing-17', fecha: '16/9/2026, 18:30:47', sesion: '#14', categoria: 'Venta', badgeCategoria: 'Venta', documento: 'NV001-00000457', usuario: 'Esteffany Cordova', metodo_pago: 'Efectivo', monto: 210.00 }
+      ]);
+    }
+  }
+
+  // ─── Cuentas Bancarias (Seed exacto al screenshot media_1789926163888.png) ──
+  if (db.cuentas_bancarias) {
+    const cbCount = await db.cuentas_bancarias.count();
+    if (cbCount === 0) {
+      await db.cuentas_bancarias.bulkAdd([
+        { id: 'cb-1', nombre: 'Cuenta bancaria', entidad: 'BCP', numero: '5467461313584864', tipo: 'Bancaria', saldo: 24063.00, moneda: 'PEN', estado: 'Activa' },
+        { id: 'cb-2', nombre: 'Terminal tarjetas', entidad: 'POS Niubiz/Izipay', numero: 'POS-01', tipo: 'Tarjeta', saldo: 8471.61, moneda: 'PEN', estado: 'Activa' },
+        { id: 'cb-3', nombre: 'Billetera Plin', entidad: 'Plin', numero: 'Billetera', tipo: 'Billetera', saldo: 96337.51, moneda: 'PEN', estado: 'Activa' },
+        { id: 'cb-4', nombre: 'Billetera Yape', entidad: 'Yape', numero: '9358865187', tipo: 'Billetera', saldo: 211415.07, moneda: 'PEN', estado: 'Activa' }
+      ]);
+    }
+  }
+
+  // ─── Cuentas por Cobrar (Seed exacto al screenshot media_1789925791170.png) ─
+  if (db.cuentas_por_cobrar) {
+    const cpcCount = await db.cuentas_por_cobrar.count();
+    if (cpcCount === 0) {
+      await db.cuentas_por_cobrar.bulkAdd([
+        { id: 'cpc-101', comprobante: 'F001-00000318', cliente_nombre: 'BASHUA S.A.C.', ruc_nit: '20616352327', fecha_vencimiento: '15/09/2026', cuotas: '—', total: 4451.04, cobrado: 4451.04, saldo: 0.00, spot_bn: 980.96, spot_status: 'pending', estado: 'Abierta', isVencido: false, canConfirmBN: true },
+        { id: 'cpc-102', comprobante: 'F001-00000317', cliente_nombre: 'BASHUA S.A.C.', ruc_nit: '20616352327', fecha_vencimiento: '15/09/2026', cuotas: '—', total: 960.00, cobrado: 960.00, saldo: 0.00, spot_bn: 40.00, spot_status: 'pending', estado: 'Abierta', isVencido: false, canConfirmBN: true },
+        { id: 'cpc-103', comprobante: 'F001-00000227', cliente_nombre: 'GREENCENTER EMOBILITY S.A.C.', ruc_nit: '20613074342', fecha_vencimiento: '28/08/2026', cuotas: '1 pend. / 1 A crédito', total: 131.40, cobrado: 0.00, saldo: 131.40, spot_bn: 0.00, spot_status: null, estado: 'Abierta', isVencido: true, canConfirmBN: false },
+        { id: 'cpc-104', comprobante: 'F001-00000225', cliente_nombre: 'GRUPO EMPRESARIAL PACHAY S.A.C.', ruc_nit: '20614717697', fecha_vencimiento: '28/08/2026', cuotas: '1 pend. / 1 A crédito', total: 2332.85, cobrado: 0.00, saldo: 2332.85, spot_bn: 0.00, spot_status: null, estado: 'Abierta', isVencido: true, canConfirmBN: false },
+        { id: 'cpc-105', comprobante: 'F001-00000222', cliente_nombre: 'BASHUA S.A.C.', ruc_nit: '20616352327', fecha_vencimiento: '28/08/2026', cuotas: '1 pend. / 1 A crédito', total: 911.76, cobrado: 0.00, saldo: 911.76, spot_bn: 0.00, spot_status: null, estado: 'Abierta', isVencido: true, canConfirmBN: false },
+        { id: 'cpc-106', comprobante: 'NV001-00000327', cliente_nombre: 'GREENCENTER EMOBILITY S.A.C.', ruc_nit: '20613074342', fecha_vencimiento: '24/08/2026', cuotas: '3 pend. / 3 A crédito', total: 14.50, cobrado: 0.00, saldo: 14.50, spot_bn: 0.00, spot_status: null, estado: 'Abierta', isVencido: true, canConfirmBN: false },
+        { id: 'cpc-107', comprobante: 'F001-00000126', cliente_nombre: 'NEGOCIOS DIGITALES TUKIFAC S.A.C.', ruc_nit: '20612257320', fecha_vencimiento: '06/08/2026', cuotas: '1 pend. / 1 A crédito', total: 338.04, cobrado: 0.00, saldo: 338.04, spot_bn: 0.00, spot_status: null, estado: 'Abierta', isVencido: true, canConfirmBN: false }
+      ]);
+    }
+  }
+
+  // ─── Métodos de Pago (Seed exacto al screenshot media_1789925791176.png) ────
+  if (db.metodos_pago) {
+    const mpCount = await db.metodos_pago.count();
+    if (mpCount === 0) {
+      await db.metodos_pago.bulkAdd([
+        { id: 'mp-1', nombre: 'Efectivo', codigo: 'cash', destino: 'Caja', destinoId: null, estado: 'Activo', isProtected: true },
+        { id: 'mp-2', nombre: 'Yape', codigo: 'yape', destino: 'Cuenta bancaria', destinoId: '4', estado: 'Activo', isProtected: false },
+        { id: 'mp-3', nombre: 'Plin', codigo: 'plin', destino: 'Cuenta bancaria', destinoId: '1', estado: 'Activo', isProtected: false },
+        { id: 'mp-4', nombre: 'Transferencia', codigo: 'transferencia', destino: 'Cuenta bancaria', destinoId: '2', estado: 'Activo', isProtected: false },
+        { id: 'mp-5', nombre: 'Tarjeta', codigo: 'tarjeta', destino: 'Cuenta bancaria', destinoId: '3', estado: 'Activo', isProtected: false }
       ]);
     }
   }
