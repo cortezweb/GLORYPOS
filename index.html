@@ -20,8 +20,8 @@
     <script type="module" src="/src/main.jsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          // Dev mode: Unregister service worker and clear caches so new changes show immediately
+        // En caso de forzar limpieza o modo local
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.search.includes('clear=1')) {
           navigator.serviceWorker.getRegistrations().then(regs => {
             for (const r of regs) r.unregister();
           });
@@ -32,7 +32,9 @@
           }
         } else {
           window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
+            navigator.serviceWorker.register('/sw.js').then((reg) => {
+              reg.update();
+            }).catch(() => {});
           });
         }
       }

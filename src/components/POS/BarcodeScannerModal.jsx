@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, Volume2, VolumeX, Zap, Camera, Scan, Trash2, 
   Minus, Plus, ChevronRight, CheckCircle2, AlertTriangle, RefreshCw, ShieldAlert,
-  SwitchCamera
+  SwitchCamera, Image as ImageIcon
 } from 'lucide-react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useCart } from '../../context/CartContext';
@@ -12,6 +12,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
   const { items, total, count, updateQuantity, removeFromCart, clearCart, addToCart } = useCart();
   
   const scannerRef = useRef(null);
+  const fileInputRef = useRef(null);
   const lastScanTimeRef = useRef(0);
   const lastScanCodeRef = useRef('');
 
@@ -20,6 +21,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
   const [torchSupported, setTorchSupported] = useState(false);
   const [availableCameras, setAvailableCameras] = useState([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
+  const [activeCameraLabel, setActiveCameraLabel] = useState('');
   const [manualCode, setManualCode] = useState('');
   const [lastDetected, setLastDetected] = useState(null);
   const [cameraActive, setCameraActive] = useState(false);
@@ -46,6 +48,23 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     }
   };
 
+  // Forzar purga de caché PWA en el celular
+  const handleForceCachePurge = async () => {
+    try {
+      if ('caches' in window) {
+        const names = await caches.keys();
+        for (const name of names) await caches.delete(name);
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const r of regs) await r.unregister();
+      }
+      window.location.href = window.location.origin + '?clear=1&t=' + Date.now();
+    } catch (e) {
+      window.location.reload();
+    }
+  };
+
   // Inicializar escáner con html5-qrcode
   const startScanner = async (forcedCameraId = null) => {
     setCameraError(null);
@@ -64,8 +83,8 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         scannerRef.current = null;
       }
 
-      // Esperar brevemente a que el DOM tenga el elemento listo
-      await new Promise(r => setTimeout(r, 80));
+      // Esperar a que el DOM tenga el elemento listo
+      await new Promise(r => setTimeout(r, 100));
 
       const element = document.getElementById('glorypos-barcode-reader');
       if (!element) {
@@ -73,7 +92,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         return;
       }
 
-      // 1. Obtener lista de cámaras disponibles para elegir la trasera real
+      // 1. Obtener lista de cámaras disponibles
       let cameras = [];
       try {
         cameras = await Html5Qrcode.getCameras();
@@ -84,28 +103,29 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         console.warn('[BarcodeScanner] No se pudo enumerar cámaras:', e);
       }
 
-      // 2. Determinar configuración de cámara
+      // 2. Determinar configuración de cámara (buscar trasera principal)
       let cameraConfig = { facingMode: 'environment' };
 
       if (forcedCameraId) {
         cameraConfig = forcedCameraId;
+        const matched = cameras.find(c => c.id === forcedCameraId);
+        if (matched) setActiveCameraLabel(matched.label || 'Lente seleccionado');
       } else if (cameras && cameras.length > 0) {
-        // En celulares con múltiples lentes (macro, profundidad, gran angular),
-        // buscamos la cámara trasera principal
         const rearCamera = cameras.find(c => 
           /back|rear|environment|trasera|posterior/i.test(c.label) &&
-          !/wide|ultra|macro|depth/i.test(c.label)
+          !/wide|ultra|macro|depth|0/i.test(c.label)
         ) || cameras.find(c => /back|rear|environment|trasera|posterior/i.test(c.label))
-          || cameras[cameras.length - 1]; // Habitualmente la última en Android
+          || cameras[cameras.length - 1];
 
         if (rearCamera && rearCamera.id) {
           cameraConfig = rearCamera.id;
+          setActiveCameraLabel(rearCamera.label || 'Cámara Trasera Principal');
           const idx = cameras.findIndex(c => c.id === rearCamera.id);
           if (idx !== -1) setCurrentCameraIndex(idx);
         }
       }
 
-      // 3. Instanciar Html5Qrcode con soporte multiformato
+      // 3. Instanciar Html5Qrcode
       const formatsToSupport = [
         Html5QrcodeSupportedFormats.EAN_13,
         Html5QrcodeSupportedFormats.EAN_8,
@@ -120,14 +140,14 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         formatsToSupport,
         verbose: false,
         experimentalFeatures: {
-          useBarCodeDetectorIfSupported: true // Decodificación nativa acelerada por GPU
+          useBarCodeDetectorIfSupported: true // GPU acceleration
         }
       });
 
       scannerRef.current = html5QrCode;
 
       const scanConfig = {
-        fps: 15,
+        fps: 20,
         qrbox: (viewfinderWidth, viewfinderHeight) => {
           const width = Math.floor(viewfinderWidth * 0.88);
           const height = Math.floor(Math.min(viewfinderHeight * 0.55, 160));
@@ -136,13 +156,13 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         aspectRatio: 1.777778
       };
 
-      // 4. Iniciar con reintento automático si el lens falla
+      // 4. Iniciar cámara con fallback si un lente específico da error
       try {
         await html5QrCode.start(
           cameraConfig,
           scanConfig,
           (decodedText) => handleDecodedBarcode(decodedText),
-          () => {} // Frame sin código, continuar
+          () => {}
         );
       } catch (errFirst) {
         console.warn('[BarcodeScanner] Primer intento falló, reintentando con facingMode:', errFirst);
@@ -182,12 +202,40 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     }
   };
 
-  // Cambiar entre cámaras disponibles (ej. cambiar de lente en Android)
+  // Alternar entre cámaras disponibles
   const handleSwitchCamera = () => {
     if (availableCameras.length <= 1) return;
     const nextIdx = (currentCameraIndex + 1) % availableCameras.length;
     setCurrentCameraIndex(nextIdx);
     startScanner(availableCameras[nextIdx].id);
+  };
+
+  // Escaneo alternativo con foto / cámara nativa
+  const handleScanFromPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      let qrInstance = scannerRef.current;
+      if (!qrInstance) {
+        qrInstance = new Html5Qrcode('glorypos-barcode-reader', {
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.QR_CODE
+          ]
+        });
+      }
+      const decodedText = await qrInstance.scanFile(file, true);
+      if (decodedText) {
+        handleDecodedBarcode(decodedText);
+      }
+    } catch (err) {
+      alert('No se detectó un código de barras claro en la foto. Intenta con mejor iluminación.');
+    }
   };
 
   // Detener y limpiar escáner
@@ -207,7 +255,6 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     setTorchEnabled(false);
   };
 
-  // Ciclo de vida del modal
   useEffect(() => {
     if (isOpen) {
       startScanner();
@@ -234,13 +281,12 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     }
   };
 
-  // Manejo de código detectado con filtro de repetición rápida
+  // Manejo de código detectado con debounce
   const handleDecodedBarcode = (code) => {
     if (!code) return;
     const clean = String(code).trim();
     const now = Date.now();
 
-    // Evitar leer 10 veces el mismo producto en 1.8 segundos
     if (clean === lastScanCodeRef.current && now - lastScanTimeRef.current < 1800) {
       return;
     }
@@ -248,7 +294,6 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     lastScanCodeRef.current = clean;
     lastScanTimeRef.current = now;
 
-    // Vibración háptica en celulares
     if (navigator.vibrate) {
       try { navigator.vibrate(80); } catch (e) {}
     }
@@ -256,12 +301,11 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     handleScanCode(clean);
   };
 
-  // Procesar búsqueda en la base de datos de productos
+  // Procesar búsqueda en inventario
   const handleScanCode = async (codigo) => {
     if (!codigo) return;
     const cleanCode = codigo.trim();
 
-    // 1. Buscar en productos locales de la tienda
     const prod = await db.productos_tienda.where('codigo_barras').equals(cleanCode).first();
     
     if (prod) {
@@ -271,7 +315,6 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
       setManualCode('');
       setTimeout(() => setLastDetected(null), 2500);
     } else {
-      // 2. Buscar en catálogo maestro general de Bolivia
       const master = await db.catalogo_maestro.where('codigo_barras').equals(cleanCode).first();
       if (master) {
         const newShopProd = {
@@ -296,7 +339,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         setManualCode('');
         setTimeout(() => setLastDetected(null), 2500);
       } else {
-        alert(`Código "${cleanCode}" no registrado en inventario.`);
+        alert(`Código "${cleanCode}" no encontrado en inventario.`);
       }
     }
   };
@@ -313,7 +356,17 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
   return (
     <div className="fixed inset-0 z-50 bg-slate-950 flex justify-center animate-fadeIn">
       
-      {/* Estilos obligatorios para que html5-qrcode no quede en negro en móviles */}
+      {/* Input oculto para escaneo por foto de cámara nativa */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleScanFromPhoto}
+      />
+
+      {/* Reglas CSS estrictas para renderizado de video en Android */}
       <style>{`
         #glorypos-barcode-reader {
           width: 100% !important;
@@ -337,12 +390,12 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         }
       `}</style>
 
-      {/* Contenedor Adaptado para Celular / PWA */}
+      {/* Frame Móvil */}
       <main className="w-full max-w-md bg-slate-50 flex flex-col h-screen overflow-hidden shadow-2xl relative border-x border-slate-200">
         
-        {/* Barra Superior */}
-        <section className="bg-slate-900 text-white px-4 py-2.5 flex items-center justify-between border-b border-slate-800 z-30 shadow-xs shrink-0">
-          <div className="flex items-center gap-3">
+        {/* Barra Superior con indicador de versión v4.0 para confirmar que no sea caché viejo */}
+        <section className="bg-slate-900 text-white px-3.5 py-2.5 flex items-center justify-between border-b border-slate-800 z-30 shadow-xs shrink-0">
+          <div className="flex items-center gap-2.5">
             <button 
               onClick={onClose}
               aria-label="Volver al punto de venta" 
@@ -355,43 +408,46 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
               <div className="flex items-center gap-1.5">
                 <span className={`inline-block w-2 h-2 rounded-full ${cameraActive ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'}`}></span>
                 <h1 className="font-bold text-sm tracking-tight leading-tight">Lector de Códigos</h1>
+                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  v4.0
+                </span>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium">Facturación SIAT • GLORYPOS</p>
+              <p className="text-[10px] text-slate-400 font-medium truncate max-w-[160px]">
+                {activeCameraLabel || 'GLORYPOS Móvil'}
+              </p>
             </div>
           </div>
 
-          {/* Toggles: Sonido, Linterna, Cambiar Lente y Recargar */}
-          <div className="flex items-center gap-1.5">
+          {/* Botones de Control */}
+          <div className="flex items-center gap-1">
             
             {/* Cambiar Lente si hay más de 1 cámara */}
             {availableCameras.length > 1 && (
               <button
                 onClick={handleSwitchCamera}
-                title="Cambiar de lente/cámara"
-                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center transition cursor-pointer"
+                title="Cambiar de lente de cámara"
+                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 flex items-center justify-center transition cursor-pointer"
                 type="button"
               >
-                <SwitchCamera className="w-4 h-4 text-sky-400" />
+                <SwitchCamera className="w-4 h-4" />
               </button>
             )}
 
-            <button 
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              aria-label="Activar sonido beep" 
-              className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-colors cursor-pointer ${
-                soundEnabled 
-                  ? 'bg-slate-800 text-emerald-400 border-slate-700' 
-                  : 'bg-slate-800/50 text-slate-500 border-slate-800'
-              }`}
+            {/* Escanear por Foto / Cámara Nativa */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              title="Tomar foto con cámara del celular"
+              className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 flex items-center justify-center transition cursor-pointer"
               type="button"
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              <Camera className="w-4 h-4" />
             </button>
 
+            {/* Linterna */}
             {torchSupported && (
               <button 
                 onClick={toggleTorch}
-                aria-label="Linterna" 
+                title="Linterna" 
                 className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-colors cursor-pointer ${
                   torchEnabled 
                     ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md' 
@@ -403,9 +459,9 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
               </button>
             )}
 
+            {/* Recargar / Limpiar Caché */}
             <button 
               onClick={() => startScanner()}
-              aria-label="Recargar cámara" 
               title="Recargar cámara"
               className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center transition cursor-pointer"
               type="button"
@@ -415,50 +471,60 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           </div>
         </section>
 
-        {/* Visor de Cámara Real con html5-qrcode */}
-        <section className="relative w-full h-[40%] shrink-0 overflow-hidden flex flex-col justify-between p-3 select-none bg-slate-950">
-          
-          {/* Elemento donde se inyecta el stream de video */}
+        {/* Visor de Cámara con altura fija explícita para evitar colapso a 0px en flexbox */}
+        <section 
+          style={{ height: '280px', minHeight: '280px' }}
+          className="relative w-full shrink-0 overflow-hidden select-none bg-slate-950"
+        >
+          {/* Contenedor del video real */}
           <div id="glorypos-barcode-reader"></div>
 
-          {/* Loader mientras inicia la cámara */}
+          {/* Loader */}
           {isInitializing && (
             <div className="absolute inset-0 z-20 bg-slate-950/90 flex flex-col items-center justify-center text-white space-y-2">
               <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-xs text-slate-300 font-mono">Conectando lente de cámara...</p>
+              <p className="text-xs text-slate-300 font-mono">Conectando sensor de cámara...</p>
             </div>
           )}
 
-          {/* Mensaje de Error en caso de bloqueo de permisos */}
+          {/* Mensaje de Error si la cámara está bloqueada */}
           {cameraError && (
             <div className="absolute inset-0 z-20 bg-slate-950/95 p-4 flex flex-col items-center justify-center text-center space-y-2">
               <ShieldAlert className="w-8 h-8 text-amber-400" />
               <h3 className="text-xs font-bold text-white">
                 {cameraError === 'permission_denied' && 'Permiso de Cámara Denegado'}
                 {cameraError === 'not_found' && 'No se detectó cámara trasera'}
-                {cameraError === 'general' && 'No se pudo activar la cámara'}
+                {cameraError === 'general' && 'No se pudo activar el visor'}
               </h3>
               <p className="text-[11px] text-slate-300 max-w-xs leading-relaxed">
-                {cameraError === 'permission_denied' && 'Toca el ícono del candado 🔒 en la barra de tu navegador y activa el permiso de Cámara.'}
-                {cameraError === 'not_found' && 'Asegúrate de que ninguna otra aplicación esté usando la cámara.'}
-                {cameraError === 'general' && 'Toca "Reintentar" o selecciona otro lente arriba.'}
+                Toca el ícono del candado 🔒 en la barra de tu navegador para dar permiso de cámara, o usa el botón de tomar foto.
               </p>
-              <button
-                type="button"
-                onClick={() => startScanner()}
-                className="mt-1 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Reintentar</span>
-              </button>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => startScanner()}
+                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Reintentar</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>Tomar Foto</span>
+                </button>
+              </div>
             </div>
           )}
 
           {/* Helper Superior */}
-          <div className="relative z-20 flex justify-between items-center pointer-events-none">
+          <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-center pointer-events-none">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-[11px] font-semibold text-emerald-300 shadow-lg">
               <Scan className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
-              <span>Apunta la línea verde al código</span>
+              <span>Apunta la línea al código</span>
             </span>
 
             {/* Simulación rápida en caso de pruebas */}
@@ -466,14 +532,12 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
               <button 
                 onClick={() => handleScanCode('7771234000018')}
                 className="px-2 py-0.5 bg-slate-900/80 text-white hover:bg-emerald-600 rounded text-[10px] font-bold border border-white/20 transition cursor-pointer"
-                title="Simular Coca-Cola"
               >
-                + Coca 2L
+                + Coca
               </button>
               <button 
                 onClick={() => handleScanCode('7771234000032')}
                 className="px-2 py-0.5 bg-slate-900/80 text-white hover:bg-emerald-600 rounded text-[10px] font-bold border border-white/20 transition cursor-pointer"
-                title="Simular Paceña"
               >
                 + Paceña
               </button>
@@ -481,25 +545,26 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           </div>
 
           {/* Retícula Central con Esquinas y Línea Láser */}
-          <div className="relative z-10 w-64 max-w-[88%] h-28 mx-auto my-auto flex items-center justify-center pointer-events-none">
-            <div className="absolute top-0 left-0 w-7 h-7 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg shadow-[0_0_10px_#34d399]"></div>
-            <div className="absolute top-0 right-0 w-7 h-7 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg shadow-[0_0_10px_#34d399]"></div>
-            <div className="absolute bottom-0 left-0 w-7 h-7 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg shadow-[0_0_10px_#34d399]"></div>
-            <div className="absolute bottom-0 right-0 w-7 h-7 border-b-4 border-r-4 border-emerald-400 rounded-br-lg shadow-[0_0_10px_#34d399]"></div>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="relative w-64 max-w-[88%] h-28 flex items-center justify-center">
+              <div className="absolute top-0 left-0 w-7 h-7 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg shadow-[0_0_10px_#34d399]"></div>
+              <div className="absolute top-0 right-0 w-7 h-7 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg shadow-[0_0_10px_#34d399]"></div>
+              <div className="absolute bottom-0 left-0 w-7 h-7 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg shadow-[0_0_10px_#34d399]"></div>
+              <div className="absolute bottom-0 right-0 w-7 h-7 border-b-4 border-r-4 border-emerald-400 rounded-br-lg shadow-[0_0_10px_#34d399]"></div>
 
-            <div className="absolute left-1 right-1 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_14px_#10b981] animate-pulse"></div>
+              <div className="absolute left-1 right-1 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_14px_#10b981] animate-pulse"></div>
 
-            {/* Notificación de Producto Detectado */}
-            {lastDetected && (
-              <div className="absolute -bottom-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-3 py-1 rounded-full text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-xl animate-bounce border border-white/30">
-                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                <span className="truncate max-w-[200px]">{lastDetected.nombre}</span>
-              </div>
-            )}
+              {lastDetected && (
+                <div className="absolute -bottom-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-3 py-1 rounded-full text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-xl animate-bounce border border-white/30">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                  <span className="truncate max-w-[200px]">{lastDetected.nombre}</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Barra de Ingreso Manual */}
-          <div className="relative z-20 pb-0.5">
+          <div className="absolute bottom-2 left-2 right-2 z-20">
             <form 
               onSubmit={(e) => { e.preventDefault(); handleScanCode(manualCode); }}
               className="flex gap-1.5 bg-slate-900/95 backdrop-blur-md p-1.5 rounded-xl border border-slate-700/70 shadow-lg"
@@ -524,8 +589,21 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           </div>
         </section>
 
+        {/* Botón de Purga de Caché si el celular tiene versión antigua */}
+        <div className="bg-slate-100 px-4 py-1 flex items-center justify-between border-b border-slate-200 text-[10px] text-slate-500">
+          <span>¿No ves la cámara?</span>
+          <button
+            type="button"
+            onClick={handleForceCachePurge}
+            className="text-emerald-700 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+          >
+            <RefreshCw className="w-3 h-3" />
+            <span>Limpiar caché PWA</span>
+          </button>
+        </div>
+
         {/* Hoja Inferior: Productos en Carrito */}
-        <section className="flex-1 bg-slate-50 flex flex-col min-h-0 overflow-hidden rounded-t-2xl -mt-2 z-20 shadow-lg border-t border-slate-200">
+        <section className="flex-1 bg-slate-50 flex flex-col min-h-0 overflow-hidden shadow-lg border-t border-slate-200">
           <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mt-2 mb-1"></div>
 
           <div className="px-4 py-2 flex items-center justify-between border-b border-slate-200 bg-white">
@@ -622,7 +700,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
             ))}
 
             {items.length === 0 && (
-              <div className="text-center py-10 text-slate-400 space-y-1">
+              <div className="text-center py-8 text-slate-400 space-y-1">
                 <Scan className="w-8 h-8 mx-auto text-slate-300" />
                 <p className="text-xs font-bold text-slate-600">El carrito está vacío</p>
                 <p className="text-[11px]">Apunta la cámara al código de barras del producto</p>
