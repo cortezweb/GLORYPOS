@@ -428,6 +428,15 @@ export default function DesktopSidebar({
                 >
                   • Marcas
                 </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('unidades_medida')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['unidades_medida', 'unidades'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Unidades de medida
+                </button>
               </div>
             )}
           </div>

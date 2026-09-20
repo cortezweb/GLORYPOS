@@ -269,6 +269,9 @@ export default function Sidebar({
                   <button type="button" onClick={() => handleNav('marcas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Marcas
                   </button>
+                  <button type="button" onClick={() => handleNav('unidades_medida')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Unidades de medida
+                  </button>
                   <button type="button" onClick={() => handleNav('inventory')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Stock & Kardex
                   </button>

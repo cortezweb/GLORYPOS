@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, Sparkles, Wrench, Layers, Bookmark, Boxes } from 'lucide-react';
+import { Package, Sparkles, Wrench, Layers, Bookmark, Ruler, Boxes } from 'lucide-react';
 
 export default function ProductsSubNav({ currentSubView, onSelectSubView }) {
   const tabs = [
@@ -32,6 +32,12 @@ export default function ProductsSubNav({ currentSubView, onSelectSubView }) {
       aliases: ['marcas'],
       label: 'Marcas', 
       icon: Bookmark 
+    },
+    { 
+      id: 'unidades_medida', 
+      aliases: ['unidades_medida', 'unidades'],
+      label: 'Unidades de Medida', 
+      icon: Ruler 
     },
     { 
       id: 'inventory', 

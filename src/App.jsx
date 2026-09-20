@@ -64,6 +64,7 @@ import CuentasPorCobrarView from './components/Sales/CuentasPorCobrarView';
 // Productos Sub-Windows
 import CombosPromocionesView from './components/Products/CombosPromocionesView';
 import ServiciosView from './components/Products/ServiciosView';
+import UnidadesMedidaView from './components/Products/UnidadesMedidaView';
 
 // Auth Screens
 import LoginView from './components/Auth/LoginView';
@@ -314,6 +315,11 @@ function MainShell() {
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                 />
               )}
+              {['unidades_medida', 'unidades', 'unidades-medida'].includes(currentView) && (
+                <UnidadesMedidaView 
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
+                />
+              )}
               {['inventory', 'inventario', 'kardex'].includes(currentView) && (
                 <InventoryView 
                   currentRubro={currentRubro}
@@ -402,7 +408,7 @@ function MainShell() {
                 'ventas_notas', 'notas_venta', 'notas',
                 'ventas_cotizaciones', 'cotizaciones', 'preventa',
                 'ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja',
-                'productos', 'products', 'combos_promociones', 'combos', 'promociones', 'servicios', 'services', 'categorias_marcas', 'categorias', 'marcas',
+                'productos', 'products', 'combos_promociones', 'combos', 'promociones', 'servicios', 'services', 'categorias_marcas', 'categorias', 'marcas', 'unidades_medida', 'unidades', 'unidades-medida',
                 'inventory', 'inventario', 'kardex',
                 'clients', 'clientes',
                 'purchases', 'compras', 'nueva_compra', 'compras_historial', 'proveedores',
