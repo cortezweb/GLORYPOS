@@ -83,56 +83,42 @@ export default function ReportesCajaView({ onSelectSubView }) {
       {/* Subnavegación Superior de Finanzas */}
       <FinanceSubNav activeTab="reportes_caja" onSelectTab={onSelectSubView} />
 
-      {/* Header Principal */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div>
-          <h1 className="text-xl font-black text-slate-900 tracking-tight">Reportes de caja</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Resumen de caja y movimientos por método de pago
-          </p>
-        </div>
-
-        {/* Botones de Exportar */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleExportPDF}
-            className="px-3.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition flex items-center gap-1.5"
-          >
-            <FileText className="w-3.5 h-3.5 text-rose-600" />
-            <span>Exportar PDF</span>
-          </button>
-
-          <button
-            onClick={handleExportCSV}
-            className="px-3.5 py-2 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/70 rounded-xl transition flex items-center gap-1.5"
-          >
-            <Download className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Exportar Excel</span>
-          </button>
-        </div>
+      {/* Header Principal exacto a media_1789932485053.png */}
+      <div className="space-y-0.5">
+        <h1 className="text-xl font-bold text-slate-900 tracking-tight">Reportes de caja</h1>
+        <p className="text-xs text-slate-500">
+          Resumen de caja y movimientos por método de pago
+        </p>
       </div>
 
-      {/* Barra de Filtros (Exacta a media_1789925791161.png) */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 text-xs items-end">
+      {/* Contenedor de Filtros exacto a la imagen media_1789932485053.png */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+          <Filter className="w-3.5 h-3.5 text-slate-500" />
+          <span>Filtros</span>
+        </div>
+
+        {/* 6 Selectores en fila */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">Sucursal</label>
+            <label className="block text-[11px] text-slate-500 mb-1">Sucursal</label>
             <select
               value={sucursal}
               onChange={(e) => setSucursal(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
             >
+              <option value="Todas">Todas</option>
               <option value="Principal">Principal</option>
               <option value="Almacén">Almacén</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">Usuario</label>
+            <label className="block text-[11px] text-slate-500 mb-1">Usuario</label>
             <select
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
             >
               <option value="Todos">Todos</option>
               <option value="Esteffany Cordova">Esteffany Cordova</option>
@@ -141,31 +127,31 @@ export default function ReportesCajaView({ onSelectSubView }) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">Desde</label>
+            <label className="block text-[11px] text-slate-500 mb-1">Desde</label>
             <input
               type="date"
               value={desde}
               onChange={(e) => setDesde(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">Hasta</label>
+            <label className="block text-[11px] text-slate-500 mb-1">Hasta</label>
             <input
               type="date"
               value={hasta}
               onChange={(e) => setHasta(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">Sesión</label>
+            <label className="block text-[11px] text-slate-500 mb-1">Sesión de caja</label>
             <select
               value={sesion}
               onChange={(e) => setSesion(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
             >
               <option value="Todas">Todas</option>
               <option value="#18">#18 - Principal</option>
@@ -175,54 +161,77 @@ export default function ReportesCajaView({ onSelectSubView }) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 mb-1">Tipo</label>
+            <label className="block text-[11px] text-slate-500 mb-1">Tipo movimiento</label>
             <select
               value={tipoMov}
               onChange={(e) => setTipoMov(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
             >
-              <option value="Todos">Todos los movimientos</option>
+              <option value="Todos">Todos</option>
               <option value="Venta">Ventas</option>
               <option value="Ingreso">Ingresos manuales</option>
               <option value="Egreso">Egresos / Gastos</option>
             </select>
           </div>
+        </div>
 
-          <div>
+        {/* Fila de Botones idéntica a media_1789932485053.png */}
+        <div className="flex flex-wrap items-center gap-2.5 pt-1">
+          {/* Toggle: Resumen de caja vs Movimientos */}
+          <div className="flex items-center gap-1.5">
             <button
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition shadow-xs"
+              type="button"
+              onClick={() => setActiveTab('resumen')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                activeTab === 'resumen'
+                  ? 'bg-[#00a650] text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              }`}
             >
-              Aplicar
+              Resumen de caja
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('movimientos')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                activeTab === 'movimientos'
+                  ? 'bg-[#00a650] text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              Movimientos
             </button>
           </div>
+
+          {/* Aplicar */}
+          <button
+            type="button"
+            className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold shadow-xs transition cursor-pointer"
+          >
+            Aplicar
+          </button>
+
+          {/* Exportar PDF */}
+          <button
+            type="button"
+            onClick={handleExportPDF}
+            className="px-4 py-2 bg-[#f87171] hover:bg-[#ef4444] text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Exportar PDF</span>
+          </button>
+
+          {/* Exportar Excel */}
+          <button
+            type="button"
+            onClick={handleExportCSV}
+            className="px-4 py-2 bg-[#48bb78] hover:bg-[#38a169] text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Exportar Excel</span>
+          </button>
         </div>
-      </div>
-
-      {/* Tabs Selector: Resumen de caja vs Movimientos */}
-      <div className="flex border-b border-slate-200">
-        <button
-          onClick={() => setActiveTab('resumen')}
-          className={`px-5 py-2.5 text-xs font-bold border-b-2 transition flex items-center gap-2 ${
-            activeTab === 'resumen'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          <span>Resumen de caja</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('movimientos')}
-          className={`px-5 py-2.5 text-xs font-bold border-b-2 transition flex items-center gap-2 ${
-            activeTab === 'movimientos'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <ListFilter className="w-4 h-4" />
-          <span>Movimientos</span>
-        </button>
       </div>
 
       {/* Vista 1: Resumen de Caja */}
