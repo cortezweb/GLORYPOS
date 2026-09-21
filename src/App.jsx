@@ -385,7 +385,18 @@ function MainShell() {
                   onOpenCloseCash={() => setIsCloseCashOpen(true)} 
                 />
               )}
-              {['guias_remision', 'guias', 'despacho'].includes(currentView) && <GuiasRemisionView />}
+              {['guias_remision', 'guias', 'despacho', 'guias_remitente', 'guias_transportista', 'transportistas_gre', 'transportistas', 'conductores_gre', 'conductores', 'vehiculos_gre', 'vehiculos'].includes(currentView) && (
+                <GuiasRemisionView 
+                  initialTab={
+                    currentView === 'guias_transportista' ? 'guias_transportista' :
+                    ['transportistas_gre', 'transportistas'].includes(currentView) ? 'transportistas' :
+                    ['conductores_gre', 'conductores'].includes(currentView) ? 'conductores' :
+                    ['vehiculos_gre', 'vehiculos'].includes(currentView) ? 'vehiculos' :
+                    'guias_remitente'
+                  }
+                  onSelectSubView={(sub) => setCurrentView(sub)} 
+                />
+              )}
               {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
               {['administracion', 'admin', 'configuracion'].includes(currentView) && <AdministracionView />}
               {['modulos'].includes(currentView) && <ModulosView />}
@@ -435,7 +446,7 @@ function MainShell() {
                 'subscription', 'suscripcion', 'planes',
                 'tienda_virtual', 'catalogo_online', 'tienda',
                 'finanzas', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar_finanzas', 'cuentas_por_pagar', 'reportes_caja_finanzas', 'metodos_pago',
-                'guias_remision', 'guias', 'despacho',
+                'guias_remision', 'guias', 'despacho', 'guias_remitente', 'guias_transportista', 'transportistas_gre', 'transportistas', 'conductores_gre', 'conductores', 'vehiculos_gre', 'vehiculos',
                 'comprobantes_pendientes', 'pendientes',
                 'documentos_avanzados', 'documentos',
                 'contabilidad',

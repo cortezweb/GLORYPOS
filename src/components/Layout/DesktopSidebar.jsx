@@ -65,6 +65,8 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, tienda_virtual: true }));
     } else if (['finanzas', 'caja', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar', 'cuentas_por_pagar', 'reportes_caja', 'metodos_pago'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, finanzas: true }));
+    } else if (['guias_remision', 'guias_remitente', 'guias_transportista', 'transportistas_gre', 'transportistas', 'conductores_gre', 'conductores', 'vehiculos_gre', 'vehiculos'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, guias_remision: true }));
     }
   }, [currentView]);
 
@@ -612,12 +614,48 @@ export default function DesktopSidebar({
               <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => onSelectView('guias_remision')}
+                  onClick={() => onSelectView('guias_remitente')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'guias_remision' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['guias_remitente', 'guias_remision', 'guias'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Guías Electrónicas
+                  • Remitente (09)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('guias_transportista')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'guias_transportista' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Transportista (31)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('transportistas_gre')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['transportistas_gre', 'transportistas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Transportistas
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('conductores_gre')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['conductores_gre', 'conductores'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Conductores
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('vehiculos_gre')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['vehiculos_gre', 'vehiculos'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Vehículos
                 </button>
               </div>
             )}

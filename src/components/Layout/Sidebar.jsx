@@ -360,10 +360,38 @@ export default function Sidebar({
 
           {/* Guías de remisión */}
           {hasModule('guias_remision') && (
-            <button type="button" onClick={() => handleNav('guias_remision')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
-              <Send className="w-4 h-4 text-slate-500" />
-              <span>Guías de remisión</span>
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMenu('guias_remision')}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Send className="w-4 h-4 text-slate-500" />
+                  <span>Guías de remisión</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedMenus.guias_remision ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedMenus.guias_remision && (
+                <div className="pl-8 pr-2 py-1 space-y-0.5">
+                  <button type="button" onClick={() => handleNav('guias_remitente')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Remitente (09)
+                  </button>
+                  <button type="button" onClick={() => handleNav('guias_transportista')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Transportista (31)
+                  </button>
+                  <button type="button" onClick={() => handleNav('transportistas_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Transportistas
+                  </button>
+                  <button type="button" onClick={() => handleNav('conductores_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Conductores
+                  </button>
+                  <button type="button" onClick={() => handleNav('vehiculos_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Vehículos
+                  </button>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Comprobantes pendientes */}

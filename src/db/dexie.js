@@ -169,6 +169,38 @@ db.version(11).stores({
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
+// v12: soporte integral para Guías de Remisión Electrónica (GRE) y catálogos asociados
+db.version(12).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  unidades_medida: 'id, codigo, nombre, simbolo, estado',
+  transferencias_inventario: 'id, fecha, origen, destino, estado',
+  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+  metodos_pago: 'id, nombre, codigo, destino, estado',
+  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+  transportistas_gre: 'id, documento, nombre, mtc, estado',
+  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
@@ -835,6 +867,123 @@ export async function initDatabase() {
         { id: 'mp-3', nombre: 'Plin', codigo: 'plin', destino: 'Cuenta bancaria', destinoId: '1', estado: 'Activo', isProtected: false },
         { id: 'mp-4', nombre: 'Transferencia', codigo: 'transferencia', destino: 'Cuenta bancaria', destinoId: '2', estado: 'Activo', isProtected: false },
         { id: 'mp-5', nombre: 'Tarjeta', codigo: 'tarjeta', destino: 'Cuenta bancaria', destinoId: '3', estado: 'Activo', isProtected: false }
+      ]);
+    }
+  }
+
+  // ─── Guías Remitente (Seed exacto al screenshot media_1789932575569.png) ────
+  if (db.guias_remitente) {
+    const grCount = await db.guias_remitente.count();
+    if (grCount === 0) {
+      await db.guias_remitente.bulkAdd([
+        { 
+          id: 'gr-1', 
+          fecha: '09/09/2026', 
+          guia: 'T001-3', 
+          destinatario: 'BASHUA S.A.C.', 
+          doc_destinatario: '20614752327', 
+          siat_code: 'SIAT 2108', 
+          items_count: 1, 
+          estado_siat: 'Rechazado',
+          partida: 'Av. Juan Pablo II #450, El Alto',
+          llegada: 'Calle Comercio #890, La Paz',
+          modalidad: 'Transporte Privado',
+          conductor: 'Juan gabriel quispe huacarpuma',
+          vehiculo: 'V2105 (huyndai sedan)',
+          items_desc: '1 Pallet cajas de bebidas y víveres',
+          motivo: 'Venta con entrega a domicilio'
+        },
+        { 
+          id: 'gr-2', 
+          fecha: '31/08/2026', 
+          guia: 'T001-2', 
+          destinatario: 'GRUPO EMPRESARIAL PACHAY S.A.C.', 
+          doc_destinatario: '20614717697', 
+          siat_code: 'SIAT 2108', 
+          items_count: 3, 
+          estado_siat: 'Rechazado',
+          partida: 'Almacén Central - Santa Cruz',
+          llegada: 'Sucursal 2 - Av. Banzer Km 6',
+          modalidad: 'Transporte Privado',
+          conductor: 'Juan gabriel quispe huacarpuma',
+          vehiculo: 'V2105 (huyndai sedan)',
+          items_desc: '3 Bultos de mercadería variada',
+          motivo: 'Traslado entre almacenes'
+        },
+        { 
+          id: 'gr-3', 
+          fecha: '17/08/2026', 
+          guia: 'T001-1', 
+          destinatario: 'Clientes Varios', 
+          doc_destinatario: '99999999', 
+          siat_code: 'SIAT 2108', 
+          items_count: 6, 
+          estado_siat: 'Rechazado',
+          partida: 'Almacén Central',
+          llegada: 'Puntos de venta feria',
+          modalidad: 'Transporte Privado',
+          conductor: 'Juan gabriel quispe huacarpuma',
+          vehiculo: 'V2105 (huyndai sedan)',
+          items_desc: '6 Cajas de fideos y aceites surtidos',
+          motivo: 'Traslado a ferias'
+        }
+      ]);
+    }
+  }
+
+  // ─── Guías Transportista (Seed exacto al screenshot media_1789932575543.png) ─
+  if (db.guias_transportista) {
+    const gtCount = await db.guias_transportista.count();
+    if (gtCount === 0) {
+      await db.guias_transportista.bulkAdd([
+        { 
+          id: 'gt-1', 
+          fecha: '01/09/2026', 
+          guia: 'V001-1', 
+          destinatario: 'CASAS MEJIA RAFAEL FERNANDO', 
+          doc_destinatario: '10428288527', 
+          siat_code: 'SIAT 0', 
+          items_count: 1, 
+          estado_siat: 'Aceptado',
+          remitente: 'INVERSIONES SAN ROQUE S.R.L.',
+          doc_remitente: '20491823910',
+          partida: 'Km 12 Doble Vía La Guardia',
+          llegada: 'Terminal Bimodal Santa Cruz',
+          modalidad: 'Transporte Público',
+          pagador_flete: 'Destinatario',
+          items_desc: '1 Contenedor refrigerado de insumos',
+          motivo: 'Servicio de flete y transporte'
+        }
+      ]);
+    }
+  }
+
+  // ─── Transportistas GRE (Seed exacto al screenshot media_1789932575539.png) ──
+  if (db.transportistas_gre) {
+    const tCount = await db.transportistas_gre.count();
+    if (tCount === 0) {
+      await db.transportistas_gre.bulkAdd([
+        { id: 'trans-1', documento: '20556677881', nombre: 'TRANS LOGÍSTICA BOLIVIA S.R.L.', mtc: 'MTC-SCZ-8821', estado: 'Activo' }
+      ]);
+    }
+  }
+
+  // ─── Conductores GRE (Seed exacto al screenshot media_1789932575537.png) ────
+  if (db.conductores_gre) {
+    const cCount = await db.conductores_gre.count();
+    if (cCount === 0) {
+      await db.conductores_gre.bulkAdd([
+        { id: 'cond-1', documento: '1-71079426', hasStar: true, nombre: 'Juan gabriel quispe huacarpuma', licencia: 'V710794265', telefono: '927303279', estado: 'Activo' }
+      ]);
+    }
+  }
+
+  // ─── Vehículos GRE (Seed exacto al screenshot media_1789932575536.png) ──────
+  if (db.vehiculos_gre) {
+    const vCount = await db.vehiculos_gre.count();
+    if (vCount === 0) {
+      await db.vehiculos_gre.bulkAdd([
+        { id: 'veh-1', placa: 'V2105', marca: 'huyndai', modelo: 'sedan', cert_habilitacion: '64211554', estado: 'Activo' }
       ]);
     }
   }
