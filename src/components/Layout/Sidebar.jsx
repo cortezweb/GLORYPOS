@@ -53,7 +53,16 @@ export default function Sidebar({
     'contabilidad', 'reportes', 'administracion', 'modulos', 'tienda_virtual'
   ];
 
-  const hasModule = (modId) => isSuperAdmin || allowedModules.includes(modId);
+  const hasModule = (modId) => {
+    if (isSuperAdmin) return true;
+    const alwaysVisible = [
+      'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
+      'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
+      'contabilidad', 'reportes', 'administracion', 'modulos'
+    ];
+    if (alwaysVisible.includes(modId)) return true;
+    return allowedModules.includes(modId);
+  };
 
   const handleNav = (view) => {
     onClose();
@@ -404,12 +413,38 @@ export default function Sidebar({
             </button>
           )}
 
-          {/* Comprobantes avanzados */}
+          {/* Documentos avanzados (Acordeón) */}
           {hasModule('documentos_avanzados') && (
-            <button type="button" onClick={() => handleNav('documentos_avanzados')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
-              <FileCode className="w-4 h-4 text-slate-500" />
-              <span>Comprobantes avanzados</span>
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMenu('documentos_avanzados')}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+                  ['documentos_avanzados', 'retenciones', 'percepciones', 'reversiones', 'documentos'].includes(currentView)
+                    ? 'text-slate-900 font-bold bg-slate-100'
+                    : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <FileCode className="w-4 h-4 text-slate-500" />
+                  <span>Documentos avanzados</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedMenus.documentos_avanzados ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedMenus.documentos_avanzados && (
+                <div className="pl-8 pr-2 py-1 space-y-0.5">
+                  <button type="button" onClick={() => handleNav('retenciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Retenciones
+                  </button>
+                  <button type="button" onClick={() => handleNav('percepciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Percepciones
+                  </button>
+                  <button type="button" onClick={() => handleNav('reversiones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Reversiones
+                  </button>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Contabilidad */}

@@ -42,7 +42,7 @@ export default function DesktopSidebar({
     setExpandedMenus(prev => ({ ...prev, [menuId]: !prev[menuId] }));
   };
 
-  // Permisos: Superadmin ve todo; cliente solo ve modulos_activos
+  // Permisos: Superadmin ve todo; cliente ve módulos activos + módulos estándar
   const isSuperAdmin = tenantSlug === 'admin' || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
   const allowedModules = empresa?.modulos_activos || [
     'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
@@ -50,7 +50,16 @@ export default function DesktopSidebar({
     'contabilidad', 'reportes', 'administracion', 'modulos', 'tienda_virtual'
   ];
 
-  const hasModule = (modId) => isSuperAdmin || allowedModules.includes(modId);
+  const hasModule = (modId) => {
+    if (isSuperAdmin) return true;
+    const alwaysVisible = [
+      'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
+      'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
+      'contabilidad', 'reportes', 'administracion', 'modulos'
+    ];
+    if (alwaysVisible.includes(modId)) return true;
+    return allowedModules.includes(modId);
+  };
 
   // Auto-expandir el menú si la vista actual pertenece a ese módulo
   useEffect(() => {
@@ -68,6 +77,8 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, finanzas: true }));
     } else if (['guias_remision', 'guias_remitente', 'guias_transportista', 'transportistas_gre', 'transportistas', 'conductores_gre', 'conductores', 'vehiculos_gre', 'vehiculos'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, guias_remision: true }));
+    } else if (['documentos_avanzados', 'retenciones', 'percepciones', 'reversiones', 'documentos'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, documentos_avanzados: true }));
     } else if (['administracion', 'admin', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, administracion: true }));
     }
@@ -695,17 +706,24 @@ export default function DesktopSidebar({
           </div>
         )}
 
-        {/* 12. COMPROBANTES AVANZADOS (Acordeón) */}
+        {/* 12. DOCUMENTOS AVANZADOS (Acordeón exacto a media_1790120030276.png) */}
         {hasModule('documentos_avanzados') && (
           <div>
             <button
               type="button"
-              onClick={() => toggleMenu('documentos_avanzados')}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+              onClick={() => {
+                toggleMenu('documentos_avanzados');
+                onSelectView('documentos_avanzados');
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+                ['documentos_avanzados', 'retenciones', 'percepciones', 'reversiones', 'documentos'].includes(currentView)
+                  ? 'bg-slate-100 text-slate-900 font-bold'
+                  : 'text-slate-700 hover:bg-slate-100'
+              }`}
             >
               <div className="flex items-center gap-2.5">
                 <FileCode className="w-4 h-4 text-slate-500" />
-                <span>Comprobantes avanzados</span>
+                <span>Documentos avanzados</span>
               </div>
               <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.documentos_avanzados ? 'rotate-180' : ''}`} />
             </button>
