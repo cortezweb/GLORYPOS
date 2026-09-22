@@ -3,7 +3,7 @@ import {
   Home, LayoutDashboard, ShoppingCart, ShoppingBag, Globe, 
   Truck, Users, Tag, Boxes, Wallet, Send, FileCode, BarChart3, 
   Settings, Layers, Sparkles, Lock, PlayCircle, LogOut, ChevronDown, ChevronRight,
-  Calculator, UtensilsCrossed, Pill, BedDouble, Clock, FileText
+  Calculator, UtensilsCrossed, Pill, BedDouble, Clock, FileText, LayoutGrid, ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -31,6 +31,7 @@ export default function DesktopSidebar({
     documentos_avanzados: false,
     contabilidad: false,
     reportes: false,
+    administracion: false,
     tienda_virtual: false,
     restaurante: false,
     farmacia: false,
@@ -46,7 +47,7 @@ export default function DesktopSidebar({
   const allowedModules = empresa?.modulos_activos || [
     'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
     'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
-    'contabilidad', 'reportes', 'tienda_virtual'
+    'contabilidad', 'reportes', 'administracion', 'modulos', 'tienda_virtual'
   ];
 
   const hasModule = (modId) => isSuperAdmin || allowedModules.includes(modId);
@@ -67,6 +68,8 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, finanzas: true }));
     } else if (['guias_remision', 'guias_remitente', 'guias_transportista', 'transportistas_gre', 'transportistas', 'conductores_gre', 'conductores', 'vehiculos_gre', 'vehiculos'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, guias_remision: true }));
+    } else if (['administracion', 'admin', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView)) {
+      setExpandedMenus(prev => ({ ...prev, administracion: true }));
     }
   }, [currentView]);
 
@@ -710,12 +713,30 @@ export default function DesktopSidebar({
               <div className="pl-8 pr-2 py-1 space-y-0.5">
                 <button
                   type="button"
-                  onClick={() => onSelectView('documentos_avanzados')}
+                  onClick={() => onSelectView('retenciones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'documentos_avanzados' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['retenciones', 'documentos_avanzados', 'documentos'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Retenciones & Percepciones
+                  • Retenciones
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('percepciones')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'percepciones' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Percepciones
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('reversiones')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    currentView === 'reversiones' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Reversiones
                 </button>
               </div>
             )}
@@ -806,6 +827,15 @@ export default function DesktopSidebar({
                 </button>
                 <button
                   type="button"
+                  onClick={() => onSelectView('reporte_notas')}
+                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                    ['reporte_notas', 'notas_credito_debito'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  • Notas de Crédito & Débito
+                </button>
+                <button
+                  type="button"
                   onClick={() => onSelectView('reporte_kardex')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'reporte_kardex' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
@@ -827,7 +857,72 @@ export default function DesktopSidebar({
           </div>
         )}
 
-        {/* 15. TIENDA VIRTUAL (Acordeón) */}
+        {/* 15. ADMINISTRACIÓN (Acordeón exacto a media_1790120030276.png) */}
+        {hasModule('administracion') && (
+          <div>
+            <button
+              type="button"
+              onClick={() => toggleMenu('administracion')}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+                ['administracion', 'admin', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView)
+                  ? 'text-slate-900 font-bold bg-slate-100'
+                  : 'text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Users className="w-4 h-4 text-slate-500" />
+                <span>Administración</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.administracion ? 'rotate-180' : ''}`} />
+            </button>
+            {expandedMenus.administracion && (
+              <div className="pl-6 pr-2 py-1 space-y-1">
+                <button
+                  type="button"
+                  onClick={() => onSelectView('admin_usuarios')}
+                  className={`w-full flex items-center gap-2 text-left px-2.5 py-1.5 rounded-lg text-[11px] transition ${
+                    ['admin_usuarios', 'usuarios'].includes(currentView)
+                      ? 'bg-[#10b981] text-white font-bold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Users className="w-3.5 h-3.5 opacity-80" />
+                  <span>Usuarios</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectView('roles_permisos')}
+                  className={`w-full flex items-center gap-2 text-left px-2.5 py-1.5 rounded-lg text-[11px] transition ${
+                    ['roles_permisos', 'admin_roles'].includes(currentView)
+                      ? 'bg-[#10b981] text-white font-bold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 opacity-80" />
+                  <span>Roles y permisos</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 16. MÓDULOS (Botón directo exacto a media_1790120030276.png) */}
+        {hasModule('modulos') && (
+          <button
+            type="button"
+            onClick={() => onSelectView('modulos')}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition text-left ${
+              currentView === 'modulos'
+                ? 'bg-[#10b981] text-white font-bold shadow-xs'
+                : 'text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <LayoutGrid className="w-4 h-4 text-slate-500" />
+            <span>Módulos</span>
+          </button>
+        )}
+
+        {/* 17. TIENDA VIRTUAL (Acordeón) */}
         {hasModule('tienda_virtual') && (
           <div>
             <button

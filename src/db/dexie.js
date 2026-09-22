@@ -201,6 +201,77 @@ db.version(12).stores({
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
 
+// v13: soporte integral para Comprobantes Avanzados (Retenciones, Percepciones y Reversiones)
+db.version(13).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  unidades_medida: 'id, codigo, nombre, simbolo, estado',
+  transferencias_inventario: 'id, fecha, origen, destino, estado',
+  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+  metodos_pago: 'id, nombre, codigo, destino, estado',
+  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+  transportistas_gre: 'id, documento, nombre, mtc, estado',
+  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+  retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
+  percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
+  reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
+// v14: soporte integral para Roles y Permisos en Administración
+db.version(14).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  unidades_medida: 'id, codigo, nombre, simbolo, estado',
+  transferencias_inventario: 'id, fecha, origen, destino, estado',
+  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+  metodos_pago: 'id, nombre, codigo, destino, estado',
+  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+  transportistas_gre: 'id, documento, nombre, mtc, estado',
+  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+  retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
+  percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
+  reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
+  roles: 'id, nombre, descripcion, permisos, activo',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
+
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
@@ -984,6 +1055,90 @@ export async function initDatabase() {
     if (vCount === 0) {
       await db.vehiculos_gre.bulkAdd([
         { id: 'veh-1', placa: 'V2105', marca: 'huyndai', modelo: 'sedan', cert_habilitacion: '64211554', estado: 'Activo' }
+      ]);
+    }
+  }
+
+  // ─── Documentos Avanzados: Retenciones (Seed exacto al screenshot media_1790118101543.png) ─
+  if (db.retenciones) {
+    const retCount = await db.retenciones.count();
+    if (retCount === 0) {
+      await db.retenciones.bulkAdd([
+        {
+          id: 'ret-seed-1',
+          fecha: '15/09/2026',
+          serie_nro: 'R001-1',
+          serie: 'R001',
+          correlativo: '1',
+          origen: 'Fdh-00004478',
+          proveedor_nombre: 'Clientes varios',
+          proveedor_doc: '000000',
+          retenido: 6.45,
+          moneda: 'S/',
+          tasa_porcentaje: 3,
+          monto_total_comprobante: 215.00,
+          estado_sunat: 'Error envio',
+          sunat_obs: 'Error 1033: El comprobante fue registrado previamente con errores de formato o timeout en conexión con SUNAT.',
+          rr: '—',
+          observacion: 'Retención de IGV 3% aplicada sobre comprobante Fdh-00004478'
+        }
+      ]);
+    }
+  }
+
+  // ─── Roles y Permisos (Seed exacto al screenshot media_1790120030272.png) ─────
+  if (db.roles) {
+    const rolesCount = await db.roles.count();
+    if (rolesCount === 0) {
+      await db.roles.bulkAdd([
+        {
+          id: 'rol-admin',
+          nombre: 'Administrador',
+          descripcion: 'Acceso completo al sistema',
+          permisos: ['inicio', 'dashboard', 'preventa', 'ventas', 'tienda_virtual', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'guias_remision', 'documentos_avanzados', 'contabilidad', 'reportes', 'administracion', 'modulos'],
+          activo: true,
+          esSistema: true
+        },
+        {
+          id: 'rol-almacenero',
+          nombre: 'Almacenero',
+          descripcion: 'Gestión de inventario',
+          permisos: ['productos', 'inventario', 'guias_remision', 'compras'],
+          activo: true,
+          esSistema: true
+        },
+        {
+          id: 'rol-cajero',
+          nombre: 'Cajero',
+          descripcion: 'Caja y movimientos',
+          permisos: ['ventas', 'pos', 'caja', 'finanzas', 'clientes'],
+          activo: true,
+          esSistema: true
+        },
+        {
+          id: 'rol-contador',
+          nombre: 'Contador',
+          descripcion: 'Gestión contable',
+          permisos: ['contabilidad', 'reportes', 'finanzas', 'compras', 'documentos_avanzados'],
+          activo: true,
+          esSistema: true
+        },
+        {
+          id: 'rol-supervisor',
+          nombre: 'Supervisor',
+          descripcion: 'Supervisión y reportes',
+          permisos: ['inicio', 'dashboard', 'ventas', 'reportes', 'inventario', 'clientes', 'caja'],
+          activo: true,
+          esSistema: true
+        },
+        {
+          id: 'rol-vendedor',
+          nombre: 'Vendedor',
+          descripcion: 'Gestión de ventas y POS',
+          permisos: ['pos', 'ventas', 'clientes', 'preventa', 'tienda_virtual'],
+          activo: true,
+          esSistema: true
+        }
       ]);
     }
   }

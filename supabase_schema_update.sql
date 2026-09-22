@@ -21,14 +21,40 @@ CREATE TABLE IF NOT EXISTS public.empresas (
 
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS estado_suscripcion TEXT DEFAULT 'ACTIVO';
-ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS modulos_activos JSONB DEFAULT '["preventa","ventas","compras","clientes","productos","inventario","finanzas","guias_remision","comprobantes_pendientes","documentos_avanzados","contabilidad","reportes","tienda_virtual","restaurante","farmacia","hoteles"]'::jsonb;
+ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS modulos_activos JSONB DEFAULT '["preventa","ventas","compras","clientes","productos","inventario","finanzas","guias_remision","comprobantes_pendientes","documentos_avanzados","contabilidad","reportes","administracion","modulos","tienda_virtual","restaurante","farmacia","hoteles"]'::jsonb;
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS propietario TEXT;
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS fecha_inicio TIMESTAMPTZ DEFAULT now();
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS fecha_vencimiento TIMESTAMPTZ;
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS dias_prueba INTEGER DEFAULT 30;
 ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS monto_mensual NUMERIC DEFAULT 150;
 
--- ── 2. TABLA 'usuarios' ───────────────────────────────────────────────────────
+-- ── 2. TABLA 'roles' (ROLES Y PERMISOS DE ACCESO) ──────────────────────────────
+CREATE TABLE IF NOT EXISTS public.roles (
+    id TEXT PRIMARY KEY,
+    empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
+    nombre TEXT NOT NULL,
+    descripcion TEXT,
+    permisos JSONB DEFAULT '[]'::jsonb,
+    activo BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Sembrar los 6 roles base si no existen
+INSERT INTO public.roles (id, nombre, descripcion, permisos, activo)
+VALUES 
+  ('rol-admin', 'Administrador', 'Acceso completo al sistema', '["inicio","dashboard","preventa","ventas","tienda_virtual","compras","clientes","productos","inventario","finanzas","guias_remision","documentos_avanzados","contabilidad","reportes","administracion","modulos"]'::jsonb, true),
+  ('rol-almacenero', 'Almacenero', 'Gestión de inventario', '["productos","inventario","guias_remision","compras"]'::jsonb, true),
+  ('rol-cajero', 'Cajero', 'Caja y movimientos', '["ventas","pos","caja","finanzas","clientes"]'::jsonb, true),
+  ('rol-contador', 'Contador', 'Gestión contable', '["contabilidad","reportes","finanzas","compras","documentos_avanzados"]'::jsonb, true),
+  ('rol-supervisor', 'Supervisor', 'Supervisión y reportes', '["inicio","dashboard","ventas","reportes","inventario","clientes","caja"]'::jsonb, true),
+  ('rol-vendedor', 'Vendedor', 'Gestión de ventas y POS', '["pos","ventas","clientes","preventa","tienda_virtual"]'::jsonb, true)
+ON CONFLICT (id) DO UPDATE SET 
+  nombre = EXCLUDED.nombre,
+  descripcion = EXCLUDED.descripcion,
+  permisos = EXCLUDED.permisos;
+
+-- ── 3. TABLA 'usuarios' ───────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.usuarios (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -45,7 +71,7 @@ CREATE TABLE IF NOT EXISTS public.usuarios (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 3. TABLA 'clientes' ───────────────────────────────────────────────────────
+-- ── 4. TABLA 'clientes' ───────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.clientes (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -59,7 +85,7 @@ CREATE TABLE IF NOT EXISTS public.clientes (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 4. TABLA 'proveedores' ───────────────────────────────────────────────────
+-- ── 5. TABLA 'proveedores' ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.proveedores (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -73,7 +99,7 @@ CREATE TABLE IF NOT EXISTS public.proveedores (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 5. TABLA 'productos' ─────────────────────────────────────────────────────
+-- ── 6. TABLA 'productos' ─────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.productos (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -100,7 +126,7 @@ CREATE TABLE IF NOT EXISTS public.productos (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 6. TABLA 'ventas' ────────────────────────────────────────────────────────
+-- ── 7. TABLA 'ventas' ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.ventas (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -123,7 +149,7 @@ CREATE TABLE IF NOT EXISTS public.ventas (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 7. TABLA 'compras' ───────────────────────────────────────────────────────
+-- ── 8. TABLA 'compras' ───────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.compras (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -149,7 +175,7 @@ CREATE TABLE IF NOT EXISTS public.compras (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 8. TABLA 'kardex' ────────────────────────────────────────────────────────
+-- ── 9. TABLA 'kardex' ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.kardex (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -164,7 +190,7 @@ CREATE TABLE IF NOT EXISTS public.kardex (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 9. TABLA 'caja_chica' ────────────────────────────────────────────────────
+-- ── 10. TABLA 'caja_chica' ────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.caja_chica (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -182,7 +208,7 @@ CREATE TABLE IF NOT EXISTS public.caja_chica (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 10. TABLA 'cotizaciones' ─────────────────────────────────────────────────
+-- ── 11. TABLA 'cotizaciones' ─────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.cotizaciones (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -200,7 +226,7 @@ CREATE TABLE IF NOT EXISTS public.cotizaciones (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 11. TABLA 'membresias' ───────────────────────────────────────────────────
+-- ── 12. TABLA 'membresias' ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.membresias (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -216,7 +242,7 @@ CREATE TABLE IF NOT EXISTS public.membresias (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ── 12. TABLA 'pedidos_web' ──────────────────────────────────────────────────
+-- ── 13. TABLA 'pedidos_web' ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.pedidos_web (
     id TEXT PRIMARY KEY,
     empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -229,8 +255,69 @@ CREATE TABLE IF NOT EXISTS public.pedidos_web (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- ── 14. TABLAS 'DOCUMENTOS AVANZADOS' (RETENCIONES, PERCEPCIONES, REVERSIONES)
+CREATE TABLE IF NOT EXISTS public.retenciones (
+    id TEXT PRIMARY KEY,
+    empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
+    fecha TIMESTAMPTZ DEFAULT now(),
+    serie_nro TEXT NOT NULL,
+    serie TEXT,
+    correlativo TEXT,
+    origen TEXT,
+    proveedor_nombre TEXT,
+    proveedor_doc TEXT,
+    retenido NUMERIC(10,2) DEFAULT 0,
+    moneda TEXT DEFAULT 'S/',
+    tasa_porcentaje NUMERIC(5,2) DEFAULT 3,
+    monto_total_comprobante NUMERIC(10,2) DEFAULT 0,
+    estado_sunat TEXT DEFAULT 'Registrado',
+    sunat_obs TEXT,
+    rr TEXT DEFAULT '—',
+    observacion TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.percepciones (
+    id TEXT PRIMARY KEY,
+    empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
+    fecha TIMESTAMPTZ DEFAULT now(),
+    serie_nro TEXT NOT NULL,
+    serie TEXT,
+    correlativo TEXT,
+    origen TEXT,
+    sujeto_nombre TEXT,
+    sujeto_doc TEXT,
+    percibido NUMERIC(10,2) DEFAULT 0,
+    moneda TEXT DEFAULT 'S/',
+    tasa_porcentaje NUMERIC(5,2) DEFAULT 2,
+    monto_total_comprobante NUMERIC(10,2) DEFAULT 0,
+    estado_sunat TEXT DEFAULT 'Registrado',
+    sunat_obs TEXT,
+    observacion TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.reversiones (
+    id TEXT PRIMARY KEY,
+    empresa_id TEXT REFERENCES public.empresas(id) ON DELETE CASCADE,
+    fecha TIMESTAMPTZ DEFAULT now(),
+    serie_nro TEXT NOT NULL,
+    serie TEXT,
+    correlativo TEXT,
+    origen TEXT,
+    sujeto_nombre TEXT,
+    sujeto_doc TEXT,
+    monto NUMERIC(10,2) DEFAULT 0,
+    motivo_reversion TEXT,
+    estado_sunat TEXT DEFAULT 'Registrado',
+    sunat_obs TEXT,
+    observacion TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- ── HABILITAR ROW LEVEL SECURITY (RLS) EN TODAS LAS TABLAS ───────────────────
 ALTER TABLE public.empresas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.usuarios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.clientes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.proveedores ENABLE ROW LEVEL SECURITY;
@@ -242,10 +329,16 @@ ALTER TABLE public.caja_chica ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cotizaciones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.membresias ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pedidos_web ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.retenciones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.percepciones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.reversiones ENABLE ROW LEVEL SECURITY;
 
 -- ── POLÍTICAS DE ACCESO PÚBLICO RESILIENTE (PWA CLIENT KEY) ───────────────────
 DROP POLICY IF EXISTS "Allow public access empresas" ON public.empresas;
 CREATE POLICY "Allow public access empresas" ON public.empresas FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access roles" ON public.roles;
+CREATE POLICY "Allow public access roles" ON public.roles FOR ALL USING (true) WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Allow public access usuarios" ON public.usuarios;
 CREATE POLICY "Allow public access usuarios" ON public.usuarios FOR ALL USING (true) WITH CHECK (true);
@@ -280,10 +373,24 @@ CREATE POLICY "Allow public access membresias" ON public.membresias FOR ALL USIN
 DROP POLICY IF EXISTS "Allow public access pedidos_web" ON public.pedidos_web;
 CREATE POLICY "Allow public access pedidos_web" ON public.pedidos_web FOR ALL USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow public access retenciones" ON public.retenciones;
+CREATE POLICY "Allow public access retenciones" ON public.retenciones FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access percepciones" ON public.percepciones;
+CREATE POLICY "Allow public access percepciones" ON public.percepciones FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access reversiones" ON public.reversiones;
+CREATE POLICY "Allow public access reversiones" ON public.reversiones FOR ALL USING (true) WITH CHECK (true);
+
 -- ── ÍNDICES PARA ALTO RENDIMIENTO ────────────────────────────────────────────
+CREATE INDEX IF NOT EXISTS idx_roles_empresa ON public.roles(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_usuarios_empresa ON public.usuarios(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_productos_empresa ON public.productos(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_ventas_empresa_fecha ON public.ventas(empresa_id, fecha);
 CREATE INDEX IF NOT EXISTS idx_compras_empresa ON public.compras(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_cotizaciones_empresa ON public.cotizaciones(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_membresias_empresa ON public.membresias(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_pedidos_web_empresa ON public.pedidos_web(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_retenciones_empresa ON public.retenciones(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_percepciones_empresa ON public.percepciones(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_reversiones_empresa ON public.reversiones(empresa_id);

@@ -3,7 +3,8 @@ import {
   X, Home, LayoutDashboard, ShoppingCart, ShoppingBag, Globe, 
   Truck, Users, Tag, Boxes, Wallet, Send, FileCode, BarChart3, 
   Settings, Layers, Sparkles, Lock, PlayCircle, LogOut, ChevronDown,
-  Calculator, UtensilsCrossed, Pill, BedDouble, Clock, FileText
+  Calculator, UtensilsCrossed, Pill, BedDouble, Clock, FileText,
+  ShieldCheck, LayoutGrid
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -32,6 +33,7 @@ export default function Sidebar({
     documentos_avanzados: false,
     contabilidad: false,
     reportes: false,
+    administracion: false,
     tienda_virtual: false,
     restaurante: false,
     farmacia: false,
@@ -48,7 +50,7 @@ export default function Sidebar({
   const allowedModules = empresa?.modulos_activos || [
     'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
     'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
-    'contabilidad', 'reportes', 'tienda_virtual'
+    'contabilidad', 'reportes', 'administracion', 'modulos', 'tienda_virtual'
   ];
 
   const hasModule = (modId) => isSuperAdmin || allowedModules.includes(modId);
@@ -455,6 +457,51 @@ export default function Sidebar({
                 </div>
               )}
             </div>
+          )}
+
+          {/* Administración (Acordeón) */}
+          {hasModule('administracion') && (
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMenu('administracion')}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+                  ['administracion', 'admin', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView)
+                    ? 'text-slate-900 font-bold bg-slate-100'
+                    : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Users className="w-4 h-4 text-slate-500" />
+                  <span>Administración</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedMenus.administracion ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedMenus.administracion && (
+                <div className="pl-8 pr-2 py-1 space-y-0.5">
+                  <button type="button" onClick={() => handleNav('admin_usuarios')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Usuarios
+                  </button>
+                  <button type="button" onClick={() => handleNav('roles_permisos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Roles y permisos
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Módulos */}
+          {hasModule('modulos') && (
+            <button
+              type="button"
+              onClick={() => handleNav('modulos')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 ${
+                currentView === 'modulos' ? 'bg-[#10b981] text-white font-bold' : ''
+              }`}
+            >
+              <LayoutGrid className="w-4 h-4 text-slate-500" />
+              <span>Módulos</span>
+            </button>
           )}
 
           {/* Tienda Virtual (Acordeón) */}

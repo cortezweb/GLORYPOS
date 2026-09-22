@@ -346,13 +346,14 @@ function MainShell() {
                 />
               )}
 
-              {/* Reportes Especializados (6 Ventanas) */}
-              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab'].includes(currentView) && (
+              {/* Reportes Especializados (7 Ventanas) */}
+              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab'].includes(currentView) && (
                 <ReportsView 
                   initialTab={
                     currentView === 'reporte_productos' ? 'productos' :
                     ['ventas_por_producto', 'reporte_ventas_producto'].includes(currentView) ? 'ventas_producto' :
                     currentView === 'reporte_compras' ? 'compras' :
+                    ['reporte_notas', 'notas_credito_debito'].includes(currentView) ? 'notas' :
                     currentView === 'reporte_kardex' ? 'kardex' :
                     ['reporte_caja', 'reporte_cajas_tab'].includes(currentView) ? 'caja' :
                     'ventas'
@@ -397,8 +398,26 @@ function MainShell() {
                   onSelectSubView={(sub) => setCurrentView(sub)} 
                 />
               )}
-              {['documentos_avanzados', 'documentos'].includes(currentView) && <DocumentosAvanzadosView />}
-              {['administracion', 'admin', 'configuracion'].includes(currentView) && <AdministracionView />}
+              {['documentos_avanzados', 'documentos', 'retenciones', 'percepciones', 'reversiones'].includes(currentView) && (
+                <DocumentosAvanzadosView 
+                  initialTab={
+                    currentView === 'percepciones' ? 'percepciones' :
+                    currentView === 'reversiones' ? 'reversiones' :
+                    'retenciones'
+                  }
+                  onSelectSubView={(sub) => setCurrentView(sub)}
+                />
+              )}
+              {['administracion', 'admin', 'configuracion', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView) && (
+                <AdministracionView 
+                  initialTab={
+                    ['roles_permisos', 'admin_roles'].includes(currentView) ? 'roles' :
+                    ['usuarios', 'admin_usuarios'].includes(currentView) ? 'usuarios' :
+                    ['configuracion'].includes(currentView) ? 'empresa' :
+                    'roles'
+                  }
+                />
+              )}
               {['modulos'].includes(currentView) && <ModulosView />}
               {/* Pantalla de Inicio GLORYPOS */}
               {currentView === 'inicio' && (
@@ -442,18 +461,18 @@ function MainShell() {
                 'inventory', 'inventario', 'movimientos', 'inventario_movimientos', 'transferencias', 'inventario_transferencias', 'historial_transferencias', 'inventario_historial_transferencias', 'kardex', 'inventario_kardex',
                 'clients', 'clientes',
                 'purchases', 'compras', 'nueva_compra', 'compras_historial', 'proveedores',
-                'reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_cajas_tab',
+                'reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab',
                 'subscription', 'suscripcion', 'planes',
                 'tienda_virtual', 'catalogo_online', 'tienda',
                 'finanzas', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar_finanzas', 'cuentas_por_pagar', 'reportes_caja_finanzas', 'metodos_pago',
                 'guias_remision', 'guias', 'despacho', 'guias_remitente', 'guias_transportista', 'transportistas_gre', 'transportistas', 'conductores_gre', 'conductores', 'vehiculos_gre', 'vehiculos',
                 'comprobantes_pendientes', 'pendientes',
-                'documentos_avanzados', 'documentos',
+                'documentos_avanzados', 'documentos', 'retenciones', 'percepciones', 'reversiones',
                 'contabilidad',
                 'restaurante',
                 'farmacia',
                 'hoteles',
-                'administracion', 'admin', 'configuracion',
+                'administracion', 'admin', 'configuracion', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios',
                 'modulos'
               ].includes(currentView) && (
                 <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 space-y-4 shadow-sm">

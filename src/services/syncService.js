@@ -131,6 +131,11 @@ export const syncService = {
       cotizaciones: 0,
       membresias: 0,
       pedidos_web: 0,
+      roles: 0,
+      usuarios: 0,
+      retenciones: 0,
+      percepciones: 0,
+      reversiones: 0,
       errors: []
     };
 
@@ -505,6 +510,156 @@ export const syncService = {
         }
       } catch (pwE) {
         summary.errors.push({ tabla: 'pedidos_web', error: pwE.message });
+      }
+
+      // 13. Sincronizar Roles y Permisos
+      try {
+        if (db.roles) {
+          const localRoles = await db.roles.toArray();
+          if (localRoles.length > 0) {
+            const payload = localRoles.map(r => ({
+              id: String(r.id),
+              empresa_id: empresaId,
+              nombre: r.nombre,
+              descripcion: r.descripcion || '',
+              permisos: Array.isArray(r.permisos) ? r.permisos : [],
+              activo: r.activo !== false,
+              updated_at: new Date().toISOString()
+            }));
+
+            const { error: rolErr } = await supabase.from('roles').upsert(payload, { onConflict: 'id' });
+            if (rolErr) {
+              summary.errors.push({ tabla: 'roles', error: rolErr.message });
+            } else {
+              summary.roles = payload.length;
+            }
+          }
+        }
+      } catch (rE) {
+        summary.errors.push({ tabla: 'roles', error: rE.message });
+      }
+
+      // 14. Sincronizar Usuarios
+      try {
+        if (db.usuarios) {
+          const localUsers = await db.usuarios.toArray();
+          if (localUsers.length > 0) {
+            const payload = localUsers.map(u => ({
+              id: String(u.id),
+              empresa_id: empresaId,
+              nombre: u.nombre,
+              email: u.email || '',
+              rol: u.rol || 'CAJERO',
+              pin: u.pin || null,
+              password: u.password || null,
+              activo: u.activo !== false,
+              updated_at: new Date().toISOString()
+            }));
+
+            const { error: usrErr } = await supabase.from('usuarios').upsert(payload, { onConflict: 'id' });
+            if (usrErr) {
+              summary.errors.push({ tabla: 'usuarios', error: usrErr.message });
+            } else {
+              summary.usuarios = payload.length;
+            }
+          }
+        }
+      } catch (uE) {
+        summary.errors.push({ tabla: 'usuarios', error: uE.message });
+      }
+
+      // 15. Sincronizar Retenciones
+      try {
+        if (db.retenciones) {
+          const localRet = await db.retenciones.toArray();
+          if (localRet.length > 0) {
+            const payload = localRet.map(r => ({
+              id: String(r.id),
+              empresa_id: empresaId,
+              fecha: r.fecha || new Date().toISOString(),
+              serie_nro: r.serie_nro || '',
+              origen: r.origen || '',
+              proveedor_nombre: r.proveedor_nombre || '',
+              proveedor_doc: r.proveedor_doc || '',
+              retenido: Number(r.retenido) || 0,
+              moneda: r.moneda || 'S/',
+              tasa_porcentaje: Number(r.tasa_porcentaje) || 3,
+              monto_total_comprobante: Number(r.monto_total_comprobante) || 0,
+              estado_sunat: r.estado_sunat || 'Registrado'
+            }));
+
+            const { error: retErr } = await supabase.from('retenciones').upsert(payload, { onConflict: 'id' });
+            if (retErr) {
+              summary.errors.push({ tabla: 'retenciones', error: retErr.message });
+            } else {
+              summary.retenciones = payload.length;
+            }
+          }
+        }
+      } catch (retE) {
+        summary.errors.push({ tabla: 'retenciones', error: retE.message });
+      }
+
+      // 16. Sincronizar Percepciones
+      try {
+        if (db.percepciones) {
+          const localPerc = await db.percepciones.toArray();
+          if (localPerc.length > 0) {
+            const payload = localPerc.map(p => ({
+              id: String(p.id),
+              empresa_id: empresaId,
+              fecha: p.fecha || new Date().toISOString(),
+              serie_nro: p.serie_nro || '',
+              origen: p.origen || '',
+              sujeto_nombre: p.sujeto_nombre || '',
+              sujeto_doc: p.sujeto_doc || '',
+              percibido: Number(p.percibido) || 0,
+              moneda: p.moneda || 'S/',
+              tasa_porcentaje: Number(p.tasa_porcentaje) || 2,
+              monto_total_comprobante: Number(p.monto_total_comprobante) || 0,
+              estado_sunat: p.estado_sunat || 'Registrado'
+            }));
+
+            const { error: percErr } = await supabase.from('percepciones').upsert(payload, { onConflict: 'id' });
+            if (percErr) {
+              summary.errors.push({ tabla: 'percepciones', error: percErr.message });
+            } else {
+              summary.percepciones = payload.length;
+            }
+          }
+        }
+      } catch (percE) {
+        summary.errors.push({ tabla: 'percepciones', error: percE.message });
+      }
+
+      // 17. Sincronizar Reversiones
+      try {
+        if (db.reversiones) {
+          const localRev = await db.reversiones.toArray();
+          if (localRev.length > 0) {
+            const payload = localRev.map(r => ({
+              id: String(r.id),
+              empresa_id: empresaId,
+              fecha: r.fecha || new Date().toISOString(),
+              serie_nro: r.serie_nro || '',
+              origen: r.origen || '',
+              sujeto_nombre: r.sujeto_nombre || '',
+              sujeto_doc: r.sujeto_doc || '',
+              monto: Number(r.monto) || 0,
+              motivo_reversion: r.motivo_reversion || '',
+              estado_sunat: r.estado_sunat || 'Registrado'
+            }));
+
+            const { error: revErr } = await supabase.from('reversiones').upsert(payload, { onConflict: 'id' });
+            if (revErr) {
+              summary.errors.push({ tabla: 'reversiones', error: revErr.message });
+            } else {
+              summary.reversiones = payload.length;
+            }
+          }
+        }
+      } catch (revE) {
+        summary.errors.push({ tabla: 'reversiones', error: revE.message });
       }
 
       // Notificar a la interfaz de usuario
