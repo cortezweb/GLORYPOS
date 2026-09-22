@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, Users, Building2, Printer, Save, CheckCircle2, 
-  Settings, Download, FileSpreadsheet, HardDrive 
+  Settings, Download, FileSpreadsheet, HardDrive, Cloud, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { exportLibroVentasRCV } from '../../utils/rcvExport';
+import { syncService } from '../../services/syncService';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import RolesPermisosTab from './RolesPermisosTab';
 import UsuariosTab from './UsuariosTab';
 
@@ -13,6 +15,21 @@ export default function AdministracionView({ initialTab = 'roles' }) {
   const { empresa } = useAuth();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [saved, setSaved] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState(null);
+
+  const handleSyncSupabase = async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await syncService.syncLocalToCloud();
+      setSyncResult(res);
+    } catch (err) {
+      setSyncResult({ success: false, error: err.message });
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   useEffect(() => {
     if (initialTab) {
@@ -233,6 +250,55 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                     Activo
                   </span>
                 </div>
+              </div>
+
+              {/* Sincronización en la Nube con Supabase */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div className="flex items-center space-x-2">
+                    <Cloud className="w-5 h-5 text-emerald-600" />
+                    <h3 className="font-bold text-sm text-slate-800">Base de Datos Supabase</h3>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                    isSupabaseConfigured ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {isSupabaseConfigured ? 'Conectado' : 'Sin Configurar'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Sincronización en la nube en tiempo real de productos, ventas, clientes, kardex, roles y usuarios.
+                </p>
+                
+                {syncResult && (
+                  <div className={`p-2.5 rounded-xl text-[11px] font-medium ${
+                    syncResult.success 
+                      ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' 
+                      : 'bg-rose-50 border border-rose-200 text-rose-800'
+                  }`}>
+                    {syncResult.success ? (
+                      <div>
+                        <p className="font-bold flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> ¡Sincronizado con Supabase!
+                        </p>
+                        <p className="text-[10px] opacity-80 mt-0.5">
+                          Productos: {syncResult.summary?.productos || 0}, Ventas: {syncResult.summary?.ventas || 0}, Clientes: {syncResult.summary?.clientes || 0}
+                        </p>
+                      </div>
+                    ) : (
+                      <p>Error: {syncResult.error || 'No se pudo sincronizar'}</p>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleSyncSupabase}
+                  disabled={syncing}
+                  className="w-full py-2.5 px-3 bg-[#10b981] hover:bg-[#059669] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
+                  <span>{syncing ? 'Sincronizando con Supabase...' : 'Sincronizar con Supabase Ahora'}</span>
+                </button>
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
