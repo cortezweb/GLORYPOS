@@ -69,7 +69,7 @@ export default function DesktopSidebar({
       setExpandedMenus(prev => ({ ...prev, productos: true }));
     } else if (['ventas_cotizaciones', 'cotizaciones', 'preventa'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, preventa: true }));
-    } else if (['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_kardex', 'reporte_caja'].includes(currentView)) {
+    } else if (['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas', 'reportes_caja_finanzas'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, reportes: true }));
     } else if (['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView)) {
       setExpandedMenus(prev => ({ ...prev, tienda_virtual: true }));
@@ -796,8 +796,15 @@ export default function DesktopSidebar({
           <div>
             <button
               type="button"
-              onClick={() => toggleMenu('reportes')}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 transition text-left"
+              onClick={() => {
+                toggleMenu('reportes');
+                onSelectView('reporte_ventas');
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+                ['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas', 'reportes_caja_finanzas'].includes(currentView)
+                  ? 'bg-slate-100 text-slate-900 font-bold'
+                  : 'text-slate-700 hover:bg-slate-100'
+              }`}
             >
               <div className="flex items-center gap-2.5">
                 <BarChart3 className="w-4 h-4 text-slate-500" />
@@ -880,7 +887,10 @@ export default function DesktopSidebar({
           <div>
             <button
               type="button"
-              onClick={() => toggleMenu('administracion')}
+              onClick={() => {
+                toggleMenu('administracion');
+                onSelectView('admin_usuarios');
+              }}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
                 ['administracion', 'admin', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView)
                   ? 'text-slate-900 font-bold bg-slate-100'

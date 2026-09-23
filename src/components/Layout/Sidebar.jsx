@@ -460,8 +460,15 @@ export default function Sidebar({
             <div>
               <button
                 type="button"
-                onClick={() => toggleMenu('reportes')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100"
+                onClick={() => {
+                  toggleMenu('reportes');
+                  handleNav('reporte_ventas');
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
+                  ['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas', 'reportes_caja_finanzas'].includes(currentView)
+                    ? 'text-slate-900 font-bold bg-slate-100'
+                    : 'text-slate-700 hover:bg-slate-100'
+                }`}
               >
                 <div className="flex items-center gap-2.5">
                   <BarChart3 className="w-4 h-4 text-slate-500" />
@@ -483,6 +490,9 @@ export default function Sidebar({
                   <button type="button" onClick={() => handleNav('reporte_compras')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Reporte de Compras
                   </button>
+                  <button type="button" onClick={() => handleNav('reporte_notas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                    • Notas de Crédito & Débito
+                  </button>
                   <button type="button" onClick={() => handleNav('reporte_kardex')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Reporte de Kardex
                   </button>
@@ -499,7 +509,10 @@ export default function Sidebar({
             <div>
               <button
                 type="button"
-                onClick={() => toggleMenu('administracion')}
+                onClick={() => {
+                  toggleMenu('administracion');
+                  handleNav('admin_usuarios');
+                }}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left ${
                   ['administracion', 'admin', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios'].includes(currentView)
                     ? 'text-slate-900 font-bold bg-slate-100'

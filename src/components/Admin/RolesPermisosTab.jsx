@@ -1,14 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { db } from '../../db/dexie';
-import ModalRol from './ModalRol';
+import ModalRol, { COLUMNA_IZQUIERDA_CATEGORIAS, COLUMNA_DERECHA_CATEGORIAS, getAllCategoryPermissionIds } from './ModalRol';
+
+const ALL_PERMISSION_IDS = [
+  ...COLUMNA_IZQUIERDA_CATEGORIAS.flatMap(getAllCategoryPermissionIds),
+  ...COLUMNA_DERECHA_CATEGORIAS.flatMap(getAllCategoryPermissionIds)
+];
+
+const ALMACENERO_PERMISOS = [
+  'ver_dashboard',
+  'anular_ventas',
+  'cambiar_precio_vender',
+  'gestionar_inventario',
+  'ver_inventario',
+  'crear_contactos',
+  'editar_contactos',
+  'eliminar_contactos',
+  'ver_contactos',
+  'registrar_arqueo_caja',
+  'retenciones_percepciones_reversiones',
+  'emitir_nota_debito',
+  'anular_venta_nota_credito',
+  'emitir_guias_remision',
+  'enviar_sunat',
+  'ver_reporte_kardex',
+  'gestionar_transportistas_flota',
+  'ver_transportistas_flota',
+  'configurar_tienda_virtual',
+  'ver_tienda_virtual_pedidos',
+  'gestionar_pedidos_web',
+  'editar_config_empresa',
+  'ver_config_empresa',
+  'activar_desactivar_modulos',
+  'registrar_pagos_paquetes',
+  'ver_suscripcion_facturacion'
+];
 
 const DEFAULT_ROLES = [
   {
     id: 'rol-admin',
     nombre: 'Administrador',
     descripcion: 'Acceso completo al sistema',
-    permisos: ['inicio', 'dashboard', 'preventa', 'ventas', 'tienda_virtual', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'guias_remision', 'documentos_avanzados', 'contabilidad', 'reportes', 'administracion', 'modulos'],
+    permisos: ALL_PERMISSION_IDS,
     activo: true,
     esSistema: true
   },
@@ -16,7 +50,7 @@ const DEFAULT_ROLES = [
     id: 'rol-almacenero',
     nombre: 'Almacenero',
     descripcion: 'Gestión de inventario',
-    permisos: ['productos', 'inventario', 'guias_remision', 'compras'],
+    permisos: ALMACENERO_PERMISOS,
     activo: true,
     esSistema: true
   },
@@ -24,7 +58,11 @@ const DEFAULT_ROLES = [
     id: 'rol-cajero',
     nombre: 'Cajero',
     descripcion: 'Caja y movimientos',
-    permisos: ['ventas', 'pos', 'caja', 'finanzas', 'clientes'],
+    permisos: [
+      'ver_dashboard', 'usar_pos', 'crear_ventas', 'ver_ventas',
+      'registrar_arqueo_caja', 'cerrar_caja', 'abrir_caja', 'movimientos_caja',
+      'ver_caja_bancos', 'ver_productos', 'ver_contactos', 'crear_contactos'
+    ],
     activo: true,
     esSistema: true
   },
@@ -32,7 +70,11 @@ const DEFAULT_ROLES = [
     id: 'rol-contador',
     nombre: 'Contador',
     descripcion: 'Gestión contable',
-    permisos: ['contabilidad', 'reportes', 'finanzas', 'compras', 'documentos_avanzados'],
+    permisos: [
+      'ver_dashboard', 'ver_ventas', 'ver_compras', 'ver_cuentas_cobrar', 'ver_cuentas_pagar',
+      'ver_todos_reportes', 'ver_reporte_ventas', 'ver_reporte_compras', 'ver_reporte_caja',
+      'ver_reporte_kardex', 'ver_reporte_notas', 'retenciones_percepciones_reversiones'
+    ],
     activo: true,
     esSistema: true
   },
@@ -40,7 +82,12 @@ const DEFAULT_ROLES = [
     id: 'rol-supervisor',
     nombre: 'Supervisor',
     descripcion: 'Supervisión y reportes',
-    permisos: ['inicio', 'dashboard', 'ventas', 'reportes', 'inventario', 'clientes', 'caja'],
+    permisos: [
+      'ver_dashboard', 'ver_ventas', 'anular_ventas', 'crear_ventas', 'usar_pos',
+      'ver_cotizaciones', 'ver_cuentas_cobrar', 'ver_compras', 'ver_cuentas_pagar',
+      'ver_productos', 'ver_inventario', 'gestionar_inventario', 'ver_caja_bancos',
+      'ver_todos_reportes', 'ver_reporte_ventas', 'ver_reporte_caja'
+    ],
     activo: true,
     esSistema: true
   },
@@ -48,7 +95,10 @@ const DEFAULT_ROLES = [
     id: 'rol-vendedor',
     nombre: 'Vendedor',
     descripcion: 'Gestión de ventas y POS',
-    permisos: ['pos', 'ventas', 'clientes', 'preventa', 'tienda_virtual'],
+    permisos: [
+      'usar_pos', 'crear_ventas', 'ver_ventas', 'crear_cotizaciones', 'ver_cotizaciones',
+      'ver_productos', 'crear_contactos', 'ver_contactos'
+    ],
     activo: true,
     esSistema: true
   }
@@ -66,7 +116,17 @@ export default function RolesPermisosTab() {
       if (db.roles) {
         const storedRoles = await db.roles.toArray();
         if (storedRoles && storedRoles.length > 0) {
-          setRoles(storedRoles);
+          // Detectar si los roles almacenados tienen el esquema antiguo de módulos
+          const hasOldScheme = storedRoles.some(r => r.id === 'rol-almacenero' && (!r.permisos.includes('ver_dashboard')));
+          if (hasOldScheme) {
+            for (const def of DEFAULT_ROLES) {
+              await db.roles.put(def);
+            }
+            const updated = await db.roles.toArray();
+            setRoles(updated);
+          } else {
+            setRoles(storedRoles);
+          }
         } else {
           // Si por alguna razón la tabla está vacía, sembrar por defecto
           await db.roles.bulkAdd(DEFAULT_ROLES);

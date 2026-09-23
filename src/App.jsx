@@ -347,7 +347,7 @@ function MainShell() {
               )}
 
               {/* Reportes Especializados (7 Ventanas) */}
-              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab'].includes(currentView) && (
+              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas', 'reporte_cajas_tab', 'reportes_caja_finanzas'].includes(currentView) && (
                 <ReportsView 
                   initialTab={
                     currentView === 'reporte_productos' ? 'productos' :
@@ -355,7 +355,7 @@ function MainShell() {
                     currentView === 'reporte_compras' ? 'compras' :
                     ['reporte_notas', 'notas_credito_debito'].includes(currentView) ? 'notas' :
                     currentView === 'reporte_kardex' ? 'kardex' :
-                    ['reporte_caja', 'reporte_cajas_tab'].includes(currentView) ? 'caja' :
+                    ['reporte_caja', 'reporte_cajas', 'reporte_cajas_tab', 'reportes_caja_finanzas'].includes(currentView) ? 'caja' :
                     'ventas'
                   }
                   onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
