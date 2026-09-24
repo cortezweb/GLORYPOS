@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, ScanBarcode, Wifi, Bell, Maximize2, Minimize2, Lock, 
   Cloud, RefreshCw, LogOut, ChevronDown, MessageSquare, ShoppingCart, 
-  CheckCircle2, ChevronLeft, FileText, ShoppingBag, Store, ExternalLink, Clock
+  CheckCircle2, ChevronLeft, FileText, ShoppingBag, Store, ExternalLink, Clock,
+  User, Settings, Headphones, Building2, X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
@@ -21,9 +22,11 @@ export default function TopBar({
   const { empresa, currentUser, logout } = useAuth();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState(null);
   const userMenuRef = useRef(null);
+  const mobileUserMenuRef = useRef(null);
 
   // Reloj y fecha en vivo para la cabecera móvil (idéntico a la imagen)
   const [currentDateTime, setCurrentDateTime] = useState(() => {
@@ -70,7 +73,9 @@ export default function TopBar({
   // Cerrar menú de usuario al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+      const inDesktop = userMenuRef.current && userMenuRef.current.contains(e.target);
+      const inMobile = mobileUserMenuRef.current && mobileUserMenuRef.current.contains(e.target);
+      if (!inDesktop && !inMobile) {
         setIsUserMenuOpen(false);
       }
     };
@@ -84,9 +89,97 @@ export default function TopBar({
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
+  const userDisplayName = currentUser?.nombre || 'Esteffany Cordova';
+  const userInitial = userDisplayName.trim().charAt(0).toUpperCase() || 'E';
   const initials = currentUser?.nombre 
     ? currentUser.nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-    : 'AD';
+    : 'EC';
+
+  const renderUserDropdown = () => (
+    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 p-3.5 animate-fadeIn">
+      {/* Encabezado: SUCURSAL */}
+      <div className="text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-1.5 px-0.5">
+        SUCURSAL
+      </div>
+
+      {/* Caja Sucursal activa */}
+      <div 
+        onClick={() => {
+          alert(`Sucursal activa: ${empresa?.sucursal_activa || 'Principal'} (Casa Matriz)`);
+        }}
+        className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 transition cursor-pointer mb-2.5 shadow-2xs group"
+        title="Clic para ver detalles de sucursal"
+      >
+        <Building2 className="w-4 h-4 text-slate-400 group-hover:text-slate-600 shrink-0" />
+        <span className="text-xs font-semibold text-slate-700 truncate">
+          {empresa?.sucursal_activa || 'Principal'}
+        </span>
+      </div>
+
+      {/* Lista de enlaces: Perfil, Ajustes, Soporte */}
+      <div className="space-y-0.5">
+        {/* Perfil (Ícono verde exacto a la imagen adjunta) */}
+        <button
+          type="button"
+          onClick={() => {
+            setIsUserMenuOpen(false);
+            setIsProfileModalOpen(true);
+          }}
+          className="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-xl transition cursor-pointer text-left"
+        >
+          <User className="w-4 h-4 text-[#10b981] shrink-0" />
+          <span>Perfil</span>
+        </button>
+
+        {/* Ajustes */}
+        <button
+          type="button"
+          onClick={() => {
+            setIsUserMenuOpen(false);
+            if (onSelectView) onSelectView('configuracion');
+          }}
+          className="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-xl transition cursor-pointer text-left"
+        >
+          <Settings className="w-4 h-4 text-slate-500 shrink-0" />
+          <span>Ajustes</span>
+        </button>
+
+        {/* Soporte */}
+        <button
+          type="button"
+          onClick={() => {
+            setIsUserMenuOpen(false);
+            handleSupportClick();
+          }}
+          className="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-xl transition cursor-pointer text-left"
+        >
+          <Headphones className="w-4 h-4 text-slate-500 shrink-0" />
+          <span>Soporte</span>
+        </button>
+      </div>
+
+      {/* Línea divisoria */}
+      <div className="border-t border-slate-100 my-2"></div>
+
+      {/* Etiqueta de versión */}
+      <div className="text-[11px] text-slate-400 font-normal px-2.5 py-0.5 select-none font-mono">
+        v2.0.1
+      </div>
+
+      {/* Cerrar sesión */}
+      <button
+        type="button"
+        onClick={() => {
+          setIsUserMenuOpen(false);
+          logout();
+        }}
+        className="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium text-slate-700 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer text-left mt-0.5 group"
+      >
+        <LogOut className="w-4 h-4 text-slate-500 group-hover:text-rose-600 shrink-0" />
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  );
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 font-sans select-none shadow-xs">
@@ -122,15 +215,48 @@ export default function TopBar({
           </span>
         </div>
 
-        {/* Derecha: Botón Hamburguesa de Menú */}
-        <button 
-          onClick={onOpenSidebar}
-          aria-label="Abrir Menú" 
-          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-800 hover:bg-slate-100 active:scale-95 transition cursor-pointer"
-          type="button"
-        >
-          <Menu className="w-6 h-6 stroke-[2.2]" />
-        </button>
+        {/* Derecha: Notificaciones + Avatar Perfil + Botón Hamburguesa de Menú */}
+        <div className="flex items-center gap-1.5">
+          {/* Campana Móvil con Badge Naranja */}
+          <button
+            type="button"
+            title="8 Notificaciones del sistema"
+            onClick={() => alert('Tienes 8 avisos del sistema: 3 comprobantes emitidos, 5 alertas de inventario.')}
+            className="relative p-1.5 rounded-xl text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+          >
+            <Bell className="w-5 h-5 text-slate-600 stroke-[1.8]" />
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-0.5 rounded-full bg-amber-500 text-white text-[9px] font-black flex items-center justify-center shadow-xs border border-white">
+              8
+            </span>
+          </button>
+
+          {/* Menú de Perfil Móvil */}
+          <div className="relative" ref={mobileUserMenuRef}>
+            <button
+              type="button"
+              onClick={() => setIsUserMenuOpen(prev => !prev)}
+              className="flex items-center gap-1 p-1 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+              title={userDisplayName}
+            >
+              <div className="w-7 h-7 rounded-full bg-[#10b981] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                {userInitial}
+              </div>
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isUserMenuOpen && renderUserDropdown()}
+          </div>
+
+          {/* Botón Hamburguesa de Menú */}
+          <button 
+            onClick={onOpenSidebar}
+            aria-label="Abrir Menú" 
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-800 hover:bg-slate-100 active:scale-95 transition cursor-pointer"
+            type="button"
+          >
+            <Menu className="w-5 h-5 stroke-[2.2]" />
+          </button>
+        </div>
       </div>
 
       {/* ── DESKTOP TOP BANNER SUPERIOR ── */}
@@ -271,73 +397,138 @@ export default function TopBar({
             </span>
           </button>
 
-          {/* Campana de Notificaciones con Badge */}
+          {/* Campana de Notificaciones con Badge Naranja (Exacto a la imagen) */}
           <button
             type="button"
-            title="Avisos del sistema"
-            onClick={() => alert('No hay comprobantes pendientes en cola de contingencia.')}
-            className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
+            title="8 Notificaciones del sistema"
+            onClick={() => alert('Tienes 8 avisos del sistema: 3 comprobantes emitidos, 5 alertas de inventario.')}
+            className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
           >
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 px-1 min-w-[16px] h-4 rounded-full bg-blue-600 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
-              0
+            <Bell className="w-5 h-5 text-slate-600 stroke-[1.8]" />
+            <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center justify-center shadow-xs border-2 border-white">
+              8
             </span>
           </button>
 
-          {/* Avatar del Usuario */}
+          {/* Menú de Perfil de Usuario (Estructura idéntica a la imagen adjunta) */}
           <div className="relative" ref={userMenuRef}>
             <button
               type="button"
               onClick={() => setIsUserMenuOpen(prev => !prev)}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs flex items-center justify-center border border-blue-200 transition cursor-pointer shadow-xs"
-              title={`${currentUser?.nombre || 'Administrador'} (${currentUser?.rol || 'ADMIN'})`}
+              className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-xl hover:bg-slate-100/80 transition cursor-pointer select-none"
+              title={`${userDisplayName} (${currentUser?.rol || 'ADMIN'})`}
             >
-              {initials}
+              {/* Círculo verde con la inicial */}
+              <div className="w-8 h-8 rounded-full bg-[#10b981] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                {userInitial}
+              </div>
+              {/* Nombre de usuario truncado */}
+              <span className="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-700 max-w-[125px] truncate text-left">
+                {userDisplayName}
+              </span>
+              {/* Flecha Chevron hacia abajo */}
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {/* Dropdown de Sesión */}
-            {isUserMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 p-3 animate-fadeIn">
-                <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center shadow-sm">
-                    {initials}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">
-                      {currentUser?.nombre || 'Administrador'}
-                    </p>
-                    <p className="text-[10px] text-slate-500 truncate font-mono">
-                      {currentUser?.email || 'admin@glorypos.com'}
-                    </p>
-                    <span className="inline-block mt-0.5 px-1.5 py-0.2 bg-blue-50 text-blue-700 text-[9px] font-bold rounded">
-                      {currentUser?.rol || 'SUPERADMIN'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="py-2 px-1 text-[11px] text-slate-600 border-b border-slate-100 flex items-center justify-between">
-                  <span className="text-slate-400">Empresa:</span>
-                  <span className="font-bold text-slate-800 truncate max-w-[130px]">{empresa?.nombre || 'DEMO'}</span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsUserMenuOpen(false);
-                    logout();
-                  }}
-                  className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white font-bold text-xs rounded-xl transition cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Cerrar Sesión</span>
-                </button>
-              </div>
-            )}
+            {/* Dropdown flotante (Exacto al diseño de la imagen adjunta) */}
+            {isUserMenuOpen && renderUserDropdown()}
           </div>
 
         </div>
 
       </div>
+
+      {/* ── MODAL: MI PERFIL DE USUARIO ── */}
+      {isProfileModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-md overflow-hidden animate-scaleUp">
+            {/* Header del Modal */}
+            <div className="relative p-6 pb-5 bg-gradient-to-br from-emerald-600 to-teal-700 text-white">
+              <button
+                type="button"
+                onClick={() => setIsProfileModalOpen(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-white text-emerald-700 font-black text-2xl flex items-center justify-center shadow-lg">
+                  {userInitial}
+                </div>
+                <div>
+                  <h3 className="text-lg font-black leading-tight text-white">
+                    {userDisplayName}
+                  </h3>
+                  <p className="text-xs text-emerald-100 font-medium">
+                    {currentUser?.email || 'admin@glorypos.com'}
+                  </p>
+                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-emerald-500/40 text-emerald-100 text-[10px] font-bold rounded-full uppercase tracking-wider border border-white/20">
+                    {currentUser?.rol || 'SUPERADMIN'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Contenido del Perfil */}
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sucursal</span>
+                  <p className="text-xs font-bold text-slate-800 mt-0.5 flex items-center gap-1.5 truncate">
+                    <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    {empresa?.sucursal_activa || 'Principal'}
+                  </p>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Empresa</span>
+                  <p className="text-xs font-bold text-slate-800 mt-0.5 truncate" title={empresa?.nombre || 'GLORYPOS'}>
+                    {empresa?.nombre || 'GLORYPOS'}
+                  </p>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Plataforma</span>
+                  <p className="text-xs font-bold text-slate-800 mt-0.5 font-mono">
+                    GLORYPOS v2.0.1
+                  </p>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Estado</span>
+                  <p className="text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Activo / Conectado
+                  </p>
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="pt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsProfileModalOpen(false);
+                    if (onSelectView) onSelectView('configuracion');
+                  }}
+                  className="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Settings className="w-4 h-4 text-slate-500" />
+                  <span>Ajustes de cuenta</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsProfileModalOpen(false);
+                    logout();
+                  }}
+                  className="py-2.5 px-4 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white text-xs font-bold transition cursor-pointer flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Cerrar sesión</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </header>
   );

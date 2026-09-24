@@ -188,7 +188,7 @@ export const syncService = {
             nombre: p.nombre,
             categoria: p.categoria || 'General',
             unidad_medida: p.unidad_medida || 'Unidad',
-            foto_url: p.foto_url || null,
+            foto_url: p.foto_url || p.imagen_url || null,
             precio_venta: Number(p.precio_venta) || 0,
             precio_compra: Number(p.precio_compra) || 0,
             stock_actual: Number(p.stock_actual) || 0,
@@ -507,6 +507,34 @@ export const syncService = {
           } else {
             summary.pedidos_web = payload.length;
           }
+
+          // Espejear a la tabla existente 'ventas' con tipo_documento = 'PEDIDO_WEB'
+          // para garantizar visibilidad inmediata en Supabase sin esperar la creación de tablas DDL
+          try {
+            const ventasWebPayload = localPedidos.map(p => ({
+              id: `vta-${p.id}`,
+              empresa_id: empresaId,
+              fecha: p.fecha || new Date().toISOString(),
+              correlativo: p.numero_orden || p.id || `PW-${Date.now()}`,
+              tipo_documento: 'PEDIDO_WEB',
+              serie: 'WEB01',
+              cliente_nombre: p.cliente_nombre || 'Cliente Web',
+              cliente_ci_nit: String(p.telefono || '0'),
+              metodo_pago: 'WHATSAPP',
+              num_operacion: null,
+              descuento_porcentaje: 0,
+              subtotal: Number(p.total) || 0,
+              total: Number(p.total) || 0,
+              monto_recibido: 0,
+              cambio: 0,
+              estado_siat: 'NO_APLICA',
+              cuf: null,
+              items: Array.isArray(p.items) ? p.items : []
+            }));
+            await supabase.from('ventas').upsert(ventasWebPayload, { onConflict: 'id' });
+          } catch (vwErr) {
+            console.warn('[syncService] Advertencia reflejando pedido web en ventas:', vwErr);
+          }
         }
       } catch (pwE) {
         summary.errors.push({ tabla: 'pedidos_web', error: pwE.message });
@@ -722,6 +750,7 @@ export const syncService = {
             categoria: p.categoria,
             unidad_medida: p.unidad_medida,
             foto_url: p.foto_url,
+            imagen_url: p.foto_url,
             precio_venta: Number(p.precio_venta),
             precio_compra: Number(p.precio_compra),
             stock_actual: Number(p.stock_actual),

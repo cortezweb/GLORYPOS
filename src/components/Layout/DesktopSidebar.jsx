@@ -970,10 +970,10 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('tienda_virtual')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['tienda_virtual', 'catalogo_online', 'tienda', 'ecommerce'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  • Catálogo Online Web
+                  • Tienda Virtual (Ecommerce)
                 </button>
                 <button
                   type="button"

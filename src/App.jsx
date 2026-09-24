@@ -39,6 +39,7 @@ import InicioView from './components/Dashboard/InicioView';
 
 // New Stitch Views
 import TiendaVirtualView from './components/Store/TiendaVirtualView';
+import EcommerceStorefront from './components/Store/EcommerceStorefront';
 import FinanzasView from './components/Finance/FinanzasView';
 import GuiasRemisionView from './components/Dispatch/GuiasRemisionView';
 import DocumentosAvanzadosView from './components/AdvancedDocs/DocumentosAvanzadosView';
@@ -92,6 +93,29 @@ function MainShell() {
   const [activeTicketSale, setActiveTicketSale] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isTerminalLocked, setIsTerminalLocked] = useState(false);
+
+  // Ecommerce Public Route Listener (/ecommerce, #/ecommerce, ?view=ecommerce)
+  const [isEcommerceRoute, setIsEcommerceRoute] = useState(() => {
+    return window.location.pathname.startsWith('/ecommerce') || 
+           window.location.hash.startsWith('#/ecommerce') ||
+           new URLSearchParams(window.location.search).get('view') === 'ecommerce';
+  });
+
+  React.useEffect(() => {
+    const checkEcommerceRoute = () => {
+      setIsEcommerceRoute(
+        window.location.pathname.startsWith('/ecommerce') || 
+        window.location.hash.startsWith('#/ecommerce') ||
+        new URLSearchParams(window.location.search).get('view') === 'ecommerce'
+      );
+    };
+    window.addEventListener('hashchange', checkEcommerceRoute);
+    window.addEventListener('popstate', checkEcommerceRoute);
+    return () => {
+      window.removeEventListener('hashchange', checkEcommerceRoute);
+      window.removeEventListener('popstate', checkEcommerceRoute);
+    };
+  }, []);
 
   // Global Hardware USB / Laser Barcode Scanner Listener
   useBarcodeGunScanner();
@@ -165,6 +189,11 @@ function MainShell() {
   // Sin empresa registrada → onboarding de registro
   if (!empresa?.nombre || showRegister) {
     return <RegisterView onGoToLogin={() => setShowRegister(false)} />;
+  }
+
+  // Ruta pública directa de Ecommerce para clientes externos (sin requerir login)
+  if (isEcommerceRoute) {
+    return <EcommerceStorefront isEmbedded={false} />;
   }
 
   // Con empresa pero sin sesión → pantalla de login
@@ -363,9 +392,9 @@ function MainShell() {
               )}
               {['subscription', 'suscripcion', 'planes'].includes(currentView) && <SubscriptionView />}
               
-              {['tienda_virtual', 'catalogo_online', 'tienda'].includes(currentView) && (
+              {['tienda_virtual', 'catalogo_online', 'tienda', 'ecommerce'].includes(currentView) && (
                 <TiendaVirtualView 
-                  initialTab="catalogo"
+                  initialTab="tienda"
                   onSelectView={(v) => setCurrentView(v)}
                   onOpenPosWithCart={() => setCurrentView('pos')}
                 />

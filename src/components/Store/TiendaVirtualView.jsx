@@ -3,31 +3,90 @@ import {
   Globe, ShoppingBag, ExternalLink, Share2, Eye, 
   Smartphone, QrCode, CheckCircle2, Search, ArrowRight,
   Check, X, Copy, Printer, Download, MessageSquare, Store,
-  Layers, Package, ChevronRight, RefreshCw
+  Layers, Package, ChevronRight, RefreshCw, Settings, SlidersHorizontal,
+  Plus, Trash2, Edit3, Image as ImageIcon, Sparkles
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { syncService } from '../../services/syncService';
 import PedidosWebView from '../Sales/PedidosWebView';
+import EcommerceStorefront from './EcommerceStorefront';
 
-export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectView, onOpenPosWithCart }) {
+const SLIDERS_STORAGE_KEY = 'glorypos_ecommerce_sliders';
+
+const INITIAL_SLIDERS = [
+  {
+    id: 'slide-1',
+    title: '¡Gran Liquidación & Novedades!',
+    subtitle: 'Encuentra los mejores productos a los mejores precios de la temporada con envío directo.',
+    buttonText: 'Ver productos',
+    linkUrl: '#productos',
+    bgGradient: 'from-emerald-700 via-teal-700 to-slate-900',
+    active: true
+  },
+  {
+    id: 'slide-2',
+    title: 'Pide Fácil por WhatsApp',
+    subtitle: 'Arma tu carrito en segundos y te atendemos al instante por WhatsApp para tu entrega.',
+    buttonText: 'Explorar Catálogo',
+    linkUrl: '#productos',
+    bgGradient: 'from-blue-700 via-indigo-800 to-slate-900',
+    active: true
+  }
+];
+
+export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView, onOpenPosWithCart }) {
   const { empresa } = useAuth();
-  const [activeTab, setActiveTab] = useState(initialTab); // 'catalogo' | 'pedidos'
+  const [activeTab, setActiveTab] = useState(initialTab === 'pedidos' ? 'pedidos' : 'tienda');
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('TODAS');
-  const [onlyActive, setOnlyActive] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [pedidosCount, setPedidosCount] = useState({ total: 13, nuevos: 12 });
+  const [pedidosCount, setPedidosCount] = useState({ total: 0, nuevos: 0 });
 
-  // Cargar productos de Dexie
+  // Banner / Slider Management States
+  const [sliders, setSliders] = useState(() => {
+    try {
+      const saved = localStorage.getItem(SLIDERS_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : INITIAL_SLIDERS;
+    } catch {
+      return INITIAL_SLIDERS;
+    }
+  });
+  const [isEditingSlider, setIsEditingSlider] = useState(null); // slider obj or null
+  const [newSliderData, setNewSliderData] = useState({
+    title: '',
+    subtitle: '',
+    buttonText: 'Ver productos',
+    bgGradient: 'from-emerald-700 via-teal-700 to-slate-900'
+  });
+
+  // Cargar productos de Dexie / Supabase
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        let list = await db.productos_tienda.toArray();
-        if (!list || list.length === 0) {
-          list = await db.productos.toArray();
+        let list = [];
+        try {
+          list = await db.productos_tienda.toArray();
+        } catch (e) {
+          console.warn('Error reading db.productos_tienda:', e);
         }
+
+        if ((!list || list.length === 0) && isSupabaseConfigured && supabase) {
+          try {
+            const { data, error } = await supabase.from('productos').select('*');
+            if (!error && data && data.length > 0) {
+              list = data;
+              for (const p of data) {
+                await db.productos_tienda.put(p).catch(() => {});
+              }
+            }
+          } catch (cloudErr) {
+            console.warn('Error pulling products from Supabase:', cloudErr);
+          }
+        }
+
         setProducts(list || []);
       } catch (err) {
         console.error('Error cargando productos de tienda:', err);
@@ -38,22 +97,27 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
 
   // Cargar conteo de pedidos web
   useEffect(() => {
-    const saved = localStorage.getItem('glorypos_pedidos_web_v2');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          const nuevos = parsed.filter(p => p.estado === 'Nuevo').length;
-          setPedidosCount({ total: parsed.length, nuevos });
+    const updateCount = () => {
+      const saved = localStorage.getItem('glorypos_pedidos_web_v2');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            const nuevos = parsed.filter(p => p.estado === 'Nuevo').length;
+            setPedidosCount({ total: parsed.length, nuevos });
+          }
+        } catch {
+          // ignore
         }
-      } catch (e) {
-        // fallback
       }
-    }
-  }, [activeTab]);
+    };
+    updateCount();
+    window.addEventListener('glorypos_order_created', updateCount);
+    return () => window.removeEventListener('glorypos_order_created', updateCount);
+  }, []);
 
-  const storeSlug = empresa?.nit_ci || 'demo';
-  const storeUrl = `https://glorypos.bo/catalogo/${storeSlug}`;
+  // URL Pública de Ecommerce
+  const storeUrl = `${window.location.origin}/#/ecommerce`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(storeUrl);
@@ -66,59 +130,97 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
     setProducts(updated);
     try {
       await db.productos_tienda.update(prodId, { activo: !currentVal });
+      syncService.triggerBackgroundSync();
     } catch (e) {
       // ignore
     }
   };
 
-  // Categorías únicas
-  const categories = ['TODAS', ...Array.from(new Set(products.map(p => p.categoria).filter(Boolean)))];
+  // Guardar Sliders en LocalStorage
+  const handleSaveSliders = (updatedSliders) => {
+    setSliders(updatedSliders);
+    try {
+      localStorage.setItem(SLIDERS_STORAGE_KEY, JSON.stringify(updatedSliders));
+    } catch (e) {
+      console.warn('Error saving sliders:', e);
+    }
+  };
 
-  const filteredProducts = products.filter(p => {
-    const matchesSearch = 
-      p.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.categoria?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.codigo_barras?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCat = selectedCategory === 'TODAS' || p.categoria === selectedCategory;
-    const matchesActive = !onlyActive || p.activo !== false;
-    return matchesSearch && matchesCat && matchesActive;
-  });
+  const handleAddSlider = () => {
+    if (!newSliderData.title.trim()) return;
+    const newSlide = {
+      id: 'slide-' + Date.now(),
+      title: newSliderData.title.trim(),
+      subtitle: newSliderData.subtitle.trim(),
+      buttonText: newSliderData.buttonText.trim() || 'Ver productos',
+      linkUrl: '#productos',
+      bgGradient: newSliderData.bgGradient,
+      active: true
+    };
+    handleSaveSliders([...sliders, newSlide]);
+    setNewSliderData({
+      title: '',
+      subtitle: '',
+      buttonText: 'Ver productos',
+      bgGradient: 'from-emerald-700 via-teal-700 to-slate-900'
+    });
+  };
+
+  const handleDeleteSlider = (slideId) => {
+    handleSaveSliders(sliders.filter(s => s.id !== slideId));
+  };
 
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn pb-14">
       
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* BARRA SUPERIOR DE PESTAÑAS (Catálogo Online Web / Pedidos Web)     */}
+      {/* BARRA SUPERIOR DE PESTAÑAS (Tienda en Vivo / Banners / Pedidos)    */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 pb-2.5">
           
-          {/* Tabs Selector */}
+          {/* Pestañas Principales */}
           <div className="flex items-center space-x-2">
+            {/* Pestaña 1: Tienda Virtual en Vivo */}
             <button
               type="button"
-              onClick={() => setActiveTab('catalogo')}
+              onClick={() => setActiveTab('tienda')}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'catalogo'
+                activeTab === 'tienda'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-500/25'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Store className="w-4 h-4" />
+              <span>Tienda Virtual (Ecommerce)</span>
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                activeTab === 'tienda' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+              }`}>
+                En Vivo
+              </span>
+            </button>
+
+            {/* Pestaña 2: Banners & Configuración */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('configuracion')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTab === 'configuracion'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-500/25'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              <Globe className="w-4 h-4" />
-              <span>Catálogo Online Web</span>
-              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                activeTab === 'catalogo' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
-              }`}>
-                {products.length}
-              </span>
+              <SlidersHorizontal className="w-4 h-4" />
+              <span>Banners & Catálogo</span>
             </button>
 
+            {/* Pestaña 3: Pedidos Web */}
             <button
               type="button"
               onClick={() => setActiveTab('pedidos')}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'pedidos'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-500/25'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-500/25'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -126,7 +228,7 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
               <span>Pedidos Web</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-black tracking-tight ${
                 activeTab === 'pedidos' 
-                  ? 'bg-white text-emerald-700' 
+                  ? 'bg-white text-indigo-700' 
                   : 'bg-emerald-100 text-emerald-800 animate-pulse'
               }`}>
                 {pedidosCount.nuevos > 0 ? `${pedidosCount.nuevos} Nuevos` : pedidosCount.total}
@@ -134,20 +236,22 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
             </button>
           </div>
 
-          {/* Quick Actions Header */}
+          {/* Acciones Rápidas del Header */}
           <div className="flex items-center gap-2 shrink-0">
             <button
+              type="button"
               onClick={() => setIsQrModalOpen(true)}
-              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200"
-              title="Generar código QR del catálogo"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200 cursor-pointer"
+              title="Generar código QR del ecommerce"
             >
               <QrCode className="w-3.5 h-3.5 text-slate-600" />
-              <span>Código QR</span>
+              <span className="hidden sm:inline">Código QR</span>
             </button>
 
             <button
+              type="button"
               onClick={handleCopyLink}
-              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200 cursor-pointer"
             >
               {copied ? (
                 <>
@@ -157,7 +261,7 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
               ) : (
                 <>
                   <Share2 className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Compartir</span>
+                  <span className="hidden sm:inline">Compartir</span>
                 </>
               )}
             </button>
@@ -166,10 +270,10 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
               href={storeUrl}
               target="_blank"
               rel="noreferrer"
-              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
             >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Ver Catálogo</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Abrir Tienda</span>
             </a>
           </div>
 
@@ -177,328 +281,280 @@ export default function TiendaVirtualView({ initialTab = 'catalogo', onSelectVie
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* VISTA SEGÚN PESTAÑA ACTIVA                                         */}
+      {/* CONTENIDO SEGÚN LA PESTAÑA ACTIVA                                  */}
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'pedidos' ? (
-        <PedidosWebView 
-          hideSubNav={true} 
-          onOpenPosWithCart={onOpenPosWithCart}
-          onSelectSubView={onSelectView}
-        />
-      ) : (
-        <div className="max-w-7xl mx-auto w-full p-4 sm:p-6 space-y-5">
-          
-          {/* ── 1. BANNER HERO DE TIENDA VIRTUAL ── */}
-          <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-700 rounded-3xl p-5 sm:p-7 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="relative z-10 max-w-2xl">
-              <div className="inline-flex items-center space-x-2 bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-blue-100 border border-white/20 mb-3">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-[11px] font-bold uppercase tracking-wider">
-                  Catálogo Digital Sincronizado en Tiempo Real
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-                {empresa?.nombre || 'Mi Tienda Online GLORYPOS'}
-              </h1>
-              <p className="text-xs sm:text-sm text-blue-100 mt-2 leading-relaxed">
-                Tus clientes pueden ver tus productos, consultar precios, armar pedidos desde su celular y enviártelos directamente por WhatsApp para coordinar la entrega o facturar en el POS.
-              </p>
+
+      {/* PESTAÑA 1: TIENDA VIRTUAL EN VIVO (Modelo Tukifac) */}
+      {activeTab === 'tienda' && (
+        <div className="flex-1 flex flex-col">
+          {/* Banner Informativo Superior para el Administrador */}
+          <div className="bg-slate-900 text-white px-4 py-2.5 text-xs flex flex-wrap items-center justify-between gap-3 border-b border-slate-800">
+            <div className="flex items-center gap-2 font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="text-slate-300">Enlace público de tu Tienda:</span>
+              <span className="font-bold text-emerald-400 truncate max-w-xs">{storeUrl}</span>
             </div>
-
-            {/* Banner Quick Link Box */}
-            <div className="relative z-10 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 w-full md:w-auto shrink-0 space-y-2.5">
-              <div className="text-[11px] text-blue-200 font-medium">Link directo para tus clientes:</div>
-              <div className="flex items-center gap-2 bg-slate-900/60 rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 border border-white/10">
-                <Globe className="w-3.5 h-3.5 text-blue-300 shrink-0" />
-                <span className="truncate max-w-[200px] sm:max-w-[260px] font-semibold">{storeUrl}</span>
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="ml-auto text-white hover:text-blue-300 font-sans text-[11px] font-bold underline shrink-0"
-                >
-                  {copied ? '¡Copiado!' : 'Copiar'}
-                </button>
-              </div>
-              <div className="flex items-center justify-between text-[11px] text-blue-100 pt-1">
-                <span>📱 Compatible con móviles y tablets</span>
-                <span className="font-bold text-emerald-300">● 100% Online</span>
-              </div>
-            </div>
-
-            {/* Decorative background circle */}
-            <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-white/5 rounded-full pointer-events-none blur-2xl"></div>
-          </div>
-
-          {/* ── 2. TARJETAS DE MÉTRICAS RÁPIDAS ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            {/* Card 1: URL Pública */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Enlace Catálogo</span>
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Globe className="w-4 h-4" />
-                </div>
-              </div>
-              <p className="text-xs font-mono text-slate-800 truncate font-semibold mb-2">{storeUrl}</p>
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 self-start"
+                className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold transition cursor-pointer"
               >
-                <Copy className="w-3 h-3" />
-                <span>{copied ? 'Enlace copiado' : 'Copiar enlace'}</span>
+                {copied ? '¡Copiado!' : 'Copiar URL'}
               </button>
+              <a
+                href={storeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition flex items-center gap-1"
+              >
+                <Eye className="w-3 h-3" />
+                <span>Pestaña Nueva</span>
+              </a>
             </div>
+          </div>
 
-            {/* Card 2: Productos Visibles */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Productos en Tienda</span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <Package className="w-4 h-4" />
-                </div>
-              </div>
+          {/* Renderizado de la Tienda Virtual E-commerce */}
+          <EcommerceStorefront isEmbedded={true} />
+        </div>
+      )}
+
+      {/* PESTAÑA 2: CONFIGURACIÓN & BANNERS */}
+      {activeTab === 'configuracion' && (
+        <div className="max-w-7xl mx-auto w-full p-4 sm:p-6 space-y-6">
+          
+          {/* Gestión de Sliders / Banners */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-5">
+            <div className="flex items-center justify-between">
               <div>
-                <span className="text-2xl font-black text-slate-900">{products.length}</span>
-                <span className="text-xs text-slate-500 ml-1.5 font-medium">ítems sincronizados</span>
+                <h3 className="text-base font-black text-slate-900">
+                  Banners Promocionales de la Tienda
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Personaliza los anuncios que ven tus clientes en la cabecera del ecommerce.
+                </p>
               </div>
-              <div className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-2">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Stock sincronizado con tu POS</span>
-              </div>
+              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+                {sliders.length} activos
+              </span>
             </div>
 
-            {/* Card 3: Pedidos Web Recibidos */}
-            <div 
-              onClick={() => setActiveTab('pedidos')}
-              className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between hover:border-emerald-400 cursor-pointer group transition-colors"
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pedidos Web</span>
-                <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
-                  <ShoppingBag className="w-4 h-4" />
+            {/* Lista de Banners Actuales */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {sliders.map((s, idx) => (
+                <div 
+                  key={s.id} 
+                  className={`p-5 rounded-2xl bg-gradient-to-r ${s.bgGradient} text-white shadow-md relative flex flex-col justify-between overflow-hidden`}
+                >
+                  <div className="relative z-10 space-y-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 text-white inline-block">
+                      Banner #{idx + 1}
+                    </span>
+                    <h4 className="text-lg font-black leading-snug">{s.title}</h4>
+                    <p className="text-xs text-slate-100/90 line-clamp-2">{s.subtitle}</p>
+                    <span className="inline-block mt-2 px-3 py-1 rounded-full bg-white text-slate-900 text-xs font-black shadow-xs">
+                      {s.buttonText}
+                    </span>
+                  </div>
+
+                  <div className="pt-4 flex items-center justify-end gap-2 relative z-10 border-t border-white/10 mt-3">
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteSlider(s.id)}
+                      className="p-1.5 rounded-lg bg-white/10 hover:bg-rose-600 text-white transition cursor-pointer"
+                      title="Eliminar banner"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <span className="text-2xl font-black text-slate-900">{pedidosCount.total}</span>
-                <span className="text-xs text-emerald-600 ml-2 font-bold px-1.5 py-0.5 bg-emerald-50 rounded-md">
-                  {pedidosCount.nuevos} nuevos
-                </span>
-              </div>
-              <div className="text-xs font-bold text-teal-600 group-hover:text-teal-700 flex items-center gap-1 mt-2">
-                <span>Gestionar pedidos web</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-              </div>
+              ))}
             </div>
 
-            {/* Card 4: Canal WhatsApp */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Canal WhatsApp</span>
-                <div className="w-8 h-8 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
-                  <MessageSquare className="w-4 h-4" />
+            {/* Formulario Agregar Nuevo Banner */}
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <Plus className="w-4 h-4 text-emerald-600" />
+                <span>Agregar Nuevo Banner Promocional</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">Título del Banner</label>
+                  <input
+                    type="text"
+                    value={newSliderData.title}
+                    onChange={(e) => setNewSliderData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Ej. ¡50% de Descuento en Bebidas!"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800"
+                  />
                 </div>
-              </div>
-              <p className="text-xs font-bold text-slate-800">
-                {empresa?.telefono ? `WhatsApp: ${empresa.telefono}` : 'Recepción Directa'}
-              </p>
-              <div className="text-[11px] text-slate-500 mt-2">
-                Los clientes envían su pedido armado a tu chat oficial
+
+                <div>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">Texto del Botón</label>
+                  <input
+                    type="text"
+                    value={newSliderData.buttonText}
+                    onChange={(e) => setNewSliderData(prev => ({ ...prev, buttonText: e.target.value }))}
+                    placeholder="Ej. Comprar Ahora"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">Subtítulo / Mensaje</label>
+                  <input
+                    type="text"
+                    value={newSliderData.subtitle}
+                    onChange={(e) => setNewSliderData(prev => ({ ...prev, subtitle: e.target.value }))}
+                    placeholder="Ej. Ofertas válidas hasta agotar stock. Envío inmediato por WhatsApp."
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">Tema de Color</label>
+                  <select
+                    value={newSliderData.bgGradient}
+                    onChange={(e) => setNewSliderData(prev => ({ ...prev, bgGradient: e.target.value }))}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800"
+                  >
+                    <option value="from-emerald-700 via-teal-700 to-slate-900">Verde Esmeralda (Principal)</option>
+                    <option value="from-blue-700 via-indigo-800 to-slate-900">Azul Océano</option>
+                    <option value="from-violet-700 via-purple-800 to-slate-900">Morado Neón</option>
+                    <option value="from-amber-600 via-orange-700 to-slate-900">Naranja / Dorado</option>
+                    <option value="from-rose-700 via-red-800 to-slate-900">Rojo Fuego</option>
+                  </select>
+                </div>
+
+                <div className="flex items-end">
+                  <button
+                    type="button"
+                    onClick={handleAddSlider}
+                    className="w-full py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                  >
+                    Guardar Banner
+                  </button>
+                </div>
               </div>
             </div>
 
           </div>
 
-          {/* ── 3. SECCIÓN DE GESTIÓN DE PRODUCTOS EN TIENDA VIRTUAL ── */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-4">
-            
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          {/* Gestión de Productos Visibles en la Tienda */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-slate-900">
-                  Productos en tu Catálogo Virtual
+                <h3 className="text-base font-black text-slate-900">
+                  Visibilidad de Productos en la Tienda
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Activa o desactiva los productos que deseas mostrar en tu catálogo público para clientes.
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Activa o desactiva qué productos se publican en el ecommerce.
                 </p>
               </div>
-
-              {/* Filtro y Búsqueda */}
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    placeholder="Buscar producto..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-8.5 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500"
-                  />
-                  {searchTerm && (
-                    <button 
-                      onClick={() => setSearchTerm('')} 
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-
-                <label className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 cursor-pointer hover:bg-slate-100">
-                  <input
-                    type="checkbox"
-                    checked={onlyActive}
-                    onChange={e => setOnlyActive(e.target.checked)}
-                    className="rounded text-blue-600 focus:ring-0"
-                  />
-                  <span>Solo activos</span>
-                </label>
-              </div>
+              <span className="text-xs font-bold text-slate-500">
+                {products.length} productos en catálogo
+              </span>
             </div>
 
-            {/* Categorías Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-400 mr-1 shrink-0">Categoría:</span>
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 rounded-lg font-semibold shrink-0 transition text-xs ${
-                    selectedCategory === cat
-                      ? 'bg-blue-600 text-white shadow-2xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
+                    <th className="py-2.5 px-3">Producto</th>
+                    <th className="py-2.5 px-3">Categoría</th>
+                    <th className="py-2.5 px-3 text-right">Precio</th>
+                    <th className="py-2.5 px-3 text-center">Estado en Tienda</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {products.slice(0, 50).map((prod) => {
+                    const price = Number(prod.precio_venta || prod.precio || 0);
+                    const isVisible = prod.activo !== false;
+                    return (
+                      <tr key={prod.id} className="hover:bg-slate-50">
+                        <td className="py-2.5 px-3 font-semibold text-slate-800 flex items-center gap-2">
+                          <Package className="w-4 h-4 text-slate-400 shrink-0" />
+                          <span>{prod.nombre}</span>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-500">{prod.categoria || 'General'}</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
+                          Bs. {price.toFixed(2)}
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleProduct(prod.id, isVisible)}
+                            className={`px-3 py-1 rounded-full text-[10px] font-bold transition cursor-pointer ${
+                              isVisible
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-slate-200 text-slate-600'
+                            }`}
+                          >
+                            {isVisible ? 'Visible en Tienda' : 'Oculto'}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-
-            {/* Grid de Productos */}
-            {filteredProducts.length === 0 ? (
-              <div className="py-12 text-center text-slate-400">
-                <Package className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-                <p className="text-xs font-semibold">No se encontraron productos con los filtros aplicados</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 pt-1">
-                {filteredProducts.map(prod => {
-                  const isActive = prod.activo !== false;
-                  return (
-                    <div 
-                      key={prod.id} 
-                      className={`p-3.5 rounded-2xl border transition-all flex flex-col justify-between ${
-                        isActive 
-                          ? 'border-slate-200 bg-white hover:shadow-md' 
-                          : 'border-slate-200/60 bg-slate-50 opacity-75'
-                      }`}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <img
-                          src={prod.foto_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=200&q=80'}
-                          alt={prod.nombre}
-                          className="w-14 h-14 rounded-xl object-cover bg-slate-100 border border-slate-200 shrink-0"
-                          onError={(e) => {
-                            e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=200&q=80';
-                          }}
-                        />
-                        <div className="min-w-0 flex-1">
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-blue-600 block truncate">
-                            {prod.categoria || 'General'}
-                          </span>
-                          <p className="text-xs font-bold text-slate-900 line-clamp-2 leading-tight mt-0.5">
-                            {prod.nombre}
-                          </p>
-                          <div className="flex items-center gap-1.5 mt-1">
-                            <span className="text-xs font-extrabold text-slate-900">
-                              Bs. {Number(prod.precio_venta || 0).toFixed(2)}
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-normal">
-                              • Stock: <strong className="text-slate-700">{prod.stock_actual ?? 10}</strong>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Footer card: Switch de visibilidad en tienda */}
-                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
-                        <span className={`text-[10px] font-bold ${isActive ? 'text-emerald-700' : 'text-slate-400'}`}>
-                          {isActive ? '● En Catálogo' : '○ Oculto'}
-                        </span>
-
-                        <button
-                          type="button"
-                          onClick={() => handleToggleProduct(prod.id, isActive)}
-                          className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1 ${
-                            isActive
-                              ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                              : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                          }`}
-                        >
-                          {isActive ? 'Visible' : 'Activar'}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
           </div>
 
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* MODAL CÓDIGO QR PARA MOSTRADOR                                     */}
-      {/* ══════════════════════════════════════════════════════════════════ */}
-      {isQrModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-slate-100 relative">
-            <button
-              onClick={() => setIsQrModalOpen(false)}
-              className="absolute right-4 top-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* PESTAÑA 3: PEDIDOS WEB INTEGRADOS */}
+      {activeTab === 'pedidos' && (
+        <PedidosWebView 
+          hideSubNav={true} 
+          onOpenPosWithCart={onOpenPosWithCart}
+          onSelectSubView={onSelectView}
+        />
+      )}
 
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 mx-auto flex items-center justify-center">
-              <QrCode className="w-6 h-6" />
+      {/* ── MODAL: CÓDIGO QR DE LA TIENDA ── */}
+      {isQrModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-sm overflow-hidden p-6 text-center space-y-4 animate-scaleUp">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <h3 className="text-sm font-black text-slate-900">Código QR de tu Tienda</h3>
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 inline-block mx-auto shadow-inner">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(storeUrl)}`}
+                alt="QR Code Tienda Virtual"
+                className="w-48 h-48 mx-auto"
+              />
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-slate-900">QR de tu Catálogo Digital</h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Tus clientes pueden escanearlo con la cámara de su celular para abrir tu tienda al instante.
-              </p>
+              <p className="text-xs font-bold text-slate-800 truncate">{empresa?.nombre || 'GLORYPOS'}</p>
+              <p className="text-[11px] text-slate-400 font-mono mt-0.5">{storeUrl}</p>
             </div>
 
-            {/* QR Image Box */}
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 inline-block">
-              <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(storeUrl)}`}
-                alt="QR Tienda Virtual"
-                className="w-48 h-48 mx-auto rounded-lg shadow-2xs"
-              />
-              <p className="text-[11px] font-mono font-semibold text-slate-700 mt-2 truncate max-w-[200px] mx-auto">
-                {storeUrl}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 pt-1">
+            <div className="pt-2 flex gap-2">
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Copy className="w-3.5 h-3.5" />
-                <span>{copied ? '¡Copiado!' : 'Copiar URL'}</span>
+                <span>{copied ? '¡Copiado!' : 'Copiar Link'}</span>
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
+                className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Imprimir QR</span>

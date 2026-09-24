@@ -569,7 +569,7 @@ export default function Sidebar({
               {expandedMenus.tienda_virtual && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
                   <button type="button" onClick={() => handleNav('tienda_virtual')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
-                    • Catálogo Online Web
+                    • Tienda Virtual (Ecommerce)
                   </button>
                   <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
                     • Pedidos Web
