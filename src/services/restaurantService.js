@@ -327,6 +327,33 @@ export const restaurantService = {
     });
   },
 
+  // Módulo Hoteles: carga los platos a la cuenta del huésped en lugar de cobrarlos ahora.
+  // El inventario (recetas) se descuenta cuando el hotel cobra el folio.
+  async cargarAHabitacion(comandaId, reservaId, itemIds = null) {
+    const comanda = await db.comandas.get(comandaId);
+    const reserva = await db.reservas.get(reservaId);
+    if (!comanda || !reserva) return;
+    if (reserva.estado !== 'EN_CASA') throw new Error('El huésped ya no está en casa.');
+    const aCargar = (comanda.items || []).filter(it => itemActivo(it) && !it.pagado && (!itemIds || itemIds.includes(it.id)));
+    const consumos = [...(reserva.consumos || []), ...aCargar.map(it => ({
+      id: uid('cons'),
+      producto_id: it.producto_id,
+      nombre: it.nombre + (it.nota ? ` (${it.nota})` : ''),
+      precio: it.precio,
+      cantidad: it.cantidad,
+      fecha: new Date().toISOString(),
+      origen: `Restaurante · comanda #${comanda.numero}`,
+      pagado: false,
+    }))];
+    await db.reservas.update(reservaId, { consumos });
+    await this.registrarPago(comandaId, aCargar.map(it => it.id), {
+      id: `cargo-${reservaId}`,
+      correlativo: `Cargo a hab. (${reserva.codigo})`,
+      total: round2(aCargar.reduce((a, it) => a + it.precio * it.cantidad, 0)),
+    });
+    window.dispatchEvent(new CustomEvent('hoteles_updated', { detail: { id: reservaId } }));
+  },
+
   // ── Recetas e inventario ──────────────────────────────────────────────
   costoPlato(producto, productosById) {
     if (!Array.isArray(producto?.receta) || producto.receta.length === 0) {

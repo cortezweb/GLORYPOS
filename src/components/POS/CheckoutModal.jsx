@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { restaurantService } from '../../services/restaurantService';
+import { hotelService } from '../../services/hotelService';
 
 export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   const { items, total, count, clearCart, comandaEnCobro } = useCart();
@@ -135,6 +136,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
         cuf: docTipo === 'FACTURA' ? `CUF-GLORY-${Date.now()}-BOL` : null,
         items: [...items],
         comanda_id: comandaEnCobro?.comandaId || null,
+        reserva_id: comandaEnCobro?.reservaId || null,
         mesa: comandaEnCobro?.mesa || null
       };
 
@@ -146,6 +148,15 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
       // GLORYCHEF: marcar los platos cobrados y liberar la mesa si la cuenta quedó saldada
       if (comandaEnCobro?.comandaId) {
         await restaurantService.registrarPago(comandaEnCobro.comandaId, comandaEnCobro.itemIds || [], venta);
+      }
+
+      // Hoteles: registrar el pago en el folio del huésped y, si corresponde, hacer el check-out
+      if (comandaEnCobro?.reservaId) {
+        try {
+          await hotelService.registrarPago(comandaEnCobro.reservaId, items, venta, { checkout: !!comandaEnCobro.checkout });
+        } catch (hotelErr) {
+          alert(`Venta registrada, pero el check-out quedó pendiente: ${hotelErr.message}`);
+        }
       }
 
       // Update client stats

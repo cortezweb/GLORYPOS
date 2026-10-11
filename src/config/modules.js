@@ -19,11 +19,12 @@ export const ALL_CLIENT_MODULES = [
   // El id 'restaurante' se mantiene para no romper empresas ya registradas.
   { id: 'restaurante', label: 'GLORYCHEF · Restaurante', icon: '👨‍🍳', desc: 'Mesas, comandas, cocina y recetas ligadas al inventario' },
   { id: 'farmacia', label: 'Farmacia & Botica', icon: '💊', desc: 'Lotes, vencimientos y boticas' },
-  { id: 'hoteles', label: 'Hoteles & Hospedajes', icon: '🏨', desc: 'Recepción y habitaciones' },
+  { id: 'hoteles', label: 'Hoteles & Hospedajes', icon: '🏨', desc: 'Recepción, reservas, calendario, limpieza y folio del huésped' },
 ];
 
 export const GLORYCHEF_MODULE_ID = 'restaurante';
 export const TIENDA_MODULE_ID = 'tienda_virtual';
+export const HOTEL_MODULE_ID = 'hoteles';
 
 export const MODULE_PRESETS = {
   FULL: {
@@ -45,7 +46,7 @@ export const MODULE_PRESETS = {
   },
   HOTEL: {
     name: 'Hoteles',
-    ids: ['ventas', 'clientes', 'productos', 'finanzas', 'hoteles', 'reportes']
+    ids: ['ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'hoteles', 'reportes']
   },
   FACTURACION: {
     name: 'Facturación Básica',
@@ -81,6 +82,13 @@ export const VIEW_MODULE_MAP = {
   chef_config: 'restaurante',
   farmacia: 'farmacia',
   hoteles: 'hoteles',
+  hotel_recepcion: 'hoteles',
+  hotel_calendario: 'hoteles',
+  hotel_reservas: 'hoteles',
+  hotel_limpieza: 'hoteles',
+  hotel_huespedes: 'hoteles',
+  hotel_reportes: 'hoteles',
+  hotel_config: 'hoteles',
 };
 
 export function isSuperAdminSession(tenantSlug, currentUser) {

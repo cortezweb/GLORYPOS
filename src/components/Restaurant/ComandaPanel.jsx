@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import {
   ArrowLeft, Search, Send, Receipt, Printer, Scissors, Trash2, Minus, Plus,
-  ArrowRightLeft, StickyNote, CheckCheck, CreditCard, Ban
+  ArrowRightLeft, StickyNote, CheckCheck, CreditCard, Ban, BedDouble
 } from 'lucide-react';
+import { db } from '../../db/dexie';
+import { useModules } from '../../hooks/useModules';
 import { useAuth } from '../../context/AuthContext';
 import {
   restaurantService, ITEM_ESTADOS, TIPOS_PEDIDO, totalComanda, totalPendienteCobro, itemActivo
@@ -27,6 +29,25 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
   const [dividiendo, setDividiendo] = useState(false);
   const [seleccion, setSeleccion] = useState([]);
   const [cambiandoMesa, setCambiandoMesa] = useState(false);
+  const { hotelActivo } = useModules();
+  const [huespedes, setHuespedes] = useState(null); // lista de huéspedes en casa para "cargar a habitación"
+
+  const abrirCargoHabitacion = async () => {
+    if (huespedes) { setHuespedes(null); return; }
+    const [reservas, habs] = await Promise.all([db.reservas.where('estado').equals('EN_CASA').toArray(), db.habitaciones.toArray()]);
+    const hab = Object.fromEntries(habs.map(h => [h.id, h.numero]));
+    setHuespedes(reservas.map(r => ({ id: r.id, nombre: r.huesped?.nombre, numero: hab[r.habitacion_id] })));
+  };
+
+  const cargarA = async (h) => {
+    if (!window.confirm(`¿Cargar ${money(totalPendienteCobro(comanda))} a la habitación ${h.numero} (${h.nombre})?`)) return;
+    try {
+      await restaurantService.cargarAHabitacion(comanda.id, h.id, dividiendo && seleccion.length ? seleccion : null);
+      setHuespedes(null);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   // La carta: todo lo vendible que no sea insumo de cocina
   const carta = useMemo(() => productos.filter(p => !p.es_insumo && p.activo !== false), [productos]);
@@ -303,6 +324,26 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
               >
                 <CreditCard className="w-4 h-4" /> Cobrar {money(totalPendienteCobro(comanda))}
               </button>
+            )}
+            {hotelActivo && (
+              <button
+                type="button"
+                disabled={cobrables.length === 0}
+                onClick={abrirCargoHabitacion}
+                className="col-span-2 py-2 rounded-xl border border-sky-200 text-sky-800 bg-sky-50 hover:bg-sky-100 disabled:opacity-40 flex items-center justify-center gap-1.5"
+              >
+                <BedDouble className="w-4 h-4" /> Cargar a habitación
+              </button>
+            )}
+            {huespedes && (
+              <div className="col-span-2 border border-sky-200 rounded-2xl p-2 space-y-1">
+                {huespedes.length === 0 && <p className="text-[11px] text-slate-400 font-normal">No hay huéspedes en casa.</p>}
+                {huespedes.map(h => (
+                  <button key={h.id} type="button" onClick={() => cargarA(h)} className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-sky-50 text-[11px]">
+                    Hab. {h.numero} · {h.nombre}
+                  </button>
+                ))}
+              </div>
             )}
             <button type="button" onClick={anularComanda} className="col-span-2 py-1.5 rounded-xl text-rose-600 hover:bg-rose-50 flex items-center justify-center gap-1">
               <Ban className="w-3.5 h-3.5" /> Anular comanda

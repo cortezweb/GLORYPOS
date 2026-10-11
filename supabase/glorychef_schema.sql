@@ -60,23 +60,30 @@ CREATE TABLE IF NOT EXISTS public.glorychef_recetas (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-ALTER TABLE public.salones ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.mesas ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.comandas ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.glorychef_recetas ENABLE ROW LEVEL SECURITY;
-
--- Mismo esquema de acceso que el resto de tablas del proyecto (supabase_master_schema.sql)
-DROP POLICY IF EXISTS "Allow public access salones" ON public.salones;
-CREATE POLICY "Allow public access salones" ON public.salones FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow public access mesas" ON public.mesas;
-CREATE POLICY "Allow public access mesas" ON public.mesas FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow public access comandas" ON public.comandas;
-CREATE POLICY "Allow public access comandas" ON public.comandas FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow public access glorychef_recetas" ON public.glorychef_recetas;
-CREATE POLICY "Allow public access glorychef_recetas" ON public.glorychef_recetas FOR ALL USING (true) WITH CHECK (true);
+-- Seguridad: si ya ejecutaste supabase_phase2_security_rls.sql se aplica el mismo
+-- aislamiento por empresa (rls_tenant_*); si no, se usa el acceso abierto del esquema maestro.
+DO $$
+DECLARE
+  tbl text;
+  tablas text[] := ARRAY['salones', 'mesas', 'comandas', 'glorychef_recetas'];
+  con_tenant boolean := EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'get_current_tenant_id');
+BEGIN
+  FOREACH tbl IN ARRAY tablas LOOP
+    EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY;', tbl);
+    EXECUTE format('DROP POLICY IF EXISTS "Allow public access %s" ON public.%I;', tbl, tbl);
+    EXECUTE format('DROP POLICY IF EXISTS rls_tenant_%I ON public.%I;', tbl, tbl);
+    IF con_tenant THEN
+      EXECUTE format('
+        CREATE POLICY rls_tenant_%I ON public.%I
+        FOR ALL TO authenticated, anon
+        USING (empresa_id = public.get_current_tenant_id() OR public.is_super_admin() OR empresa_id = ''empresa_activa'')
+        WITH CHECK (empresa_id = public.get_current_tenant_id() OR public.is_super_admin() OR empresa_id = ''empresa_activa'');
+      ', tbl, tbl);
+    ELSE
+      EXECUTE format('CREATE POLICY "Allow public access %s" ON public.%I FOR ALL USING (true) WITH CHECK (true);', tbl, tbl);
+    END IF;
+  END LOOP;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_salones_empresa ON public.salones(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_mesas_empresa ON public.mesas(empresa_id);

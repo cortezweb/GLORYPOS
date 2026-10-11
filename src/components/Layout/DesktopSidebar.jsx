@@ -1050,15 +1050,26 @@ export default function DesktopSidebar({
             </button>
             {expandedMenus.hoteles && (
               <div className="pl-8 pr-2 py-1 space-y-0.5">
-                <button
-                  type="button"
-                  onClick={() => onSelectView('hoteles')}
-                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'hoteles' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                >
-                  • Habitaciones & Check-in
-                </button>
+                {[
+                  ['hotel_recepcion', 'Recepción & Habitaciones'],
+                  ['hotel_calendario', 'Calendario de ocupación'],
+                  ['hotel_reservas', 'Reservas'],
+                  ['hotel_limpieza', 'Limpieza & Mantenimiento'],
+                  ['hotel_huespedes', 'Libro de huéspedes'],
+                  ['hotel_reportes', 'Reportes hoteleros'],
+                  ['hotel_config', 'Habitaciones & Tarifas'],
+                ].map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => onSelectView(id)}
+                    className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                      currentView === id || (id === 'hotel_recepcion' && currentView === 'hoteles') ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
+                    }`}
+                  >
+                    • {label}
+                  </button>
+                ))}
               </div>
             )}
           </div>

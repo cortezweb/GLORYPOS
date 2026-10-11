@@ -1125,7 +1125,7 @@ export const syncService = {
         summary.errors.push({ tabla: 'reversiones', error: revE.message });
       }
 
-      // 18. Sincronizar GLORYCHEF (salones, mesas, comandas y recetas). Cada tabla aislada.
+      // 18. Sincronizar módulos especializados: GLORYCHEF (salones, mesas, comandas, recetas) y Hoteles. Cada tabla aislada.
       const glorychefTablas = [
         { tabla: 'salones', leer: () => db.salones?.toArray() || [], mapear: s => ({ id: String(s.id), empresa_id: empresaId, nombre: s.nombre, orden: Number(s.orden) || 0 }) },
         { tabla: 'mesas', leer: () => db.mesas?.toArray() || [], mapear: m => ({ id: String(m.id), empresa_id: empresaId, salon_id: m.salon_id, numero: String(m.numero), capacidad: Number(m.capacidad) || 1, estado: m.estado, comanda_id: m.comanda_id || null }) },
@@ -1149,6 +1149,21 @@ export const syncService = {
           }),
           conflicto: 'producto_id'
         },
+        // Módulo Hoteles
+        { tabla: 'hab_tipos', leer: () => db.hab_tipos?.toArray() || [], mapear: t => ({ id: String(t.id), empresa_id: empresaId, nombre: t.nombre, capacidad: Number(t.capacidad) || 1, tarifa: Number(t.tarifa) || 0, descripcion: t.descripcion || null }) },
+        { tabla: 'habitaciones', leer: () => db.habitaciones?.toArray() || [], mapear: h => ({ id: String(h.id), empresa_id: empresaId, numero: String(h.numero), piso: Number(h.piso) || 0, tipo_id: h.tipo_id, limpieza: h.limpieza || 'LIMPIA', nota: h.nota || null }) },
+        {
+          tabla: 'reservas',
+          leer: () => db.reservas?.toArray() || [],
+          mapear: r => ({
+            id: String(r.id), empresa_id: empresaId, codigo: r.codigo, habitacion_id: r.habitacion_id, estado: r.estado,
+            llegada: r.llegada, salida: r.salida, salida_real: r.salida_real || null, tarifa: Number(r.tarifa) || 0,
+            adultos: Number(r.adultos) || 1, ninos: Number(r.ninos) || 0, canal: r.canal || 'Directo', huesped: r.huesped || {},
+            consumos: r.consumos || [], pagos: r.pagos || [], notas: r.notas || null,
+            checkin_at: r.checkin_at || null, checkout_at: r.checkout_at || null, motivo_cancelacion: r.motivo_cancelacion || null
+          })
+        },
+        { tabla: 'huespedes', leer: () => db.huespedes?.toArray() || [], mapear: h => ({ id: String(h.id), empresa_id: empresaId, nombre: h.nombre, tipo_doc: h.tipo_doc || null, documento: h.documento || null, nacionalidad: h.nacionalidad || null, telefono: h.telefono || null, email: h.email || null, visitas: Number(h.visitas) || 0 }) },
       ];
       for (const t of glorychefTablas) {
         try {

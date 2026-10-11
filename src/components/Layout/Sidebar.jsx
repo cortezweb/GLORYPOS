@@ -575,7 +575,7 @@ export default function Sidebar({
 
           {/* Hoteles */}
           {hasModule('hoteles') && (
-            <button type="button" onClick={() => handleNav('hoteles')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
+            <button type="button" onClick={() => handleNav('hotel_recepcion')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <BedDouble className="w-4 h-4 text-slate-500" />
               <span>Hoteles</span>
             </button>

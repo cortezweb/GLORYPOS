@@ -503,7 +503,13 @@ function MainShell() {
                 />
               )}
               {['farmacia'].includes(currentView) && <FarmaciaView />}
-              {['hoteles'].includes(currentView) && <HotelesView />}
+              {['hoteles', 'hotel_recepcion', 'hotel_calendario', 'hotel_reservas', 'hotel_limpieza', 'hotel_huespedes', 'hotel_reportes', 'hotel_config'].includes(currentView) && (
+                <HotelesView
+                  currentView={currentView}
+                  onSelectSubView={(v) => setCurrentView(v)}
+                  onOpenCheckout={() => setIsCheckoutOpen(true)}
+                />
+              )}
               {['comprobantes_pendientes', 'pendientes'].includes(currentView) && <ComprobantesPendientesView />}
 
               {/* Consola SuperAdmin SaaS */}
@@ -542,7 +548,7 @@ function MainShell() {
                 'contabilidad',
                 'restaurante', 'chef_mesas', 'chef_pedidos', 'chef_cocina', 'chef_carta', 'chef_reportes', 'chef_config',
                 'farmacia',
-                'hoteles',
+                'hoteles', 'hotel_recepcion', 'hotel_calendario', 'hotel_reservas', 'hotel_limpieza', 'hotel_huespedes', 'hotel_reportes', 'hotel_config',
                 'administracion', 'admin', 'configuracion', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios',
                 'modulos'
               ].includes(currentView) && (
