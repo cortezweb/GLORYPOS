@@ -216,7 +216,7 @@ function MainShell() {
   }
 
   return (
-    <div className={`min-h-screen ${currentView === 'pos' ? 'lg:h-screen lg:overflow-hidden' : ''} w-full bg-slate-100 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-hidden`}>
+    <div className={`min-h-screen ${currentView === 'pos' ? 'lg:h-screen lg:overflow-hidden' : ''} w-full bg-slate-100 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-clip`}>
       {/* BEGIN: Persistent Desktop Navigation Sidebar (>= 1024px) */}
       <DesktopSidebar
         currentView={currentView}
