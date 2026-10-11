@@ -13,6 +13,7 @@ import { db } from '../../db/dexie';
 import { tenantService, slugify } from '../../services/tenantService';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { hashText } from '../../utils/crypto';
+import { ALL_CLIENT_MODULES, MODULE_PRESETS } from '../../config/modules';
 import { playCashChime } from '../../utils/audio';
 import GloryLogo from '../Common/GloryLogo';
 
@@ -23,55 +24,13 @@ export const RUBROS = [
   { id: 'ROPA', label: 'Ropa & Calzado', icon: '👗' },
   { id: 'CARNICERIA', label: 'Carnicería & Frial', icon: '🥩' },
   { id: 'HELADERIA', label: 'Heladería & Cafetería', icon: '🍦' },
+  { id: 'RESTAURANTE', label: 'Restaurante (GLORYCHEF)', icon: '👨‍🍳' },
 ];
 
 export const CIUDADES = ['Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Oruro', 'Potosí', 'Beni', 'Pando'];
 
-export const ALL_CLIENT_MODULES = [
-  { id: 'preventa', label: 'Preventa & Cotizaciones', icon: '📝', desc: 'Cotizaciones, proformas y pedidos' },
-  { id: 'ventas', label: 'Ventas & Facturación (POS)', icon: '🛒', desc: 'Caja rápida, facturas SIAT / SUNAT y boletas' },
-  { id: 'compras', label: 'Compras & Proveedores', icon: '🛍️', desc: 'Facturas de compras y proveedores' },
-  { id: 'clientes', label: 'Directorio de Clientes', icon: '👥', desc: 'Directorio, cuentas y crédito' },
-  { id: 'productos', label: 'Productos / Servicios', icon: '🏷️', desc: 'Catálogo con variantes, códigos y precios' },
-  { id: 'inventario', label: 'Inventario & Kardex', icon: '📦', desc: 'Stock valorizado y ajustes de merma' },
-  { id: 'finanzas', label: 'Finanzas & Caja Chica', icon: '💵', desc: 'Arqueos, movimientos de turno e ingresos/egresos' },
-  { id: 'guias_remision', label: 'Guías de Remisión', icon: '🚚', desc: 'Guías de despacho electrónicas' },
-  { id: 'comprobantes_pendientes', label: 'Comprobantes Pendientes', icon: '⏳', desc: 'Cola offline y contingencia' },
-  { id: 'documentos_avanzados', label: 'Comprobantes Avanzados', icon: '📄', desc: 'Retenciones, percepciones y especiales' },
-  { id: 'contabilidad', label: 'Contabilidad & Libros', icon: '🧮', desc: 'Exportación PLE, SIAT y resúmenes' },
-  { id: 'reportes', label: 'Reportes & Analíticas', icon: '📊', desc: 'Métricas de ventas, utilidades y Excel' },
-  { id: 'tienda_virtual', label: 'Tienda Virtual', icon: '🌐', desc: 'Catálogo online y pedidos WhatsApp' },
-  { id: 'restaurante', label: 'Restaurante / Mesas', icon: '🍽️', desc: 'Comandas, salones y cocina' },
-  { id: 'farmacia', label: 'Farmacia & Botica', icon: '💊', desc: 'Lotes, vencimientos y boticas' },
-  { id: 'hoteles', label: 'Hoteles & Hospedajes', icon: '🏨', desc: 'Recepción y habitaciones' },
-];
-
-export const MODULE_PRESETS = {
-  FULL: {
-    name: 'Full Suite (16)',
-    ids: ALL_CLIENT_MODULES.map(m => m.id)
-  },
-  RETAIL: {
-    name: 'Comercio / Retail',
-    ids: ['preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'reportes', 'tienda_virtual']
-  },
-  GASTRONOMIA: {
-    name: 'Restaurante',
-    ids: ['ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'restaurante', 'reportes']
-  },
-  FARMACIA: {
-    name: 'Farmacia',
-    ids: ['ventas', 'compras', 'clientes', 'productos', 'inventario', 'finanzas', 'farmacia', 'guias_remision', 'reportes']
-  },
-  HOTEL: {
-    name: 'Hoteles',
-    ids: ['ventas', 'clientes', 'productos', 'finanzas', 'hoteles', 'reportes']
-  },
-  FACTURACION: {
-    name: 'Facturación Básica',
-    ids: ['preventa', 'ventas', 'clientes', 'productos', 'reportes']
-  }
-};
+// Catálogo de módulos y presets: ver src/config/modules.js (registro central)
+export { ALL_CLIENT_MODULES, MODULE_PRESETS };
 
 // Paletas de Color para el Admin Dashboard
 const COLOR_THEMES = {
@@ -376,6 +335,7 @@ export default function SuperAdminView({
     if (MODULE_PRESETS[presetKey]) {
       setDrawerData(prev => ({
         ...prev,
+        rubro: MODULE_PRESETS[presetKey].rubro || prev.rubro,
         modulos_activos: [...MODULE_PRESETS[presetKey].ids]
       }));
     }

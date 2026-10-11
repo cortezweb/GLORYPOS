@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import GloryLogo from '../Common/GloryLogo';
+import { useModules } from '../../hooks/useModules';
 
 export default function DesktopSidebar({ 
   currentView, 
@@ -44,23 +45,7 @@ export default function DesktopSidebar({
   };
 
   // Permisos: Superadmin ve todo; cliente ve módulos activos + módulos estándar
-  const isSuperAdmin = tenantSlug === 'admin' || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
-  const allowedModules = empresa?.modulos_activos || [
-    'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
-    'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
-    'contabilidad', 'reportes', 'administracion', 'modulos', 'tienda_virtual'
-  ];
-
-  const hasModule = (modId) => {
-    if (isSuperAdmin) return true;
-    const alwaysVisible = [
-      'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
-      'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
-      'contabilidad', 'reportes', 'administracion', 'modulos'
-    ];
-    if (alwaysVisible.includes(modId)) return true;
-    return allowedModules.includes(modId);
-  };
+  const { hasModule, isSuperAdmin } = useModules();
 
   // Auto-expandir el menú si la vista actual pertenece a ese módulo
   useEffect(() => {
@@ -989,21 +974,31 @@ export default function DesktopSidebar({
             >
               <div className="flex items-center gap-2.5">
                 <UtensilsCrossed className="w-4 h-4 text-slate-500" />
-                <span>Restaurante</span>
+                <span>GLORYCHEF</span>
               </div>
               <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expandedMenus.restaurante ? 'rotate-180' : ''}`} />
             </button>
             {expandedMenus.restaurante && (
               <div className="pl-8 pr-2 py-1 space-y-0.5">
-                <button
-                  type="button"
-                  onClick={() => onSelectView('restaurante')}
-                  className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'restaurante' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                >
-                  • Mesas, Salones & Comandas
-                </button>
+                {[
+                  ['chef_mesas', 'Mesas & Comandas'],
+                  ['chef_pedidos', 'Para llevar & Delivery'],
+                  ['chef_cocina', 'Cocina (KDS)'],
+                  ['chef_carta', 'Carta & Recetas'],
+                  ['chef_reportes', 'Reportes GLORYCHEF'],
+                  ['chef_config', 'Salones & Mesas'],
+                ].map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => onSelectView(id)}
+                    className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
+                      currentView === id || (id === 'chef_mesas' && currentView === 'restaurante') ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
+                    }`}
+                  >
+                    • {label}
+                  </button>
+                ))}
               </div>
             )}
           </div>

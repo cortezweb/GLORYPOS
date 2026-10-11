@@ -290,10 +290,12 @@ export const tenantService = {
       // 2. En Supabase si está configurado y la columna existe
       if (isSupabaseConfigured && navigator.onLine && supabase) {
         try {
-          await supabase
+          // Se filtra por el slug del cliente editado, no por la empresa activa en este navegador
+          const { error } = await supabase
             .from('empresas')
             .update({ modulos_activos, updated_at: new Date().toISOString() })
-            .eq('id', active?.id || 'empresa_activa');
+            .eq('slug', clean);
+          if (error) throw error;
         } catch (sErr) {
           console.warn('[tenantService] Supabase modulos_activos pendiente de migración SQL:', sErr);
         }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  X, Check, Store, Wrench, Pill, Shirt, Beef, IceCream, 
+  X, Check, Store, Wrench, Pill, Shirt, Beef, IceCream, ChefHat, 
   Sparkles, Layers, ArrowRight 
 } from 'lucide-react';
 import { db } from '../../db/dexie';
@@ -12,7 +12,8 @@ const ICONS = {
   Pill: Pill,
   Shirt: Shirt,
   Beef: Beef,
-  IceCream: IceCream
+  IceCream: IceCream,
+  ChefHat: ChefHat
 };
 
 export default function RubroSelectorModal({ isOpen, onClose, currentRubro = 'ABARROTES', onRubroChanged }) {

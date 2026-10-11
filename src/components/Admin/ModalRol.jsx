@@ -215,6 +215,22 @@ export const COLUMNA_DERECHA_CATEGORIAS = [
     ]
   },
   {
+    id: 'glorychef',
+    nombre: 'GLORYCHEF (RESTAURANTE)',
+    col1: [
+      { id: 'chef_ver_mesas', label: 'Ver mesas y abrir comandas (mozo)' },
+      { id: 'chef_tomar_pedidos', label: 'Tomar pedidos y enviar a cocina' },
+      { id: 'chef_anular_platos', label: 'Anular platos enviados a cocina' },
+      { id: 'chef_cobrar', label: 'Cobrar y dividir cuentas (cajero)' }
+    ],
+    col2: [
+      { id: 'chef_ver_cocina', label: 'Ver pantalla de cocina (cocinero)' },
+      { id: 'chef_gestionar_recetas', label: 'Gestionar carta y recetas' },
+      { id: 'chef_configurar_salones', label: 'Configurar salones y mesas' },
+      { id: 'chef_ver_reportes', label: 'Ver reportes de restaurante' }
+    ]
+  },
+  {
     id: 'empresa',
     nombre: 'EMPRESA',
     col1: [

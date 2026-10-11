@@ -1,9 +1,45 @@
 import React from 'react';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Receipt, Sparkles } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Receipt, Sparkles, ChefHat } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useModules } from '../../hooks/useModules';
+import { useAuth } from '../../context/AuthContext';
+import { db } from '../../db/dexie';
+import { restaurantService } from '../../services/restaurantService';
 
 export default function DesktopCartSidebar({ onOpenCheckout }) {
-  const { items, total, count, updateQuantity, removeFromCart, clearCart, isBumping } = useCart();
+  const { items, total, count, updateQuantity, removeFromCart, clearCart, isBumping, loadItems, comandaEnCobro } = useCart();
+  const { glorychefActivo } = useModules();
+  const { currentUser } = useAuth();
+
+  // GLORYCHEF: venta de mostrador que también va a cocina (para llevar). La comanda se cierra al cobrar.
+  const enviarACocina = async () => {
+    const now = new Date().toISOString();
+    const productos = await db.productos_tienda.bulkGet(items.map(i => i.productId));
+    const comanda = await restaurantService.crearComanda({
+      tipo: 'LLEVAR',
+      origen: 'POS',
+      mozo: currentUser?.nombre || '',
+      cliente_nombre: 'Mostrador',
+      items: items.map((i, idx) => ({
+        id: `it-${Date.now()}-${idx}`,
+        producto_id: i.productId,
+        nombre: i.nombre,
+        categoria: i.categoria,
+        precio: i.precio,
+        cantidad: i.cantidad,
+        nota: '',
+        estacion: productos[idx]?.estacion || 'COCINA',
+        estado: 'ENVIADO',
+        ronda: 1,
+        enviado_at: now,
+        listo_at: null,
+        pagado: false,
+      })),
+    });
+    await restaurantService.updateComanda(comanda.id, { ultima_ronda_at: now });
+    const enCobro = restaurantService.itemsParaCobro(comanda);
+    loadItems(enCobro, { comandaId: comanda.id, itemIds: enCobro.map(i => i.customDetails.item_id), mesa: null });
+  };
 
   return (
     <aside className="w-84 xl:w-96 bg-white border-l border-gray-200 flex flex-col h-full shadow-xs shrink-0 z-20">
@@ -189,6 +225,20 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
           )}
         </div>
 
+        {glorychefActivo && items.length > 0 && !comandaEnCobro && (
+          <button
+            type="button"
+            onClick={enviarACocina}
+            className="w-full mb-2 py-2.5 px-4 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl font-bold text-xs flex items-center justify-center gap-2"
+          >
+            <ChefHat className="w-4 h-4" /> Enviar a cocina (para llevar)
+          </button>
+        )}
+        {comandaEnCobro && (
+          <p className="mb-2 text-[11px] font-bold text-orange-700 text-center">
+            Comanda GLORYCHEF en cocina · se cierra al cobrar
+          </p>
+        )}
         <button
           onClick={onOpenCheckout}
           disabled={items.length === 0}

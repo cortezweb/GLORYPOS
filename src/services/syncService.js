@@ -224,6 +224,8 @@ export const syncService = {
       retenciones: 0,
       percepciones: 0,
       reversiones: 0,
+      glorychef: 0,
+      glorychef_errors: [],
       errors: []
     };
 
@@ -1121,6 +1123,48 @@ export const syncService = {
         }
       } catch (revE) {
         summary.errors.push({ tabla: 'reversiones', error: revE.message });
+      }
+
+      // 18. Sincronizar GLORYCHEF (salones, mesas, comandas y recetas). Cada tabla aislada.
+      const glorychefTablas = [
+        { tabla: 'salones', leer: () => db.salones?.toArray() || [], mapear: s => ({ id: String(s.id), empresa_id: empresaId, nombre: s.nombre, orden: Number(s.orden) || 0 }) },
+        { tabla: 'mesas', leer: () => db.mesas?.toArray() || [], mapear: m => ({ id: String(m.id), empresa_id: empresaId, salon_id: m.salon_id, numero: String(m.numero), capacidad: Number(m.capacidad) || 1, estado: m.estado, comanda_id: m.comanda_id || null }) },
+        {
+          tabla: 'comandas',
+          leer: () => db.comandas?.toArray() || [],
+          mapear: c => ({
+            id: String(c.id), empresa_id: empresaId, numero: c.numero, tipo: c.tipo, origen: c.origen || 'GLORYCHEF',
+            mesa_id: c.mesa_id || null, mesa_numero: c.mesa_numero || null, mozo: c.mozo || null, comensales: Number(c.comensales) || 1,
+            cliente_nombre: c.cliente_nombre || null, telefono: c.telefono || null, direccion: c.direccion || null,
+            estado: c.estado, items: c.items || [], ventas: c.ventas || [], venta_id: c.venta_id || null,
+            pedido_web_id: c.pedido_web_id || null, fecha_apertura: c.fecha_apertura, fecha_cierre: c.fecha_cierre || null
+          })
+        },
+        {
+          tabla: 'glorychef_recetas',
+          leer: async () => (await db.productos_tienda.toArray()).filter(p => p.es_plato || p.es_insumo || (Array.isArray(p.receta) && p.receta.length > 0)),
+          mapear: p => ({
+            producto_id: String(p.id), empresa_id: empresaId, es_plato: !!p.es_plato, es_insumo: !!p.es_insumo,
+            estacion: p.estacion || 'COCINA', merma_pct: Number(p.merma_pct) || 0, receta: Array.isArray(p.receta) ? p.receta : []
+          }),
+          conflicto: 'producto_id'
+        },
+      ];
+      for (const t of glorychefTablas) {
+        try {
+          const filas = await t.leer();
+          if (!filas || filas.length === 0) continue;
+          const payload = filas.map(f => ({ ...t.mapear(f), updated_at: new Date().toISOString() }));
+          const { error: gcErr } = await supabase.from(t.tabla).upsert(payload, { onConflict: t.conflicto || 'id' });
+          if (gcErr) {
+            // No marca toda la sincronización como fallida si aún no se ejecutó glorychef_schema.sql
+            summary.glorychef_errors.push({ tabla: t.tabla, error: gcErr.message });
+          } else {
+            summary.glorychef += payload.length;
+          }
+        } catch (gcE) {
+          summary.glorychef_errors.push({ tabla: t.tabla, error: gcE.message });
+        }
       }
 
       // Notificar a la interfaz de usuario
