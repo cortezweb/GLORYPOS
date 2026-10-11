@@ -249,7 +249,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
                 type="text"
                 value={desde}
                 onChange={(e) => setDesde(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -265,7 +265,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
                 type="text"
                 value={hasta}
                 onChange={(e) => setHasta(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -279,7 +279,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
             <select
               value={sucursal}
               onChange={(e) => setSucursal(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todas">Todas</option>
               <option value="Principal">Principal</option>
@@ -295,7 +295,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
             <select
               value={comprobante}
               onChange={(e) => setComprobante(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todos">Todos</option>
               <option value="Factura">Factura</option>
@@ -312,7 +312,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
             <select
               value={metodoPago}
               onChange={(e) => setMetodoPago(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todos">Todos</option>
               <option value="Efectivo">Efectivo</option>
@@ -330,7 +330,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
             <select
               value={modoPago}
               onChange={(e) => setModoPago(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todos">Todos</option>
               <option value="Contado">Contado</option>
@@ -346,7 +346,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
             <select
               value={estadoVenta}
               onChange={(e) => setEstadoVenta(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todas">Todas</option>
               <option value="Pagada">Pagada</option>
@@ -370,7 +370,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar cliente o documento..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] placeholder:text-slate-400"
             />
           </div>
 
@@ -386,7 +386,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
             <button
               type="button"
               onClick={handleExportExcel}
-              className="px-4 py-2 bg-[#12b76a] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-[#1E2022] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Exportar Excel</span>
@@ -400,7 +400,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
         {/* Fila 1 (8 tarjetas) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
           {/* Card 1: TOTAL NO ANULADAS */}
-          <div className="p-3 rounded-2xl bg-[#f5f3ff] border border-violet-200/80 space-y-0.5">
+          <div className="p-3 rounded-2xl bg-[#f5f3ff] border border-[#FFB627]/20 space-y-0.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#7c3aed] block">
               TOTAL NO ANULADAS
             </span>
@@ -413,8 +413,8 @@ export default function ReporteVentasTab({ ventas = [] }) {
           </div>
 
           {/* Card 2: NETO COBRABLE */}
-          <div className="p-3 rounded-2xl bg-[#ecfdf5] border border-emerald-200/80 space-y-0.5">
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#059669] block">
+          <div className="p-3 rounded-2xl bg-[#FDFBF7] border border-[#FF6B35]/20 space-y-0.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B35] block">
               NETO COBRABLE
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
@@ -459,7 +459,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
           </div>
 
           {/* Card 6: YAPE */}
-          <div className="p-3 rounded-2xl bg-[#faf5ff] border border-purple-200/80 space-y-0.5">
+          <div className="p-3 rounded-2xl bg-[#faf5ff] border border-[#FFB627]/20 space-y-0.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#9333ea] block">
               YAPE
             </span>
@@ -479,7 +479,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
           </div>
 
           {/* Card 8: PLIN */}
-          <div className="p-3 rounded-2xl bg-[#f0fdfa] border border-teal-200/80 space-y-0.5">
+          <div className="p-3 rounded-2xl bg-[#FDFBF7] border border-[#FFB627]/50/80 space-y-0.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#0d9488] block">
               PLIN
             </span>
@@ -585,7 +585,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
                   <td className="py-2.5 px-3 text-slate-600 text-[11px]">{row.tipo_operacion}</td>
                   <td className="py-2.5 px-3 text-slate-700 font-medium">{row.metodo_pago}</td>
                   <td className="py-2.5 px-3">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">
                       {row.estado}
                     </span>
                   </td>
@@ -602,3 +602,10 @@ export default function ReporteVentasTab({ ventas = [] }) {
     </div>
   );
 }
+
+
+
+
+
+
+

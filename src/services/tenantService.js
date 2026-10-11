@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { db } from '../db/dexie';
+import { db, switchTenantDatabase } from '../db/dexie';
 
 const RESERVED_SUBDOMAINS = ['www', 'app', 'pos', 'api', 'cdn', 'static', 'mail', 'staging', 'dev'];
 
@@ -255,7 +255,10 @@ export const tenantService = {
       }
     }
 
-    // 2. Guardar en Dexie como empresa activa
+    // 2. Cambiar a la base de datos local aislada del nuevo inquilino
+    await switchTenantDatabase(slug);
+
+    // Guardar en Dexie como empresa activa dentro de su base aislada
     await db.config_empresa.put({
       ...newEmpresa,
       id: 'empresa_activa',

@@ -150,7 +150,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
 
   // 5. Tipo de Comprobante
   const tiposComprobante = [
-    { label: 'Boleta de Venta', valor: 45, color: '#10b981' },
+    { label: 'Boleta de Venta', valor: 45, color: '#FF6B35' },
     { label: 'Factura', valor: 30, color: '#8b5cf6' },
     { label: 'Nota de Venta', valor: 15, color: '#06b6d4' },
     { label: 'GUIA DE REMISION', valor: 4, color: '#f59e0b' },
@@ -161,7 +161,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
 
   // 6. Métodos de Pago
   const metodosPago = [
-    { label: 'Efectivo', valor: 65, color: '#10b981' },
+    { label: 'Efectivo', valor: 65, color: '#FF6B35' },
     { label: 'Yape', valor: 15, color: '#8b5cf6' },
     { label: 'Plin', valor: 8, color: '#06b6d4' },
     { label: 'Trf. Banco', valor: 7, color: '#ef4444' },
@@ -170,12 +170,12 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
 
   // 7. Estado de Venta
   const estadosVenta = [
-    { label: 'Pagado', valor: 100, color: '#10b981' }
+    { label: 'Pagado', valor: 100, color: '#FF6B35' }
   ];
 
   // 8. Ventas por Categoría de Producto
   const categoriasProductos = [
-    { label: 'ABARROTES', valor: 28, color: '#10b981' },
+    { label: 'ABARROTES', valor: 28, color: '#FF6B35' },
     { label: 'BEBIDAS', valor: 18, color: '#06b6d4' },
     { label: 'SNACKS', valor: 12, color: '#3b82f6' },
     { label: 'LACTEOS', valor: 10, color: '#8b5cf6' },
@@ -307,7 +307,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
                   setFechaDesde(e.target.value);
                   setQuickPeriod('personalizado');
                 }}
-                className="pl-2.5 pr-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="pl-2.5 pr-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
               />
             </div>
           </div>
@@ -322,7 +322,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
                   setFechaHasta(e.target.value);
                   setQuickPeriod('personalizado');
                 }}
-                className="pl-2.5 pr-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="pl-2.5 pr-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
               />
             </div>
           </div>
@@ -361,7 +361,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               VENTAS DEL PERIODO
             </span>
-            <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <ShoppingCart className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -383,7 +383,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               VENTAS HOY
             </span>
-            <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -405,7 +405,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               CLIENTES NUEVOS
             </span>
-            <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#FDFBF7] text-[#FF6B35] flex items-center justify-center">
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -463,10 +463,10 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
         {/* Card 6: Total Facturado con Detracción */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs space-y-1.5 relative">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6B35]">
               TOTAL FACTURADO CON DETRACCIÓN
             </span>
-            <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <FileText className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -481,10 +481,10 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
         {/* Card 7: Total Facturado (Neto) */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs space-y-1.5 relative">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6B35]">
               TOTAL FACTURADO (NETO)
             </span>
-            <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <ShoppingCart className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -524,10 +524,10 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
         {/* Card 9: Aceptados SUNAT */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs space-y-1.5 relative">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6B35]">
               ACEPTADOS SUNAT
             </span>
-            <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -671,7 +671,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
                       <path
                         d={pathD}
                         fill="none"
-                        stroke="#10b981"
+                        stroke="#FF6B35"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -683,7 +683,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
                           cy={pt.y}
                           r="3"
                           fill="#ffffff"
-                          stroke="#10b981"
+                          stroke="#FF6B35"
                           strokeWidth="2"
                           className="hover:scale-150 transition cursor-pointer"
                         >
@@ -713,7 +713,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
             {/* Leyenda inferior */}
             <div className="flex items-center justify-center gap-6 mt-3 text-xs font-medium text-slate-600">
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B35]"></span>
                 <span>Ventas</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -750,7 +750,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
                   cy="18"
                   r="14"
                   fill="transparent"
-                  stroke="#10b981"
+                  stroke="#FF6B35"
                   strokeWidth="4"
                   strokeDasharray="86.5 1.5"
                   strokeDashoffset="0"
@@ -762,7 +762,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
           {/* Leyenda */}
           <div className="flex items-center justify-center gap-6 text-xs font-semibold">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded bg-emerald-500"></span>
+              <span className="w-2.5 h-2.5 rounded bg-[#FF6B35]"></span>
               <span className="text-slate-700">Aceptado</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -864,7 +864,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <circle cx="18" cy="18" r="13" fill="none" stroke="#e2e8f0" strokeWidth="5" />
                 <circle cx="18" cy="18" r="13" fill="none" stroke="#8b5cf6" strokeWidth="5" strokeDasharray="35 65" strokeDashoffset="0" />
-                <circle cx="18" cy="18" r="13" fill="none" stroke="#10b981" strokeWidth="5" strokeDasharray="40 60" strokeDashoffset="-35" />
+                <circle cx="18" cy="18" r="13" fill="none" stroke="#FF6B35" strokeWidth="5" strokeDasharray="40 60" strokeDashoffset="-35" />
                 <circle cx="18" cy="18" r="13" fill="none" stroke="#ef4444" strokeWidth="5" strokeDasharray="15 85" strokeDashoffset="-75" />
               </svg>
             </div>
@@ -890,7 +890,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
           <div className="flex items-center justify-center py-2">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                <circle cx="18" cy="18" r="13" fill="none" stroke="#10b981" strokeWidth="5" strokeDasharray="65 35" strokeDashoffset="0" />
+                <circle cx="18" cy="18" r="13" fill="none" stroke="#FF6B35" strokeWidth="5" strokeDasharray="65 35" strokeDashoffset="0" />
                 <circle cx="18" cy="18" r="13" fill="none" stroke="#8b5cf6" strokeWidth="5" strokeDasharray="18 82" strokeDashoffset="-65" />
                 <circle cx="18" cy="18" r="13" fill="none" stroke="#ef4444" strokeWidth="5" strokeDasharray="10 90" strokeDashoffset="-83" />
                 <circle cx="18" cy="18" r="13" fill="none" stroke="#06b6d4" strokeWidth="5" strokeDasharray="7 93" strokeDashoffset="-93" />
@@ -918,14 +918,14 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
           <div className="flex items-center justify-center py-2">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                <circle cx="18" cy="18" r="13" fill="none" stroke="#10b981" strokeWidth="5" strokeDasharray="100 0" strokeDashoffset="0" />
+                <circle cx="18" cy="18" r="13" fill="none" stroke="#FF6B35" strokeWidth="5" strokeDasharray="100 0" strokeDashoffset="0" />
               </svg>
             </div>
           </div>
 
           <div className="flex items-center justify-center text-[10px] font-semibold text-slate-600">
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="w-2 h-2 rounded-full bg-[#FF6B35]"></span>
               Pagado
             </span>
           </div>
@@ -956,7 +956,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
           <div className="md:col-span-2 flex items-center justify-center py-4">
             <div className="relative w-48 h-48 sm:w-56 sm:h-56">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                <circle cx="18" cy="18" r="12" fill="none" stroke="#10b981" strokeWidth="5" strokeDasharray="28 72" strokeDashoffset="0" />
+                <circle cx="18" cy="18" r="12" fill="none" stroke="#FF6B35" strokeWidth="5" strokeDasharray="28 72" strokeDashoffset="0" />
                 <circle cx="18" cy="18" r="12" fill="none" stroke="#06b6d4" strokeWidth="5" strokeDasharray="18 82" strokeDashoffset="-28" />
                 <circle cx="18" cy="18" r="12" fill="none" stroke="#3b82f6" strokeWidth="5" strokeDasharray="12 88" strokeDashoffset="-46" />
                 <circle cx="18" cy="18" r="12" fill="none" stroke="#8b5cf6" strokeWidth="5" strokeDasharray="10 90" strokeDashoffset="-58" />
@@ -1128,7 +1128,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
                     <td className="py-2 px-3 text-center">
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                         uc.sunat.includes('Aceptado') 
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                          ? 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20' 
                           : 'bg-slate-100 text-slate-600'
                       }`}>
                         {uc.sunat}
@@ -1153,12 +1153,12 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
         
         {/* Card 1: Vs Período Anterior */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center shrink-0">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
             <span className="text-[10px] font-bold uppercase text-slate-400 block">VS PERÍODO ANTERIOR</span>
-            <span className="text-xl font-black text-emerald-600 block">{kpiData.variacionTotal}</span>
+            <span className="text-xl font-black text-[#FF6B35] block">{kpiData.variacionTotal}</span>
             <span className="text-[10px] text-slate-400 block">Variación de ventas en el rango seleccionado</span>
           </div>
         </div>
@@ -1177,7 +1177,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
 
         {/* Card 3: Errores de Envío SUNAT */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#FDFBF7] text-[#FF6B35] flex items-center justify-center shrink-0">
             <Clock className="w-5 h-5" />
           </div>
           <div>
@@ -1197,3 +1197,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
     </div>
   );
 }
+
+
+
+

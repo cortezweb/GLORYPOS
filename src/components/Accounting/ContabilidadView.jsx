@@ -61,7 +61,7 @@ export default function ContabilidadView() {
         <div className="bg-white p-5 rounded-2xl border border-slate-200">
           <span className="text-xs font-bold text-slate-400 block mb-1">Total Débito Fiscal Estimado</span>
           <p className="text-2xl font-black text-slate-900">Bs. 5,583.50</p>
-          <span className="text-[11px] text-emerald-600 font-bold mt-1 inline-block">13% sobre ventas declaradas</span>
+          <span className="text-[11px] text-[#FF6B35] font-bold mt-1 inline-block">13% sobre ventas declaradas</span>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-200">
           <span className="text-xs font-bold text-slate-400 block mb-1">Total Crédito Fiscal Compras</span>
@@ -70,7 +70,7 @@ export default function ContabilidadView() {
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-200">
           <span className="text-xs font-bold text-slate-400 block mb-1">Saldo Tributario del Periodo</span>
-          <p className="text-2xl font-black text-emerald-700">Bs. 2,814.50</p>
+          <p className="text-2xl font-black text-[#E85B28]">Bs. 2,814.50</p>
           <span className="text-[11px] text-slate-500 font-medium mt-1 inline-block">Impuesto neto por liquidar</span>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default function ContabilidadView() {
                 <button
                   type="button"
                   onClick={() => handleExport(book.name + ' (Excel)')}
-                  className="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold border border-emerald-200 transition flex items-center gap-1.5"
+                  className="px-3 py-2 bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#E85B28] rounded-xl text-xs font-bold border border-[#FF6B35]/20 transition flex items-center gap-1.5"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
                   <span>Excel</span>
@@ -130,3 +130,5 @@ export default function ContabilidadView() {
     </div>
   );
 }
+
+

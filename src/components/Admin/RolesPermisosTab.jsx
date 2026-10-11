@@ -187,7 +187,7 @@ export default function RolesPermisosTab() {
         <button
           type="button"
           onClick={handleOpenNew}
-          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white font-medium text-xs rounded-lg shadow-xs transition active:scale-95 shrink-0"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-medium text-xs rounded-lg shadow-xs transition active:scale-95 shrink-0"
         >
           <Plus className="w-3.5 h-3.5 stroke-[3]" />
           <span>Nuevo rol</span>
@@ -222,7 +222,7 @@ export default function RolesPermisosTab() {
                     type="button"
                     onClick={() => handleOpenEdit(rol)}
                     title={`Editar rol ${rol.nombre}`}
-                    className="p-1 text-slate-400 hover:text-blue-600 hover:bg-slate-50 rounded transition"
+                    className="p-1 text-slate-400 hover:text-[#FF6B35] hover:bg-slate-50 rounded transition"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
@@ -295,3 +295,5 @@ export default function RolesPermisosTab() {
     </div>
   );
 }
+
+

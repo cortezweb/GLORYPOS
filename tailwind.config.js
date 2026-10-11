@@ -7,30 +7,59 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#2563eb',
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
+        // ── PALETA OFICIAL DE COLORES GLORYPOS ──
+        glory: {
+          orange: '#FF6B35', // Color Principal (Apetito y Energía)
+          dark: '#1E2022',   // Azul Nocturno (Confianza y Estructuras)
+          yellow: '#FFB627', // Amarillo Mostaza (Énfasis y Detalle)
+          cream: '#FDFBF7',  // Crema Natural (Fondo y Calidez)
+          green: '#00B574',  // Verde Éxito (Conversión y Transacciones)
         },
-        electric: {
-          indigo: '#4f46e5',
-          violet: '#7c3aed',
-          purple: '#8b5cf6',
+        primary: {
+          DEFAULT: '#FF6B35',
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#FF6B35',
+          600: '#ea580c',
+          700: '#c2410c',
+          800: '#9a3412',
+          900: '#7c2d12',
+        },
+        secondary: {
+          DEFAULT: '#1E2022',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#1E2022',
+        },
+        accent: {
+          DEFAULT: '#FFB627',
+          50: '#fffbeb',
+          100: '#fef3c7',
+          500: '#FFB627',
+          600: '#f59e0b',
+          700: '#d97706',
         },
         glorypos: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          dark: '#0f172a',
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          500: '#FF6B35',
+          600: '#ea580c',
+          700: '#c2410c',
+          dark: '#1E2022',
         },
         emerald: {
-          500: '#10b981',
-          600: '#059669',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          500: '#00B574',
+          600: '#009c63',
+          700: '#047857',
         }
       },
       fontFamily: {

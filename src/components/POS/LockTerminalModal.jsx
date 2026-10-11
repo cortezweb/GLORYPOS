@@ -129,7 +129,7 @@ export default function LockTerminalModal({ isOpen, onClose, onLogout, cajeroNom
                   error
                     ? 'border-red-500 bg-red-500 shadow-md shadow-red-500/50'
                     : isFilled
-                      ? 'border-blue-500 bg-blue-500 scale-110 shadow-md shadow-blue-500/50'
+                      ? 'border-[#FF6B35] bg-[#FF6B35] scale-110 shadow-md shadow-blue-500/50'
                       : 'border-slate-600 bg-transparent'
                 }`}
               />
@@ -208,3 +208,4 @@ export default function LockTerminalModal({ isOpen, onClose, onLogout, cajeroNom
     </div>
   );
 }
+

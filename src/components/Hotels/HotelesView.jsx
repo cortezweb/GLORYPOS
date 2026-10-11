@@ -57,7 +57,7 @@ export default function HotelesView() {
             onClick={() => alert(`Habitación ${room.id}: ${room.estado}`)}
             className={`rounded-3xl p-5 border transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between min-h-[160px] ${
               room.estado === 'DISPONIBLE'
-                ? 'bg-white border-slate-200 hover:border-emerald-300'
+                ? 'bg-white border-slate-200 hover:border-[#FF6B35]/30'
                 : room.estado === 'LIMPIEZA'
                 ? 'bg-amber-50/40 border-amber-200 hover:border-amber-400'
                 : 'bg-sky-50/40 border-sky-200 hover:border-sky-400'
@@ -69,7 +69,7 @@ export default function HotelesView() {
                 <span className="text-lg font-black text-slate-900">Hab. {room.id}</span>
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                room.estado === 'DISPONIBLE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                room.estado === 'DISPONIBLE' ? 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20' :
                 room.estado === 'LIMPIEZA' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                 'bg-sky-100 text-sky-800 border border-sky-200'
               }`}>
@@ -99,3 +99,5 @@ export default function HotelesView() {
     </div>
   );
 }
+
+

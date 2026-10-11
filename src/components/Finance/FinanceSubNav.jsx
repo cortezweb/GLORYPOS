@@ -71,7 +71,7 @@ export default function FinanceSubNav({ currentSubView, activeTab, onSelectSubVi
               onClick={() => handleSelect(tab.id)}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'bg-emerald-600 text-white shadow-xs'
+                  ? 'bg-[#FF6B35] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
               }`}
               type="button"
@@ -85,3 +85,4 @@ export default function FinanceSubNav({ currentSubView, activeTab, onSelectSubVi
     </div>
   );
 }
+

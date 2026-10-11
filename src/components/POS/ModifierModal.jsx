@@ -123,7 +123,7 @@ export default function ModifierModal({ product, isOpen, onClose }) {
                   onClick={() => toggleTopping(topping)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
                     isSelected
-                      ? 'bg-violet-600 text-white shadow-xs'
+                      ? 'bg-[#FF6B35] text-white shadow-xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
@@ -162,3 +162,4 @@ export default function ModifierModal({ product, isOpen, onClose }) {
     </div>
   );
 }
+

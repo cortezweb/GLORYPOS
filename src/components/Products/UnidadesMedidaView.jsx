@@ -183,7 +183,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-slideUp">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -195,7 +195,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Ruler className="w-4 h-4 text-emerald-600" />
+                <Ruler className="w-4 h-4 text-[#FF6B35]" />
                 <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                   Unidades de medida
                 </h1>
@@ -211,7 +211,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
                 setForm({ codigo: '', nombre: '', simbolo: '', estado: 'Activa' });
                 setIsNewModalOpen(true);
               }}
-              className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer shrink-0"
+              className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>+ Nueva unidad</span>
@@ -227,7 +227,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar por código, nombre o símbolo..."
-                className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 shadow-2xs transition"
+                className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-[#FF6B35] shadow-2xs transition"
               />
               {search && (
                 <button
@@ -294,7 +294,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
                           title="Haga clic para alternar Activa / Inactiva"
                         >
                           {isActiva ? (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#FF6B35]/10 text-[#E85B28]">
                               Activa
                             </span>
                           ) : (
@@ -311,7 +311,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
                           type="button"
                           onClick={() => handleOpenEdit(u)}
                           title="Editar unidad"
-                          className="p-1 text-slate-400 hover:text-emerald-700 rounded hover:bg-slate-100 transition cursor-pointer"
+                          className="p-1 text-slate-400 hover:text-[#E85B28] rounded hover:bg-slate-100 transition cursor-pointer"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
@@ -347,7 +347,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <Ruler className="w-4 h-4" />
                 </div>
                 <div>
@@ -423,7 +423,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-[#00a650] hover:bg-[#009245] rounded-xl transition shadow-2xs cursor-pointer"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] rounded-xl transition shadow-2xs cursor-pointer"
                 >
                   Crear Unidad
                 </button>
@@ -502,7 +502,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-2xs cursor-pointer"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] rounded-xl transition shadow-2xs cursor-pointer"
                 >
                   Guardar Cambios
                 </button>
@@ -515,3 +515,6 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
     </div>
   );
 }
+
+
+

@@ -70,20 +70,20 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#eaedff] bg-white">
             <div className="flex items-center space-x-2.5">
               {/* GLORYPOS Brand Badge */}
-              <div className="flex items-center gap-1.5 bg-gradient-to-r from-blue-50 to-violet-50 px-2 py-1 rounded-lg border border-[#dbe1ff]">
-                <div className="w-5 h-5 rounded bg-gradient-to-tr from-[#2563eb] to-[#7c3aed] flex items-center justify-center text-white shadow-xs">
+              <div className="flex items-center gap-1.5 bg-orange-50 px-2 py-1 rounded-lg border border-orange-200">
+                <div className="w-5 h-5 rounded bg-[#FF6B35] flex items-center justify-center text-white shadow-xs">
                   <Zap className="w-3 h-3 fill-white" />
                 </div>
-                <span className="text-xs font-extrabold tracking-tight bg-gradient-to-r from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent">
+                <span className="text-xs font-extrabold tracking-tight text-[#FF6B35]">
                   GLORYPOS
                 </span>
               </div>
               <div className="h-3.5 w-px bg-slate-200"></div>
               <div className="flex items-center space-x-1.5">
-                <span className="bg-[#dbe1ff] text-[#2563eb] rounded p-1 text-xs font-bold flex items-center justify-center w-5 h-5">
+                <span className="bg-orange-100 text-[#FF6B35] rounded p-1 text-xs font-bold flex items-center justify-center w-5 h-5">
                   <Receipt className="w-3 h-3" />
                 </span>
-                <h1 className="text-xs font-bold text-[#131b2e] tracking-tight">Recibo de venta</h1>
+                <h1 className="text-xs font-bold text-[#1E2022] tracking-tight">Recibo de venta</h1>
               </div>
             </div>
 
@@ -105,7 +105,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               {/* Row 1: Return & Thermal Reprint */}
               <button 
                 onClick={onClose}
-                className="bg-[#1e293b] hover:bg-[#0f172a] active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
+                className="bg-[#1E2022] hover:bg-slate-900 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Volver</span>
@@ -113,7 +113,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
 
               <button 
                 onClick={handlePrint}
-                className="bg-[#2563eb] hover:bg-blue-700 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs shadow-blue-500/20"
+                className="bg-[#FF6B35] hover:bg-[#ea580c] active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs shadow-orange-500/20"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Reimprimir</span>
@@ -122,7 +122,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               {/* Row 2: WhatsApp & Email Share */}
               <button 
                 onClick={handleShareWhatsApp}
-                className="bg-[#7c3aed] hover:bg-violet-700 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs shadow-violet-500/20"
+                className="bg-[#00B574] hover:bg-[#009c63] active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs shadow-[#FF6B35]/20"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>WhatsApp</span>
@@ -130,7 +130,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
 
               <button 
                 onClick={() => alert(`Enlace enviado al cliente ${venta.cliente_nombre}`)}
-                className="bg-[#4f46e5] hover:bg-indigo-700 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
+                className="bg-[#1E2022] hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <Mail className="w-3.5 h-3.5" />
                 <span>Correo</span>
@@ -139,7 +139,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               {/* Row 3: Ticket Format & PDF Export */}
               <button 
                 onClick={handlePrint}
-                className="bg-[#3b82f6] hover:bg-blue-600 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
+                className="bg-slate-700 hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>Ticket 80mm</span>
@@ -147,7 +147,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
 
               <button 
                 onClick={handlePrint}
-                className="bg-[#9333ea] hover:bg-purple-700 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
+                className="bg-[#FFB627] hover:bg-[#e6a21e] active:scale-[0.98] text-[#1E2022] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>PDF</span>
@@ -156,7 +156,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               {/* Row 4: Mini Ticket & Nueva Venta */}
               <button 
                 onClick={handlePrint}
-                className="bg-[#6366f1] hover:bg-indigo-600 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
+                className="bg-slate-600 hover:bg-slate-700 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <Receipt className="w-3.5 h-3.5" />
                 <span>Ticket 58mm</span>
@@ -164,7 +164,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
 
               <button 
                 onClick={() => { onClose(); if (onNewSale) onNewSale(); }}
-                className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] hover:opacity-95 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
+                className="bg-gradient-to-r from-[#FF6B35] to-[#ea580c] hover:opacity-95 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs shadow-orange-500/25"
               >
                 <ShoppingBag className="w-3.5 h-3.5" />
                 <span>Nueva Venta</span>
@@ -179,14 +179,12 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               data-purpose="thermal-receipt-preview"
             >
               {/* Company Logo & Branding */}
-              <header className="text-center mb-2">
-                <div className="flex items-center justify-center gap-1 font-sans font-black text-base text-slate-900 tracking-tighter">
-                  <span className="text-[#2563eb] text-lg leading-none">
-                    ★
-                  </span>
+              <header className="text-center mb-2 flex flex-col items-center">
+                <img src="/logo.png" alt="GloryPOS" className="h-7 object-contain mb-1" />
+                <div className="flex items-center justify-center gap-1 font-sans font-black text-sm text-slate-900 tracking-tighter">
                   <span className="tracking-wide uppercase">{empresa?.nombre || 'GLORYPOS BOLIVIA'}</span>
                 </div>
-                <p className="text-[9px] font-sans font-semibold tracking-widest text-[#2563eb] -mt-0.5 uppercase">
+                <p className="text-[9px] font-sans font-semibold tracking-widest text-[#FF6B35] uppercase">
                   PUNTO DE VENTA & FACTURACIÓN
                 </p>
               </header>
@@ -207,7 +205,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
                 <p className="text-[11px] font-black uppercase">
                   {isFactura ? 'FACTURA ELECTRÓNICA SIAT' : (isBoleta ? 'BOLETA DE VENTA ELECTRÓNICA' : 'NOTA DE VENTA')}
                 </p>
-                <p className="text-[12px] font-black tracking-wider text-[#2563eb]">
+                <p className="text-[12px] font-black tracking-wider text-[#FF6B35]">
                   {venta.correlativo}
                 </p>
               </div>
@@ -329,7 +327,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
                       <span>Bs. {Number(venta.monto_recibido || venta.total).toFixed(2)}</span>
                     </div>
                     {venta.cambio > 0 && (
-                      <div className="flex justify-between font-bold text-emerald-700">
+                      <div className="flex justify-between font-bold text-[#E85B28]">
                         <span>Cambio / Vuelto:</span>
                         <span>Bs. {Number(venta.cambio).toFixed(2)}</span>
                       </div>
@@ -366,3 +364,4 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
     </div>
   );
 }
+

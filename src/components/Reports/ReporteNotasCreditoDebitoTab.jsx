@@ -94,7 +94,7 @@ export default function ReporteNotasCreditoDebitoTab() {
                 type="text"
                 value={desde}
                 onChange={(e) => setDesde(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -110,7 +110,7 @@ export default function ReporteNotasCreditoDebitoTab() {
                 type="text"
                 value={hasta}
                 onChange={(e) => setHasta(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -124,7 +124,7 @@ export default function ReporteNotasCreditoDebitoTab() {
             <select
               value={tipo}
               onChange={(e) => setTipo(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todas">Todas</option>
               <option value="Nota de Crédito">Nota de Crédito</option>
@@ -140,7 +140,7 @@ export default function ReporteNotasCreditoDebitoTab() {
             <select
               value={sucursal}
               onChange={(e) => setSucursal(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Principal">Principal</option>
               <option value="Todas">Todas</option>
@@ -151,7 +151,7 @@ export default function ReporteNotasCreditoDebitoTab() {
           <div>
             <button
               type="button"
-              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition h-[34px] flex items-center justify-center"
+              className="px-6 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-xs transition h-[34px] flex items-center justify-center"
             >
               Buscar
             </button>
@@ -176,7 +176,7 @@ export default function ReporteNotasCreditoDebitoTab() {
           <span className="text-[11px] font-semibold text-slate-500 block">
             Notas de débito
           </span>
-          <div className="text-xl font-bold text-blue-600 font-mono">
+          <div className="text-xl font-bold text-[#FF6B35] font-mono">
             S/ {totalND.toFixed(2)}
           </div>
         </div>
@@ -251,10 +251,10 @@ export default function ReporteNotasCreditoDebitoTab() {
                   <td className="py-2.5 px-3 text-slate-700">{row.fecha}</td>
                   <td className="py-2.5 px-3 font-mono font-bold text-slate-800">{row.numero}</td>
                   <td className="py-2.5 px-3 text-slate-600">{row.motivo}</td>
-                  <td className="py-2.5 px-3 font-mono text-emerald-700 font-medium">{row.comprobante_afectado}</td>
+                  <td className="py-2.5 px-3 font-mono text-[#E85B28] font-medium">{row.comprobante_afectado}</td>
                   <td className="py-2.5 px-3 font-medium text-slate-800">{row.cliente}</td>
                   <td className="py-2.5 px-3">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">
                       {row.estado}
                     </span>
                   </td>
@@ -270,3 +270,6 @@ export default function ReporteNotasCreditoDebitoTab() {
     </div>
   );
 }
+
+
+

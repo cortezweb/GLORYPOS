@@ -9,6 +9,7 @@ import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { syncService } from '../../services/syncService';
+import GloryLogo from '../Common/GloryLogo';
 
 const CART_STORAGE_KEY = 'glorypos_ecommerce_cart';
 const SETTINGS_STORAGE_KEY = 'glorypos_ecommerce_settings';
@@ -21,7 +22,7 @@ const DEFAULT_SLIDERS = [
     subtitle: 'Encuentra los mejores productos a los mejores precios de la temporada con envío directo.',
     buttonText: 'Ver productos',
     linkUrl: '#productos',
-    bgGradient: 'from-emerald-700 via-teal-700 to-slate-900',
+    bgGradient: 'from-[#FF6B35] via-[#FF6B35] to-slate-900',
     active: true
   },
   {
@@ -375,18 +376,18 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
   };
 
   return (
-    <div className={`min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans select-none ${isEmbedded ? '' : 'relative'}`}>
+    <div className={`min-h-screen bg-[#FDFBF7] text-[#1E2022] flex flex-col font-sans select-none ${isEmbedded ? '' : 'relative'}`}>
       
       {/* ── NOTIFICACIÓN TOAST FLOTANTE ── */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-[500] bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-slideUp border border-slate-700">
-          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-[500] bg-[#1E2022] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-slideUp border border-slate-700">
+          <Check className="w-4 h-4 text-[#00B574] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* ── HEADER SUPERIOR E-COMMERCE (Exacto a Tukifac) ── */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-xs">
+      {/* ── HEADER SUPERIOR E-COMMERCE ── */}
+      <header className="bg-white border-b border-stone-200/80 sticky top-0 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           
           {/* Logo & Nombre de la Tienda */}
@@ -402,16 +403,14 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
               </button>
             )}
             
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-emerald-500/20 shrink-0">
-              <Store className="w-5 h-5 text-white" />
-            </div>
+            <GloryLogo size="sm" showSubtitle={false} />
 
             <div className="min-w-0">
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-slate-900 truncate max-w-[170px] sm:max-w-xs leading-tight">
+              <h1 className="text-base sm:text-lg font-black tracking-tight text-[#1E2022] truncate max-w-[170px] sm:max-w-xs leading-tight">
                 {empresa?.nombre || 'GLORYPOS Store'}
               </h1>
-              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded-full inline-flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[10px] text-[#00B574] font-bold bg-[#FF6B35]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-[#FF6B35]/10">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00B574] animate-pulse"></span>
                 Tienda Virtual Oficial
               </span>
             </div>
@@ -425,7 +424,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar producto, categoría o marca..."
-              className="w-full bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-xs rounded-xl pl-9 pr-8 py-2.5 outline-hidden border border-transparent focus:border-emerald-500 transition-all text-slate-800 placeholder-slate-400"
+              className="w-full bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-xs rounded-xl pl-9 pr-8 py-2.5 outline-hidden border border-transparent focus:border-[#FF6B35] transition-all text-slate-800 placeholder-slate-400"
             />
             {searchTerm && (
               <button
@@ -443,12 +442,12 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/25 transition active:scale-95 cursor-pointer"
+              className="relative flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#FF6B35] hover:bg-[#ea580c] text-white font-bold text-xs shadow-md shadow-[#FF6B35]/30 transition active:scale-95 cursor-pointer"
             >
               <ShoppingCart className="w-4 h-4" />
               <span className="hidden sm:inline">Carrito</span>
               {cartTotalItems > 0 && (
-                <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-900 text-[10px] font-black flex items-center justify-center shadow-xs">
+                <span className="w-5 h-5 rounded-full bg-[#FFB627] text-[#1E2022] text-[10px] font-black flex items-center justify-center shadow-xs">
                   {cartTotalItems}
                 </span>
               )}
@@ -464,9 +463,9 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
         {/* ── 1. HERO SLIDER BANNER (Exacto a Tukifac) ── */}
         {sliders.length > 0 && (
           <div className="relative rounded-3xl overflow-hidden shadow-xl text-white">
-            <div className={`p-6 sm:p-10 lg:p-12 bg-gradient-to-r ${sliders[currentSlide]?.bgGradient || 'from-emerald-700 to-slate-900'} transition-all duration-700 relative`}>
+            <div className={`p-6 sm:p-10 lg:p-12 bg-gradient-to-r ${sliders[currentSlide]?.bgGradient || 'from-[#FF6B35] to-slate-900'} transition-all duration-700 relative`}>
               <div className="max-w-xl space-y-3 relative z-10">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[11px] font-bold text-emerald-200 uppercase tracking-wider border border-white/20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[11px] font-bold text-[#FFB627] uppercase tracking-wider border border-white/20">
                   <Sparkles className="w-3 h-3 text-amber-300" />
                   Promociones Disponibles
                 </span>
@@ -482,7 +481,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-slate-900 hover:bg-slate-100 font-black text-xs shadow-lg transition active:scale-95"
                   >
                     <span>{sliders[currentSlide]?.buttonText || 'Ver productos'}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-emerald-600" />
+                    <ArrowRight className="w-3.5 h-3.5 text-[#FF6B35]" />
                   </a>
                 </div>
               </div>
@@ -530,7 +529,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 shrink-0 ${
                     isSelected
-                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+                      ? 'bg-[#FF6B35] text-white shadow-md shadow-[#FF6B35]/30'
                       : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80 hover:text-slate-900'
                   }`}
                 >
@@ -548,7 +547,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             <div>
               <h2 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
                 <span>{selectedCategory === 'TODAS' ? 'Todos los Productos' : selectedCategory}</span>
-                <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-extrabold text-[#FF6B35] bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
                   {filteredProducts.length} ítems
                 </span>
               </h2>
@@ -564,7 +563,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                 onClick={() => setShowPriceFilter(prev => !prev)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition ${
                   showPriceFilter 
-                    ? 'border-emerald-500 bg-emerald-50 text-emerald-800' 
+                    ? 'border-[#FF6B35] bg-orange-50 text-[#FF6B35]' 
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
               >
@@ -579,7 +578,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2 animate-fadeIn max-w-sm">
               <div className="flex items-center justify-between text-xs font-bold text-slate-700">
                 <span>Filtro de Precio Máximo:</span>
-                <span className="text-emerald-600 font-mono">Bs. {priceRange.currentMax}</span>
+                <span className="text-[#FF6B35] font-mono">Bs. {priceRange.currentMax}</span>
               </div>
               <input
                 type="range"
@@ -587,7 +586,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                 max={priceRange.max}
                 value={priceRange.currentMax}
                 onChange={(e) => setPriceRange(prev => ({ ...prev, currentMax: Number(e.target.value) }))}
-                className="w-full accent-emerald-600 cursor-pointer"
+                className="w-full accent-[#FF6B35] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-mono">
                 <span>Min: Bs. {priceRange.min}</span>
@@ -596,10 +595,10 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             </div>
           )}
 
-          {/* ── 4. CUADRÍCULA DE PRODUCTOS (Grid Responsiva Exacta a Tukifac) ── */}
+          {/* ── 4. CUADRÍCULA DE PRODUCTOS ── */}
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center space-y-3">
-              <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#FF6B35] border-t-transparent rounded-full animate-spin"></div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                 Cargando Tienda Virtual...
               </p>
@@ -616,7 +615,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
               <button
                 type="button"
                 onClick={() => { setSearchTerm(''); setSelectedCategory('TODAS'); }}
-                className="px-4 py-2 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-xl hover:bg-emerald-100 transition"
+                className="px-4 py-2 bg-orange-50 text-[#FF6B35] font-bold text-xs rounded-xl hover:bg-orange-100 transition"
               >
                 Ver todos los productos
               </button>
@@ -632,7 +631,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                   <div
                     key={prod.id}
                     onClick={() => handleOpenDetailModal(prod)}
-                    className="bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-500/80 shadow-2xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden cursor-pointer group"
+                    className="bg-white rounded-2xl border border-slate-200/90 hover:border-[#FF6B35]/80 shadow-2xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden cursor-pointer group"
                   >
                     {/* Imagen de Producto */}
                     <div className="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
@@ -644,7 +643,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 group-hover:text-emerald-500/60 transition-colors">
+                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 group-hover:text-[#FF6B35]/60 transition-colors">
                           <Package className="w-12 h-12 stroke-[1.5]" />
                           <span className="text-[10px] font-bold mt-1 text-slate-400">GLORYPOS</span>
                         </div>
@@ -656,7 +655,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                           Agotado
                         </span>
                       ) : (
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black tracking-tight shadow-xs">
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-[#00B574] text-white text-[9px] font-black tracking-tight shadow-xs">
                           Disponible
                         </span>
                       )}
@@ -665,10 +664,10 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                     {/* Contenido / Datos de la Tarjeta */}
                     <div className="p-3.5 flex flex-col flex-1 justify-between gap-2">
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 block truncate">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B35] block truncate">
                           {prod.categoria || 'General'}
                         </span>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-800 line-clamp-2 mt-0.5 group-hover:text-emerald-700 transition-colors leading-snug">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-800 line-clamp-2 mt-0.5 group-hover:text-[#FF6B35] transition-colors leading-snug">
                           {prod.nombre}
                         </h4>
                         <span className="text-[11px] text-slate-400 block mt-0.5">
@@ -679,7 +678,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                       <div className="pt-2 border-t border-slate-100/80 flex items-center justify-between gap-2">
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block leading-none">PRECIO</span>
-                          <span className="text-sm sm:text-base font-black text-slate-900 font-mono tracking-tight text-emerald-600">
+                          <span className="text-sm sm:text-base font-black font-mono tracking-tight text-[#FF6B35]">
                             Bs. {price.toFixed(2)}
                           </span>
                         </div>
@@ -688,7 +687,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                           type="button"
                           disabled={isOutOfStock}
                           onClick={(e) => handleAddToCart(prod, 1, e)}
-                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs active:scale-95 transition disabled:opacity-40 cursor-pointer flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-xl bg-[#00B574] hover:bg-[#00965e] text-white text-xs font-bold shadow-xs active:scale-95 transition disabled:opacity-40 cursor-pointer flex items-center gap-1"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">Agregar</span>
@@ -711,7 +710,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             
             {/* Cabecera del modal */}
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-emerald-600 tracking-wider">
+              <span className="text-xs font-black uppercase text-[#FF6B35] tracking-wider">
                 {selectedProduct.categoria || 'Detalle del Producto'}
               </span>
               <button
@@ -755,7 +754,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-slate-400 font-bold uppercase block">Precio Unitario</span>
-                  <span className="text-xl font-black text-emerald-600 font-mono">
+                  <span className="text-xl font-black text-[#FF6B35] font-mono">
                     Bs. {Number(selectedProduct.precio_venta || selectedProduct.precio || 0).toFixed(2)}
                   </span>
                 </div>
@@ -793,7 +792,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                   handleAddToCart(selectedProduct, modalQuantity);
                   setSelectedProduct(null);
                 }}
-                className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/25 transition cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-2xl bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-sm shadow-md shadow-[#FF6B35]/30 transition cursor-pointer flex items-center justify-center gap-2"
               >
                 <ShoppingCart className="w-4 h-4" />
                 <span>Agregar al Carrito (Bs. {(Number(selectedProduct.precio_venta || selectedProduct.precio || 0) * modalQuantity).toFixed(2)})</span>
@@ -819,7 +818,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             {/* Header del Carrito */}
             <div className="flex items-center justify-between p-4 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-emerald-600" />
+                <ShoppingBag className="w-5 h-5 text-[#FF6B35]" />
                 <h3 className="font-black text-slate-800 text-base">
                   Tu Carrito de Compras
                 </h3>
@@ -912,7 +911,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       placeholder="Ej. Juan Pérez"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-emerald-500 transition"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-[#FF6B35] transition"
                       required
                     />
                   </div>
@@ -926,7 +925,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       placeholder="Ej. 77012345"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-emerald-500 transition font-mono"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-[#FF6B35] transition font-mono"
                       required
                     />
                   </div>
@@ -940,7 +939,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                       value={customerAddress}
                       onChange={(e) => setCustomerAddress(e.target.value)}
                       placeholder="Ej. Av. Principal #123, Zona Central"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-emerald-500 transition"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-[#FF6B35] transition"
                     />
                   </div>
                 </div>
@@ -948,7 +947,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                 {/* Total */}
                 <div className="flex justify-between items-center pt-2 border-t border-slate-200 text-sm font-black text-slate-900">
                   <span>Total a Pagar:</span>
-                  <span className="text-lg font-mono text-emerald-600">
+                  <span className="text-lg font-mono text-[#FF6B35]">
                     Bs. {cartTotalPrice.toFixed(2)}
                   </span>
                 </div>
@@ -958,7 +957,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleSendOrderWhatsApp}
-                  className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-lg shadow-emerald-600/30 transition active:scale-98 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full py-3.5 rounded-2xl bg-[#00B574] hover:bg-[#00965e] text-white font-black text-xs shadow-lg shadow-[#00B574]/30 transition active:scale-98 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <MessageCircle className="w-4 h-4 fill-white" />
                   <span>{isSubmitting ? 'Procesando pedido...' : 'Pedir por WhatsApp'}</span>
@@ -970,31 +969,29 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
         </div>
       )}
 
-      {/* ── FOOTER DE LA TIENDA VIRTUAL (Exacto a Tukifac) ── */}
-      <footer className="bg-slate-900 text-white mt-12 border-t border-slate-800">
+      {/* ── FOOTER DE LA TIENDA VIRTUAL ── */}
+      <footer className="bg-[#1E2022] text-white mt-12 border-t border-stone-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8">
           
           {/* Info Tienda */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center font-bold text-white shadow-xs">
-                <Store className="w-4 h-4" />
-              </div>
+              <GloryLogo size="sm" showSubtitle={false} />
               <span className="font-black text-lg text-white">
                 {empresa?.nombre || 'GLORYPOS Store'}
               </span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+            <p className="text-xs text-stone-300 leading-relaxed max-w-sm">
               Tu tienda virtual en línea sincronizada en tiempo real con nuestro Punto de Venta. Pide por WhatsApp y recibe tus compras sin complicaciones.
             </p>
           </div>
 
           {/* Categorías Principales */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-stone-300 mb-3">
               Categorías
             </h4>
-            <ul className="space-y-1.5 text-xs text-slate-400">
+            <ul className="space-y-1.5 text-xs text-stone-400">
               {categories.slice(1, 6).map(c => (
                 <li key={c}>
                   <button
@@ -1004,7 +1001,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
                       const el = document.getElementById('productos');
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="hover:text-emerald-400 transition"
+                    className="hover:text-[#FF6B35] transition"
                   >
                     • {c}
                   </button>
@@ -1015,16 +1012,16 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
 
           {/* Contacto & WhatsApp */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-stone-300">
               Atención al Cliente
             </h4>
-            <div className="space-y-2 text-xs text-slate-400">
+            <div className="space-y-2 text-xs text-stone-400">
               <p className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <Phone className="w-3.5 h-3.5 text-[#00B574] shrink-0" />
                 <span>WhatsApp: {empresa?.telefono || '+591 77012345'}</span>
               </p>
               <p className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-[#00B574] shrink-0" />
                 <span>{empresa?.direccion || 'Oficina Principal (Casa Matriz)'}</span>
               </p>
             </div>
@@ -1032,7 +1029,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
 
         </div>
 
-        <div className="border-t border-slate-800 py-4 text-center text-[11px] text-slate-500 font-mono">
+        <div className="border-t border-stone-800 py-4 text-center text-[11px] text-stone-400 font-mono">
           © {new Date().getFullYear()} {empresa?.nombre || 'GLORYPOS'} · Plataforma de Comercio Electrónico
         </div>
       </footer>
@@ -1040,3 +1037,6 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
     </div>
   );
 }
+
+
+

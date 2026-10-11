@@ -253,7 +253,7 @@ export default function ServiciosView({ onSelectSubView }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                 <Wrench className="w-5 h-5" />
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -268,7 +268,7 @@ export default function ServiciosView({ onSelectSubView }) {
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition active:scale-95 self-start sm:self-center"
+            className="bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition active:scale-95 self-start sm:self-center"
           >
             <Plus className="w-4 h-4" />
             <span>Nuevo Servicio</span>
@@ -284,17 +284,17 @@ export default function ServiciosView({ onSelectSubView }) {
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Servicios Activos</span>
-            <span className="text-2xl font-black text-emerald-600 mt-1 block">{totalActivos}</span>
+            <span className="text-2xl font-black text-[#FF6B35] mt-1 block">{totalActivos}</span>
           </div>
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Precio Promedio</span>
-            <span className="text-2xl font-black text-blue-600 mt-1 block">S/ {precioPromedio}</span>
+            <span className="text-2xl font-black text-[#FF6B35] mt-1 block">S/ {precioPromedio}</span>
           </div>
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Tipo de Facturación</span>
-            <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full inline-block mt-2">
+            <span className="text-xs font-bold text-[#FF6B35] bg-[#FF6B35]/10 px-2.5 py-1 rounded-full inline-block mt-2">
               Unidad ZZ (Servicio)
             </span>
           </div>
@@ -309,7 +309,7 @@ export default function ServiciosView({ onSelectSubView }) {
               placeholder="Buscar por nombre, código o categoría..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#FF6B35] outline-none"
             />
           </div>
 
@@ -419,7 +419,7 @@ export default function ServiciosView({ onSelectSubView }) {
                       <td className="py-3 px-3 text-center">
                         <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                           s.estado === 'Activo'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            ? 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20'
                             : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}>
                           {s.estado}
@@ -466,7 +466,7 @@ export default function ServiciosView({ onSelectSubView }) {
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <Wrench className="w-4 h-4 text-blue-600" />
+                <Wrench className="w-4 h-4 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-800">
                   {editingServicio ? 'Editar Servicio' : 'Nuevo Servicio'}
                 </h3>
@@ -489,7 +489,7 @@ export default function ServiciosView({ onSelectSubView }) {
                     type="text"
                     value={formCodigo}
                     onChange={(e) => setFormCodigo(e.target.value)}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold outline-none focus:border-blue-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div className="col-span-2">
@@ -500,7 +500,7 @@ export default function ServiciosView({ onSelectSubView }) {
                     value={formNombre}
                     onChange={(e) => setFormNombre(e.target.value)}
                     placeholder="Ej: Mantenimiento Preventivo"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
               </div>
@@ -513,7 +513,7 @@ export default function ServiciosView({ onSelectSubView }) {
                     value={formCategoria}
                     onChange={(e) => setFormCategoria(e.target.value)}
                     placeholder="Soporte, Asesoría, Flete..."
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -523,7 +523,7 @@ export default function ServiciosView({ onSelectSubView }) {
                     value={formDuracion}
                     onChange={(e) => setFormDuracion(e.target.value)}
                     placeholder="1 hora, 45 min..."
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
               </div>
@@ -539,7 +539,7 @@ export default function ServiciosView({ onSelectSubView }) {
                     value={formPrecio}
                     onChange={(e) => setFormPrecio(e.target.value)}
                     placeholder="0.00"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 outline-none focus:border-blue-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-bold text-slate-900 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -551,7 +551,7 @@ export default function ServiciosView({ onSelectSubView }) {
                     value={formCosto}
                     onChange={(e) => setFormCosto(e.target.value)}
                     placeholder="0.00"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
               </div>
@@ -563,7 +563,7 @@ export default function ServiciosView({ onSelectSubView }) {
                   value={formDescripcion}
                   onChange={(e) => setFormDescripcion(e.target.value)}
                   placeholder="Detalles sobre las tareas o alcances incluidos..."
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 resize-none"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35] resize-none"
                 />
               </div>
 
@@ -572,7 +572,7 @@ export default function ServiciosView({ onSelectSubView }) {
                 <select
                   value={formEstado}
                   onChange={(e) => setFormEstado(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35] bg-white"
                 >
                   <option value="Activo">Activo</option>
                   <option value="Inactivo">Inactivo</option>
@@ -589,7 +589,7 @@ export default function ServiciosView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-sm transition active:scale-95"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-xl font-bold shadow-sm transition active:scale-95"
                 >
                   Guardar Servicio
                 </button>
@@ -603,3 +603,6 @@ export default function ServiciosView({ onSelectSubView }) {
     </div>
   );
 }
+
+
+

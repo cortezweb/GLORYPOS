@@ -196,7 +196,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
         {/* BEGIN: ModalHeader (Exact Stitch Layout) */}
         <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-20">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#2563eb]">
+            <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-[#FF6B35]">
               {/* Receipt Icon */}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
@@ -204,7 +204,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
             </div>
             <div>
               <h1 className="text-base font-bold text-slate-800 leading-none">Procesar pago</h1>
-              <span className="text-[10px] text-slate-400 font-medium">GLORYPOS Bolivia</span>
+              <span className="text-[10px] text-[#FF6B35] font-bold">GLORYPOS Bolivia</span>
             </div>
           </div>
           <button 
@@ -225,7 +225,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
             <div className="flex justify-between items-center">
               <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider">Cliente</label>
               {clienteSelect !== 'CLIENTES_VARIOS' && (
-                <span className="text-[10px] text-blue-600 font-semibold">Cliente Registrado</span>
+                <span className="text-[10px] text-[#FF6B35] font-bold">Cliente Registrado</span>
               )}
             </div>
             
@@ -234,7 +234,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 <select 
                   value={clienteSelect}
                   onChange={(e) => setClienteSelect(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-3 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 appearance-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-3 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] focus:border-[#FF6B35] appearance-none"
                 >
                   <option value="CLIENTES_VARIOS">Clientes Varios (CI/NIT: 0)</option>
                   {clientesList.map(c => (
@@ -252,7 +252,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
 
               <button 
                 onClick={() => setShowNewClientForm(!showNewClientForm)}
-                className="border border-blue-600 text-blue-600 hover:bg-blue-50 active:scale-95 px-3 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-1 shadow-xs whitespace-nowrap" 
+                className="border border-[#FF6B35] text-[#FF6B35] hover:bg-orange-50 active:scale-95 px-3 py-2 rounded-lg font-semibold text-xs transition flex items-center gap-1 shadow-xs whitespace-nowrap" 
                 type="button"
               >
                 <span>{showNewClientForm ? 'Cerrar' : '+ Nuevo'}</span>
@@ -261,9 +261,9 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
 
             {/* Quick New Client Subform */}
             {showNewClientForm && (
-              <form onSubmit={handleCreateClient} className="mt-2 p-2.5 bg-blue-50/50 border border-blue-200 rounded-xl space-y-2 animate-fadeIn">
+              <form onSubmit={handleCreateClient} className="mt-2 p-2.5 bg-orange-50/50 border border-orange-200 rounded-xl space-y-2 animate-fadeIn">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-blue-900">Registrar Nuevo Cliente</span>
+                  <span className="text-[11px] font-bold text-slate-800">Registrar Nuevo Cliente</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -271,7 +271,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                     placeholder="Razón Social / Nombre"
                     value={nuevoCliente.razon_social}
                     onChange={(e) => setNuevoCliente({ ...nuevoCliente, razon_social: e.target.value })}
-                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-blue-600"
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-[#FF6B35]"
                     required
                   />
                   <input
@@ -279,7 +279,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                     placeholder="NIT / CI"
                     value={nuevoCliente.nit_ci}
                     onChange={(e) => setNuevoCliente({ ...nuevoCliente, nit_ci: e.target.value })}
-                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-blue-600"
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-[#FF6B35]"
                     required
                   />
                 </div>
@@ -293,7 +293,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                   </button>
                   <button
                     type="submit"
-                    className="px-3 py-1 bg-blue-600 text-white font-bold rounded-lg text-xs hover:bg-blue-700 shadow-xs"
+                    className="px-3 py-1 bg-[#FF6B35] text-white font-bold rounded-lg text-xs hover:bg-[#ea580c] shadow-xs"
                   >
                     Guardar Cliente
                   </button>
@@ -312,7 +312,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setDocTipo('NOTA_VENTA')}
                 className={`py-2 text-center rounded-lg font-semibold transition shadow-xs text-xs ${
                   docTipo === 'NOTA_VENTA' 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-[#FF6B35] text-white shadow-xs' 
                     : 'text-slate-600 hover:text-slate-800 hover:bg-white/60'
                 }`} 
                 type="button"
@@ -325,7 +325,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setDocTipo('BOLETA')}
                 className={`py-2 text-center rounded-lg font-semibold transition shadow-xs text-xs ${
                   docTipo === 'BOLETA' 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-[#FF6B35] text-white shadow-xs' 
                     : 'text-slate-600 hover:text-slate-800 hover:bg-white/60'
                 }`} 
                 type="button"
@@ -338,14 +338,14 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setDocTipo('FACTURA')}
                 className={`py-2 text-center rounded-lg font-semibold transition shadow-xs text-xs flex items-center justify-center gap-1 ${
                   docTipo === 'FACTURA' 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-[#FF6B35] text-white shadow-xs' 
                     : 'text-slate-600 hover:text-slate-800 hover:bg-white/60'
                 }`} 
                 type="button"
               >
                 <span>Factura</span>
                 <span className={`text-[9px] px-1 rounded font-black ${
-                  docTipo === 'FACTURA' ? 'bg-amber-400 text-slate-900' : 'bg-blue-100 text-blue-700'
+                  docTipo === 'FACTURA' ? 'bg-[#FFB627] text-slate-900' : 'bg-orange-100 text-[#FF6B35]'
                 }`}>
                   SIAT
                 </span>
@@ -363,7 +363,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 <select 
                   value={serie}
                   onChange={(e) => setSerie(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-3 pr-7 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-600 appearance-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-3 pr-7 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] appearance-none"
                 >
                   <option value="NV001">NV001</option>
                   <option value="B001">B001</option>
@@ -381,7 +381,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
             <div className="col-span-5 space-y-1">
               <label className="block text-[11px] font-medium text-slate-500">Descuento</label>
               <div className="flex items-stretch rounded-lg border border-slate-200 overflow-hidden bg-slate-50">
-                <span className="inline-flex items-center px-2 bg-blue-600 text-white font-bold text-[11px]">%</span>
+                <span className="inline-flex items-center px-2 bg-[#FF6B35] text-white font-bold text-[11px]">%</span>
                 <input 
                   type="number" 
                   min="0" 
@@ -400,7 +400,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-1">
                 <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Métodos de pago</span>
-                <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                <span className="w-4 h-4 rounded-full bg-[#FF6B35] text-white text-[10px] flex items-center justify-center font-bold">1</span>
               </div>
               <span className="text-[11px] text-slate-400">Bolivia QR / Efectivo / POS</span>
             </div>
@@ -412,24 +412,24 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setMetodoPago('EFECTIVO')}
                 className={`rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 relative shadow-xs cursor-pointer transition ${
                   metodoPago === 'EFECTIVO' 
-                    ? 'border-2 border-blue-600 bg-blue-50/50' 
+                    ? 'border-2 border-[#FF6B35] bg-orange-50/50' 
                     : 'border border-slate-200 hover:border-slate-300 bg-white'
-                }`}
+                }`} 
                 role="button" 
                 tabIndex="0"
               >
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-[#FF6B35]">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <rect height="12" rx="2" strokeWidth="2" width="20" x="2" y="6" />
                     <circle cx="12" cy="12" r="3" strokeWidth="2" />
                     <path d="M6 12h.01M18 12h.01" strokeLinecap="round" strokeWidth="2" />
                   </svg>
                 </div>
-                <span className={`text-xs font-bold ${metodoPago === 'EFECTIVO' ? 'text-blue-900' : 'text-slate-700'}`}>
+                <span className={`text-xs font-bold ${metodoPago === 'EFECTIVO' ? 'text-[#FF6B35]' : 'text-slate-700'}`}>
                   Efectivo
                 </span>
                 {metodoPago === 'EFECTIVO' && (
-                  <span className="absolute top-1 right-1.5 text-blue-600">
+                  <span className="absolute top-1 right-1.5 text-[#FF6B35]">
                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                       <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fillRule="evenodd" />
                     </svg>
@@ -442,20 +442,20 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setMetodoPago('QR')}
                 className={`rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 relative shadow-xs cursor-pointer transition ${
                   metodoPago === 'QR' 
-                    ? 'border-2 border-blue-600 bg-blue-50/50' 
-                    : 'border border-slate-200 hover:border-purple-300 hover:bg-purple-50/40 bg-white'
-                }`}
+                    ? 'border-2 border-[#FF6B35] bg-orange-50/50' 
+                    : 'border border-slate-200 hover:border-[#FFB627]/30 hover:bg-[#FDFBF7]/40 bg-white'
+                }`} 
                 role="button" 
                 tabIndex="0"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#7c3aed] to-[#2563eb] flex items-center justify-center text-white shadow-xs font-black text-xs tracking-tight">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#FF6B35] to-[#FFB627] flex items-center justify-center text-white shadow-xs font-black text-xs tracking-tight">
                   <QrCode className="w-4 h-4" />
                 </div>
-                <span className={`text-xs font-semibold ${metodoPago === 'QR' ? 'text-blue-900 font-bold' : 'text-slate-700'}`}>
+                <span className={`text-xs font-semibold ${metodoPago === 'QR' ? 'text-[#FF6B35] font-bold' : 'text-slate-700'}`}>
                   QR Simple
                 </span>
                 {metodoPago === 'QR' && (
-                  <span className="absolute top-1 right-1.5 text-blue-600">
+                  <span className="absolute top-1 right-1.5 text-[#FF6B35]">
                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                       <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fillRule="evenodd" />
                     </svg>
@@ -468,20 +468,20 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setMetodoPago('TARJETA')}
                 className={`rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 relative shadow-xs cursor-pointer transition ${
                   metodoPago === 'TARJETA' 
-                    ? 'border-2 border-blue-600 bg-blue-50/50' 
-                    : 'border border-slate-200 hover:border-violet-300 hover:bg-violet-50/40 bg-white'
-                }`}
+                    ? 'border-2 border-[#FF6B35] bg-orange-50/50' 
+                    : 'border border-slate-200 hover:border-amber-300 hover:bg-amber-50/40 bg-white'
+                }`} 
                 role="button" 
                 tabIndex="0"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#7c3aed] flex items-center justify-center text-white shadow-xs">
+                <div className="w-8 h-8 rounded-lg bg-[#FFB627] flex items-center justify-center text-slate-900 shadow-xs">
                   <CreditCard className="w-4 h-4" />
                 </div>
-                <span className={`text-xs font-semibold ${metodoPago === 'TARJETA' ? 'text-blue-900 font-bold' : 'text-slate-700'}`}>
+                <span className={`text-xs font-semibold ${metodoPago === 'TARJETA' ? 'text-[#FF6B35] font-bold' : 'text-slate-700'}`}>
                   Tarjeta
                 </span>
                 {metodoPago === 'TARJETA' && (
-                  <span className="absolute top-1 right-1.5 text-blue-600">
+                  <span className="absolute top-1 right-1.5 text-[#FF6B35]">
                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                       <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fillRule="evenodd" />
                     </svg>
@@ -494,20 +494,20 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                 onClick={() => setMetodoPago('TRANSFERENCIA')}
                 className={`rounded-xl p-2.5 flex flex-col items-center justify-center space-y-1 relative shadow-xs cursor-pointer transition ${
                   metodoPago === 'TRANSFERENCIA' 
-                    ? 'border-2 border-blue-600 bg-blue-50/50' 
+                    ? 'border-2 border-[#FF6B35] bg-orange-50/50' 
                     : 'border border-slate-200 hover:border-sky-300 hover:bg-sky-50/40 bg-white'
-                }`}
+                }`} 
                 role="button" 
                 tabIndex="0"
               >
-                <div className="w-8 h-8 rounded-full bg-[#00a3e0] flex items-center justify-center text-white shadow-xs font-black text-[10px] uppercase">
+                <div className="w-8 h-8 rounded-full bg-[#1E2022] flex items-center justify-center text-white shadow-xs font-black text-[10px] uppercase">
                   <Building2 className="w-4 h-4" />
                 </div>
-                <span className={`text-xs font-semibold ${metodoPago === 'TRANSFERENCIA' ? 'text-blue-900 font-bold' : 'text-slate-700'}`}>
+                <span className={`text-xs font-semibold ${metodoPago === 'TRANSFERENCIA' ? 'text-[#FF6B35] font-bold' : 'text-slate-700'}`}>
                   Transferencia
                 </span>
                 {metodoPago === 'TRANSFERENCIA' && (
-                  <span className="absolute top-1 right-1.5 text-blue-600">
+                  <span className="absolute top-1 right-1.5 text-[#FF6B35]">
                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                       <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fillRule="evenodd" />
                     </svg>
@@ -518,10 +518,10 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
 
             {/* If QR selected, show dynamic Bolivian QR Simple generator with simulation */}
             {metodoPago === 'QR' && (
-              <div className="p-3.5 bg-gradient-to-br from-indigo-50/90 to-purple-50/90 border border-indigo-200 rounded-2xl space-y-2.5 animate-fadeIn">
+              <div className="p-3.5 bg-gradient-to-br from-indigo-50/90 to-[#FDFBF7]/90 border border-indigo-200 rounded-2xl space-y-2.5 animate-fadeIn">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-pulse"></span>
                     <span className="text-xs font-black text-indigo-950">QR Simple Interoperable (Bolivia)</span>
                   </div>
                   <span className="text-[10px] font-mono font-bold bg-white px-2 py-0.5 rounded-full border border-indigo-200 text-indigo-700">
@@ -557,7 +557,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                         setNumOperacion(randomOp);
                         playCashChime();
                       }}
-                      className="mt-1 px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg text-[10px] font-bold shadow-xs transition flex items-center gap-1 active:scale-95"
+                      className="mt-1 px-2.5 py-1 bg-gradient-to-r from-[#FF6B35] to-[#E85B28] hover:from-[#FF6B35] hover:to-[#E85B28] text-white rounded-lg text-[10px] font-bold shadow-xs transition flex items-center gap-1 active:scale-95"
                     >
                       <Sparkles className="w-3 h-3" />
                       <span>{numOperacion ? `✓ Aprobado: ${numOperacion}` : '⚡ Simular Aprobación Bancaria'}</span>
@@ -590,7 +590,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                     value={pagoExacto ? totalFinal : montoRecibido}
                     disabled={pagoExacto}
                     onChange={(e) => setMontoRecibido(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-2 py-1.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-600 text-right disabled:opacity-80" 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-2 py-1.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-[#FF6B35] text-right disabled:opacity-80" 
                   />
                 </div>
               </div>
@@ -602,7 +602,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                   value={numOperacion}
                   onChange={(e) => setNumOperacion(e.target.value)}
                   placeholder="Opcional" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:ring-1 focus:ring-blue-600" 
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:ring-1 focus:ring-[#FF6B35]" 
                 />
               </div>
             </div>
@@ -618,7 +618,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                     type="button"
                     onClick={() => { setPagoExacto(true); setMontoRecibido(totalFinal); }}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold transition border ${
-                      pagoExacto ? 'bg-blue-600 text-white border-blue-600 shadow-xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      pagoExacto ? 'bg-[#FF6B35] text-white border-[#FF6B35] shadow-xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                     }`}
                   >
                     Exacto
@@ -630,7 +630,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                       onClick={() => { setPagoExacto(false); setMontoRecibido(val); }}
                       className={`px-2 py-1 rounded-lg text-xs font-bold transition border ${
                         !pagoExacto && montoRecibido === val 
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-xs' 
+                          ? 'bg-[#FF6B35] text-white border-[#FF6B35] shadow-xs' 
                           : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
@@ -643,7 +643,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
 
             {/* Quick Pago Exacto Checkbox & Prominent Change Card */}
             <div className="flex items-center justify-between pt-0.5">
-              <label className="inline-flex items-center text-xs font-semibold text-blue-700 cursor-pointer select-none">
+              <label className="inline-flex items-center text-xs font-semibold text-slate-700 cursor-pointer select-none">
                 <input 
                   type="checkbox" 
                   checked={pagoExacto}
@@ -651,16 +651,16 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                     setPagoExacto(e.target.checked);
                     if (e.target.checked) setMontoRecibido(totalFinal);
                   }}
-                  className="rounded text-blue-600 focus:ring-blue-500 border-slate-300 w-4 h-4 mr-1.5" 
+                  className="rounded text-[#FF6B35] focus:ring-[#FF6B35] border-slate-300 w-4 h-4 mr-1.5 accent-[#FF6B35]" 
                 />
                 Pago exacto
               </label>
             </div>
 
             {!pagoExacto && cambio > 0 && (
-              <div className="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs animate-fadeIn shadow-xs">
-                <span className="font-bold text-emerald-800">Cambio a Entregar (Vuelto):</span>
-                <span className="text-base font-black text-emerald-600">Bs. {cambio.toFixed(2)}</span>
+              <div className="p-2.5 bg-[#FF6B35]/10 rounded-xl border border-[#FF6B35]/20 flex items-center justify-between text-xs animate-fadeIn shadow-xs">
+                <span className="font-bold text-[#1E2022]">Cambio a Entregar (Vuelto):</span>
+                <span className="text-base font-black text-[#FF6B35]">Bs. {cambio.toFixed(2)}</span>
               </div>
             )}
           </section>
@@ -694,7 +694,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
 
             <div className="flex justify-between items-center text-slate-500 text-xs pt-0.5">
               <span className="font-medium">Suma de pagos</span>
-              <span className="font-bold text-blue-600">Bs. {montoEntregado.toFixed(2)}</span>
+              <span className="font-bold text-[#FF6B35]">Bs. {montoEntregado.toFixed(2)}</span>
             </div>
           </section>
           {/* END: ResumenVenta */}
@@ -705,7 +705,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
         <footer className="p-3 bg-white border-t border-slate-200 grid grid-cols-12 gap-2 items-center">
           <button 
             onClick={onClose}
-            className="col-span-4 py-2.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition active:scale-95 text-center" 
+            className="col-span-4 py-2.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition active:scale-95 text-center cursor-pointer" 
             type="button"
           >
             Cancelar
@@ -714,7 +714,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
           <button 
             onClick={handleProcessPayment}
             disabled={isProcessing}
-            className="col-span-8 py-2.5 px-4 bg-gradient-to-r from-blue-600 to-[#7c3aed] hover:from-blue-700 hover:to-[#6d28d9] active:opacity-95 text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center space-x-1.5 disabled:opacity-60" 
+            className="col-span-8 py-2.5 px-4 bg-gradient-to-r from-[#00B574] to-[#00965e] hover:from-[#00965e] hover:to-[#007a4d] active:opacity-95 text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:shadow-[#00B574]/25 transition active:scale-95 flex items-center justify-center space-x-1.5 disabled:opacity-60 cursor-pointer" 
             type="button"
           >
             {isProcessing ? (
@@ -740,3 +740,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
     </div>
   );
 }
+
+
+
+

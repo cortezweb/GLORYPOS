@@ -98,7 +98,7 @@ export default function ReportsView({ onOpenReceipt, initialTab = 'ventas' }) {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? 'bg-[#10b981] text-white shadow-xs font-bold'
+                    ? 'bg-[#FF6B35] text-white shadow-xs font-bold'
                     : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/80'
                 }`}
               >
@@ -150,3 +150,4 @@ export default function ReportsView({ onOpenReceipt, initialTab = 'ventas' }) {
     </div>
   );
 }
+

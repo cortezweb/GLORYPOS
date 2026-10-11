@@ -68,7 +68,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#FF6B35]/20 text-[#E85B28] flex items-center justify-center font-bold">
               %
             </div>
             <div>
@@ -102,7 +102,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 type="text"
                 value={form.serie}
                 onChange={(e) => setForm({ ...form, serie: e.target.value.toUpperCase() })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -114,7 +114,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 type="text"
                 value={form.correlativo}
                 onChange={(e) => setForm({ ...form, correlativo: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -130,7 +130,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.fecha}
                 onChange={(e) => setForm({ ...form, fecha: e.target.value })}
                 placeholder="dd/mm/aaaa"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -143,7 +143,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.origen}
                 onChange={(e) => setForm({ ...form, origen: e.target.value })}
                 placeholder="Ej: F001-00004478"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-emerald-700"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-mono text-[#E85B28]"
                 required
               />
             </div>
@@ -158,7 +158,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
               value={form.proveedor_nombre}
               onChange={(e) => setForm({ ...form, proveedor_nombre: e.target.value })}
               placeholder="Razón Social o Apellidos y Nombres"
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
               required
             />
           </div>
@@ -173,7 +173,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.proveedor_doc}
                 onChange={(e) => setForm({ ...form, proveedor_doc: e.target.value })}
                 placeholder="Ej: 20601234567 o 000000"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-mono"
               />
             </div>
             <div>
@@ -183,7 +183,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
               <select
                 value={form.tasa}
                 onChange={(e) => setForm({ ...form, tasa: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
               >
                 <option value="3">3% (Tasa General)</option>
                 <option value="6">6% (Casos excepcionales)</option>
@@ -202,15 +202,15 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.monto_total}
                 onChange={(e) => setForm({ ...form, monto_total: e.target.value })}
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-emerald-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#E85B28] uppercase tracking-wider mb-1">
                 Total Retenido Calculado
               </label>
-              <div className="w-full px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-800">
+              <div className="w-full px-3 py-2 bg-[#FF6B35]/10 border border-[#FF6B35]/20 rounded-xl text-xs font-bold text-[#1E2022]">
                 S/ {montoRetenido}
               </div>
             </div>
@@ -225,7 +225,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
               value={form.observacion}
               onChange={(e) => setForm({ ...form, observacion: e.target.value })}
               placeholder="Detalle de la retención..."
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -240,7 +240,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
+              className="px-5 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Emitir Retención</span>
@@ -251,3 +251,6 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
     </div>
   );
 }
+
+
+

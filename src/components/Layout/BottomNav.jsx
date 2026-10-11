@@ -13,7 +13,7 @@ export default function BottomNav({ currentView, onSelectView }) {
           onClick={() => onSelectView('pos')}
           className={`flex flex-col items-center justify-center transition-colors ${
             ['pos', 'ventas_caja', 'ventas_notas', 'ventas_cotizaciones'].includes(currentView) 
-              ? 'text-blue-600 font-semibold' 
+              ? 'text-[#FF6B35] font-semibold' 
               : 'text-gray-500 hover:text-gray-800'
           }`}
           type="button"
@@ -33,7 +33,7 @@ export default function BottomNav({ currentView, onSelectView }) {
         <button 
           onClick={() => onSelectView('productos')}
           className={`flex flex-col items-center justify-center transition-colors ${
-            ['productos', 'inventory'].includes(currentView) ? 'text-blue-600 font-semibold' : 'text-gray-500 hover:text-gray-800'
+            ['productos', 'inventory'].includes(currentView) ? 'text-[#FF6B35] font-semibold' : 'text-gray-500 hover:text-gray-800'
           }`}
           type="button"
         >
@@ -45,7 +45,7 @@ export default function BottomNav({ currentView, onSelectView }) {
         <button 
           onClick={() => onSelectView('clients')}
           className={`flex flex-col items-center justify-center transition-colors ${
-            currentView === 'clients' ? 'text-blue-600 font-semibold' : 'text-gray-500 hover:text-gray-800'
+            currentView === 'clients' ? 'text-[#FF6B35] font-semibold' : 'text-gray-500 hover:text-gray-800'
           }`}
           type="button"
         >
@@ -58,7 +58,7 @@ export default function BottomNav({ currentView, onSelectView }) {
           onClick={() => onSelectView('ventas_comprobantes')}
           className={`flex flex-col items-center justify-center transition-colors ${
             ['ventas_comprobantes', 'sales', 'reports'].includes(currentView) 
-              ? 'text-blue-600 font-semibold' 
+              ? 'text-[#FF6B35] font-semibold' 
               : 'text-gray-500 hover:text-gray-800'
           }`}
           type="button"

@@ -52,7 +52,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
               <span className="text-2xl font-black text-slate-900 block">
                 Bs. 18,450.00
               </span>
-              <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-0.5">
+              <span className="text-[11px] font-semibold text-[#FF6B35] flex items-center gap-0.5">
                 <ArrowUpRight className="w-3.5 h-3.5" /> +14.2% vs mes anterior
               </span>
             </div>
@@ -76,7 +76,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
               <span className="text-2xl font-black text-slate-900 block">
                 148
               </span>
-              <span className="text-[11px] font-semibold text-indigo-600">
+              <span className="text-[11px] font-semibold text-[#1E2022]">
                 Directorio actualizado
               </span>
             </div>
@@ -101,7 +101,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
                 <h3 className="font-bold text-slate-900 text-sm">Evolución de Ventas Semanal</h3>
                 <p className="text-xs text-slate-500">Comportamiento en Bolivianos (Bs.)</p>
               </div>
-              <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-bold text-[#1E2022] bg-indigo-50 px-2.5 py-1 rounded-lg">
                 Esta Semana
               </span>
             </div>
@@ -122,7 +122,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
                     Bs. {b.monto}
                   </span>
                   <div 
-                    className="w-full bg-gradient-to-t from-blue-600 to-indigo-600 rounded-t-xl group-hover:from-blue-700 group-hover:to-indigo-700 transition-all shadow-xs"
+                    className="w-full bg-gradient-to-t from-blue-600 to-[#1E2022] rounded-t-xl group-hover:from-blue-700 group-hover:to-indigo-700 transition-all shadow-xs"
                     style={{ height: `${(b.val / 120) * 120}px` }}
                   />
                   <span className="text-xs font-semibold text-slate-600">{b.day}</span>
@@ -157,7 +157,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
             {/* Top Products */}
             <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                <TrendingUp className="w-4 h-4 text-[#FF6B35]" />
                 <h4 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
                   Más Vendidos en Bolivia
                 </h4>
@@ -166,11 +166,11 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                   <span className="font-semibold text-slate-800">1. Coca-Cola Original 2L</span>
-                  <span className="font-extrabold text-indigo-600">142 vendidos</span>
+                  <span className="font-extrabold text-[#1E2022]">142 vendidos</span>
                 </div>
                 <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                   <span className="font-semibold text-slate-800">2. Cerveza Paceña 710ml</span>
-                  <span className="font-extrabold text-indigo-600">98 vendidos</span>
+                  <span className="font-extrabold text-[#1E2022]">98 vendidos</span>
                 </div>
               </div>
             </div>
@@ -191,3 +191,5 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
     </div>
   );
 }
+
+

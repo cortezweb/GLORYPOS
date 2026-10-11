@@ -35,7 +35,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-3 py-1.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Imprimir</span>
@@ -69,7 +69,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
             <div className="border-2 border-slate-800 rounded-xl p-3 text-center min-w-[210px] bg-slate-50/50">
               <p className="text-xs font-bold tracking-wider text-slate-800">R.U.C. {empresa?.nit || '20608945123'}</p>
               <p className="text-[11px] font-black my-1 text-slate-900 leading-tight">{docTitle}</p>
-              <p className="text-sm font-black font-mono text-emerald-800 mt-1">{doc.serie_nro}</p>
+              <p className="text-sm font-black font-mono text-[#1E2022] mt-1">{doc.serie_nro}</p>
             </div>
           </div>
 
@@ -91,7 +91,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
               </div>
               <div>
                 <span className="text-slate-400 text-[10px] font-bold uppercase">Estado SUNAT: </span>
-                <span className="font-semibold text-emerald-700">{doc.estado_sunat}</span>
+                <span className="font-semibold text-[#E85B28]">{doc.estado_sunat}</span>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
               </thead>
               <tbody className="divide-y divide-slate-100">
                 <tr>
-                  <td className="py-3 px-3 font-mono font-bold text-emerald-700">{doc.origen || '—'}</td>
+                  <td className="py-3 px-3 font-mono font-bold text-[#E85B28]">{doc.origen || '—'}</td>
                   <td className="py-3 px-3 text-slate-600">{doc.fecha}</td>
                   <td className="py-3 px-3 text-right font-medium text-slate-700">S/ {Number(totalBase).toFixed(2)}</td>
                   <td className="py-3 px-3 text-center font-bold text-slate-700">{doc.tasa_porcentaje || 3}%</td>
@@ -133,7 +133,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
               </div>
               <div className="flex justify-between text-slate-900 font-black text-sm pt-1.5 border-t border-slate-200">
                 <span>{amountLabel}:</span>
-                <span className="text-emerald-700">S/ {Number(amountVal).toFixed(2)}</span>
+                <span className="text-[#E85B28]">S/ {Number(amountVal).toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -158,3 +158,4 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
     </div>
   );
 }
+

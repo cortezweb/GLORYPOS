@@ -119,7 +119,7 @@ export default function MetodosPagoView({ onSelectSubView }) {
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 self-start md:self-auto active:scale-95"
+          className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 self-start md:self-auto active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Nuevo método</span>
@@ -151,20 +151,20 @@ export default function MetodosPagoView({ onSelectSubView }) {
                   </td>
                   <td className="py-3.5 px-4">
                     {m.destino === 'Caja' ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#FF6B35]/10 text-[#FF6B35] border border-blue-200/60">
                         <Wallet className="w-3.5 h-3.5" />
                         Caja
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20/60">
                         <Building2 className="w-3.5 h-3.5" />
                         Cuenta bancaria
                       </span>
                     )}
                   </td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20/60">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B35]"></span>
                       {m.estado}
                     </span>
                   </td>
@@ -206,7 +206,7 @@ export default function MetodosPagoView({ onSelectSubView }) {
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
             <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#00a650] text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <CreditCard className="w-5 h-5" />
                 </div>
                 <div>
@@ -233,7 +233,7 @@ export default function MetodosPagoView({ onSelectSubView }) {
                   placeholder="Ej. Billetera Tunki, Apple Pay, Cheque"
                   value={formNombre}
                   onChange={(e) => setFormNombre(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -257,11 +257,11 @@ export default function MetodosPagoView({ onSelectSubView }) {
                     onClick={() => setFormDestino('Caja')}
                     className={`p-3 rounded-xl border text-left transition flex items-center gap-2 ${
                       formDestino === 'Caja'
-                        ? 'border-blue-600 bg-blue-50/50 text-blue-900 font-bold'
+                        ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-blue-900 font-bold'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-600'
                     }`}
                   >
-                    <Wallet className="w-4 h-4 text-blue-600" />
+                    <Wallet className="w-4 h-4 text-[#FF6B35]" />
                     <div>
                       <div className="text-xs">Caja</div>
                       <div className="text-[10px] text-slate-400 font-normal">Afecta arqueo físico</div>
@@ -273,11 +273,11 @@ export default function MetodosPagoView({ onSelectSubView }) {
                     onClick={() => setFormDestino('Cuenta bancaria')}
                     className={`p-3 rounded-xl border text-left transition flex items-center gap-2 ${
                       formDestino === 'Cuenta bancaria'
-                        ? 'border-emerald-600 bg-emerald-50/50 text-emerald-900 font-bold'
+                        ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-[#1E2022] font-bold'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-600'
                     }`}
                   >
-                    <Building2 className="w-4 h-4 text-emerald-600" />
+                    <Building2 className="w-4 h-4 text-[#FF6B35]" />
                     <div>
                       <div className="text-xs">Cuenta bancaria</div>
                       <div className="text-[10px] text-slate-400 font-normal">Depósito o billetera</div>
@@ -308,7 +308,7 @@ export default function MetodosPagoView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Guardar Método
                 </button>
@@ -321,10 +321,15 @@ export default function MetodosPagoView({ onSelectSubView }) {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
     </div>
   );
 }
+
+
+
+
+

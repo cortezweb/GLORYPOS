@@ -147,7 +147,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
                 <Layers className="w-4 h-4" />
               </div>
               <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
@@ -162,7 +162,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
           <button
             type="button"
             onClick={openNew}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm shadow-blue-500/20 active:scale-95 cursor-pointer"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-[#1E2022] hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm shadow-blue-500/20 active:scale-95 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Nueva {activeTab === 'categorias' ? 'Categoría' : 'Marca'}</span>
@@ -224,7 +224,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
                 className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs hover:border-blue-300 transition-all flex items-center justify-between group"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600 text-slate-500 flex items-center justify-center font-bold text-sm shrink-0 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-[#FF6B35]/10 group-hover:text-[#FF6B35] text-slate-500 flex items-center justify-center font-bold text-sm shrink-0 transition-colors">
                     {activeTab === 'categorias' ? <Tag className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
                   </div>
                   <div className="min-w-0">
@@ -235,8 +235,8 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
                           {count} {count === 1 ? 'producto' : 'productos'}
                         </span>
                       )}
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">
+                        <span className="w-1 h-1 rounded-full bg-[#FF6B35]"></span>
                         {item.estado || 'Activo'}
                       </span>
                     </div>
@@ -248,7 +248,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
                     type="button"
                     onClick={() => openEdit(item)}
                     title="Editar"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#FF6B35] hover:bg-[#FF6B35]/10 transition"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
@@ -329,7 +329,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md shadow-blue-600/20"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#FF6B35]/90 rounded-xl transition shadow-md shadow-blue-600/20"
                 >
                   Guardar
                 </button>
@@ -341,3 +341,6 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
     </div>
   );
 }
+
+
+

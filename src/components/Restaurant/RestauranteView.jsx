@@ -25,7 +25,7 @@ export default function RestauranteView({ onSelectSubView }) {
   const getEstadoBadge = (estado) => {
     switch (estado) {
       case 'DISPONIBLE':
-        return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Libre</span>;
+        return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">Libre</span>;
       case 'OCUPADA':
         return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Ocupada</span>;
       case 'CUENTA_PEDIDA':
@@ -85,7 +85,7 @@ export default function RestauranteView({ onSelectSubView }) {
             onClick={() => alert(`Mesa ${mesa.id}: Estado actual ${mesa.estado}`)}
             className={`rounded-3xl p-5 border transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between min-h-[160px] ${
               mesa.estado === 'DISPONIBLE'
-                ? 'bg-white border-slate-200 hover:border-emerald-300'
+                ? 'bg-white border-slate-200 hover:border-[#FF6B35]/30'
                 : mesa.estado === 'CUENTA_PEDIDA'
                 ? 'bg-rose-50/40 border-rose-200 hover:border-rose-400'
                 : 'bg-amber-50/40 border-amber-200 hover:border-amber-400'
@@ -100,7 +100,7 @@ export default function RestauranteView({ onSelectSubView }) {
               {mesa.orden ? (
                 <>
                   <p className="text-xs font-bold text-slate-800">{mesa.orden}</p>
-                  <p className="text-base font-black text-emerald-700">{mesa.total}</p>
+                  <p className="text-base font-black text-[#E85B28]">{mesa.total}</p>
                   <p className="text-[11px] text-slate-500 flex items-center gap-1">
                     <Clock className="w-3 h-3 text-slate-400" />
                     <span>Tiempo: {mesa.tiempo}</span>
@@ -128,3 +128,5 @@ export default function RestauranteView({ onSelectSubView }) {
     </div>
   );
 }
+
+

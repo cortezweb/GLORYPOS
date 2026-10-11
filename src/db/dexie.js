@@ -2,277 +2,384 @@ import Dexie from 'dexie';
 import { MASTER_PRODUCTS } from './seedMaster';
 import { hashText, isAlreadyHashed } from '../utils/crypto';
 
-export const db = new Dexie('GloryPosBoliviaDB');
+export function applyDexieSchema(dexieInstance) {
+  dexieInstance.version(2).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total'
+  });
 
-db.version(2).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total'
+  dexieInstance.version(3).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo'
+  });
+
+  dexieInstance.version(4).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo'
+  });
+
+  dexieInstance.version(5).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, email, pin, rol, nombre'
+  });
+
+  dexieInstance.version(6).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, email, pin, rol, nombre',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(7).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(8).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(9).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(10).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    transferencias_inventario: 'id, fecha, origen, destino, estado',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(11).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    transferencias_inventario: 'id, fecha, origen, destino, estado',
+    sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+    ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+    cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+    cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+    metodos_pago: 'id, nombre, codigo, destino, estado',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(12).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    transferencias_inventario: 'id, fecha, origen, destino, estado',
+    sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+    ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+    cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+    cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+    metodos_pago: 'id, nombre, codigo, destino, estado',
+    guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+    guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+    transportistas_gre: 'id, documento, nombre, mtc, estado',
+    conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+    vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(13).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    transferencias_inventario: 'id, fecha, origen, destino, estado',
+    sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+    ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+    cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+    cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+    metodos_pago: 'id, nombre, codigo, destino, estado',
+    guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+    guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+    transportistas_gre: 'id, documento, nombre, mtc, estado',
+    conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+    vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+    retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
+    percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
+    reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(14).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    transferencias_inventario: 'id, fecha, origen, destino, estado',
+    sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+    ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+    cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+    cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+    metodos_pago: 'id, nombre, codigo, destino, estado',
+    guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+    guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+    transportistas_gre: 'id, documento, nombre, mtc, estado',
+    conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+    vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+    retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
+    percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
+    reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
+    roles: 'id, nombre, descripcion, permisos, activo',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+  });
+
+  dexieInstance.version(15).stores({
+    catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+    productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+    ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+    config_empresa: 'id, slug',
+    clientes: 'id, nit_ci, razon_social, telefono',
+    proveedores: 'id, nit, razon_social, telefono',
+    compras: 'id, fecha, proveedor_id, total',
+    cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+    movimientos_caja: 'id, fecha, tipo, monto, motivo',
+    kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+    usuarios: 'id, empresa_id, email, pin, rol, nombre',
+    membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+    pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+    unidades_medida: 'id, codigo, nombre, simbolo, estado',
+    transferencias_inventario: 'id, fecha, origen, destino, estado',
+    sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+    ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+    cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+    cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+    cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+    metodos_pago: 'id, nombre, codigo, destino, estado',
+    guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+    guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+    transportistas_gre: 'id, documento, nombre, mtc, estado',
+    conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+    vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+    retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
+    percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
+    reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
+    roles: 'id, nombre, descripcion, permisos, activo',
+    sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at',
+    auditoria: 'id, fecha, usuario, accion, modulo, detalles'
+  });
+}
+
+function getTenantDatabaseName(slug) {
+  const clean = String(slug || 'admin').toLowerCase().trim().replace(/[^a-z0-9_-]/g, '_') || 'admin';
+  return `GloryPosDB_${clean}`;
+}
+
+export function createTenantDatabase(slug = 'admin') {
+  const tenantDb = new Dexie(getTenantDatabaseName(slug));
+  applyDexieSchema(tenantDb);
+  return tenantDb;
+}
+
+// ── INSTANCIA DINÁMICA MULTI-TENANT CON PROXY TRANSPARENTE ──────────────────
+let activeTenantSlug = typeof localStorage !== 'undefined'
+  ? (localStorage.getItem('glorypos_tenant_slug') || 'admin')
+  : 'admin';
+
+let activeDb = createTenantDatabase(activeTenantSlug);
+
+export const db = new Proxy({}, {
+  get(target, prop) {
+    if (prop === '_rawDb') return activeDb;
+    if (prop === 'activeTenantSlug') return activeTenantSlug;
+    const val = activeDb[prop];
+    if (typeof val === 'function') {
+      return val.bind(activeDb);
+    }
+    return val;
+  }
 });
 
-db.version(3).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo'
-});
+export async function switchTenantDatabase(newSlug) {
+  const clean = String(newSlug || 'admin').toLowerCase().trim().replace(/[^a-z0-9_-]/g, '_') || 'admin';
+  if (clean === activeTenantSlug && activeDb.isOpen()) {
+    return db;
+  }
+  try {
+    activeDb.close();
+  } catch (e) {
+    console.warn('[dexie] Error cerrando base anterior:', e);
+  }
+  activeTenantSlug = clean;
+  activeDb = createTenantDatabase(clean);
+  console.info(`[dexie] Base de datos local aislada activada: GloryPosDB_${clean}`);
+  return db;
+}
 
-db.version(4).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo'
-});
+export async function initDatabase(targetSlug = null) {
+  if (targetSlug && targetSlug !== activeTenantSlug) {
+    await switchTenantDatabase(targetSlug);
+  }
 
-db.version(5).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, email, pin, rol, nombre'
-});
+  // Migración segura de datos históricos desde GloryPosBoliviaDB si existe
+  if (activeTenantSlug === 'admin') {
+    try {
+      const currentProds = await db.productos_tienda.count().catch(() => 0);
+      if (currentProds === 0) {
+        const legacyDb = new Dexie('GloryPosBoliviaDB');
+        applyDexieSchema(legacyDb);
+        const legacyProds = await legacyDb.productos_tienda.count().catch(() => 0);
+        if (legacyProds > 0) {
+          console.info('[dexie] Migrando datos históricos de GloryPosBoliviaDB hacia GloryPosDB_admin...');
+          for (const table of legacyDb.tables) {
+            if (table.name === 'sync_queue') continue;
+            try {
+              const records = await table.toArray();
+              if (records.length > 0 && db[table.name]) {
+                await db[table.name].bulkPut(records);
+              }
+            } catch (err) {
+              console.warn(`[dexie] Error migrando tabla legacy ${table.name}:`, err);
+            }
+          }
+          legacyDb.close();
+          console.info('[dexie] Migración histórica completada sin pérdida de información.');
+        }
+      }
+    } catch (migErr) {
+      console.warn('[dexie] Verificación de migración legacy:', migErr);
+    }
+  }
 
-// v6: agrega cola de sincronización offline → nube
-db.version(6).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, email, pin, rol, nombre',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v7: soporte multi-tenant (slug en config_empresa, empresa_id en usuarios)
-db.version(7).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v8: soporte para membresías y pedidos web
-db.version(8).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v9: soporte para catálogo de unidades de medida (SIAT N°03)
-db.version(9).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  unidades_medida: 'id, codigo, nombre, simbolo, estado',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v10: soporte para transferencias de inventario
-db.version(10).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  unidades_medida: 'id, codigo, nombre, simbolo, estado',
-  transferencias_inventario: 'id, fecha, origen, destino, estado',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v11: soporte integral para finanzas (sesiones de caja, ingresos, egresos, cuentas bancarias, cuentas por cobrar, cuentas por pagar, métodos de pago)
-db.version(11).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  unidades_medida: 'id, codigo, nombre, simbolo, estado',
-  transferencias_inventario: 'id, fecha, origen, destino, estado',
-  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
-  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
-  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
-  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
-  metodos_pago: 'id, nombre, codigo, destino, estado',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v12: soporte integral para Guías de Remisión Electrónica (GRE) y catálogos asociados
-db.version(12).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  unidades_medida: 'id, codigo, nombre, simbolo, estado',
-  transferencias_inventario: 'id, fecha, origen, destino, estado',
-  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
-  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
-  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
-  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
-  metodos_pago: 'id, nombre, codigo, destino, estado',
-  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
-  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
-  transportistas_gre: 'id, documento, nombre, mtc, estado',
-  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
-  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v13: soporte integral para Comprobantes Avanzados (Retenciones, Percepciones y Reversiones)
-db.version(13).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  unidades_medida: 'id, codigo, nombre, simbolo, estado',
-  transferencias_inventario: 'id, fecha, origen, destino, estado',
-  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
-  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
-  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
-  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
-  metodos_pago: 'id, nombre, codigo, destino, estado',
-  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
-  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
-  transportistas_gre: 'id, documento, nombre, mtc, estado',
-  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
-  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
-  retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
-  percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
-  reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-// v14: soporte integral para Roles y Permisos en Administración
-db.version(14).stores({
-  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
-  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
-  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
-  config_empresa: 'id, slug',
-  clientes: 'id, nit_ci, razon_social, telefono',
-  proveedores: 'id, nit, razon_social, telefono',
-  compras: 'id, fecha, proveedor_id, total',
-  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
-  movimientos_caja: 'id, fecha, tipo, monto, motivo',
-  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
-  usuarios: 'id, empresa_id, email, pin, rol, nombre',
-  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
-  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
-  unidades_medida: 'id, codigo, nombre, simbolo, estado',
-  transferencias_inventario: 'id, fecha, origen, destino, estado',
-  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
-  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
-  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
-  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
-  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
-  metodos_pago: 'id, nombre, codigo, destino, estado',
-  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
-  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
-  transportistas_gre: 'id, documento, nombre, mtc, estado',
-  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
-  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
-  retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
-  percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
-  reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
-  roles: 'id, nombre, descripcion, permisos, activo',
-  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
-});
-
-export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
   if (masterCount === 0) {
     await db.catalogo_maestro.bulkAdd(MASTER_PRODUCTS);

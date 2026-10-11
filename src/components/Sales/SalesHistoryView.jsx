@@ -45,8 +45,8 @@ export default function SalesHistoryView({ onOpenReceipt }) {
             </span>
           </div>
 
-          <div className="p-3 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">
+          <div className="p-3 bg-gradient-to-br from-[#FF6B35] to-[#E85B28] border border-[#FF6B35]/10 rounded-2xl">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#E85B28] block">
               Comprobantes
             </span>
             <span className="text-lg font-extrabold text-slate-900">
@@ -132,3 +132,6 @@ export default function SalesHistoryView({ onOpenReceipt }) {
     </div>
   );
 }
+
+
+

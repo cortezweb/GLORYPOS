@@ -65,7 +65,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#FF6B35]/20 text-[#E85B28] flex items-center justify-center font-bold">
               <RotateCcw className="w-4 h-4" />
             </div>
             <div>
@@ -99,7 +99,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
                 type="text"
                 value={form.serie}
                 onChange={(e) => setForm({ ...form, serie: e.target.value.toUpperCase() })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -111,7 +111,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
                 type="text"
                 value={form.correlativo}
                 onChange={(e) => setForm({ ...form, correlativo: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -127,7 +127,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.fecha}
                 onChange={(e) => setForm({ ...form, fecha: e.target.value })}
                 placeholder="dd/mm/aaaa"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -140,7 +140,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.origen}
                 onChange={(e) => setForm({ ...form, origen: e.target.value })}
                 placeholder="Ej: R001-1 o P001-1"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-emerald-700"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-mono text-[#E85B28]"
                 required
               />
             </div>
@@ -155,7 +155,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
               value={form.sujeto_nombre}
               onChange={(e) => setForm({ ...form, sujeto_nombre: e.target.value })}
               placeholder="Razón Social o Nombre"
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
               required
             />
           </div>
@@ -170,7 +170,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.sujeto_doc}
                 onChange={(e) => setForm({ ...form, sujeto_doc: e.target.value })}
                 placeholder="Ej: 20100012345"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-mono"
               />
             </div>
             <div>
@@ -183,7 +183,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
                 value={form.monto}
                 onChange={(e) => setForm({ ...form, monto: e.target.value })}
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
                 required
               />
             </div>
@@ -196,7 +196,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
             <select
               value={form.motivo}
               onChange={(e) => setForm({ ...form, motivo: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Anulación de la operación">Anulación de la operación</option>
               <option value="Error en el monto retenido/percibido">Error en el monto retenido/percibido</option>
@@ -214,7 +214,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
               value={form.observacion}
               onChange={(e) => setForm({ ...form, observacion: e.target.value })}
               placeholder="Detalle de justificación..."
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -229,7 +229,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
+              className="px-5 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Emitir Reversión</span>
@@ -240,3 +240,5 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
     </div>
   );
 }
+
+

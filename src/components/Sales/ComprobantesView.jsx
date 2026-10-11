@@ -413,7 +413,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
       {/* Subnavegación de Ventas */}
       <SalesSubNav currentSubView="ventas_comprobantes" onSelectSubView={onSelectSubView} />
 
-      <main className="max-w-[1360px] mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
         {/* ========================================================= */}
         {/* CABECERA: TÍTULO, SUBTÍTULO Y PESTAÑAS DERECHAS */}
@@ -439,7 +439,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
               }}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                 activeTab === 'facturas_boletas'
-                  ? 'bg-[#00a650] text-white shadow-xs'
+                  ? 'bg-[#FF6B35] text-white shadow-xs'
                   : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -455,7 +455,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 transition ${
                 activeTab === 'notas_credito'
-                  ? 'bg-[#00a650] text-white border-[#00a650] shadow-xs'
+                  ? 'bg-[#FF6B35] text-white border-[#FF6B35] shadow-xs'
                   : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -472,7 +472,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 transition ${
                 activeTab === 'resumenes_bajas'
-                  ? 'bg-[#00a650] text-white border-[#00a650] shadow-xs'
+                  ? 'bg-[#FF6B35] text-white border-[#FF6B35] shadow-xs'
                   : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -509,7 +509,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                   setFilterEstado(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none cursor-pointer pr-8"
+                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none cursor-pointer pr-8"
               >
                 <option value="ALL">Todos los estados</option>
                 <option value="Aceptado">Aceptado</option>
@@ -530,7 +530,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none"
               />
             </div>
           </div>
@@ -544,7 +544,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                   type="date"
                   value={fechaDesde}
                   onChange={(e) => setFechaDesde(e.target.value)}
-                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-emerald-500 outline-none pr-7 bg-white"
+                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-[#FF6B35] outline-none pr-7 bg-white"
                 />
                 <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -554,7 +554,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                   type="date"
                   value={fechaHasta}
                   onChange={(e) => setFechaHasta(e.target.value)}
-                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-emerald-500 outline-none pr-7 bg-white"
+                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-[#FF6B35] outline-none pr-7 bg-white"
                 />
                 <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -569,7 +569,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                   setItemsPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-800 bg-white focus:border-emerald-500 outline-none cursor-pointer"
+                className="border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-800 bg-white focus:border-[#FF6B35] outline-none cursor-pointer"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -659,7 +659,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                         <td className="py-3 px-3 text-center whitespace-nowrap">
                           <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                             estadoSunat === 'Aceptado'
-                              ? 'bg-[#e8f8f0] text-[#00a650] border-emerald-200'
+                              ? 'bg-[#e8f8f0] text-[#FF6B35] border-[#FF6B35]/20'
                               : estadoSunat === 'Anulado'
                               ? 'bg-red-50 text-red-600 border-red-200'
                               : 'bg-amber-50 text-amber-700 border-amber-200'
@@ -696,7 +696,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                               onClick={() => {
                                 if (onOpenReceipt) onOpenReceipt(v);
                               }}
-                              className="p-1 bg-[#0066cc] hover:bg-blue-700 text-white rounded-md transition shadow-2xs"
+                              className="p-1 bg-[#0066cc] hover:bg-[#FF6B35]/90 text-white rounded-md transition shadow-2xs"
                               title="Imprimir Ticket"
                             >
                               <Printer className="w-3.5 h-3.5" />
@@ -775,10 +775,10 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                           <button
                             type="button"
                             onClick={() => handleDownloadCDR(v)}
-                            className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-blue-200 rounded-md bg-blue-50/70 hover:bg-blue-100 text-blue-800 transition text-[10px] font-bold"
+                            className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-blue-200 rounded-md bg-[#FF6B35]/10/70 hover:bg-[#FF6B35]/20 text-blue-800 transition text-[10px] font-bold"
                             title="Descargar CDR (Constancia de Recepción SUNAT)"
                           >
-                            <FileText className="w-3 h-3 text-blue-600" />
+                            <FileText className="w-3 h-3 text-[#FF6B35]" />
                             <ChevronDown className="w-2.5 h-2.5" />
                           </button>
                         </td>
@@ -790,10 +790,10 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                             <button
                               type="button"
                               onClick={() => handleSendWhatsApp(v)}
-                              className="w-7 h-7 rounded-full border border-emerald-300 text-emerald-600 hover:bg-emerald-50 flex items-center justify-center transition shadow-2xs"
+                              className="w-7 h-7 rounded-full border border-[#FF6B35]/30 text-[#FF6B35] hover:bg-[#FF6B35]/10 flex items-center justify-center transition shadow-2xs"
                               title="Enviar por WhatsApp"
                             >
-                              <MessageCircle className="w-3.5 h-3.5 text-[#00a650]" />
+                              <MessageCircle className="w-3.5 h-3.5 text-[#FF6B35]" />
                             </button>
 
                             {/* Botón Menú Tres Puntos */}
@@ -834,9 +834,9 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                                   handleSendWhatsApp(v);
                                   setActiveActionsMenuId(null);
                                 }}
-                                className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-emerald-700 font-medium"
+                                className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-[#E85B28] font-medium"
                               >
-                                <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                                <MessageCircle className="w-3.5 h-3.5 text-[#FF6B35]" />
                                 Enviar WhatsApp
                               </button>
                               <button
@@ -931,7 +931,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm"
+                  className="px-3 py-1 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   Imprimir
@@ -1053,7 +1053,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-600" />
+                <FileText className="w-4 h-4 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-800">
                   Detalle del Comprobante {detailSale.correlativo}
                 </h3>
@@ -1083,7 +1083,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Estado:</span>
-                  <span className="font-bold text-emerald-600">{detailSale.estado_sunat || 'Aceptado'}</span>
+                  <span className="font-bold text-[#FF6B35]">{detailSale.estado_sunat || 'Aceptado'}</span>
                 </div>
               </div>
 
@@ -1106,7 +1106,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
 
               <div className="pt-2 flex justify-between items-center text-sm font-black border-t border-slate-100">
                 <span>TOTAL:</span>
-                <span className="text-emerald-700">S/ {(Number(detailSale.total) || 0).toFixed(2)}</span>
+                <span className="text-[#E85B28]">S/ {(Number(detailSale.total) || 0).toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -1116,3 +1116,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
     </div>
   );
 }
+
+
+
+

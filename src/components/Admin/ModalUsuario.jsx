@@ -91,7 +91,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
         {/* Cabecera */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <User className="w-5 h-5" />
             </div>
             <div>
@@ -129,7 +129,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               placeholder="Ej. Esteffany Cordova"
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-blue-500 focus:outline-hidden transition"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-[#FF6B35] focus:outline-hidden transition"
               required
             />
           </div>
@@ -143,7 +143,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Ej. esteffany@tukfac.com"
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-blue-500 focus:outline-hidden transition"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-[#FF6B35] focus:outline-hidden transition"
               required
             />
           </div>
@@ -156,7 +156,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
               <select
                 value={rol}
                 onChange={(e) => setRol(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-blue-500 focus:outline-hidden transition"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-[#FF6B35] focus:outline-hidden transition"
               >
                 {roles.map((r) => (
                   <option key={r.id || r.nombre} value={r.nombre}>
@@ -186,7 +186,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 placeholder={userToEdit ? 'Sin cambios (****)' : 'Ej. 1234'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-blue-500 focus:outline-hidden transition"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-[#FF6B35] focus:outline-hidden transition"
               />
             </div>
           </div>
@@ -200,7 +200,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={userToEdit ? 'Dejar en blanco para mantener la actual' : 'Mínimo 6 caracteres'}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-blue-500 focus:outline-hidden transition"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:border-[#FF6B35] focus:outline-hidden transition"
             />
           </div>
 
@@ -212,7 +212,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
                 onChange={(e) => setActivo(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6B35]"></div>
               <span className="ml-3 font-semibold text-slate-700">
                 {activo ? 'Usuario Activo con Acceso al Sistema' : 'Usuario Inactivo / Bloqueado'}
               </span>
@@ -231,7 +231,7 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
             <button
               type="submit"
               disabled={guardando}
-              className="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition disabled:opacity-50"
+              className="px-5 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#FF6B35]/90 rounded-xl shadow-xs transition disabled:opacity-50"
             >
               {guardando ? 'Guardando...' : userToEdit ? 'Guardar Cambios' : 'Crear Usuario'}
             </button>
@@ -242,3 +242,5 @@ export default function ModalUsuario({ isOpen, onClose, userToEdit, roles = [], 
     </div>
   );
 }
+
+

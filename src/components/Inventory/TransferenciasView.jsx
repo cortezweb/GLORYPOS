@@ -177,7 +177,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-slideUp">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -259,7 +259,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
                   setSelectedProductToAdd(products[0] || null);
                   setIsAddModalOpen(true);
                 }}
-                className="px-3.5 py-1.5 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                className="px-3.5 py-1.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>+ Agregar productos</span>
@@ -355,7 +355,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
             <button
               type="button"
               onClick={handleSubmitTransfer}
-              className="px-5 py-2.5 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-2 shadow-2xs active:scale-95 cursor-pointer"
+              className="px-5 py-2.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl transition flex items-center gap-2 shadow-2xs active:scale-95 cursor-pointer"
             >
               <ArrowRightLeft className="w-4 h-4" />
               <span>Enviar transferencia</span>
@@ -372,7 +372,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
           <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <Package className="w-4 h-4" />
                 </div>
                 <div>
@@ -423,7 +423,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
                       setAddPresentation(p.unidad_medida || 'Unidad');
                     }}
                     className={`w-full p-2.5 text-left flex items-center justify-between text-xs transition cursor-pointer ${
-                      isSelected ? 'bg-emerald-50/80 font-bold' : 'hover:bg-slate-50'
+                      isSelected ? 'bg-[#FF6B35]/10/80 font-bold' : 'hover:bg-slate-50'
                     }`}
                   >
                     <div>
@@ -431,7 +431,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
                       <p className="text-[10px] text-slate-400 font-mono">{p.codigo_barras || 'Sin código'}</p>
                     </div>
                     <div className="text-right">
-                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <span className="text-[11px] font-bold text-[#E85B28] bg-[#FF6B35]/10 px-2 py-0.5 rounded-full">
                         Stock: {p.stock_actual ?? 0}
                       </span>
                     </div>
@@ -449,7 +449,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
             {selectedProductToAdd && (
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                 <p className="text-xs font-bold text-slate-800">
-                  Seleccionado: <span className="text-emerald-700">{selectedProductToAdd.nombre}</span>
+                  Seleccionado: <span className="text-[#E85B28]">{selectedProductToAdd.nombre}</span>
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -493,7 +493,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
                 type="button"
                 disabled={!selectedProductToAdd}
                 onClick={handleAddItem}
-                className="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition shadow-2xs cursor-pointer"
+                className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition shadow-2xs cursor-pointer"
               >
                 Añadir a la Lista
               </button>
@@ -505,3 +505,6 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
     </div>
   );
 }
+
+
+

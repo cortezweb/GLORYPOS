@@ -26,7 +26,7 @@ export default function EstadoSunatModal({ isOpen, onClose, doc, onUpdateStatus 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-blue-600" />
+            <ShieldCheck className="w-5 h-5 text-[#FF6B35]" />
             <h2 className="text-sm font-bold text-slate-800">Estado de Envío SUNAT</h2>
           </div>
           <button
@@ -62,12 +62,12 @@ export default function EstadoSunatModal({ isOpen, onClose, doc, onUpdateStatus 
               </p>
             </div>
           ) : isAceptado ? (
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 space-y-1.5">
+            <div className="p-4 rounded-xl bg-[#FF6B35]/10 border border-[#FF6B35]/20 text-[#1E2022] space-y-1.5">
               <div className="flex items-center gap-2 font-bold text-xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#FF6B35] shrink-0" />
                 <span>Comprobante Aceptado por SUNAT</span>
               </div>
-              <p className="text-[11px] text-emerald-700">
+              <p className="text-[11px] text-[#E85B28]">
                 {doc.sunat_obs || 'La constancia de recepción (CDR) fue emitida y registrada sin observaciones.'}
               </p>
             </div>
@@ -114,7 +114,7 @@ export default function EstadoSunatModal({ isOpen, onClose, doc, onUpdateStatus 
               type="button"
               disabled={retrying}
               onClick={handleRetrySunat}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5 disabled:opacity-50"
+              className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5 disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${retrying ? 'animate-spin' : ''}`} />
               <span>{retrying ? 'Reintentando...' : 'Reintentar Envío a SUNAT'}</span>
@@ -125,3 +125,6 @@ export default function EstadoSunatModal({ isOpen, onClose, doc, onUpdateStatus 
     </div>
   );
 }
+
+
+

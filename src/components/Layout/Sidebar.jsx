@@ -7,6 +7,7 @@ import {
   ShieldCheck, LayoutGrid
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import GloryLogo from '../Common/GloryLogo';
 
 export default function Sidebar({ 
   isOpen, 
@@ -82,19 +83,11 @@ export default function Sidebar({
         
         {/* Header */}
         <div className="p-4 pb-3 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white text-base shadow-md shadow-blue-500/20">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <div className="flex items-baseline">
-                <span className="text-xl font-black tracking-tight text-slate-900">GLORY</span>
-                <span className="text-xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-0.5">POS</span>
-              </div>
-              <h2 className="text-[10px] font-black uppercase text-slate-700 truncate max-w-[180px]">
-                {empresa?.nombre || 'GLORYPOS BOLIVIA'}
-              </h2>
-            </div>
+          <div className="flex flex-col">
+            <GloryLogo size="md" subtitleText="Cloud System" />
+            <h2 className="text-[10px] font-black uppercase text-[#1E2022] truncate max-w-[180px] mt-1">
+              {empresa?.nombre || 'GLORYPOS BOLIVIA'}
+            </h2>
           </div>
           <button
             type="button"
@@ -113,7 +106,7 @@ export default function Sidebar({
             type="button"
             onClick={() => handleNav('inicio')}
             className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-bold transition text-left ${
-              currentView === 'inicio' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20' : 'text-slate-700 hover:bg-slate-100'
+              currentView === 'inicio' ? 'bg-gradient-to-r from-[#FF6B35] to-[#ea580c] text-white shadow-md shadow-orange-500/20' : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
             <Home className="w-4 h-4" />
@@ -155,7 +148,7 @@ export default function Sidebar({
               </button>
               {expandedMenus.preventa && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('ventas_cotizaciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('ventas_cotizaciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Cotizaciones
                   </button>
                 </div>
@@ -179,31 +172,31 @@ export default function Sidebar({
               </button>
               {expandedMenus.ventas && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('pos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('pos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Punto de Venta (POS)
                   </button>
-                  <button type="button" onClick={() => handleNav('nuevo_comprobante')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('nuevo_comprobante')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Nuevo Comprobante
                   </button>
-                  <button type="button" onClick={() => handleNav('ventas_comprobantes')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('ventas_comprobantes')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Consulta de Comprobantes
                   </button>
-                  <button type="button" onClick={() => handleNav('ventas_notas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('ventas_notas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Notas de Venta
                   </button>
-                  <button type="button" onClick={() => handleNav('cuentas_por_cobrar')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('cuentas_por_cobrar')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Cuentas por Cobrar
                   </button>
-                  <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Pedidos Web
                   </button>
-                  <button type="button" onClick={() => handleNav('membresias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('membresias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Membresías
                   </button>
-                  <button type="button" onClick={() => handleNav('ventas_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('ventas_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Mis Cajas (Turnos)
                   </button>
-                  <button type="button" onClick={() => handleNav('reporte_cajas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_cajas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reporte de Cajas
                   </button>
                 </div>
@@ -227,13 +220,13 @@ export default function Sidebar({
               </button>
               {expandedMenus.compras && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('nueva_compra')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('nueva_compra')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Nueva Compra
                   </button>
-                  <button type="button" onClick={() => handleNav('purchases')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('purchases')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Compras
                   </button>
-                  <button type="button" onClick={() => handleNav('proveedores')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('proveedores')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Proveedores
                   </button>
                 </div>
@@ -265,25 +258,25 @@ export default function Sidebar({
               </button>
               {expandedMenus.productos && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('productos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('productos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Productos
                   </button>
-                  <button type="button" onClick={() => handleNav('combos_promociones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('combos_promociones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Combos y Promociones
                   </button>
-                  <button type="button" onClick={() => handleNav('servicios')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('servicios')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Servicios
                   </button>
-                  <button type="button" onClick={() => handleNav('categorias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('categorias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Categorías
                   </button>
-                  <button type="button" onClick={() => handleNav('marcas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('marcas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Marcas
                   </button>
-                  <button type="button" onClick={() => handleNav('unidades_medida')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('unidades_medida')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Unidades de medida
                   </button>
-                  <button type="button" onClick={() => handleNav('inventory')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('inventory')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Stock & Kardex
                   </button>
                 </div>
@@ -307,16 +300,16 @@ export default function Sidebar({
               </button>
               {expandedMenus.inventario && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('movimientos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('movimientos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Movimientos
                   </button>
-                  <button type="button" onClick={() => handleNav('transferencias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('transferencias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Transferencias
                   </button>
-                  <button type="button" onClick={() => handleNav('historial_transferencias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('historial_transferencias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Historial de transferencias
                   </button>
-                  <button type="button" onClick={() => handleNav('kardex')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('kardex')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Kardex
                   </button>
                 </div>
@@ -340,28 +333,28 @@ export default function Sidebar({
               </button>
               {expandedMenus.finanzas && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('sesiones_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('sesiones_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Caja
                   </button>
-                  <button type="button" onClick={() => handleNav('ingresos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('ingresos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Ingresos
                   </button>
-                  <button type="button" onClick={() => handleNav('egresos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('egresos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Egresos
                   </button>
-                  <button type="button" onClick={() => handleNav('cuentas_bancarias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('cuentas_bancarias')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Cuentas Bancarias
                   </button>
-                  <button type="button" onClick={() => handleNav('cuentas_por_cobrar_finanzas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('cuentas_por_cobrar_finanzas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Cuentas por cobrar
                   </button>
-                  <button type="button" onClick={() => handleNav('cuentas_por_pagar')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('cuentas_por_pagar')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Cuentas por pagar
                   </button>
-                  <button type="button" onClick={() => handleNav('reportes_caja_finanzas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reportes_caja_finanzas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reportes de caja
                   </button>
-                  <button type="button" onClick={() => handleNav('metodos_pago')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('metodos_pago')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Métodos de pago
                   </button>
                 </div>
@@ -385,19 +378,19 @@ export default function Sidebar({
               </button>
               {expandedMenus.guias_remision && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('guias_remitente')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('guias_remitente')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Remitente (09)
                   </button>
-                  <button type="button" onClick={() => handleNav('guias_transportista')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('guias_transportista')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Transportista (31)
                   </button>
-                  <button type="button" onClick={() => handleNav('transportistas_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('transportistas_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Transportistas
                   </button>
-                  <button type="button" onClick={() => handleNav('conductores_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('conductores_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Conductores
                   </button>
-                  <button type="button" onClick={() => handleNav('vehiculos_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('vehiculos_gre')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Vehículos
                   </button>
                 </div>
@@ -433,13 +426,13 @@ export default function Sidebar({
               </button>
               {expandedMenus.documentos_avanzados && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('retenciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('retenciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Retenciones
                   </button>
-                  <button type="button" onClick={() => handleNav('percepciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('percepciones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Percepciones
                   </button>
-                  <button type="button" onClick={() => handleNav('reversiones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reversiones')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reversiones
                   </button>
                 </div>
@@ -478,25 +471,25 @@ export default function Sidebar({
               </button>
               {expandedMenus.reportes && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('reporte_ventas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_ventas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reporte de Ventas
                   </button>
-                  <button type="button" onClick={() => handleNav('reporte_productos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_productos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reporte de Productos
                   </button>
-                  <button type="button" onClick={() => handleNav('ventas_por_producto')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('ventas_por_producto')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Ventas por Producto
                   </button>
-                  <button type="button" onClick={() => handleNav('reporte_compras')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_compras')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reporte de Compras
                   </button>
-                  <button type="button" onClick={() => handleNav('reporte_notas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_notas')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Notas de Crédito & Débito
                   </button>
-                  <button type="button" onClick={() => handleNav('reporte_kardex')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_kardex')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reporte de Kardex
                   </button>
-                  <button type="button" onClick={() => handleNav('reporte_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('reporte_caja')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Reporte de Caja
                   </button>
                 </div>
@@ -527,10 +520,10 @@ export default function Sidebar({
               </button>
               {expandedMenus.administracion && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('admin_usuarios')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('admin_usuarios')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Usuarios
                   </button>
-                  <button type="button" onClick={() => handleNav('roles_permisos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('roles_permisos')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Roles y permisos
                   </button>
                 </div>
@@ -544,7 +537,7 @@ export default function Sidebar({
               type="button"
               onClick={() => handleNav('modulos')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 ${
-                currentView === 'modulos' ? 'bg-[#10b981] text-white font-bold' : ''
+                currentView === 'modulos' ? 'bg-[#FF6B35] text-white font-bold' : ''
               }`}
             >
               <LayoutGrid className="w-4 h-4 text-slate-500" />
@@ -568,10 +561,10 @@ export default function Sidebar({
               </button>
               {expandedMenus.tienda_virtual && (
                 <div className="pl-8 pr-2 py-1 space-y-0.5">
-                  <button type="button" onClick={() => handleNav('tienda_virtual')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('tienda_virtual')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Tienda Virtual (Ecommerce)
                   </button>
-                  <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-emerald-600">
+                  <button type="button" onClick={() => handleNav('pedidos_web')} className="w-full text-left py-1 text-[11px] text-slate-600 hover:text-[#FF6B35]">
                     • Pedidos Web
                   </button>
                 </div>
@@ -608,7 +601,7 @@ export default function Sidebar({
         {/* Footer */}
         <div className="p-3 border-t border-slate-100 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#FF6B35] text-white font-bold text-xs flex items-center justify-center">
               {currentUser?.nombre?.charAt(0) || 'U'}
             </div>
             <div>
@@ -625,3 +618,5 @@ export default function Sidebar({
     </div>
   );
 }
+
+

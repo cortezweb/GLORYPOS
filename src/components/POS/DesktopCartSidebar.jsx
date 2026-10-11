@@ -6,11 +6,11 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
   const { items, total, count, updateQuantity, removeFromCart, clearCart, isBumping } = useCart();
 
   return (
-    <aside className="w-84 xl:w-96 bg-white border-l border-gray-200 flex flex-col h-[calc(100vh-60px)] sticky top-[60px] shadow-xs shrink-0 z-20">
+    <aside className="w-84 xl:w-96 bg-white border-l border-gray-200 flex flex-col h-full shadow-xs shrink-0 z-20">
       {/* Header */}
       <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-slate-50/70">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#FF6B35] flex items-center justify-center">
             <ShoppingCart className="w-4 h-4" />
           </div>
           <div>
@@ -34,7 +34,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
       </div>
 
       {/* Cart Items List */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 divide-y divide-gray-50">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 divide-y divide-gray-50 min-h-0">
         {items.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 space-y-2">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300">
@@ -76,7 +76,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
                     )}
 
                     {item.presNombre && item.presNombre !== 'Unidad' && (
-                      <span className="text-[9px] bg-violet-50 text-violet-700 font-bold px-1.5 py-0.2 rounded border border-violet-100">
+                      <span className="text-[9px] bg-[#FDFBF7] text-[#1E2022] font-bold px-1.5 py-0.2 rounded border border-[#FFB627]/10">
                         {item.presNombre}
                       </span>
                     )}
@@ -94,7 +94,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
                     )}
 
                     {item.lote && (
-                      <span className="text-[9px] bg-emerald-50 text-emerald-700 font-medium px-1 rounded border border-emerald-100">
+                      <span className="text-[9px] bg-[#FF6B35]/10 text-[#E85B28] font-medium px-1 rounded border border-[#FF6B35]/10">
                         Lote: {item.lote}
                       </span>
                     )}
@@ -143,7 +143,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
       </div>
 
       {/* Footer / Summary and Action Button */}
-      <div className="p-4 border-t border-gray-200 bg-slate-50/80 space-y-3">
+      <div className="p-4 border-t border-gray-200 bg-slate-50/80 space-y-3 shrink-0 mt-auto">
         <div className="space-y-1 text-xs text-slate-600">
           <div className="flex justify-between items-center">
             <span>Subtotal:</span>
@@ -151,12 +151,12 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
           </div>
           <div className="flex justify-between items-center text-[11px] text-slate-400">
             <span>Impuestos / SIAT:</span>
-            <span className="text-emerald-600 font-semibold">Incluido</span>
+            <span className="text-[#FF6B35] font-semibold">Incluido</span>
           </div>
           <div className="pt-1.5 border-t border-slate-200 flex justify-between items-baseline">
             <span className="text-sm font-bold text-slate-800">Total a Cobrar:</span>
-            <span className={`text-xl font-black text-[#2563eb] transition-transform duration-200 ${
-              isBumping ? 'scale-110 text-indigo-600' : 'scale-100'
+            <span className={`text-xl font-black text-[#FF6B35] transition-transform duration-200 ${
+              isBumping ? 'scale-110 text-[#FFB627]' : 'scale-100'
             }`}>
               Bs. {Number(total).toFixed(2)}
             </span>
@@ -178,7 +178,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
                       onClick={onOpenCheckout}
                       type="button"
                       title={`Paga con Bs. ${b} • Vuelto: Bs. ${cambio.toFixed(2)}`}
-                      className="py-1 px-1 bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded-lg font-bold text-slate-700 transition shadow-2xs text-center truncate"
+                      className="py-1 px-1 bg-white hover:bg-orange-50 hover:text-[#FF6B35] hover:border-[#FF6B35]/40 border border-slate-200 rounded-lg font-bold text-slate-700 transition shadow-2xs text-center truncate"
                     >
                       Bs. {b}
                     </button>
@@ -192,7 +192,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
         <button
           onClick={onOpenCheckout}
           disabled={items.length === 0}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-blue-700 to-[#7c3aed] hover:from-blue-700 hover:to-[#6d28d9] active:scale-[0.98] text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full py-3.5 px-4 bg-gradient-to-r from-[#00B574] to-[#00965e] hover:from-[#00965e] hover:to-[#007a4d] active:scale-[0.98] text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:shadow-[#00B574]/25 transition flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           <Receipt className="w-4 h-4" />
           <span>Cobrar / Procesar Pago</span>
@@ -202,3 +202,6 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
     </aside>
   );
 }
+
+
+

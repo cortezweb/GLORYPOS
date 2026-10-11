@@ -276,7 +276,7 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
                   onChange={(e) => setSoloDocInventario(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF6B35]"></div>
               </label>
               <span className="text-[11px] font-bold text-slate-600">
                 Solo doc. de inventario
@@ -308,7 +308,7 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
             {/* Resumen del Producto Seleccionado */}
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[10px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-bold">
+                <span className="text-[10px] font-mono text-[#FF6B35] bg-[#FF6B35]/10 px-2 py-0.5 rounded font-bold">
                   SKU: {selectedProduct.codigo_barras || 'SIN-CODIGO'}
                 </span>
                 <h2 className="text-base font-bold text-slate-900 mt-1">
@@ -322,7 +322,7 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
               <div className="flex items-center gap-4 text-xs">
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block font-semibold">STOCK ACTUAL</span>
-                  <span className="text-base font-black text-emerald-700">{selectedProduct.stock_actual ?? 0}</span>
+                  <span className="text-base font-black text-[#E85B28]">{selectedProduct.stock_actual ?? 0}</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block font-semibold">COSTO UNIT.</span>
@@ -338,7 +338,7 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
                   type="button"
                   onClick={handleExportCSV}
                   title="Exportar a CSV"
-                  className="p-2 text-slate-500 hover:text-emerald-700 bg-slate-50 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                  className="p-2 text-slate-500 hover:text-[#E85B28] bg-slate-50 hover:bg-slate-100 rounded-xl transition cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
                 </button>
@@ -378,7 +378,7 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
                           <td className="py-3 px-4 whitespace-nowrap">
                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               isEntrada 
-                                ? 'bg-emerald-50 text-emerald-700' 
+                                ? 'bg-[#FF6B35]/10 text-[#E85B28]' 
                                 : isSalida 
                                 ? 'bg-rose-50 text-rose-700' 
                                 : 'bg-slate-100 text-slate-700'
@@ -399,7 +399,7 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
                           </td>
 
                           {/* Entrada */}
-                          <td className="py-3 px-4 text-center font-bold text-emerald-700 whitespace-nowrap">
+                          <td className="py-3 px-4 text-center font-bold text-[#E85B28] whitespace-nowrap">
                             {isEntrada ? `+${item.cantidad}` : '—'}
                           </td>
 
@@ -442,3 +442,4 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Layers, Scale, Sparkles, AlertCircle } from 'lucide-react';
+import { Plus, Layers, Scale, Sparkles, AlertCircle, Package } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 
 export default function ProductCard({ product, onOpenVariants, onOpenScale, onOpenModifiers }) {
@@ -12,6 +12,8 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
   const stockNum = Number(product.stock_actual) || 0;
   const isOutOfStock = stockNum <= 0;
   const isLowStock = !isOutOfStock && stockNum <= (product.stock_minimo || 5);
+
+  const [imgError, setImgError] = React.useState(!product.foto_url);
 
   // Expiration check for Farmacia
   let expiryInfo = null;
@@ -46,7 +48,7 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
       className={`bg-white rounded-xl border overflow-hidden flex flex-col justify-between shadow-xs transition-all select-none ${
         isOutOfStock 
           ? 'border-gray-200 opacity-60 cursor-not-allowed' 
-          : 'border-gray-200 hover:border-blue-400 hover:shadow-xs cursor-pointer group active:scale-[0.97]'
+          : 'border-gray-200 hover:border-[#FF6B35] hover:shadow-xs cursor-pointer group active:scale-[0.97]'
       }`}
     >
       <div className="p-3 pb-1 flex flex-col items-center">
@@ -90,17 +92,21 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
             </span>
           )}
 
-          <img
-            src={product.foto_url}
-            alt={product.nombre}
-            className={`max-h-full max-w-full object-contain transition-transform duration-200 ${
-              isOutOfStock ? 'grayscale' : 'group-hover:scale-105'
-            }`}
-            loading="lazy"
-            onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80';
-            }}
-          />
+          {product.foto_url && !imgError ? (
+            <img
+              src={product.foto_url}
+              alt=""
+              className={`max-h-full max-w-full object-contain transition-transform duration-200 ${
+                isOutOfStock ? 'grayscale' : 'group-hover:scale-105'
+              }`}
+              loading="lazy"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-xl bg-orange-50/80 text-[#FF6B35] flex items-center justify-center font-bold text-sm shadow-2xs border border-orange-100/60">
+              <Package className="w-6 h-6 text-[#FF6B35]/70" />
+            </div>
+          )}
         </div>
 
         {/* Centered Title */}
@@ -112,7 +118,7 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
         {hasSizes && (
           <div className="flex items-center gap-1 mt-0.5 overflow-hidden flex-wrap">
             {product.tallas && product.tallas.slice(0, 3).map(t => (
-              <span key={t} className="text-[9px] font-mono font-bold bg-violet-50 text-violet-700 px-1 rounded border border-violet-100">
+              <span key={t} className="text-[9px] font-mono font-bold bg-[#FDFBF7] text-[#1E2022] px-1 rounded border border-[#FFB627]/10">
                 {t}
               </span>
             ))}
@@ -145,7 +151,7 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
               ? 'bg-rose-600 hover:bg-rose-700' 
               : hasModifiers 
                 ? 'bg-cyan-600 hover:bg-cyan-700' 
-                : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
+                : 'bg-[#FF6B35] hover:bg-[#FF6B35]/90 active:bg-[#E85B28]'
           }`}
           type="button"
         >
@@ -159,3 +165,4 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
     </article>
   );
 }
+

@@ -77,12 +77,12 @@ export default function UsuariosTab() {
 
   const getRoleBadgeColor = (rolName) => {
     const norm = (rolName || '').toLowerCase();
-    if (norm.includes('admin')) return 'bg-purple-50 text-purple-700 border-purple-200';
-    if (norm.includes('cajer')) return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-    if (norm.includes('vended')) return 'bg-blue-50 text-blue-700 border-blue-200';
+    if (norm.includes('admin')) return 'bg-[#FDFBF7] text-[#FF6B35] border-[#FFB627]/20';
+    if (norm.includes('cajer')) return 'bg-[#FF6B35]/10 text-[#E85B28] border-[#FF6B35]/20';
+    if (norm.includes('vended')) return 'bg-[#FF6B35]/10 text-[#FF6B35] border-blue-200';
     if (norm.includes('supervis')) return 'bg-sky-50 text-sky-700 border-sky-200';
     if (norm.includes('contad')) return 'bg-amber-50 text-amber-700 border-amber-200';
-    if (norm.includes('almacen')) return 'bg-teal-50 text-teal-700 border-teal-200';
+    if (norm.includes('almacen')) return 'bg-[#FF6B35] text-[#FFB627] border-[#FFB627]/50';
     return 'bg-slate-100 text-slate-700 border-slate-200';
   };
 
@@ -103,7 +103,7 @@ export default function UsuariosTab() {
         <button
           type="button"
           onClick={handleOpenNew}
-          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white font-medium text-xs rounded-lg shadow-xs transition active:scale-95 shrink-0"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-medium text-xs rounded-lg shadow-xs transition active:scale-95 shrink-0"
         >
           <Plus className="w-3.5 h-3.5 stroke-[3]" />
           <span>Nuevo usuario</span>
@@ -165,7 +165,7 @@ export default function UsuariosTab() {
                     {/* Usuario (Avatar + Nombre) */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FF6B35] to-[#E85B28] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
                           {user.nombre?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                         <div>
@@ -204,13 +204,13 @@ export default function UsuariosTab() {
                         title={user.activo ? 'Clic para desactivar' : 'Clic para activar'}
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition ${
                           user.activo
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                            ? 'bg-[#FF6B35]/10 text-[#E85B28] border-[#FF6B35]/20 hover:bg-[#FF6B35]/20'
                             : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
                         }`}
                       >
                         {user.activo ? (
                           <>
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            <CheckCircle2 className="w-3 h-3 text-[#FF6B35]" />
                             <span>Activo</span>
                           </>
                         ) : (
@@ -229,7 +229,7 @@ export default function UsuariosTab() {
                           type="button"
                           onClick={() => handleOpenEdit(user)}
                           title={`Editar ${user.nombre}`}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition"
+                          className="p-1.5 text-slate-400 hover:text-[#FF6B35] hover:bg-slate-100 rounded-lg transition"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
@@ -302,3 +302,9 @@ export default function UsuariosTab() {
     </div>
   );
 }
+
+
+
+
+
+

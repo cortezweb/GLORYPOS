@@ -241,7 +241,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
         <SalesSubNav currentSubView="notas_venta" onSelectSubView={onSelectSubView} />
       )}
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* 1. CABECERA: TÍTULO, SUBTÍTULO & BOTÓN + NUEVA VENTA                 */}
@@ -259,7 +259,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
           <button
             type="button"
             onClick={() => onSelectSubView ? onSelectSubView('pos') : null}
-            className="px-4 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto"
+            className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
             <span>Nueva venta</span>
@@ -279,7 +279,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="Buscar por cliente, serie o número..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium shadow-2xs"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] font-medium shadow-2xs"
             />
           </div>
 
@@ -434,7 +434,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                             type="button"
                             onClick={() => window.print()}
                             title="Imprimir"
-                            className="p-1 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded transition"
+                            className="p-1 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 rounded transition"
                           >
                             <Printer className="w-3.5 h-3.5" />
                           </button>
@@ -447,9 +447,9 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                         <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium inline-flex items-center gap-1.5 ${
                           nota.estado === 'Anulado'
                             ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20'
                         }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${nota.estado === 'Anulado' ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
+                          <span className={`w-1.5 h-1.5 rounded-full ${nota.estado === 'Anulado' ? 'bg-rose-500' : 'bg-[#FF6B35]'}`}></span>
                           <span>{nota.estado || 'Registrado'}</span>
                         </span>
                       </td>
@@ -472,7 +472,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                               window.open(`https://wa.me/?text=${msg}`, '_blank');
                             }}
                             title="Enviar por WhatsApp"
-                            className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 rounded-lg transition"
+                            className="p-1.5 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 border border-slate-200 rounded-lg transition"
                           >
                             <Share2 className="w-3.5 h-3.5" />
                           </button>
@@ -492,9 +492,9 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                             type="button"
                             onClick={() => setEmitirModalNota(nota)}
                             title="Emitir Comprobante Electrónico SUNAT"
-                            className="px-2 py-1 text-emerald-700 hover:bg-emerald-50 border border-slate-200 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition"
+                            className="px-2 py-1 text-[#E85B28] hover:bg-[#FF6B35]/10 border border-slate-200 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition"
                           >
-                            <FileText className="w-3 h-3 text-emerald-600" />
+                            <FileText className="w-3 h-3 text-[#FF6B35]" />
                             <span>Emitir</span>
                           </button>
 
@@ -529,7 +529,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 text-xs">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-emerald-400" />
+                <FileText className="w-5 h-5 text-[#FFB627]" />
                 <h3 className="font-bold text-sm">Emitir Comprobante SUNAT</h3>
               </div>
               <button
@@ -546,7 +546,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                 <span className="text-[10px] uppercase font-bold text-slate-400 block">Nota Origen</span>
                 <span className="font-bold text-slate-900 text-sm block">{emitirModalNota.correlativo}</span>
                 <span className="text-slate-600 block">Cliente: {emitirModalNota.cliente_nombre}</span>
-                <span className="font-bold text-emerald-700 block">Monto Total: {formatSoles(emitirModalNota.total)}</span>
+                <span className="font-bold text-[#E85B28] block">Monto Total: {formatSoles(emitirModalNota.total)}</span>
               </div>
 
               <p className="text-slate-500">
@@ -557,9 +557,9 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                 <button
                   type="button"
                   onClick={() => handleEmitirSunat(emitirModalNota, 'BOLETA')}
-                  className="p-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl text-center space-y-1 transition cursor-pointer"
+                  className="p-4 bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 border border-[#FF6B35]/20 rounded-2xl text-center space-y-1 transition cursor-pointer"
                 >
-                  <Receipt className="w-6 h-6 text-emerald-600 mx-auto" />
+                  <Receipt className="w-6 h-6 text-[#FF6B35] mx-auto" />
                   <span className="font-bold text-slate-900 block">Boleta de Venta</span>
                   <span className="text-[10px] text-slate-500 block">B001 - DNI / Final</span>
                 </button>
@@ -567,9 +567,9 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                 <button
                   type="button"
                   onClick={() => handleEmitirSunat(emitirModalNota, 'FACTURA')}
-                  className="p-4 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-2xl text-center space-y-1 transition cursor-pointer"
+                  className="p-4 bg-[#FDFBF7] hover:bg-[#FFB627]/10 border border-[#FFB627]/20 rounded-2xl text-center space-y-1 transition cursor-pointer"
                 >
-                  <FileText className="w-6 h-6 text-purple-600 mx-auto" />
+                  <FileText className="w-6 h-6 text-[#FF6B35] mx-auto" />
                   <span className="font-bold text-slate-900 block">Factura Electrónica</span>
                   <span className="text-[10px] text-slate-500 block">F001 - Con RUC</span>
                 </button>
@@ -592,3 +592,6 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
     </div>
   );
 }
+
+
+

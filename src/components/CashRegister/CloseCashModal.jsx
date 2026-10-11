@@ -140,7 +140,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               <p className="text-xs text-slate-600 leading-relaxed bg-amber-50/80 border border-amber-200/70 p-3 rounded-xl">
                 <span className="font-semibold text-amber-800">Atención:</span> Tienes la caja activa 
                 <span className="font-bold text-slate-700"> (Caja 01 - Turno Mañana)</span> con ventas registradas de 
-                <span className="font-bold text-blue-600"> Bs. {ventasStats.total.toFixed(2)}</span>. Te recomendamos realizar el arqueo de caja antes de salir.
+                <span className="font-bold text-[#FF6B35]"> Bs. {ventasStats.total.toFixed(2)}</span>. Te recomendamos realizar el arqueo de caja antes de salir.
               </p>
             </div>
 
@@ -149,7 +149,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Ventas Turno</span>
-                  <span className="text-base font-black text-blue-600">Bs. {ventasStats.total.toFixed(2)}</span>
+                  <span className="text-base font-black text-[#FF6B35]">Bs. {ventasStats.total.toFixed(2)}</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs">
@@ -169,7 +169,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="flex items-center space-x-2 pt-1 text-[11px] text-slate-500">
-                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-pulse"></span>
                   <span>Estado: <strong>Caja Abierta</strong> (GLORYPOS en línea)</span>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               {/* Primary Action: Arqueo y Cierre (Azul Eléctrico) */}
               <button 
                 onClick={() => setStep('COUNT')}
-                className="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white py-3.5 px-4 rounded-xl font-bold text-sm shadow-md shadow-blue-600/25 flex items-center justify-center space-x-2 transition-all" 
+                className="w-full bg-[#FF6B35] hover:bg-[#FF6B35]/90 active:scale-[0.98] text-white py-3.5 px-4 rounded-xl font-bold text-sm shadow-md shadow-blue-600/25 flex items-center justify-center space-x-2 transition-all" 
                 type="button"
               >
                 {/* Calculator / Cash Register Icon */}
@@ -217,7 +217,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <button 
                 onClick={() => setStep('CONFIRM')}
-                className="text-xs text-blue-600 font-semibold flex items-center gap-1 hover:underline"
+                className="text-xs text-[#FF6B35] font-semibold flex items-center gap-1 hover:underline"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Volver</span>
@@ -228,7 +228,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               </button>
             </div>
 
-            <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-200 flex items-center justify-between">
+            <div className="p-3 bg-[#FF6B35]/10/60 rounded-xl border border-blue-200 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800">
                   Efectivo Esperado (Sistema)
@@ -237,7 +237,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
                   Bs. {ventasStats.efectivo.toFixed(2)}
                 </span>
               </div>
-              <Banknote className="w-7 h-7 text-blue-600" />
+              <Banknote className="w-7 h-7 text-[#FF6B35]" />
             </div>
 
             {/* Cash Denominations Table */}
@@ -292,9 +292,9 @@ export default function CloseCashModal({ isOpen, onClose }) {
                 <span>Diferencia de Caja:</span>
                 <span className={`font-bold ${
                   diferencia === 0 
-                    ? 'text-emerald-600' 
+                    ? 'text-[#FF6B35]' 
                     : diferencia > 0 
-                      ? 'text-blue-600' 
+                      ? 'text-[#FF6B35]' 
                       : 'text-rose-600'
                 }`}>
                   {diferencia === 0 ? 'Exacto (Bs. 0.00)' : `Bs. ${diferencia.toFixed(2)}`}
@@ -313,7 +313,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
 
         {step === 'SUMMARY' && (
           <div className="flex-1 overflow-y-auto p-5 space-y-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-[#FF6B35]/20 text-[#FF6B35] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-7 h-7" />
             </div>
 
@@ -355,7 +355,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-md transition"
+                className="flex-1 py-2.5 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-xl font-bold text-xs shadow-md transition"
               >
                 Aceptar y Salir
               </button>
@@ -366,3 +366,5 @@ export default function CloseCashModal({ isOpen, onClose }) {
     </div>
   );
 }
+
+

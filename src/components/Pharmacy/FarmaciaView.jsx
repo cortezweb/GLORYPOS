@@ -28,13 +28,13 @@ export default function FarmaciaView() {
       {/* Header */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 border border-teal-200 flex items-center justify-center font-bold">
+          <div className="w-12 h-12 rounded-2xl bg-[#FF6B35] text-[#FFB627] border border-[#FFB627]/50 flex items-center justify-center font-bold">
             <Pill className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-black text-slate-900">Control de Lotes & Vencimientos</h1>
-              <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
+              <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#FF6B35] text-[#FFB627] border border-[#FFB627]/50">
                 Farmacia / Salud
               </span>
             </div>
@@ -47,7 +47,7 @@ export default function FarmaciaView() {
         <button
           type="button"
           onClick={() => alert('Formulario de ingreso de nuevo lote')}
-          className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-black rounded-xl transition flex items-center gap-2 shadow-sm"
+          className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#FF6B35] text-white text-xs font-black rounded-xl transition flex items-center gap-2 shadow-sm"
         >
           <Plus className="w-4 h-4" />
           <span>Ingresar Nuevo Lote</span>
@@ -73,7 +73,7 @@ export default function FarmaciaView() {
               placeholder="Buscar por medicamento, lote o laboratorio..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/100"
             />
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function FarmaciaView() {
                   <td className="p-3.5 text-right font-black text-slate-900">{item.stock} u.</td>
                   <td className="p-3.5 text-center">
                     {item.estado === 'BUENO' && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">
                         Vigente ({item.dias}d)
                       </span>
                     )}
@@ -124,3 +124,7 @@ export default function FarmaciaView() {
     </div>
   );
 }
+
+
+
+

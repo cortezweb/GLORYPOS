@@ -262,7 +262,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
         <SalesSubNav currentSubView="cotizaciones" onSelectSubView={onSelectSubView} />
       )}
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* 1. CABECERA: TÍTULO, SUBTÍTULO & BOTÓN NUEVA COTIZACIÓN              */}
@@ -280,7 +280,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
           <button
             type="button"
             onClick={() => setIsNewModalOpen(true)}
-            className="px-4 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto"
+            className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
             <span>Nueva cotización</span>
@@ -300,7 +300,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="Buscar número o notas..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium shadow-2xs"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] font-medium shadow-2xs"
             />
           </div>
 
@@ -397,7 +397,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
                         <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
                           cot.estado === 'Convertida' 
-                            ? 'bg-purple-50 text-purple-700 border border-purple-200' 
+                            ? 'bg-[#FDFBF7] text-[#FF6B35] border border-[#FFB627]/20' 
                             : 'bg-slate-100 text-slate-700'
                         }`}>
                           {cot.estado || 'Borrador'}
@@ -467,7 +467,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                               window.open(`https://wa.me/?text=${msg}`, '_blank');
                             }}
                             title="Enviar por Correo o WhatsApp"
-                            className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded transition"
+                            className="p-1 text-[#FF6B35] hover:text-[#FF6B35] hover:bg-[#FF6B35]/10 rounded transition"
                           >
                             <Mail className="w-3.5 h-3.5" />
                           </button>
@@ -477,7 +477,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                             type="button"
                             onClick={() => window.print()}
                             title="Imprimir"
-                            className="p-1 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded transition"
+                            className="p-1 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 rounded transition"
                           >
                             <Printer className="w-3.5 h-3.5" />
                           </button>
@@ -506,9 +506,9 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                               <button
                                 type="button"
                                 onClick={() => handleLoadToPos(cot)}
-                                className="w-full px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2 transition"
+                                className="w-full px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-[#FF6B35]/10 hover:text-[#E85B28] flex items-center gap-2 transition"
                               >
-                                <ShoppingCart className="w-3.5 h-3.5 text-emerald-600" />
+                                <ShoppingCart className="w-3.5 h-3.5 text-[#FF6B35]" />
                                 <span>Cargar al POS (Venta)</span>
                               </button>
 
@@ -566,7 +566,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
           <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
             
             {/* Modal Header */}
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#00a650] text-white">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#FF6B35] text-white">
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5" />
                 <h2 className="font-bold text-base">Nueva Cotización</h2>
@@ -594,7 +594,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                       value={formData.cliente_nombre}
                       onChange={e => setFormData({ ...formData, cliente_nombre: e.target.value })}
                       list="clients-list"
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                       required
                     />
                     <datalist id="clients-list">
@@ -611,7 +611,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                       placeholder="RUC / DNI"
                       value={formData.cliente_ci_nit}
                       onChange={e => setFormData({ ...formData, cliente_ci_nit: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                     />
                   </div>
                 </div>
@@ -621,7 +621,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                     placeholder="Teléfono / WhatsApp"
                     value={formData.cliente_telefono}
                     onChange={e => setFormData({ ...formData, cliente_telefono: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                   />
                 </div>
               </div>
@@ -636,7 +636,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                       e.target.value = '';
                     }
                   }}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
                 >
                   <option value="">Selecciona un producto para agregar...</option>
                   {productList.map(p => (
@@ -729,7 +729,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold rounded-xl shadow-xs transition"
+                    className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold rounded-xl shadow-xs transition"
                   >
                     Guardar Cotización
                   </button>
@@ -749,7 +749,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
           <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-emerald-400" />
+                <FileText className="w-5 h-5 text-[#FFB627]" />
                 <h3 className="font-bold text-sm">Cotización {previewCotizacion.correlativo}</h3>
               </div>
               <button
@@ -794,7 +794,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                 <button
                   type="button"
                   onClick={() => handleLoadToPos(previewCotizacion)}
-                  className="flex-1 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="flex-1 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   <span>Convertir a Venta POS</span>
@@ -815,3 +815,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
     </div>
   );
 }
+
+
+
+

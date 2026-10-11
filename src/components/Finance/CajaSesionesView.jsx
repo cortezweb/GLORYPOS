@@ -190,7 +190,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-slideUp">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -234,7 +234,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
               }}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                 viewMode === 'reportes'
-                  ? 'bg-[#00a650] text-white shadow-xs'
+                  ? 'bg-[#FF6B35] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -318,7 +318,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           {/* ESTADO */}
                           <td className="py-3 px-4 whitespace-nowrap">
                             {isAbierta ? (
-                              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700">
+                              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FF6B35]/10 text-[#E85B28]">
                                 Abierta
                               </span>
                             ) : (
@@ -334,8 +334,8 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                               type="button"
                               onClick={() => handleOpenSessionReport(s)}
                               className={`text-xs font-semibold cursor-pointer hover:underline ${
-                                s.arqueo_estado === 'Arqueo' ? 'text-teal-600' :
-                                s.arqueo_estado === 'Ver arqueo' ? 'text-emerald-600' :
+                                s.arqueo_estado === 'Arqueo' ? 'text-[#FFB627]' :
+                                s.arqueo_estado === 'Ver arqueo' ? 'text-[#FF6B35]' :
                                 'text-amber-600'
                               }`}
                             >
@@ -356,9 +356,9 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                                       setSelectedSesion(s);
                                       setIsIngresoOpen(true);
                                     }}
-                                    className="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
+                                    className="px-2 py-0.5 bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#E85B28] rounded-md text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
                                   >
-                                    <ArrowUpRight className="w-3 h-3 text-emerald-600" />
+                                    <ArrowUpRight className="w-3 h-3 text-[#FF6B35]" />
                                     <span>Ingreso</span>
                                   </button>
 
@@ -490,7 +490,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repSucursal}
                     onChange={(e) => setRepSucursal(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
                   >
                     <option value="Todas">Todas</option>
                     <option value="Principal">Principal</option>
@@ -503,7 +503,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repUsuario}
                     onChange={(e) => setRepUsuario(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
                   >
                     <option value="Todos">Todos</option>
                     <option value="Esteffany Cordova">Esteffany Cordova</option>
@@ -517,7 +517,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     type="date"
                     value={repDesde}
                     onChange={(e) => setRepDesde(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                   />
                 </div>
 
@@ -527,7 +527,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     type="date"
                     value={repHasta}
                     onChange={(e) => setRepHasta(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                   />
                 </div>
 
@@ -536,7 +536,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repSesion}
                     onChange={(e) => setRepSesion(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
                   >
                     <option value="Todas">Todas</option>
                     {sesiones.map(s => (
@@ -550,7 +550,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repTipoMov}
                     onChange={(e) => setRepTipoMov(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
                   >
                     <option value="Todos">Todos</option>
                     <option value="Venta">Venta</option>
@@ -567,7 +567,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   onClick={() => setReportTab('resumen')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer ${
                     reportTab === 'resumen'
-                      ? 'bg-[#00a650] text-white'
+                      ? 'bg-[#FF6B35] text-white'
                       : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -579,7 +579,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   onClick={() => setReportTab('movimientos')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
                     reportTab === 'movimientos'
-                      ? 'bg-[#00a650] text-white shadow-xs'
+                      ? 'bg-[#FF6B35] text-white shadow-xs'
                       : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -589,7 +589,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                 <button
                   type="button"
                   onClick={() => showToast("Filtros aplicados")}
-                  className="px-4 py-2 bg-[#00a650] text-white hover:bg-[#008f45] rounded-xl text-xs font-bold transition shadow-xs cursor-pointer ml-auto sm:ml-0"
+                  className="px-4 py-2 bg-[#FF6B35] text-white hover:bg-[#008f45] rounded-xl text-xs font-bold transition shadow-xs cursor-pointer ml-auto sm:ml-0"
                 >
                   Aplicar
                 </button>
@@ -626,13 +626,13 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <span className="text-[10px] text-slate-400 font-bold block">TOTAL VENTAS</span>
                       <span className="text-base font-bold text-slate-800">S/ 18,450.00</span>
                     </div>
-                    <div className="p-3.5 bg-emerald-50/60 rounded-xl border border-emerald-100">
-                      <span className="text-[10px] text-emerald-600 font-bold block">TOTAL EN EFECTIVO</span>
-                      <span className="text-base font-black text-emerald-700">S/ 7,120.00</span>
+                    <div className="p-3.5 bg-[#FF6B35]/10/60 rounded-xl border border-[#FF6B35]/10">
+                      <span className="text-[10px] text-[#FF6B35] font-bold block">TOTAL EN EFECTIVO</span>
+                      <span className="text-base font-black text-[#E85B28]">S/ 7,120.00</span>
                     </div>
-                    <div className="p-3.5 bg-blue-50/60 rounded-xl border border-blue-100">
-                      <span className="text-[10px] text-blue-600 font-bold block">MEDIOS DIGITALES</span>
-                      <span className="text-base font-bold text-blue-700">S/ 11,330.00</span>
+                    <div className="p-3.5 bg-[#FF6B35]/10/60 rounded-xl border border-blue-100">
+                      <span className="text-[10px] text-[#FF6B35] font-bold block">MEDIOS DIGITALES</span>
+                      <span className="text-base font-bold text-[#FF6B35]">S/ 11,330.00</span>
                     </div>
                     <div className="p-3.5 bg-rose-50/60 rounded-xl border border-rose-100">
                       <span className="text-[10px] text-rose-600 font-bold block">TOTAL EGRESOS</span>
@@ -649,7 +649,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <span className="text-slate-900">S/ 7,120.00 (38.6%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                          <div className="bg-[#00a650] h-full rounded-full" style={{ width: '38.6%' }}></div>
+                          <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '38.6%' }}></div>
                         </div>
                       </div>
                       <div>
@@ -658,7 +658,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <span className="text-slate-900">S/ 5,840.00 (31.6%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                          <div className="bg-purple-500 h-full rounded-full" style={{ width: '31.6%' }}></div>
+                          <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '31.6%' }}></div>
                         </div>
                       </div>
                       <div>
@@ -676,7 +676,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <span className="text-slate-900">S/ 3,000.00 (16.3%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                          <div className="bg-blue-500 h-full rounded-full" style={{ width: '16.3%' }}></div>
+                          <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '16.3%' }}></div>
                         </div>
                       </div>
                     </div>
@@ -694,11 +694,11 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">(+) Ventas en efectivo:</span>
-                      <span className="font-bold text-emerald-600">+ S/ 7,120.00</span>
+                      <span className="font-bold text-[#FF6B35]">+ S/ 7,120.00</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">(+) Ingresos manuales:</span>
-                      <span className="font-bold text-emerald-600">+ S/ 1,500.00</span>
+                      <span className="font-bold text-[#FF6B35]">+ S/ 1,500.00</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">(-) Egresos y gastos:</span>
@@ -706,7 +706,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     </div>
                     <div className="pt-2 border-t border-slate-200 flex justify-between text-sm">
                       <span className="font-bold text-slate-900">Efectivo Teórico en Gaveta:</span>
-                      <span className="font-black text-emerald-700">S/ 8,270.00</span>
+                      <span className="font-black text-[#E85B28]">S/ 8,270.00</span>
                     </div>
                   </div>
                 </div>
@@ -743,8 +743,8 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <td className="py-3 px-4 font-bold text-slate-700 whitespace-nowrap">{m.sesion}</td>
                           <td className="py-3 px-4 whitespace-nowrap">
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              m.tipo === 'Venta' ? 'bg-emerald-50 text-emerald-700' :
-                              m.tipo === 'Ingreso' ? 'bg-blue-50 text-blue-700' :
+                              m.tipo === 'Venta' ? 'bg-[#FF6B35]/10 text-[#E85B28]' :
+                              m.tipo === 'Ingreso' ? 'bg-[#FF6B35]/10 text-[#FF6B35]' :
                               'bg-rose-50 text-rose-700'
                             }`}>
                               {m.tipo}
@@ -753,7 +753,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <td className="py-3 px-4 text-slate-600 whitespace-nowrap">{m.metodo}</td>
                           <td className="py-3 px-4 font-medium text-slate-800">{m.concepto}</td>
                           <td className="py-3 px-4 text-slate-600 whitespace-nowrap">{m.usuario}</td>
-                          <td className="py-3 px-4 text-right font-bold text-emerald-600 whitespace-nowrap">
+                          <td className="py-3 px-4 text-right font-bold text-[#FF6B35] whitespace-nowrap">
                             {m.ingreso > 0 ? `S/ ${m.ingreso.toFixed(2)}` : '—'}
                           </td>
                           <td className="py-3 px-4 text-right font-bold text-rose-600 whitespace-nowrap">
@@ -780,7 +780,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <ArrowUpRight className="w-4 h-4" />
                 </div>
                 <div>
@@ -849,7 +849,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-2xs cursor-pointer"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] rounded-xl transition shadow-2xs cursor-pointer"
                 >
                   Registrar Ingreso
                 </button>
@@ -968,7 +968,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repSucursal}
                     onChange={(e) => setRepSucursal(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer text-xs"
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer text-xs"
                   >
                     <option value="Todas">Todas</option>
                     <option value="Principal">Principal</option>
@@ -981,7 +981,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repUsuario}
                     onChange={(e) => setRepUsuario(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer text-xs"
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer text-xs"
                   >
                     <option value="Todos">Todos</option>
                     <option value={selectedArqueoSesion.usuario}>{selectedArqueoSesion.usuario}</option>
@@ -995,7 +995,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     type="date"
                     value={repDesde}
                     onChange={(e) => setRepDesde(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 text-xs"
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] text-xs"
                   />
                 </div>
 
@@ -1005,7 +1005,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     type="date"
                     value={repHasta}
                     onChange={(e) => setRepHasta(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 text-xs"
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] text-xs"
                   />
                 </div>
 
@@ -1014,7 +1014,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repSesion}
                     onChange={(e) => setRepSesion(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer text-xs"
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer text-xs"
                   >
                     <option value={selectedArqueoSesion.id}>Sesión #{selectedArqueoSesion.id}</option>
                     <option value="Todas">Todas</option>
@@ -1026,7 +1026,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <select
                     value={repTipoMov}
                     onChange={(e) => setRepTipoMov(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer text-xs"
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer text-xs"
                   >
                     <option value="Todos">Todos</option>
                     <option value="Venta">Venta</option>
@@ -1043,7 +1043,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   onClick={() => setReportTab('resumen')}
                   className={`px-3.5 py-2 rounded-xl font-bold transition shadow-xs cursor-pointer ${
                     reportTab === 'resumen'
-                      ? 'bg-[#00a650] text-white'
+                      ? 'bg-[#FF6B35] text-white'
                       : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -1055,7 +1055,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   onClick={() => setReportTab('movimientos')}
                   className={`px-3.5 py-2 rounded-xl font-bold transition cursor-pointer ${
                     reportTab === 'movimientos'
-                      ? 'bg-[#00a650] text-white shadow-xs'
+                      ? 'bg-[#FF6B35] text-white shadow-xs'
                       : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -1065,7 +1065,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                 <button
                   type="button"
                   onClick={() => showToast("Filtros aplicados para sesión #" + selectedArqueoSesion.id)}
-                  className="px-4 py-2 bg-[#00a650] text-white hover:bg-[#008f45] rounded-xl font-bold transition shadow-xs cursor-pointer ml-auto sm:ml-0"
+                  className="px-4 py-2 bg-[#FF6B35] text-white hover:bg-[#008f45] rounded-xl font-bold transition shadow-xs cursor-pointer ml-auto sm:ml-0"
                 >
                   Aplicar
                 </button>
@@ -1109,7 +1109,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   </div>
                   <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/60">
                     <span className="text-[10px] text-slate-400 font-bold block">ESTADO</span>
-                    <span className={`font-bold ${selectedArqueoSesion.estado === 'Abierta' ? 'text-emerald-600' : 'text-slate-600'}`}>
+                    <span className={`font-bold ${selectedArqueoSesion.estado === 'Abierta' ? 'text-[#FF6B35]' : 'text-slate-600'}`}>
                       {selectedArqueoSesion.estado}
                     </span>
                   </div>
@@ -1123,9 +1123,9 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       S/ {Number(selectedArqueoSesion.balance_apertura ?? 0).toFixed(2)}
                     </span>
                   </div>
-                  <div className="p-3.5 bg-emerald-50/60 rounded-2xl border border-emerald-100">
-                    <span className="text-[10px] text-emerald-600 font-bold block">VENTAS / INGRESOS</span>
-                    <span className="text-base font-bold text-emerald-700">
+                  <div className="p-3.5 bg-[#FF6B35]/10/60 rounded-2xl border border-[#FF6B35]/10">
+                    <span className="text-[10px] text-[#FF6B35] font-bold block">VENTAS / INGRESOS</span>
+                    <span className="text-base font-bold text-[#E85B28]">
                       S/ {Math.max(0, Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0) + 35).toFixed(2)}
                     </span>
                   </div>
@@ -1133,21 +1133,21 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                     <span className="text-[10px] text-rose-600 font-bold block">EGRESOS / RETIROS</span>
                     <span className="text-base font-bold text-rose-700">S/ 35.00</span>
                   </div>
-                  <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200">
-                    <span className="text-[10px] text-emerald-700 font-bold block">SALDO EN CAJA</span>
-                    <span className="text-base font-black text-emerald-700">
+                  <div className="p-3.5 bg-[#FF6B35]/10 rounded-2xl border border-[#FF6B35]/20">
+                    <span className="text-[10px] text-[#E85B28] font-bold block">SALDO EN CAJA</span>
+                    <span className="text-base font-black text-[#E85B28]">
                       S/ {Number(selectedArqueoSesion.saldo_actual ?? 0).toFixed(2)}
                     </span>
                   </div>
                 </div>
 
                 {selectedArqueoSesion.balance_cierre != null && (
-                  <div className="p-3.5 bg-teal-50 rounded-2xl border border-teal-200 flex items-center justify-between">
+                  <div className="p-3.5 bg-[#FF6B35] rounded-2xl border border-[#FFB627]/50 flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-bold text-teal-900 block">Arqueo contado físico al cierre:</span>
-                      <span className="text-[11px] text-teal-700">Diferencia cuadrada sin descuadre</span>
+                      <span className="text-xs font-bold text-[#FFB627] block">Arqueo contado físico al cierre:</span>
+                      <span className="text-[11px] text-[#FFB627]">Diferencia cuadrada sin descuadre</span>
                     </div>
-                    <span className="text-lg font-black text-teal-800">
+                    <span className="text-lg font-black text-[#FFB627]">
                       S/ {Number(selectedArqueoSesion.balance_cierre).toFixed(2)}
                     </span>
                   </div>
@@ -1165,7 +1165,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                         </span>
                       </div>
                       <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
-                        <div className="bg-[#00a650] h-full rounded-full" style={{ width: '45%' }}></div>
+                        <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '45%' }}></div>
                       </div>
                     </div>
 
@@ -1177,7 +1177,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                         </span>
                       </div>
                       <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
-                        <div className="bg-purple-500 h-full rounded-full" style={{ width: '35%' }}></div>
+                        <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '35%' }}></div>
                       </div>
                     </div>
 
@@ -1189,7 +1189,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                         </span>
                       </div>
                       <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: '20%' }}></div>
+                        <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '20%' }}></div>
                       </div>
                     </div>
                   </div>
@@ -1218,9 +1218,9 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <td className="py-2.5 px-3 font-mono text-slate-500 whitespace-nowrap">{m.fecha}</td>
                           <td className="py-2.5 px-3 whitespace-nowrap">
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              m.tipo === 'Venta' ? 'bg-emerald-50 text-emerald-700' :
-                              m.tipo === 'Apertura' ? 'bg-teal-50 text-teal-700' :
-                              m.tipo === 'Ingreso' ? 'bg-blue-50 text-blue-700' :
+                              m.tipo === 'Venta' ? 'bg-[#FF6B35]/10 text-[#E85B28]' :
+                              m.tipo === 'Apertura' ? 'bg-[#FF6B35] text-[#FFB627]' :
+                              m.tipo === 'Ingreso' ? 'bg-[#FF6B35]/10 text-[#FF6B35]' :
                               'bg-rose-50 text-rose-700'
                             }`}>
                               {m.tipo}
@@ -1229,7 +1229,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <td className="py-2.5 px-3 text-slate-600 whitespace-nowrap">{m.metodo}</td>
                           <td className="py-2.5 px-3 font-medium text-slate-800">{m.concepto}</td>
                           <td className="py-2.5 px-3 text-slate-600 whitespace-nowrap">{m.usuario}</td>
-                          <td className="py-2.5 px-3 text-right font-bold text-emerald-600 whitespace-nowrap">
+                          <td className="py-2.5 px-3 text-right font-bold text-[#FF6B35] whitespace-nowrap">
                             {m.ingreso > 0 ? `S/ ${m.ingreso.toFixed(2)}` : '—'}
                           </td>
                           <td className="py-2.5 px-3 text-right font-bold text-rose-600 whitespace-nowrap">
@@ -1262,3 +1262,9 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
     </div>
   );
 }
+
+
+
+
+
+

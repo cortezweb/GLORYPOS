@@ -14,6 +14,7 @@ import { tenantService, slugify } from '../../services/tenantService';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { hashText } from '../../utils/crypto';
 import { playCashChime } from '../../utils/audio';
+import GloryLogo from '../Common/GloryLogo';
 
 export const RUBROS = [
   { id: 'ABARROTES', label: 'Minimarket & Abarrotes', icon: '🏪' },
@@ -74,44 +75,57 @@ export const MODULE_PRESETS = {
 
 // Paletas de Color para el Admin Dashboard
 const COLOR_THEMES = {
+  glory: {
+    id: 'glory',
+    name: 'Glory Oficial (Naranja & Azul Nocturno)',
+    dot: 'bg-[#FF6B35]',
+    primary: 'orange',
+    headerBg: 'bg-gradient-to-r from-[#1E2022] via-[#2a2d30] to-[#1E2022] text-white border-orange-900/40',
+    btnPrimary: 'bg-gradient-to-r from-[#FF6B35] to-[#ea580c] hover:from-[#ea580c] hover:to-[#c2410c] text-white shadow-md shadow-orange-500/20',
+    badge: 'bg-orange-50 text-[#FF6B35] border-orange-200',
+    activeTab: 'bg-[#FF6B35] text-white shadow-sm',
+    accentText: 'text-[#FF6B35]',
+    accentBorder: 'border-[#FF6B35]',
+    highlightRing: 'focus:ring-[#FF6B35]',
+  },
   indigo: {
     id: 'indigo',
     name: 'Azul Real & Índigo (SaaS Pro)',
-    dot: 'bg-blue-600',
+    dot: 'bg-[#FF6B35]',
     primary: 'blue',
     headerBg: 'bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white border-blue-900/50',
-    btnPrimary: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/20',
-    badge: 'bg-blue-50 text-blue-700 border-blue-200',
-    activeTab: 'bg-blue-600 text-white shadow-sm',
-    accentText: 'text-blue-600',
-    accentBorder: 'border-blue-500',
+    btnPrimary: 'bg-gradient-to-r from-blue-600 to-[#1E2022] hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/20',
+    badge: 'bg-[#FF6B35]/10 text-[#FF6B35] border-blue-200',
+    activeTab: 'bg-[#FF6B35] text-white shadow-sm',
+    accentText: 'text-[#FF6B35]',
+    accentBorder: 'border-[#FF6B35]',
     highlightRing: 'focus:ring-blue-500',
   },
   violet: {
     id: 'violet',
     name: 'Violeta Eléctrico (Modern)',
-    dot: 'bg-violet-600',
+    dot: 'bg-[#FF6B35]',
     primary: 'violet',
     headerBg: 'bg-gradient-to-r from-slate-900 via-purple-950 to-violet-950 text-white border-purple-900/50',
-    btnPrimary: 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-md shadow-violet-500/20',
-    badge: 'bg-violet-50 text-violet-700 border-violet-200',
-    activeTab: 'bg-violet-600 text-white shadow-sm',
-    accentText: 'text-violet-600',
-    accentBorder: 'border-violet-500',
-    highlightRing: 'focus:ring-violet-500',
+    btnPrimary: 'bg-gradient-to-r from-[#FF6B35] to-[#1E2022] hover:from-[#1E2022] hover:to-indigo-700 text-white shadow-md shadow-[#FF6B35]/20',
+    badge: 'bg-[#FDFBF7] text-[#1E2022] border-[#FFB627]/20',
+    activeTab: 'bg-[#FF6B35] text-white shadow-sm',
+    accentText: 'text-[#FF6B35]',
+    accentBorder: 'border-[#FF6B35]',
+    highlightRing: 'focus:ring-[#FF6B35]',
   },
   emerald: {
     id: 'emerald',
     name: 'Esmeralda & Menta (Fintech)',
-    dot: 'bg-emerald-600',
+    dot: 'bg-[#FF6B35]',
     primary: 'emerald',
-    headerBg: 'bg-gradient-to-r from-slate-900 via-teal-950 to-emerald-950 text-white border-emerald-900/50',
-    btnPrimary: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md shadow-emerald-500/20',
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    activeTab: 'bg-emerald-600 text-white shadow-sm',
-    accentText: 'text-emerald-600',
-    accentBorder: 'border-emerald-500',
-    highlightRing: 'focus:ring-emerald-500',
+    headerBg: 'bg-gradient-to-r from-slate-900 via-[#FF6B35] to-[#1E2022] text-white border-[#1E2022]/50',
+    btnPrimary: 'bg-gradient-to-r from-[#FF6B35] to-[#E85B28] hover:from-[#FF6B35] hover:to-[#E85B28] text-white shadow-md shadow-[#FF6B35]/30',
+    badge: 'bg-[#FF6B35]/10 text-[#E85B28] border-[#FF6B35]/20',
+    activeTab: 'bg-[#FF6B35] text-white shadow-sm',
+    accentText: 'text-[#FF6B35]',
+    accentBorder: 'border-[#FF6B35]',
+    highlightRing: 'focus:ring-[#FF6B35]',
   },
   dark: {
     id: 'dark',
@@ -147,10 +161,10 @@ export default function SuperAdminView({
 
   // Selector de tema de color para el Admin Dashboard
   const [selectedTheme, setSelectedTheme] = useState(() => {
-    return localStorage.getItem('glorypos_admin_theme') || 'indigo';
+    return localStorage.getItem('glorypos_admin_theme') || 'glory';
   });
 
-  const theme = COLOR_THEMES[selectedTheme] || COLOR_THEMES.indigo;
+  const theme = COLOR_THEMES[selectedTheme] || COLOR_THEMES.glory;
 
   const handleThemeChange = (newTheme) => {
     setSelectedTheme(newTheme);
@@ -467,7 +481,7 @@ export default function SuperAdminView({
         pin: hashedPin,
         pin_hash: hashedPin,
         rol: 'ADMIN',
-        color: 'from-blue-600 to-indigo-600',
+        color: 'from-blue-600 to-[#1E2022]',
         activo: true,
         created_at: new Date().toISOString()
       };
@@ -576,7 +590,7 @@ export default function SuperAdminView({
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <LayoutDashboard className={`w-3.5 h-3.5 ${activeTab === 'dashboard' ? 'text-emerald-400' : 'text-slate-500'}`} />
+            <LayoutDashboard className={`w-3.5 h-3.5 ${activeTab === 'dashboard' ? 'text-[#FFB627]' : 'text-slate-500'}`} />
             <span>Dashboard</span>
           </button>
 
@@ -648,16 +662,16 @@ export default function SuperAdminView({
         
         {/* Left: Branding & Status */}
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-black text-white shadow-inner">
-            <Sparkles className="w-6 h-6 text-white" />
+          <div className="bg-white/95 rounded-2xl p-1.5 shadow-md">
+            <GloryLogo size="md" showSubtitle={false} />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
-                GLORYPOS <span className="text-white/70 font-normal">|</span> Admin Dashboard
+                Admin Dashboard Console
               </h1>
-              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FF6B35]/20 text-[#FFB627] border border-[#FF6B35]/40 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFB627] animate-pulse"></span>
                 Cloud Multi-Tenant Activo
               </span>
             </div>
@@ -704,7 +718,7 @@ export default function SuperAdminView({
               title="Cierre de Caja"
               className="px-3 py-1.5 hover:bg-white/10 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
             >
-              <Wallet className="w-3.5 h-3.5 text-emerald-300" />
+              <Wallet className="w-3.5 h-3.5 text-[#FFB627]" />
               <span>Caja</span>
             </button>
           </div>
@@ -728,13 +742,13 @@ export default function SuperAdminView({
         <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tenants Totales</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <Building2 className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{totalClientes}</span>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+            <span className="text-xs font-bold text-[#FF6B35] bg-[#FF6B35]/10 px-2 py-0.5 rounded-full border border-[#FF6B35]/10">
               {clientesActivos} activos
             </span>
           </div>
@@ -747,7 +761,7 @@ export default function SuperAdminView({
         <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">MRR Recurrente</span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-[#1E2022] flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
@@ -755,7 +769,7 @@ export default function SuperAdminView({
             <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Bs. {mrrTotal.toLocaleString()}
             </span>
-            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+            <span className="text-xs font-bold text-[#1E2022] bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
               /mes
             </span>
           </div>
@@ -787,13 +801,13 @@ export default function SuperAdminView({
         <div className="bg-white border border-slate-200/90 p-4 rounded-3xl shadow-xs relative overflow-hidden group hover:shadow-md transition">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Salud del Cluster</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center">
               <Activity className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">99.98%</span>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+            <span className="text-xs font-bold text-[#FF6B35] bg-[#FF6B35]/10 px-2 py-0.5 rounded-full border border-[#FF6B35]/10">
               Operativo
             </span>
           </div>
@@ -806,7 +820,7 @@ export default function SuperAdminView({
       {/* Notificación Toast */}
       {notificationMsg && (
         <div className="fixed bottom-6 right-6 z-50 p-4 bg-slate-900 text-white font-bold text-xs rounded-2xl shadow-2xl flex items-center gap-2.5 border border-slate-700 animate-fadeIn">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <CheckCircle2 className="w-5 h-5 text-[#FFB627] shrink-0" />
           <span>{notificationMsg}</span>
         </div>
       )}
@@ -882,12 +896,12 @@ export default function SuperAdminView({
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-slate-900 text-sm">{client.nombre}</span>
                                 {isCurrentActive && (
-                                  <span className="px-2 py-0.5 text-[9px] font-black rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                                  <span className="px-2 py-0.5 text-[9px] font-black rounded-full bg-[#FF6B35]/10 text-[#FF6B35] border border-blue-200">
                                     ESPACIO ACTIVO
                                   </span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[11px] font-semibold">
+                              <div className="flex items-center gap-1.5 text-[#FF6B35] font-mono text-[11px] font-semibold">
                                 <Globe className="w-3 h-3 shrink-0" />
                                 <span>{client.slug || 'admin'}.glorypos.bo</span>
                               </div>
@@ -909,7 +923,7 @@ export default function SuperAdminView({
                         <td className="px-5 py-4">
                           <div className="space-y-1">
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                              <span className={`w-1.5 h-1.5 rounded-full ${isClientExpired ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
+                              <span className={`w-1.5 h-1.5 rounded-full ${isClientExpired ? 'bg-rose-500' : 'bg-[#FF6B35]'}`}></span>
                               {client.plan_tipo}
                             </span>
                             <span className="text-[11px] text-slate-500 font-medium block">
@@ -924,7 +938,7 @@ export default function SuperAdminView({
                             <span className={`text-xs font-bold block ${isClientExpired ? 'text-rose-600' : 'text-slate-800'}`}>
                               {new Date(client.fecha_vencimiento).toLocaleDateString('es-BO')}
                             </span>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isClientExpired ? 'text-rose-500' : 'text-emerald-600'}`}>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isClientExpired ? 'text-rose-500' : 'text-[#FF6B35]'}`}>
                               {isClientExpired ? 'Suscripción Vencida' : 'Activo'}
                             </span>
                           </div>
@@ -939,7 +953,7 @@ export default function SuperAdminView({
                               type="button"
                               onClick={() => handleImpersonate(client.slug)}
                               title="Conectarse al POS de este negocio"
-                              className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                              className="px-3 py-1.5 bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#FF6B35] border border-blue-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
                             >
                               <Laptop className="w-3.5 h-3.5" />
                               <span>Acceder</span>
@@ -992,7 +1006,7 @@ export default function SuperAdminView({
               <div key={c.id} className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2.5 shadow-2xs hover:border-blue-300 transition">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900 text-sm truncate max-w-[180px]">{c.nombre}</span>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] border border-blue-200">
                     {c.slug}
                   </span>
                 </div>
@@ -1007,13 +1021,13 @@ export default function SuperAdminView({
                   </p>
                   <p className="flex items-center gap-1.5">
                     <span className="text-slate-400">🔑 PIN de Caja:</span>
-                    <span className="font-mono font-bold text-blue-600">1234</span>
+                    <span className="font-mono font-bold text-[#FF6B35]">1234</span>
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleImpersonate(c.slug)}
-                  className="w-full mt-2 py-1.5 bg-white hover:bg-blue-50 text-blue-700 border border-slate-200 hover:border-blue-300 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                  className="w-full mt-2 py-1.5 bg-white hover:bg-[#FF6B35]/10 text-[#FF6B35] border border-slate-200 hover:border-blue-300 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
                 >
                   <Laptop className="w-3.5 h-3.5" />
                   <span>Conectar a este POS</span>
@@ -1029,7 +1043,7 @@ export default function SuperAdminView({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-slate-200/90 p-6 rounded-3xl space-y-3 shadow-xs">
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <SlidersHorizontal className="w-5 h-5 text-blue-600" />
+              <SlidersHorizontal className="w-5 h-5 text-[#FF6B35]" />
               Rubro Comercial Activo
             </h3>
             <p className="text-xs text-slate-500">
@@ -1038,12 +1052,12 @@ export default function SuperAdminView({
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between mt-3">
               <div>
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Rubro Actual</span>
-                <span className="text-base font-black text-blue-600">{currentRubro}</span>
+                <span className="text-base font-black text-[#FF6B35]">{currentRubro}</span>
               </div>
               <button
                 type="button"
                 onClick={onOpenRubroModal}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
+                className="px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
               >
                 Cambiar Rubro
               </button>
@@ -1052,7 +1066,7 @@ export default function SuperAdminView({
 
           <div className="bg-white border border-slate-200/90 p-6 rounded-3xl space-y-3 shadow-xs">
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-emerald-600" />
+              <Wallet className="w-5 h-5 text-[#FF6B35]" />
               Arqueo y Cierre de Caja
             </h3>
             <p className="text-xs text-slate-500">
@@ -1061,12 +1075,12 @@ export default function SuperAdminView({
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between mt-3">
               <div>
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Módulo</span>
-                <span className="text-base font-black text-emerald-700">Caja Chica POS</span>
+                <span className="text-base font-black text-[#E85B28]">Caja Chica POS</span>
               </div>
               <button
                 type="button"
                 onClick={onOpenCloseCash}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
+                className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
               >
                 Abrir Arqueo
               </button>
@@ -1086,7 +1100,7 @@ export default function SuperAdminView({
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-2xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center shadow-xs">
                     <Plus className="w-5 h-5" />
                   </div>
                   <div>
@@ -1135,11 +1149,11 @@ export default function SuperAdminView({
                         setIsManualSlug(true);
                         setDrawerData(prev => ({ ...prev, slug: slugify(e.target.value) }));
                       }}
-                      className="w-full p-2.5 bg-transparent text-blue-600 font-mono font-bold focus:outline-none"
+                      className="w-full p-2.5 bg-transparent text-[#FF6B35] font-mono font-bold focus:outline-none"
                     />
                     <span className="pr-3 text-slate-400 select-none font-mono">.glorypos.bo</span>
                   </div>
-                  <span className="text-[10px] text-blue-600 font-semibold mt-1 block">
+                  <span className="text-[10px] text-[#FF6B35] font-semibold mt-1 block">
                     ✓ Subdominio web para producción e identificador de acceso local.
                   </span>
                 </div>
@@ -1245,7 +1259,7 @@ export default function SuperAdminView({
                     <select
                       value={drawerData.plan_tipo}
                       onChange={e => setDrawerData(prev => ({ ...prev, plan_tipo: e.target.value }))}
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-blue-700 font-bold"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#FF6B35] font-bold"
                     >
                       <option value="TRIAL">Prueba (30 días)</option>
                       <option value="BASICO">Básico (Bs. 150/mes)</option>
@@ -1272,7 +1286,7 @@ export default function SuperAdminView({
                 <div className="space-y-2 pt-2 border-t border-slate-100">
                   <div className="flex items-center justify-between">
                     <label className="text-slate-800 font-bold">Módulos Habilitados</label>
-                    <span className="text-[10px] text-blue-600 font-bold font-mono">
+                    <span className="text-[10px] text-[#FF6B35] font-bold font-mono">
                       {drawerData.modulos_activos.length} de {ALL_CLIENT_MODULES.length}
                     </span>
                   </div>
@@ -1283,7 +1297,7 @@ export default function SuperAdminView({
                         key={key}
                         type="button"
                         onClick={() => applyDrawerPreset(key)}
-                        className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 transition border border-slate-200"
+                        className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-[#FF6B35]/10 text-slate-700 hover:text-[#FF6B35] transition border border-slate-200"
                       >
                         {MODULE_PRESETS[key].name}
                       </button>
@@ -1299,7 +1313,7 @@ export default function SuperAdminView({
                           onClick={() => toggleDrawerModule(mod.id)}
                           className={`flex items-center gap-2 p-2 rounded-xl border text-[11px] cursor-pointer transition select-none ${
                             isChecked
-                              ? 'bg-blue-50/80 border-blue-300 text-blue-900 font-bold'
+                              ? 'bg-[#FF6B35]/10/80 border-blue-300 text-blue-900 font-bold'
                               : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-800'
                           }`}
                         >
@@ -1307,7 +1321,7 @@ export default function SuperAdminView({
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => {}}
-                            className="rounded border-slate-300 text-blue-600 focus:ring-0"
+                            className="rounded border-slate-300 text-[#FF6B35] focus:ring-0"
                           />
                           <span className="text-sm">{mod.icon}</span>
                           <span className="truncate">{mod.label}</span>
@@ -1366,7 +1380,7 @@ export default function SuperAdminView({
             </button>
 
             <div className="text-center space-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 border border-emerald-200 shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center mx-auto mb-2 border border-[#FF6B35]/20 shadow-xs">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-900">Tenant Desplegado con Éxito</h3>
@@ -1379,7 +1393,7 @@ export default function SuperAdminView({
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 text-xs">
               <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
                 <span className="text-slate-500">Subdominio Web:</span>
-                <span className="text-blue-600 font-bold font-mono">https://{credentialsModalClient.slug}.glorypos.bo</span>
+                <span className="text-[#FF6B35] font-bold font-mono">https://{credentialsModalClient.slug}.glorypos.bo</span>
               </div>
               <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
                 <span className="text-slate-500">Identificador Local:</span>
@@ -1397,7 +1411,7 @@ export default function SuperAdminView({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-500">PIN Caja POS:</span>
-                <span className="text-blue-600 font-black bg-white px-2 py-0.5 rounded border border-slate-200 font-mono">
+                <span className="text-[#FF6B35] font-black bg-white px-2 py-0.5 rounded border border-slate-200 font-mono">
                   {credentialsModalClient.rawPin || '1234'}
                 </span>
               </div>
@@ -1409,7 +1423,7 @@ export default function SuperAdminView({
                 href={`https://wa.me/591${credentialsModalClient.telefono}?text=${getWhatsAppMessage(credentialsModalClient)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>Enviar Credenciales por WhatsApp (+591 {credentialsModalClient.telefono})</span>
@@ -1427,8 +1441,8 @@ export default function SuperAdminView({
               >
                 {copiedToast ? (
                   <>
-                    <CheckCheck className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-700 font-bold">¡Copiado al Portapapeles!</span>
+                    <CheckCheck className="w-4 h-4 text-[#FF6B35]" />
+                    <span className="text-[#E85B28] font-bold">¡Copiado al Portapapeles!</span>
                   </>
                 ) : (
                   <>
@@ -1455,7 +1469,7 @@ export default function SuperAdminView({
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Layers className="w-5 h-5 text-blue-600" />
+                <Layers className="w-5 h-5 text-[#FF6B35]" />
                 <h3 className="text-base font-bold text-slate-900">
                   Módulos Autorizados: {editingModulesClient.nombre}
                 </h3>
@@ -1476,7 +1490,7 @@ export default function SuperAdminView({
                     key={key}
                     type="button"
                     onClick={() => applyEditingPreset(key)}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 transition"
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-[#FF6B35]/10 text-slate-700 hover:text-[#FF6B35] border border-slate-200 transition"
                   >
                     {MODULE_PRESETS[key].name}
                   </button>
@@ -1494,7 +1508,7 @@ export default function SuperAdminView({
                     onClick={() => toggleEditingModule(mod.id)}
                     className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition select-none ${
                       isChecked
-                        ? 'bg-blue-50/80 border-blue-300 text-blue-900 font-bold'
+                        ? 'bg-[#FF6B35]/10/80 border-blue-300 text-blue-900 font-bold'
                         : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-800'
                     }`}
                   >
@@ -1502,7 +1516,7 @@ export default function SuperAdminView({
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => {}}
-                      className="rounded border-slate-300 text-blue-600 focus:ring-0 mt-0.5"
+                      className="rounded border-slate-300 text-[#FF6B35] focus:ring-0 mt-0.5"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs flex items-center gap-1.5">
@@ -1533,7 +1547,7 @@ export default function SuperAdminView({
                   type="button"
                   onClick={handleSaveClientModules}
                   disabled={isSavingModules}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
                   {isSavingModules ? 'Guardando...' : 'Guardar Módulos'}
                 </button>
@@ -1546,3 +1560,9 @@ export default function SuperAdminView({
     </div>
   );
 }
+
+
+
+
+
+

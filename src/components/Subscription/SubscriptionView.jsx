@@ -25,7 +25,7 @@ export default function SubscriptionView() {
             Estado de Suscripción SaaS
           </span>
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold ${
-            isExpired ? 'bg-rose-500 text-white' : 'bg-emerald-400 text-slate-950'
+            isExpired ? 'bg-rose-500 text-white' : 'bg-[#FFB627] text-slate-950'
           }`}>
             {isExpired ? 'VENCIDO' : 'ACTIVO'}
           </span>
@@ -68,19 +68,19 @@ export default function SubscriptionView() {
 
           <ul className="space-y-1.5 text-xs text-slate-600">
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#FF6B35] shrink-0" />
               <span>Punto de Venta PWA Offline-First</span>
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#FF6B35] shrink-0" />
               <span>Acceso al Catálogo Maestro de Bolivia</span>
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#FF6B35] shrink-0" />
               <span>Impresión térmica de Recibos / Notas de Venta</span>
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#FF6B35] shrink-0" />
               <span>Control de Inventario y Caja Chica</span>
             </li>
           </ul>
@@ -89,13 +89,13 @@ export default function SubscriptionView() {
             onClick={() => handleWhatsAppRenew('Plan Básico (Bs. 99/mes)')}
             className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2"
           >
-            <MessageCircle className="w-4 h-4 text-emerald-400" />
+            <MessageCircle className="w-4 h-4 text-[#FFB627]" />
             <span>Contratar Plan Básico</span>
           </button>
         </div>
 
         {/* Plan PRO con SIAT */}
-        <div className="p-4 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl border-2 border-indigo-500 shadow-md space-y-3 relative overflow-hidden">
+        <div className="p-4 bg-gradient-to-br from-indigo-50 to-[#FDFBF7] rounded-2xl border-2 border-indigo-500 shadow-md space-y-3 relative overflow-hidden">
           <div className="absolute top-2 right-2 bg-indigo-600 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
             Recomendado
           </div>
@@ -178,3 +178,6 @@ export default function SubscriptionView() {
     </div>
   );
 }
+
+
+

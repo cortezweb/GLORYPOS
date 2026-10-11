@@ -197,7 +197,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
               setFormSaldo('');
               setIsNewAccountModalOpen(true);
             }}
-            className="px-4 py-2.5 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 active:scale-95"
+            className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Nueva cuenta</span>
@@ -224,8 +224,8 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   <span className="text-[11px] font-bold text-slate-700 px-2 py-0.5 bg-slate-100 rounded-md">
                     {acc.nombre}
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20/60">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B35]"></span>
                     {acc.estado || 'Activa'}
                   </span>
                 </div>
@@ -242,9 +242,9 @@ export default function CuentasBancariasView({ onSelectSubView }) {
               {/* Información central / Entidad y número */}
               <div className="space-y-1 my-1">
                 <div className="flex items-center gap-2">
-                  {isBCP && <Building2 className="w-4 h-4 text-blue-600" />}
+                  {isBCP && <Building2 className="w-4 h-4 text-[#FF6B35]" />}
                   {isPOS && <CreditCard className="w-4 h-4 text-amber-600" />}
-                  {(isYape || isPlin) && <Smartphone className="w-4 h-4 text-purple-600" />}
+                  {(isYape || isPlin) && <Smartphone className="w-4 h-4 text-[#1E2022]" />}
                   <span className="font-bold text-slate-800 text-sm">
                     {acc.entidad}
                   </span>
@@ -284,7 +284,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                 placeholder="Buscar movimiento..."
                 value={searchMov}
                 onChange={(e) => setSearchMov(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650]"
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]"
               />
             </div>
 
@@ -324,7 +324,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   </td>
                   <td className="py-3 px-3 whitespace-nowrap">
                     {m.tipo === 'Abono' ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20/60">
                         Abono
                       </span>
                     ) : m.tipo === 'Retiro' ? (
@@ -332,7 +332,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                         Retiro
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#FF6B35] border border-blue-200/60">
                         Transferencia
                       </span>
                     )}
@@ -341,7 +341,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                     {m.ref}
                   </td>
                   <td className={`py-3 px-4 text-right font-black whitespace-nowrap font-mono text-xs ${
-                    m.monto >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                    m.monto >= 0 ? 'text-[#FF6B35]' : 'text-rose-600'
                   }`}>
                     {m.monto >= 0 ? `+ S/ ${Number(m.monto).toFixed(2)}` : `- S/ ${Math.abs(Number(m.monto)).toFixed(2)}`}
                   </td>
@@ -361,7 +361,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
             <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#00a650] text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <Building2 className="w-5 h-5" />
                 </div>
                 <div>
@@ -388,7 +388,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   placeholder="Ej. BCP Empresa / Billetera Yape"
                   value={formNombre}
                   onChange={(e) => setFormNombre(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -469,7 +469,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   {editingAccount ? 'Actualizar Cuenta' : 'Guardar Cuenta'}
                 </button>
@@ -483,9 +483,9 @@ export default function CuentasBancariasView({ onSelectSubView }) {
       {isTransferModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
-            <div className="p-4 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+            <div className="p-4 bg-[#FF6B35]/10 border-b border-blue-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <ArrowRightLeft className="w-5 h-5" />
                 </div>
                 <div>
@@ -568,7 +568,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-xl font-bold shadow-sm"
                 >
                   Ejecutar Transferencia
                 </button>
@@ -581,10 +581,14 @@ export default function CuentasBancariasView({ onSelectSubView }) {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
     </div>
   );
 }
+
+
+
+

@@ -83,13 +83,13 @@ export default function InicioView({
         {/* Contenido del Banner */}
         <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between h-full min-h-[190px]">
           <div className="max-w-xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase tracking-wider mb-2 border border-blue-500/30">
-              <Sparkles className="w-3 h-3 text-blue-400" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FF6B35]/20 text-[#FFB627] text-[10px] font-bold uppercase tracking-wider mb-2 border border-[#FF6B35]/30">
+              <Sparkles className="w-3 h-3 text-[#FFB627]" />
               <span>Centro de Capacitación GLORYPOS</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-md">
               Aprende a utilizar {empresa?.nombre ? 'tu sistema' : 'GLORYPOS'} <br />
-              <span className="text-blue-400">con nuestros tutoriales</span>
+              <span className="text-[#FF6B35]">con nuestros tutoriales</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-2 font-medium hidden sm:block">
               Descubre cómo emitir comprobantes, controlar tu stock y cerrar cajas sin errores.
@@ -98,7 +98,7 @@ export default function InicioView({
 
           {/* Botón Central Play (Estilo exacto de la imagen: círculo translúcido con triángulo blanco) */}
           <div className="shrink-0 pl-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:border-emerald-500">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-[#FF6B35] group-hover:border-[#FF6B35]">
               <Play className="w-7 h-7 sm:w-9 sm:h-9 text-white fill-white ml-1 transition-transform group-hover:scale-110" />
             </div>
           </div>
@@ -130,15 +130,15 @@ export default function InicioView({
             {/* TARJETA 1: REALIZA UNA VENTA RÁPIDA (Verde menta suave) */}
             <div
               onClick={() => onSelectView('pos')}
-              className="group relative rounded-3xl p-6 sm:p-7 bg-[#eaf8ef] border border-emerald-100 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden min-h-[175px] flex justify-between items-center"
+              className="group relative rounded-3xl p-6 sm:p-7 bg-[#eaf8ef] border border-[#FF6B35]/10 hover:border-[#FF6B35]/30 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden min-h-[175px] flex justify-between items-center"
             >
               <div className="relative z-10 max-w-[240px]">
-                <span className="inline-block px-3 py-0.5 rounded-full bg-white text-emerald-700 text-[11px] font-bold border border-emerald-200 shadow-xs mb-3">
+                <span className="inline-block px-3 py-0.5 rounded-full bg-white text-[#E85B28] text-[11px] font-bold border border-[#FF6B35]/20 shadow-xs mb-3">
                   Herramienta
                 </span>
                 <h2 className="text-2xl sm:text-[26px] font-black text-slate-800 leading-tight tracking-tight">
                   <span className="text-[#0284c7]">Realiza una</span> <br />
-                  <span className="text-emerald-700">Venta rápida</span>
+                  <span className="text-[#E85B28]">Venta rápida</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-2 font-medium">
                   Caja táctil, lector de barras y emisión ágil de comprobantes.
@@ -171,9 +171,9 @@ export default function InicioView({
                   <line x1="124" y1="125" x2="124" y2="157" stroke="#fbcfe8" strokeWidth="2" />
                   <line x1="144" y1="125" x2="144" y2="157" stroke="#fbcfe8" strokeWidth="2" />
                   {/* Billetes de dinero verde flotando */}
-                  <rect x="35" y="105" width="34" height="20" rx="3" fill="#10b981" transform="rotate(-25 35 105)" />
+                  <rect x="35" y="105" width="34" height="20" rx="3" fill="#FF6B35" transform="rotate(-25 35 105)" />
                   <circle cx="48" cy="112" r="3.5" fill="#a7f3d0" />
-                  <rect x="42" y="70" width="30" height="18" rx="3" fill="#34d399" transform="rotate(15 42 70)" />
+                  <rect x="42" y="70" width="30" height="18" rx="3" fill="#FFB627" transform="rotate(15 42 70)" />
                 </svg>
               </div>
             </div>
@@ -254,7 +254,7 @@ export default function InicioView({
                 <div className="my-1">
                   <h3 className="text-xl font-black text-slate-800 leading-tight">
                     Buscar <br />
-                    <span className="text-blue-600">Documentos</span>
+                    <span className="text-[#FF6B35]">Documentos</span>
                   </h3>
                 </div>
 
@@ -285,19 +285,19 @@ export default function InicioView({
               {/* TARJETA 4: CONSULTAR REPORTES (Lila suave) */}
               <div
                 onClick={() => onSelectView('reports')}
-                className="group relative rounded-3xl p-4 sm:p-6 bg-[#f4f3f9] border border-slate-200/90 hover:border-purple-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[190px] sm:min-h-[220px]"
+                className="group relative rounded-3xl p-4 sm:p-6 bg-[#f4f3f9] border border-slate-200/90 hover:border-[#FFB627]/30 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[190px] sm:min-h-[220px]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-white text-purple-700 text-[10px] font-bold border border-purple-200 shadow-xs">
+                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-white text-[#FF6B35] text-[10px] font-bold border border-[#FFB627]/20 shadow-xs">
                     Herramienta
                   </span>
-                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E2022] transition-colors" />
                 </div>
 
                 <div className="my-1">
                   <h3 className="text-xl font-black text-slate-800 leading-tight">
                     Consultar <br />
-                    <span className="text-purple-700">Reportes</span>
+                    <span className="text-[#FF6B35]">Reportes</span>
                   </h3>
                 </div>
 
@@ -359,7 +359,7 @@ export default function InicioView({
             {/* Modal Header */}
             <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-white shadow-md">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35] flex items-center justify-center font-bold text-white shadow-md">
                   <Play className="w-4 h-4 fill-white ml-0.5" />
                 </div>
                 <div>
@@ -388,14 +388,14 @@ export default function InicioView({
                   }}
                 />
                 <div className="relative z-10 flex flex-col items-center text-center p-6 space-y-3">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 animate-pulse">
+                  <div className="w-16 h-16 rounded-full bg-[#FF6B35] text-white flex items-center justify-center shadow-lg shadow-[#FF6B35]/30 animate-pulse">
                     <Play className="w-8 h-8 fill-white ml-1" />
                   </div>
                   <div>
                     <h4 className="text-lg font-black text-white">{tutorials[activeTutorialTab].title}</h4>
                     <p className="text-xs text-slate-300 max-w-md mt-1">{tutorials[activeTutorialTab].description}</p>
                   </div>
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-black/60 border border-white/20 text-emerald-400">
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-black/60 border border-white/20 text-[#FFB627]">
                     Duración: {tutorials[activeTutorialTab].duration}
                   </span>
                 </div>
@@ -414,12 +414,12 @@ export default function InicioView({
                       onClick={() => setActiveTutorialTab(idx)}
                       className={`p-3 rounded-xl border text-left transition flex items-start gap-2.5 ${
                         activeTutorialTab === idx 
-                          ? 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-xs' 
+                          ? 'bg-[#FF6B35]/10 border-[#FF6B35] text-[#1E2022] font-bold shadow-xs' 
                           : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
                       }`}
                     >
                       <div className={`w-6 h-6 rounded-lg shrink-0 flex items-center justify-center text-xs ${
-                        activeTutorialTab === idx ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                        activeTutorialTab === idx ? 'bg-[#FF6B35] text-white' : 'bg-slate-200 text-slate-600'
                       }`}>
                         {idx + 1}
                       </div>
@@ -435,7 +435,7 @@ export default function InicioView({
               {/* Pasos Clave del Tutorial Seleccionado */}
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <h5 className="text-xs font-black text-slate-800 mb-2 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <CheckCircle2 className="w-4 h-4 text-[#FF6B35]" />
                   Pasos Clave a Seguir:
                 </h5>
                 <ul className="space-y-1.5">
@@ -471,3 +471,8 @@ export default function InicioView({
     </div>
   );
 }
+
+
+
+
+

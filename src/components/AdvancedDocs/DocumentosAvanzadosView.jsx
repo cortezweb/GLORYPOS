@@ -269,7 +269,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
           onClick={() => handleTabChange('retenciones')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
             activeTab === 'retenciones'
-              ? 'bg-emerald-600 text-white shadow-xs'
+              ? 'bg-[#FF6B35] text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -283,7 +283,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
           onClick={() => handleTabChange('percepciones')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
             activeTab === 'percepciones'
-              ? 'bg-emerald-600 text-white shadow-xs'
+              ? 'bg-[#FF6B35] text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -299,7 +299,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
           onClick={() => handleTabChange('reversiones')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
             activeTab === 'reversiones'
-              ? 'bg-emerald-600 text-white shadow-xs'
+              ? 'bg-[#FF6B35] text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -323,7 +323,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                 value={filtroBuscar}
                 onChange={(e) => setFiltroBuscar(e.target.value)}
                 placeholder="Serie, RUC, razón social..."
-                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400"
+                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -337,7 +337,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
               type="text"
               value={filtroSerie}
               onChange={(e) => setFiltroSerie(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -350,7 +350,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
               type="text"
               value={filtroCorrelativo}
               onChange={(e) => setFiltroCorrelativo(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -362,7 +362,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
             <select
               value={filtroEstadoSunat}
               onChange={(e) => setFiltroEstadoSunat(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-700"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-slate-700"
             >
               <option value="Todos">Todos</option>
               <option value="Aceptado">Aceptado</option>
@@ -383,7 +383,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                 placeholder="dd/mm/aaaa"
                 value={filtroDesde}
                 onChange={(e) => setFiltroDesde(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400"
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] placeholder:text-slate-400"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -400,7 +400,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                 placeholder="dd/mm/aaaa"
                 value={filtroHasta}
                 onChange={(e) => setFiltroHasta(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400"
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B35] placeholder:text-slate-400"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -411,7 +411,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
             <button
               type="button"
               onClick={() => {}}
-              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition h-[38px] flex items-center justify-center"
+              className="px-6 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-xs transition h-[38px] flex items-center justify-center"
             >
               Filtrar
             </button>
@@ -445,7 +445,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
               <button
                 type="button"
                 onClick={() => setIsNuevaRetencionOpen(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-xs transition"
+                className="px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-xs transition"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>+ Nueva retención</span>
@@ -456,7 +456,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
               <button
                 type="button"
                 onClick={() => setIsNuevaPercepcionOpen(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-xs transition"
+                className="px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-xs transition"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>+ Nueva percepción</span>
@@ -467,7 +467,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
               <button
                 type="button"
                 onClick={() => setIsNuevaReversionOpen(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-xs transition"
+                className="px-4 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-xs transition"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>+ Nueva reversión</span>
@@ -528,7 +528,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                       </td>
 
                       {/* ORIGEN */}
-                      <td className="py-3 px-4 font-mono font-medium text-emerald-600 hover:underline cursor-pointer whitespace-nowrap"
+                      <td className="py-3 px-4 font-mono font-medium text-[#FF6B35] hover:underline cursor-pointer whitespace-nowrap"
                           onClick={() => setSelectedDocDetalle(doc)}>
                         {doc.origen || '—'}
                       </td>
@@ -556,7 +556,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                           </span>
                         )}
                         {doc.estado_sunat === 'Aceptado' && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">
                             Aceptado
                           </span>
                         )}
@@ -614,7 +614,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                       {/* CDR */}
                       <td className="py-3 px-4 text-center text-slate-400">
                         {doc.estado_sunat === 'Aceptado' ? (
-                          <span className="text-emerald-600 font-bold" title="CDR Disponible">✓</span>
+                          <span className="text-[#FF6B35] font-bold" title="CDR Disponible">✓</span>
                         ) : (
                           '—'
                         )}
@@ -634,7 +634,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                           <button
                             type="button"
                             onClick={() => setSelectedDocEstado(doc)}
-                            className="px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-semibold transition"
+                            className="px-2.5 py-0.5 bg-[#FF6B35]/20 hover:bg-blue-200 text-[#FF6B35] rounded-lg text-xs font-semibold transition"
                           >
                             Estado
                           </button>
@@ -703,3 +703,6 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
     </div>
   );
 }
+
+
+

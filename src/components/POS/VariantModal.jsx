@@ -76,7 +76,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
         {/* Detalle de Producto / Miniatura y Precio de la presentación */}
         <div className="flex items-center space-x-3 mb-4 pb-1">
           {/* Miniatura del Producto */}
-          <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-blue-100 rounded-xl flex items-center justify-center p-0.5 border border-violet-200/80 shadow-xs shrink-0 overflow-hidden">
+          <div className="w-14 h-14 bg-gradient-to-br from-[#FFB627]/10 to-blue-100 rounded-xl flex items-center justify-center p-0.5 border border-[#FFB627]/20 shadow-xs shrink-0 overflow-hidden">
             {product.foto_url ? (
               <img 
                 src={product.foto_url} 
@@ -84,7 +84,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
                 className="w-full h-full object-cover rounded-lg"
               />
             ) : (
-              <svg className="w-8 h-8 text-violet-700" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 text-[#1E2022]" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M9 3L12 6L15 3H19L20 9L18 10V21H6V10L4 9L5 3H9Z" />
               </svg>
             )}
@@ -119,7 +119,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
                     aria-checked={isChecked}
                     className={`variant-btn flex flex-col items-center justify-center py-2 px-2 rounded-xl transition-all ${
                       isChecked
-                        ? 'border border-blue-600 bg-gradient-to-r from-blue-600 to-[#7c3aed] text-white shadow-xs'
+                        ? 'border border-[#FF6B35] bg-gradient-to-r from-blue-600 to-[#7c3aed] text-white shadow-xs'
                         : 'border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700'
                     }`}
                     role="radio"
@@ -144,7 +144,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
           <div className="mb-4">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center justify-between">
               <span>TALLA DISPONIBLE</span>
-              <span className="text-[10px] text-indigo-600 font-bold">Seleccionada: {selectedTalla}</span>
+              <span className="text-[10px] text-[#1E2022] font-bold">Seleccionada: {selectedTalla}</span>
             </h3>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {product.tallas.map((talla) => {
@@ -156,7 +156,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
                     onClick={() => setSelectedTalla(talla)}
                     className={`min-w-[42px] py-1.5 px-3 rounded-xl text-xs font-extrabold font-mono transition-all ${
                       isChecked
-                        ? 'bg-indigo-600 text-white shadow-xs scale-105 ring-2 ring-indigo-300'
+                        ? 'bg-[#1E2022] text-white shadow-xs scale-105 ring-2 ring-indigo-300'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                     }`}
                   >
@@ -173,7 +173,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
           <div className="mb-4">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center justify-between">
               <span>COLOR</span>
-              <span className="text-[10px] text-indigo-600 font-bold">Seleccionado: {selectedColor}</span>
+              <span className="text-[10px] text-[#1E2022] font-bold">Seleccionado: {selectedColor}</span>
             </h3>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {product.colores.map((color) => {
@@ -213,7 +213,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
             <div className="flex items-center space-x-2">
               <button 
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-6 h-6 rounded-full bg-violet-50 text-[#7c3aed] font-bold text-sm flex items-center justify-center active:bg-violet-100" 
+                className="w-6 h-6 rounded-full bg-[#FDFBF7] text-[#7c3aed] font-bold text-sm flex items-center justify-center active:bg-[#FFB627]/10" 
                 type="button"
               >
                 -
@@ -221,7 +221,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
               <span className="text-xs font-bold text-gray-800 w-4 text-center">{quantity}</span>
               <button 
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-6 h-6 rounded-full bg-violet-50 text-[#7c3aed] font-bold text-sm flex items-center justify-center active:bg-violet-100" 
+                className="w-6 h-6 rounded-full bg-[#FDFBF7] text-[#7c3aed] font-bold text-sm flex items-center justify-center active:bg-[#FFB627]/10" 
                 type="button"
               >
                 +
@@ -262,3 +262,6 @@ export default function VariantModal({ product, isOpen, onClose }) {
     </div>
   );
 }
+
+
+

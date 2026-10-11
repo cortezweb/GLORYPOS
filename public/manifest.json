@@ -4,15 +4,15 @@
   "description": "Sistema POS PWA Offline-First con Facturación SIAT, Control de Stock y Cobro QR para Bolivia",
   "icons": [
     {
-      "src": "/vite.svg",
-      "type": "image/svg+xml",
+      "src": "/logo.png",
+      "type": "image/png",
       "sizes": "192x192 512x512",
       "purpose": "any maskable"
     }
   ],
   "start_url": "/",
-  "background_color": "#2563eb",
-  "theme_color": "#2563eb",
+  "background_color": "#FDFBF7",
+  "theme_color": "#FF6B35",
   "display": "standalone",
   "orientation": "any",
   "categories": ["business", "finance", "productivity"],

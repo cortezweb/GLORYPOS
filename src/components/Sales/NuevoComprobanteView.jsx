@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
+import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
 
 export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt }) {
@@ -356,6 +357,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
 
     // Guardar en Dexie
     await db.ventas.add(nuevaVenta);
+    syncService.triggerBackgroundSync();
 
     // Descontar stock y registrar en Kardex si es producto físico
     for (const item of items) {
@@ -414,14 +416,14 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       <button
         type="button"
         onClick={() => setShowAdditionalInfoDrawer(true)}
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-30 bg-[#00a650] hover:bg-[#008f45] text-white px-2 py-4 rounded-l-xl shadow-lg flex items-center font-bold text-[11px] tracking-wider transition select-none cursor-pointer"
+        className="fixed right-0 top-1/2 -translate-y-1/2 z-30 bg-[#FF6B35] hover:bg-[#008f45] text-white px-2 py-4 rounded-l-xl shadow-lg flex items-center font-bold text-[11px] tracking-wider transition select-none cursor-pointer"
         style={{ writingMode: 'vertical-rl', transform: 'translateY(-50%) rotate(180deg)' }}
         title="Abrir información adicional"
       >
         Abrir información adicional &gt;
       </button>
 
-      <main className="max-w-[1320px] mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
         {/* ========================================================= */}
         {/* CABECERA: DATOS DE LA EMPRESA & FECHAS */}
@@ -469,7 +471,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   type="date"
                   value={fechaEmision}
                   onChange={(e) => setFechaEmision(e.target.value)}
-                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none pr-7 bg-white"
+                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none pr-7 bg-white"
                 />
                 <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -484,7 +486,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   type="date"
                   value={fechaVencimiento}
                   onChange={(e) => setFechaVencimiento(e.target.value)}
-                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none pr-7 bg-white"
+                  className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-semibold focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none pr-7 bg-white"
                 />
                 <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -504,7 +506,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <select
                 value={tipoComprobante}
                 onChange={(e) => setTipoComprobante(e.target.value)}
-                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none cursor-pointer pr-8"
+                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none cursor-pointer pr-8"
               >
                 <option value="Boleta">Boleta</option>
                 <option value="Factura">Factura</option>
@@ -525,7 +527,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 type="text"
                 value={serie}
                 onChange={(e) => setSerie(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none"
               />
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -539,7 +541,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <select
                 value={tipoOperacion}
                 onChange={(e) => setTipoOperacion(e.target.value)}
-                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none cursor-pointer pr-8"
+                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none cursor-pointer pr-8"
               >
                 <option value="Venta interna">Venta interna</option>
                 <option value="Exportación">Exportación</option>
@@ -572,7 +574,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   }}
                   onFocus={() => setShowClientDropdown(true)}
                   placeholder="Buscar cliente por nombre o documento..."
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none pr-14"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none pr-14"
                 />
                 
                 {/* Botón limpiar cliente */}
@@ -601,7 +603,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                         setSearchClientQuery('');
                         setShowClientDropdown(false);
                       }}
-                      className="px-3 py-2 hover:bg-emerald-50 cursor-pointer text-xs border-b border-slate-100 flex justify-between"
+                      className="px-3 py-2 hover:bg-[#FF6B35]/10 cursor-pointer text-xs border-b border-slate-100 flex justify-between"
                     >
                       <span className="font-bold text-slate-800">Clientes Varios (por defecto)</span>
                       <span className="text-slate-500">99999999</span>
@@ -614,7 +616,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                           setSearchClientQuery('');
                           setShowClientDropdown(false);
                         }}
-                        className="px-3 py-2 hover:bg-emerald-50 cursor-pointer text-xs border-b border-slate-100 flex justify-between"
+                        className="px-3 py-2 hover:bg-[#FF6B35]/10 cursor-pointer text-xs border-b border-slate-100 flex justify-between"
                       >
                         <span className="font-semibold text-slate-800">{c.razon_social}</span>
                         <span className="text-slate-500">{c.nit_ci}</span>
@@ -628,7 +630,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <button
                 type="button"
                 onClick={() => setShowNewClientModal(true)}
-                className="w-8 h-8 rounded-lg border border-emerald-300 text-emerald-600 hover:bg-emerald-50 flex items-center justify-center shrink-0 transition"
+                className="w-8 h-8 rounded-lg border border-[#FF6B35]/30 text-[#FF6B35] hover:bg-[#FF6B35]/10 flex items-center justify-center shrink-0 transition"
                 title="Crear nuevo cliente"
               >
                 <User className="w-4 h-4" />
@@ -645,7 +647,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <select
                 value={moneda}
                 onChange={(e) => setMoneda(e.target.value)}
-                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none cursor-pointer pr-8"
+                className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none cursor-pointer pr-8"
               >
                 <option value="Soles (PEN)">Soles (PEN)</option>
                 <option value="Bolivianos (BOB)">Bolivianos (BOB)</option>
@@ -664,7 +666,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               type="text"
               value={tipoCambio}
               onChange={(e) => setTipoCambio(e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none"
             />
             <p className="text-[10px] text-slate-400 mt-1 leading-tight">
               Se utiliza el tipo de cambio oficial publicado por la entidad tributaria correspondiente a la fecha.
@@ -681,7 +683,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             <button
               type="button"
               onClick={() => setShowAddProductModal(true)}
-              className="bg-[#00a650] hover:bg-[#008f45] text-white font-medium px-4 py-2 rounded-full text-xs flex items-center gap-1.5 shadow-sm transition active:scale-95"
+              className="bg-[#FF6B35] hover:bg-[#008f45] text-white font-medium px-4 py-2 rounded-full text-xs flex items-center gap-1.5 shadow-sm transition active:scale-95"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               Agregar producto
@@ -701,9 +703,9 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             <button
               type="button"
               onClick={() => setShowScanModal(true)}
-              className="bg-white border border-emerald-400 text-emerald-800 hover:bg-emerald-50 font-medium px-4 py-2 rounded-full text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95"
+              className="bg-white border border-[#FF6B35]/40 text-[#1E2022] hover:bg-[#FF6B35]/10 font-medium px-4 py-2 rounded-full text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95"
             >
-              <Barcode className="w-3.5 h-3.5 text-emerald-600" />
+              <Barcode className="w-3.5 h-3.5 text-[#FF6B35]" />
               Escanear
             </button>
           </div>
@@ -737,7 +739,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 {items.length === 0 ? (
                   <tr>
                     <td colSpan={10} className="py-12 text-center text-slate-400">
-                      Sin ítems. Use <strong className="text-emerald-700">Agregar producto</strong> o <strong className="text-amber-700">Producto manual</strong>.
+                      Sin ítems. Use <strong className="text-[#E85B28]">Agregar producto</strong> o <strong className="text-amber-700">Producto manual</strong>.
                     </td>
                   </tr>
                 ) : (
@@ -755,7 +757,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                             type="text"
                             value={item.descripcion}
                             onChange={(e) => handleUpdateItem(idx, 'descripcion', e.target.value)}
-                            className="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-emerald-500 outline-none text-xs font-semibold text-slate-800 py-0.5"
+                            className="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-[#FF6B35] outline-none text-xs font-semibold text-slate-800 py-0.5"
                           />
                         </td>
 
@@ -779,7 +781,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                             step="any"
                             value={item.cantidad}
                             onChange={(e) => handleUpdateItem(idx, 'cantidad', e.target.value)}
-                            className="w-16 border border-slate-200 rounded px-2 py-1 text-xs text-center font-bold text-slate-800 focus:border-emerald-500 outline-none"
+                            className="w-16 border border-slate-200 rounded px-2 py-1 text-xs text-center font-bold text-slate-800 focus:border-[#FF6B35] outline-none"
                           />
                         </td>
 
@@ -791,7 +793,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                             step="0.01"
                             value={item.precio_unitario}
                             onChange={(e) => handleUpdateItem(idx, 'precio_unitario', e.target.value)}
-                            className="w-20 border border-slate-200 rounded px-2 py-1 text-xs text-right font-bold text-slate-800 focus:border-emerald-500 outline-none"
+                            className="w-20 border border-slate-200 rounded px-2 py-1 text-xs text-right font-bold text-slate-800 focus:border-[#FF6B35] outline-none"
                           />
                         </td>
 
@@ -800,7 +802,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                           <select
                             value={item.afectacion}
                             onChange={(e) => handleUpdateItem(idx, 'afectacion', e.target.value)}
-                            className="w-full text-[11px] border border-slate-200 rounded px-2 py-1 bg-white text-slate-700 outline-none focus:border-emerald-500"
+                            className="w-full text-[11px] border border-slate-200 rounded px-2 py-1 bg-white text-slate-700 outline-none focus:border-[#FF6B35]"
                           >
                             <option value="Gravado - Operación Onerosa">Gravado - Operación Onerosa</option>
                             <option value="Exonerado">Exonerado</option>
@@ -815,7 +817,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                             type="checkbox"
                             checked={item.igv_incluido}
                             onChange={(e) => handleUpdateItem(idx, 'igv_incluido', e.target.checked)}
-                            className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                            className="w-4 h-4 text-[#FF6B35] rounded border-slate-300 focus:ring-[#FF6B35] cursor-pointer"
                           />
                         </td>
 
@@ -827,7 +829,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                             step="0.01"
                             value={item.descuento}
                             onChange={(e) => handleUpdateItem(idx, 'descuento', e.target.value)}
-                            className="w-16 border border-slate-200 rounded px-2 py-1 text-xs text-right text-slate-700 focus:border-emerald-500 outline-none"
+                            className="w-16 border border-slate-200 rounded px-2 py-1 text-xs text-right text-slate-700 focus:border-[#FF6B35] outline-none"
                           />
                         </td>
 
@@ -876,7 +878,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                     <select
                       value={pago.metodo}
                       onChange={(e) => handleUpdatePago(idx, 'metodo', e.target.value)}
-                      className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-emerald-500 outline-none cursor-pointer pr-8"
+                      className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] outline-none cursor-pointer pr-8"
                     >
                       <option value="Efectivo">💵 Efectivo</option>
                       <option value="Tarjeta">💳 Tarjeta Débito / Crédito</option>
@@ -892,7 +894,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                     placeholder="Referencia (opc.)"
                     value={pago.referencia}
                     onChange={(e) => handleUpdatePago(idx, 'referencia', e.target.value)}
-                    className="flex-1 min-w-[140px] bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-emerald-500 outline-none"
+                    className="flex-1 min-w-[140px] bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#FF6B35] outline-none"
                   />
 
                   {/* Monto */}
@@ -903,7 +905,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                       min="0"
                       value={pago.monto}
                       onChange={(e) => handleUpdatePago(idx, 'monto', e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 text-right focus:border-emerald-500 outline-none"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 text-right focus:border-[#FF6B35] outline-none"
                     />
                   </div>
 
@@ -925,7 +927,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             <button
               type="button"
               onClick={handleAddPago}
-              className="text-[#00a650] hover:text-[#008f45] font-semibold text-xs flex items-center gap-1 transition"
+              className="text-[#FF6B35] hover:text-[#008f45] font-semibold text-xs flex items-center gap-1 transition"
             >
               + Agregar pago
             </button>
@@ -953,7 +955,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   onClick={() => setCondicionPago('Contado')}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold border transition ${
                     condicionPago === 'Contado'
-                      ? 'border-[#00a650] bg-emerald-50/70 text-[#00a650] shadow-2xs'
+                      ? 'border-[#FF6B35] bg-[#FF6B35]/10/70 text-[#FF6B35] shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                   }`}
                 >
@@ -964,7 +966,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   onClick={() => setCondicionPago('Crédito')}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold border transition ${
                     condicionPago === 'Crédito'
-                      ? 'border-[#00a650] bg-emerald-50/70 text-[#00a650] shadow-2xs'
+                      ? 'border-[#FF6B35] bg-[#FF6B35]/10/70 text-[#FF6B35] shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                   }`}
                 >
@@ -982,8 +984,8 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Descuento
               </label>
-              <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden focus-within:border-emerald-500">
-                <span className="bg-[#00a650] text-white font-bold text-xs px-3 py-2">
+              <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden focus-within:border-[#FF6B35]">
+                <span className="bg-[#FF6B35] text-white font-bold text-xs px-3 py-2">
                   %
                 </span>
                 <input
@@ -1015,7 +1017,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 type="button"
                 onClick={handleEmitirComprobante}
                 disabled={isSuccess}
-                className="w-full bg-[#00a650] hover:bg-[#008f45] text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-[0.99]"
+                className="w-full bg-[#FF6B35] hover:bg-[#008f45] text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md transition active:scale-[0.99]"
               >
                 {isSuccess ? (
                   <>
@@ -1046,11 +1048,11 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
         {/* ========================================================= */}
         <div className="space-y-1">
           <div className="h-0.5 bg-red-500 w-full rounded-full"></div>
-          <div className="bg-emerald-50 border border-emerald-200/80 px-4 py-2 rounded-lg text-xs text-emerald-800 font-medium flex items-center justify-between">
+          <div className="bg-[#FF6B35]/10 border border-[#FF6B35]/20 px-4 py-2 rounded-lg text-xs text-[#1E2022] font-medium flex items-center justify-between">
             <span>
               Total a pagar {currencySymbol} {totalComprobante.toFixed(2)}. {sumaPagos >= totalComprobante ? 'El anticipo cubre la venta; no se requiere cobro adicional.' : `Falta cancelar ${currencySymbol} ${(totalComprobante - sumaPagos).toFixed(2)}.`}
             </span>
-            <span className="text-[10px] text-emerald-600 font-bold hidden sm:inline">
+            <span className="text-[10px] text-[#FF6B35] font-bold hidden sm:inline">
               GLORYPOS Facturación
             </span>
           </div>
@@ -1066,7 +1068,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <Package className="w-4 h-4 text-emerald-600" />
+                <Package className="w-4 h-4 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-800">Seleccionar Producto del Catálogo</h3>
               </div>
               <button 
@@ -1086,7 +1088,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   placeholder="Buscar por nombre, código de barras o categoría..."
                   value={searchProductQuery}
                   onChange={(e) => setSearchProductQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -1105,7 +1107,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                       <div className="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
                         <span>Cód: {p.codigo_barras || 'S/C'}</span>
                         <span>•</span>
-                        <span>Stock: <strong className={p.stock_actual > 0 ? 'text-emerald-700' : 'text-red-500'}>{p.stock_actual || 0}</strong></span>
+                        <span>Stock: <strong className={p.stock_actual > 0 ? 'text-[#E85B28]' : 'text-red-500'}>{p.stock_actual || 0}</strong></span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -1115,7 +1117,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                       <button
                         type="button"
                         onClick={() => handleAddProductFromCatalog(p)}
-                        className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-lg text-xs transition border border-emerald-200"
+                        className="bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#E85B28] font-bold px-3 py-1 rounded-lg text-xs transition border border-[#FF6B35]/20"
                       >
                         + Agregar
                       </button>
@@ -1257,9 +1259,9 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       {showScanModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-emerald-50">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-[#FF6B35]/10">
               <div className="flex items-center gap-2">
-                <Barcode className="w-4 h-4 text-emerald-700" />
+                <Barcode className="w-4 h-4 text-[#E85B28]" />
                 <h3 className="font-bold text-sm text-slate-800">Escanear Código de Barras</h3>
               </div>
               <button 
@@ -1280,7 +1282,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 placeholder="Código de barras..."
                 value={scanBarcodeQuery}
                 onChange={(e) => setScanBarcodeQuery(e.target.value)}
-                className="w-full border-2 border-emerald-500 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-slate-800 outline-none"
+                className="w-full border-2 border-[#FF6B35] rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-slate-800 outline-none"
                 autoFocus
               />
               <div className="flex justify-end gap-2">
@@ -1293,7 +1295,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm"
+                  className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Buscar y Agregar
                 </button>
@@ -1311,7 +1313,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-emerald-600" />
+                <User className="w-4 h-4 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-800">Crear Nuevo Cliente</h3>
               </div>
               <button 
@@ -1332,7 +1334,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   value={newClientForm.razon_social}
                   onChange={(e) => setNewClientForm({ ...newClientForm, razon_social: e.target.value })}
                   placeholder="Ej: Minera Las Bambas S.A."
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -1345,7 +1347,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   value={newClientForm.nit_ci}
                   onChange={(e) => setNewClientForm({ ...newClientForm, nit_ci: e.target.value })}
                   placeholder="20601234567"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1356,7 +1358,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   value={newClientForm.direccion}
                   onChange={(e) => setNewClientForm({ ...newClientForm, direccion: e.target.value })}
                   placeholder="Av. Principal 123"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1368,7 +1370,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                     value={newClientForm.telefono}
                     onChange={(e) => setNewClientForm({ ...newClientForm, telefono: e.target.value })}
                     placeholder="999888777"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -1378,7 +1380,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                     value={newClientForm.email}
                     onChange={(e) => setNewClientForm({ ...newClientForm, email: e.target.value })}
                     placeholder="cliente@empresa.com"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
               </div>
@@ -1393,7 +1395,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm"
+                  className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Guardar y Seleccionar
                 </button>
@@ -1411,7 +1413,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
           <div className="bg-white w-full max-w-sm h-full shadow-2xl p-5 flex flex-col space-y-4 animate-in slide-in-from-right duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#00a650]" />
+                <FileText className="w-4 h-4 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-900">Información Adicional</h3>
               </div>
               <button
@@ -1431,7 +1433,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   placeholder="T001-0000123"
                   value={additionalInfo.guiaRemision}
                   onChange={(e) => setAdditionalInfo({ ...additionalInfo, guiaRemision: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1442,7 +1444,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   placeholder="OC-2026-99"
                   value={additionalInfo.ordenCompra}
                   onChange={(e) => setAdditionalInfo({ ...additionalInfo, ordenCompra: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1453,7 +1455,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   placeholder="ABC-123"
                   value={additionalInfo.placaVehiculo}
                   onChange={(e) => setAdditionalInfo({ ...additionalInfo, placaVehiculo: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1464,7 +1466,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   placeholder="Notas adicionales impresas en el comprobante..."
                   value={additionalInfo.observaciones}
                   onChange={(e) => setAdditionalInfo({ ...additionalInfo, observaciones: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 resize-none"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35] resize-none"
                 />
               </div>
             </div>
@@ -1473,7 +1475,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <button
                 type="button"
                 onClick={() => setShowAdditionalInfoDrawer(false)}
-                className="w-full bg-[#00a650] hover:bg-[#008f45] text-white py-2 rounded-xl font-bold text-xs"
+                className="w-full bg-[#FF6B35] hover:bg-[#008f45] text-white py-2 rounded-xl font-bold text-xs"
               >
                 Guardar y Cerrar
               </button>
@@ -1509,7 +1511,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   type="text"
                   value={empresaDatos.nombre}
                   onChange={(e) => setEmpresaDatos({ ...empresaDatos, nombre: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1519,7 +1521,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   type="text"
                   value={empresaDatos.direccion}
                   onChange={(e) => setEmpresaDatos({ ...empresaDatos, direccion: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1529,7 +1531,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   type="email"
                   value={empresaDatos.email}
                   onChange={(e) => setEmpresaDatos({ ...empresaDatos, email: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1539,7 +1541,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   type="text"
                   value={empresaDatos.telefono}
                   onChange={(e) => setEmpresaDatos({ ...empresaDatos, telefono: e.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                 />
               </div>
 
@@ -1547,7 +1549,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 <button
                   type="button"
                   onClick={() => setShowEditEmpresaModal(false)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm"
+                  className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Listo
                 </button>
@@ -1560,3 +1562,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
     </div>
   );
 }
+
+
+
+

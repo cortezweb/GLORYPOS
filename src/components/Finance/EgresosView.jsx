@@ -565,10 +565,12 @@ export default function EgresosView({ onSelectSubView }) {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
     </div>
   );
 }
+
+

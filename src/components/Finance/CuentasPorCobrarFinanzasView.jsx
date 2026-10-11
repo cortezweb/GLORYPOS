@@ -174,7 +174,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
               placeholder="Buscar cliente o compr"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] transition w-48 sm:w-64"
+              className="pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition w-48 sm:w-64"
             />
           </div>
         </div>
@@ -198,10 +198,10 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
             SPOT pendiente BN
           </span>
-          <span className="text-xl font-black text-blue-700 block font-mono">
+          <span className="text-xl font-black text-[#FF6B35] block font-mono">
             S/ {kpiData.spotPendiente.toFixed(2)}
           </span>
-          <span className="text-[10px] text-blue-600 font-medium">Detracciones en trámite</span>
+          <span className="text-[10px] text-[#FF6B35] font-medium">Detracciones en trámite</span>
         </div>
 
         {/* Documentos Abiertos */}
@@ -290,7 +290,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                     <td className="py-3 px-3 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">
                       S/ {Number(c.total).toFixed(2)}
                     </td>
-                    <td className="py-3 px-3 text-right font-mono text-emerald-600 font-semibold whitespace-nowrap">
+                    <td className="py-3 px-3 text-right font-mono text-[#FF6B35] font-semibold whitespace-nowrap">
                       S/ {Number(c.cobrado).toFixed(2)}
                     </td>
                     <td className={`py-3 px-3 text-right font-mono font-black whitespace-nowrap ${
@@ -298,7 +298,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                     }`}>
                       S/ {Number(c.saldo).toFixed(2)}
                     </td>
-                    <td className="py-3 px-3 text-right font-mono font-semibold whitespace-nowrap text-blue-700">
+                    <td className="py-3 px-3 text-right font-mono font-semibold whitespace-nowrap text-[#FF6B35]">
                       {c.spot_bn > 0 ? `S/ ${Number(c.spot_bn).toFixed(2)}` : '—'}
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
@@ -306,7 +306,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                         {c.spot_status === 'pending' && (
                           <button
                             onClick={() => { setSelectedConfirmBN(c); setBnNroOperacion(''); }}
-                            className="px-2.5 py-1 text-[11px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition border border-blue-200/60"
+                            className="px-2.5 py-1 text-[11px] font-bold text-[#FF6B35] bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 rounded-lg transition border border-blue-200/60"
                           >
                             Confirmar BN
                           </button>
@@ -315,7 +315,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                         {c.saldo > 0 && (
                           <button
                             onClick={() => { setSelectedCobrarItem(c); setCobroMonto(c.saldo.toString()); }}
-                            className="px-2.5 py-1 text-[11px] font-bold text-white bg-[#00a650] hover:bg-[#009245] rounded-lg transition shadow-xs"
+                            className="px-2.5 py-1 text-[11px] font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] rounded-lg transition shadow-xs"
                           >
                             Cobrar
                           </button>
@@ -342,14 +342,14 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
       {selectedCobrarItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
-            <div className="p-4 bg-emerald-50 border-b border-emerald-100 flex items-center justify-between">
+            <div className="p-4 bg-[#FF6B35]/10 border-b border-[#FF6B35]/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#00a650] text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <DollarSign className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-slate-900 text-sm">Registrar Cobro de Venta</h3>
-                  <p className="text-[11px] text-emerald-800">{selectedCobrarItem.comprobante} - {selectedCobrarItem.cliente_nombre}</p>
+                  <p className="text-[11px] text-[#1E2022]">{selectedCobrarItem.comprobante} - {selectedCobrarItem.cliente_nombre}</p>
                 </div>
               </div>
               <button 
@@ -385,7 +385,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                   required
                   value={cobroMonto}
                   onChange={(e) => setCobroMonto(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-base font-black text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-base font-black text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -430,7 +430,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Procesar Cobro
                 </button>
@@ -444,9 +444,9 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
       {selectedConfirmBN && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
-            <div className="p-4 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+            <div className="p-4 bg-[#FF6B35]/10 border-b border-blue-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
@@ -463,7 +463,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
             </div>
 
             <form onSubmit={handleConfirmSPOT} className="p-4 space-y-3.5 text-xs">
-              <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 space-y-1">
+              <div className="p-3 bg-[#FF6B35]/10 rounded-xl border border-blue-100 space-y-1">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Comprobante:</span>
                   <span className="font-bold text-slate-800">{selectedConfirmBN.comprobante}</span>
@@ -474,7 +474,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 </div>
                 <div className="flex justify-between border-t border-blue-100 pt-1">
                   <span className="text-slate-500">Monto SPOT BN:</span>
-                  <span className="font-black text-blue-700 font-mono text-sm">S/ {Number(selectedConfirmBN.spot_bn).toFixed(2)}</span>
+                  <span className="font-black text-[#FF6B35] font-mono text-sm">S/ {Number(selectedConfirmBN.spot_bn).toFixed(2)}</span>
                 </div>
               </div>
 
@@ -486,7 +486,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                   placeholder="Ej. OP-BN-9823410"
                   value={bnNroOperacion}
                   onChange={(e) => setBnNroOperacion(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -501,7 +501,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-xl font-bold shadow-sm"
                 >
                   Confirmar Depósito BN
                 </button>
@@ -517,7 +517,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 space-y-4">
             <div className="flex items-center justify-between border-b pb-3 border-slate-100">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-600" />
+                <FileText className="w-4 h-4 text-[#FF6B35]" />
                 Estado de Cuenta de Cliente
               </h3>
               <button 
@@ -542,7 +542,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Total Cobrado:</span>
-                  <span className="font-semibold text-emerald-600">S/ {Number(selectedEstadoCuenta.cobrado).toFixed(2)}</span>
+                  <span className="font-semibold text-[#FF6B35]">S/ {Number(selectedEstadoCuenta.cobrado).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-1.5 font-bold">
                   <span className="text-slate-700">Saldo Por Cobrar:</span>
@@ -564,10 +564,15 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
     </div>
   );
 }
+
+
+
+
+

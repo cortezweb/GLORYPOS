@@ -146,7 +146,7 @@ export default function GuiasRemitenteView() {
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-4 right-4 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -255,7 +255,7 @@ export default function GuiasRemitenteView() {
                           Rechazado
                         </span>
                       ) : (
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/10">
                           Aceptado
                         </span>
                       )}
@@ -301,7 +301,7 @@ export default function GuiasRemitenteView() {
                         type="button"
                         onClick={() => showToast(`Constancia CDR descargada para ${g.guia}`)}
                         title="Constancia de Recepción SIAT"
-                        className="p-1 text-blue-500 hover:text-blue-700 rounded transition cursor-pointer inline-flex items-center justify-center"
+                        className="p-1 text-[#FF6B35] hover:text-[#FF6B35] rounded transition cursor-pointer inline-flex items-center justify-center"
                       >
                         <Inbox className="w-4 h-4" />
                       </button>
@@ -322,7 +322,7 @@ export default function GuiasRemitenteView() {
                         <button
                           type="button"
                           onClick={() => setSelectedEstadoGuia(g)}
-                          className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold transition cursor-pointer"
+                          className="px-2.5 py-1 bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#FF6B35] rounded-lg text-xs font-semibold transition cursor-pointer"
                         >
                           Estado
                         </button>
@@ -507,7 +507,7 @@ export default function GuiasRemitenteView() {
           <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
@@ -566,9 +566,9 @@ export default function GuiasRemitenteView() {
                 </div>
               </div>
 
-              <div className="p-2.5 bg-emerald-50/60 rounded-xl border border-emerald-100 flex justify-between items-center">
-                <span className="text-emerald-800 font-semibold">Total Ítems Declarados:</span>
-                <span className="font-black text-emerald-700 text-sm">{selectedGuia.items_count}</span>
+              <div className="p-2.5 bg-[#FF6B35]/10/60 rounded-xl border border-[#FF6B35]/10 flex justify-between items-center">
+                <span className="text-[#1E2022] font-semibold">Total Ítems Declarados:</span>
+                <span className="font-black text-[#E85B28] text-sm">{selectedGuia.items_count}</span>
               </div>
             </div>
 
@@ -600,7 +600,7 @@ export default function GuiasRemitenteView() {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
-                  selectedEstadoGuia.estado_siat === 'Aceptado' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                  selectedEstadoGuia.estado_siat === 'Aceptado' ? 'bg-[#FF6B35]/10 text-[#FF6B35]' : 'bg-rose-50 text-rose-600'
                 }`}>
                   {selectedEstadoGuia.estado_siat === 'Aceptado' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                 </div>
@@ -623,7 +623,7 @@ export default function GuiasRemitenteView() {
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500">Estado de Recepción:</span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                    selectedEstadoGuia.estado_siat === 'Aceptado' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    selectedEstadoGuia.estado_siat === 'Aceptado' ? 'bg-[#FF6B35]/20 text-[#1E2022]' : 'bg-rose-100 text-rose-800'
                   }`}>
                     {selectedEstadoGuia.estado_siat}
                   </span>
@@ -644,7 +644,7 @@ export default function GuiasRemitenteView() {
                   <p>Código {selectedEstadoGuia.siat_code}: El documento electrónico enviado presentó observaciones de validación en los puntos de control SIAT. Se requiere reenviar con firma digital actualizada.</p>
                 </div>
               ) : (
-                <div className="p-3 bg-emerald-50/70 rounded-xl border border-emerald-100 text-emerald-800 text-[11px] space-y-1">
+                <div className="p-3 bg-[#FF6B35]/10/70 rounded-xl border border-[#FF6B35]/10 text-[#1E2022] text-[11px] space-y-1">
                   <strong className="block font-bold">Validación Exitosa:</strong>
                   <p>Código SIAT 0: El comprobante de remisión electrónica ha sido recibido y validado conforme a los estándares de interoperabilidad SIAT.</p>
                 </div>
@@ -666,3 +666,6 @@ export default function GuiasRemitenteView() {
     </div>
   );
 }
+
+
+

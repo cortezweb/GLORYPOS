@@ -100,7 +100,7 @@ export default function ScaleModal({ product, isOpen, onClose }) {
             Peso Registrado (Balanza)
           </span>
           <div className="flex items-baseline gap-1 mt-0.5">
-            <span className="text-4xl font-black font-mono tracking-tight text-emerald-400">
+            <span className="text-4xl font-black font-mono tracking-tight text-[#FFB627]">
               {weightStr}
             </span>
             <span className="text-lg font-bold text-slate-400">Kg</span>
@@ -187,3 +187,5 @@ export default function ScaleModal({ product, isOpen, onClose }) {
     </div>
   );
 }
+
+

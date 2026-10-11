@@ -151,7 +151,7 @@ export default function IngresosView({ onSelectSubView }) {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2.5 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 active:scale-95"
+            className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Agregar ingreso</span>
@@ -170,7 +170,7 @@ export default function IngresosView({ onSelectSubView }) {
               placeholder="Buscar por referencia, cliente..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] transition"
+              className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition"
             />
           </div>
 
@@ -179,7 +179,7 @@ export default function IngresosView({ onSelectSubView }) {
             <select
               value={selectedSucursal}
               onChange={(e) => setSelectedSucursal(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] text-slate-700"
+              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] text-slate-700"
             >
               <option value="Todas">Todas las sucursales</option>
               <option value="Principal">Principal</option>
@@ -192,7 +192,7 @@ export default function IngresosView({ onSelectSubView }) {
             <select
               value={selectedCaja}
               onChange={(e) => setSelectedCaja(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] text-slate-700"
+              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] text-slate-700"
             >
               <option value="Todas">Todas las cajas</option>
               <option value="18">Caja #18</option>
@@ -206,7 +206,7 @@ export default function IngresosView({ onSelectSubView }) {
             <select
               value={selectedUsuario}
               onChange={(e) => setSelectedUsuario(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] text-slate-700"
+              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] text-slate-700"
             >
               <option value="Todos">Todos los usuarios</option>
               <option value="Esteffany Cordova">Esteffany Cordova</option>
@@ -219,7 +219,7 @@ export default function IngresosView({ onSelectSubView }) {
             <select
               value={selectedMetodo}
               onChange={(e) => setSelectedMetodo(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] text-slate-700"
+              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] text-slate-700"
             >
               <option value="Todos">Todos los métodos</option>
               <option value="Efectivo">Efectivo</option>
@@ -276,11 +276,11 @@ export default function IngresosView({ onSelectSubView }) {
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       {ing.categoria === 'Venta' ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#FF6B35] border border-blue-200/60">
                           Venta
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20/60">
                           {ing.categoria}
                         </span>
                       )}
@@ -294,7 +294,7 @@ export default function IngresosView({ onSelectSubView }) {
                     <td className="py-3 px-3 text-slate-600 whitespace-nowrap">
                       {ing.metodo_pago}
                     </td>
-                    <td className="py-3 px-4 text-right font-black text-emerald-600 whitespace-nowrap font-mono text-xs">
+                    <td className="py-3 px-4 text-right font-black text-[#FF6B35] whitespace-nowrap font-mono text-xs">
                       + S/ {Number(ing.monto).toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
@@ -354,14 +354,14 @@ export default function IngresosView({ onSelectSubView }) {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
-            <div className="p-4 bg-emerald-50 border-b border-emerald-100 flex items-center justify-between">
+            <div className="p-4 bg-[#FF6B35]/10 border-b border-[#FF6B35]/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <ArrowUpRight className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-slate-900 text-sm">Registrar Ingreso de Caja</h3>
-                  <p className="text-[11px] text-emerald-800">Entrada manual de efectivo o cobro</p>
+                  <p className="text-[11px] text-[#1E2022]">Entrada manual de efectivo o cobro</p>
                 </div>
               </div>
               <button 
@@ -382,7 +382,7 @@ export default function IngresosView({ onSelectSubView }) {
                   placeholder="0.00"
                   value={formMonto}
                   onChange={(e) => setFormMonto(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-base font-black text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-base font-black text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -465,7 +465,7 @@ export default function IngresosView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Registrar Ingreso
                 </button>
@@ -481,7 +481,7 @@ export default function IngresosView({ onSelectSubView }) {
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 space-y-4">
             <div className="flex items-center justify-between border-b pb-3 border-slate-100">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-600" />
+                <FileText className="w-4 h-4 text-[#FF6B35]" />
                 Detalle de Ingreso
               </h3>
               <button 
@@ -519,7 +519,7 @@ export default function IngresosView({ onSelectSubView }) {
               </div>
               <div className="border-t border-slate-200 pt-2 flex justify-between items-center">
                 <span className="font-bold text-slate-700">Monto total:</span>
-                <span className="text-base font-black text-emerald-600">S/ {Number(selectedTicket.monto).toFixed(2)}</span>
+                <span className="text-base font-black text-[#FF6B35]">S/ {Number(selectedTicket.monto).toFixed(2)}</span>
               </div>
             </div>
 
@@ -536,10 +536,14 @@ export default function IngresosView({ onSelectSubView }) {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
     </div>
   );
 }
+
+
+
+

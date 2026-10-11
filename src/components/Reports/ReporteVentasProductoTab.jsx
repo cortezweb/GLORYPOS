@@ -93,7 +93,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
                 type="text"
                 value={desde}
                 onChange={(e) => setDesde(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -109,7 +109,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
                 type="text"
                 value={hasta}
                 onChange={(e) => setHasta(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -123,7 +123,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
             <select
               value={sucursal}
               onChange={(e) => setSucursal(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todas">Todas</option>
               <option value="Principal">Principal</option>
@@ -138,7 +138,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
             <select
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todas">Todas</option>
               <option value="ABARROTES">ABARROTES</option>
@@ -157,7 +157,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
               value={searchProd}
               onChange={(e) => setSearchProd(e.target.value)}
               placeholder="Código o nombre..."
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -169,7 +169,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
             <select
               value={tipo}
               onChange={(e) => setTipo(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todos">Todos</option>
               <option value="Productos">Productos</option>
@@ -196,7 +196,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
           <button
             type="button"
             onClick={handleExportExcel}
-            className="px-4 py-2 bg-[#12b76a] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#1E2022] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Exportar Excel</span>
@@ -220,7 +220,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {/* TOTAL VENDIDO */}
-          <div className="p-4 rounded-2xl bg-[#f5f3ff] border border-violet-200/80 space-y-1">
+          <div className="p-4 rounded-2xl bg-[#f5f3ff] border border-[#FFB627]/20 space-y-1">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#7c3aed] block">
               TOTAL VENDIDO
             </span>
@@ -230,7 +230,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
           </div>
 
           {/* COMPROBANTES */}
-          <div className="p-4 rounded-2xl bg-[#f0fdfa] border border-teal-200/80 space-y-1">
+          <div className="p-4 rounded-2xl bg-[#FDFBF7] border border-[#FFB627]/50/80 space-y-1">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#0d9488] block">
               COMPROBANTES
             </span>
@@ -314,3 +314,9 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
     </div>
   );
 }
+
+
+
+
+
+

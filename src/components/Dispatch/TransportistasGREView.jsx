@@ -76,7 +76,7 @@ export default function TransportistasGREView() {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-4 right-4 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -85,7 +85,7 @@ export default function TransportistasGREView() {
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-2.5">
-            <div className="p-2 bg-emerald-50 text-[#00a650] rounded-xl shrink-0 mt-0.5">
+            <div className="p-2 bg-[#FF6B35]/10 text-[#FF6B35] rounded-xl shrink-0 mt-0.5">
               <Truck className="w-5 h-5" />
             </div>
             <div>
@@ -101,7 +101,7 @@ export default function TransportistasGREView() {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2.5 bg-[#00a650] hover:bg-[#008f45] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer self-start sm:self-auto"
+            className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#008f45] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Nuevo transportista</span>
@@ -116,7 +116,7 @@ export default function TransportistasGREView() {
             placeholder="Buscar por RUC o razón social..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
           />
         </div>
 
@@ -153,7 +153,7 @@ export default function TransportistasGREView() {
                     <td className="py-3 px-4 whitespace-nowrap">
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                         t.estado === 'Activo' 
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+                          ? 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/10' 
                           : 'bg-slate-100 text-slate-600'
                       }`}>
                         {t.estado}
@@ -173,7 +173,7 @@ export default function TransportistasGREView() {
           <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00a650] flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
@@ -248,7 +248,7 @@ export default function TransportistasGREView() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-[#00a650] hover:bg-[#008f45] rounded-xl transition shadow-xs cursor-pointer"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#008f45] rounded-xl transition shadow-xs cursor-pointer"
                 >
                   Guardar
                 </button>
@@ -260,3 +260,6 @@ export default function TransportistasGREView() {
     </div>
   );
 }
+
+
+

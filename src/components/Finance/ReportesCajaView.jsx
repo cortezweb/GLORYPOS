@@ -105,7 +105,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <select
               value={sucursal}
               onChange={(e) => setSucursal(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
             >
               <option value="Todas">Todas</option>
               <option value="Principal">Principal</option>
@@ -118,7 +118,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <select
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
             >
               <option value="Todos">Todos</option>
               <option value="Esteffany Cordova">Esteffany Cordova</option>
@@ -132,7 +132,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               type="date"
               value={desde}
               onChange={(e) => setDesde(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -142,7 +142,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               type="date"
               value={hasta}
               onChange={(e) => setHasta(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -151,7 +151,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <select
               value={sesion}
               onChange={(e) => setSesion(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
             >
               <option value="Todas">Todas</option>
               <option value="#18">#18 - Principal</option>
@@ -165,7 +165,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <select
               value={tipoMov}
               onChange={(e) => setTipoMov(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF6B35] cursor-pointer"
             >
               <option value="Todos">Todos</option>
               <option value="Venta">Ventas</option>
@@ -184,7 +184,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               onClick={() => setActiveTab('resumen')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
                 activeTab === 'resumen'
-                  ? 'bg-[#00a650] text-white shadow-xs'
+                  ? 'bg-[#FF6B35] text-white shadow-xs'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -196,7 +196,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               onClick={() => setActiveTab('movimientos')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
                 activeTab === 'movimientos'
-                  ? 'bg-[#00a650] text-white shadow-xs'
+                  ? 'bg-[#FF6B35] text-white shadow-xs'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -207,7 +207,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
           {/* Aplicar */}
           <button
             type="button"
-            className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold shadow-xs transition cursor-pointer"
+            className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold shadow-xs transition cursor-pointer"
           >
             Aplicar
           </button>
@@ -244,12 +244,12 @@ export default function ReportesCajaView({ onSelectSubView }) {
               <span className="text-xl font-black text-slate-900 block font-mono">
                 S/ {totalVentas.toFixed(2)}
               </span>
-              <span className="text-[11px] text-emerald-600 font-semibold">14 operaciones en el periodo</span>
+              <span className="text-[11px] text-[#FF6B35] font-semibold">14 operaciones en el periodo</span>
             </div>
 
             <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Efectivo Total Recibido</span>
-              <span className="text-xl font-black text-emerald-600 block font-mono">
+              <span className="text-xl font-black text-[#FF6B35] block font-mono">
                 S/ {efectivoTotal.toFixed(2)}
               </span>
               <span className="text-[11px] text-slate-500">Cobrado directamente en gaveta</span>
@@ -257,18 +257,18 @@ export default function ReportesCajaView({ onSelectSubView }) {
 
             <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Pagos Digitales (Yape/POS)</span>
-              <span className="text-xl font-black text-blue-600 block font-mono">
+              <span className="text-xl font-black text-[#FF6B35] block font-mono">
                 S/ {totalDigitales.toFixed(2)}
               </span>
               <span className="text-[11px] text-slate-500">Acreditados a cuentas bancarias</span>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-blue-200 bg-blue-50/20 shadow-xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 block mb-1">Saldo en Gaveta (Caja)</span>
+            <div className="bg-white p-4 rounded-2xl border border-blue-200 bg-[#FF6B35]/10/20 shadow-xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6B35] block mb-1">Saldo en Gaveta (Caja)</span>
               <span className="text-xl font-black text-blue-900 block font-mono">
                 S/ {saldoFinalCaja.toFixed(2)}
               </span>
-              <span className="text-[11px] text-blue-700 font-medium">Efectivo + Ingresos - Egresos</span>
+              <span className="text-[11px] text-[#FF6B35] font-medium">Efectivo + Ingresos - Egresos</span>
             </div>
           </div>
 
@@ -284,7 +284,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
                   <span className="text-slate-900 font-mono">S/ {efectivoTotal.toFixed(2)} (38.6%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: '38.6%' }}></div>
+                  <div className="h-full bg-[#FF6B35] rounded-full" style={{ width: '38.6%' }}></div>
                 </div>
               </div>
 
@@ -295,7 +295,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
                   <span className="text-slate-900 font-mono">S/ {yapeTotal.toFixed(2)} (31.6%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500 rounded-full" style={{ width: '31.6%' }}></div>
+                  <div className="h-full bg-[#FF6B35] rounded-full" style={{ width: '31.6%' }}></div>
                 </div>
               </div>
 
@@ -306,7 +306,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
                   <span className="text-slate-900 font-mono">S/ {plinTotal.toFixed(2)} (13.5%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: '13.5%' }}></div>
+                  <div className="h-full bg-[#FF6B35] rounded-full" style={{ width: '13.5%' }}></div>
                 </div>
               </div>
 
@@ -354,11 +354,11 @@ export default function ReportesCajaView({ onSelectSubView }) {
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       {m.tipo === 'Venta' ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20/60">
                           Venta
                         </span>
                       ) : m.tipo === 'Ingreso' ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B35]/10 text-[#FF6B35] border border-blue-200/60">
                           Ingreso
                         </span>
                       ) : (
@@ -376,7 +376,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
                     <td className="py-3 px-3 text-slate-600 whitespace-nowrap">
                       {m.usuario}
                     </td>
-                    <td className="py-3 px-3 text-right font-mono text-emerald-600 font-semibold whitespace-nowrap">
+                    <td className="py-3 px-3 text-right font-mono text-[#FF6B35] font-semibold whitespace-nowrap">
                       {m.ingreso > 0 ? `+ S/ ${m.ingreso.toFixed(2)}` : '—'}
                     </td>
                     <td className="py-3 px-3 text-right font-mono text-rose-600 font-semibold whitespace-nowrap">
@@ -395,3 +395,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
     </div>
   );
 }
+
+
+
+

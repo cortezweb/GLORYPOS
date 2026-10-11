@@ -28,7 +28,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#E85B28] bg-[#FF6B35]/10 px-2 py-0.5 rounded-full border border-[#FF6B35]/20">
               SUNAT Electrónico
             </span>
             <h2 className="text-base font-bold text-slate-800 mt-1">{title}</h2>
@@ -49,7 +49,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
             <div className="text-xs">
               <span className="text-slate-400 block text-[10px] font-bold uppercase">Estado SUNAT</span>
               <span className={`inline-flex items-center gap-1 font-bold text-xs mt-0.5 ${
-                doc.estado_sunat === 'Aceptado' ? 'text-emerald-700' :
+                doc.estado_sunat === 'Aceptado' ? 'text-[#E85B28]' :
                 doc.estado_sunat === 'Error envio' ? 'text-orange-600' :
                 'text-amber-600'
               }`}>
@@ -72,7 +72,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
             </div>
             <div className="space-y-1">
               <span className="text-slate-400 text-[10px] font-bold uppercase">Comprobante Origen / Modificado</span>
-              <p className="font-mono font-bold text-emerald-700">{doc.origen || '—'}</p>
+              <p className="font-mono font-bold text-[#E85B28]">{doc.origen || '—'}</p>
               <p className="text-slate-500 text-[11px]">{doc.motivo || 'Operación comercial sujeta a régimen fiscal'}</p>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
             )}
             <div className="flex justify-between font-bold text-sm text-slate-900 pt-2 border-t border-slate-200">
               <span>{amountLabel}:</span>
-              <span className="text-emerald-700">S/ {Number(amountValue).toFixed(2)}</span>
+              <span className="text-[#E85B28]">S/ {Number(amountValue).toFixed(2)}</span>
             </div>
           </div>
 
@@ -134,3 +134,5 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
     </div>
   );
 }
+
+

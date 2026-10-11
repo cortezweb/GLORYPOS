@@ -51,7 +51,7 @@ export default function DispatchSubNav({ activeTab, onSelectTab }) {
               onClick={() => onSelectTab(tab.id)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
                 isActive
-                  ? 'bg-[#00a650] text-white shadow-xs'
+                  ? 'bg-[#FF6B35] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -64,3 +64,4 @@ export default function DispatchSubNav({ activeTab, onSelectTab }) {
     </div>
   );
 }
+

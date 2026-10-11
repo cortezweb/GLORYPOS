@@ -95,7 +95,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
             <select
               value={sucursal}
               onChange={(e) => setSucursal(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todas">Todas</option>
               <option value="Principal">Principal</option>
@@ -110,7 +110,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
             <select
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todos">Todos</option>
               <option value="Esteffany Cordova">Esteffany Cordova</option>
@@ -127,7 +127,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
                 type="text"
                 value={desde}
                 onChange={(e) => setDesde(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -143,7 +143,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
                 type="text"
                 value={hasta}
                 onChange={(e) => setHasta(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] font-medium"
               />
               <Calendar className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -157,7 +157,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
             <select
               value={tipoMovimiento}
               onChange={(e) => setTipoMovimiento(e.target.value)}
-              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
             >
               <option value="Todos">Todos</option>
               <option value="Venta">Venta</option>
@@ -180,7 +180,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
           <button
             type="button"
             onClick={handleExportExcel}
-            className="px-4 py-2 bg-[#12b76a] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#1E2022] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Exportar Excel</span>
@@ -191,8 +191,8 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
       {/* 4 Tarjetas de Métricas de Caja */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* TOTAL INGRESOS */}
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200/80 space-y-1">
-          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
+        <div className="p-4 rounded-2xl bg-[#FF6B35]/10 border border-[#FF6B35]/20 space-y-1">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#E85B28] block">
             TOTAL INGRESOS
           </span>
           <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
@@ -273,3 +273,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
     </div>
   );
 }
+
+
+
+

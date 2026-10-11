@@ -54,7 +54,7 @@ export default function ExpiredScreen() {
         <div className="space-y-2">
           <button
             onClick={handleWhatsApp}
-            className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-[#FF6B35] hover:bg-[#E85B28] active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
           >
             <MessageCircle className="w-4 h-4" />
             <span>Enviar Comprobante por WhatsApp</span>
@@ -73,3 +73,4 @@ export default function ExpiredScreen() {
     </div>
   );
 }
+

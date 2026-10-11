@@ -53,7 +53,7 @@ export default class ErrorBoundary extends React.Component {
               </button>
               <button
                 onClick={this.handleReset}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5"
+                className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-[#1E2022] hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Recargar POS</span>
@@ -67,3 +67,4 @@ export default class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+

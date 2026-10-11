@@ -225,13 +225,13 @@ export const COLUMNA_DERECHA_CATEGORIAS = [
     ]
   },
   {
-    id: 'suscripcion_tukifac',
-    nombre: 'SUSCRIPCIÓN TUKIFAC',
+    id: 'suscripcion_glorypos',
+    nombre: 'SUSCRIPCIÓN GLORYPOS',
     col1: [
       { id: 'registrar_pagos_paquetes', label: 'Registrar pagos y comprar paquetes de documentos' }
     ],
     col2: [
-      { id: 'ver_suscripcion_facturacion', label: 'Ver suscripción y facturación de Tukifac' }
+      { id: 'ver_suscripcion_facturacion', label: 'Ver suscripción y facturación de GloryPOS' }
     ]
   },
   {
@@ -362,7 +362,7 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
                       type="checkbox"
                       checked={checked}
                       onChange={() => togglePermiso(p.id)}
-                      className="mt-0.5 rounded text-blue-600 focus:ring-blue-500 border-slate-300 w-3.5 h-3.5 cursor-pointer accent-[#2563eb]"
+                      className="mt-0.5 rounded text-[#FF6B35] focus:ring-blue-500 border-slate-300 w-3.5 h-3.5 cursor-pointer accent-[#2563eb]"
                     />
                     <span className="text-[11px] leading-tight text-slate-700 group-hover:text-slate-950 font-normal">
                       {p.label}
@@ -386,7 +386,7 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
                         type="checkbox"
                         checked={checked}
                         onChange={() => togglePermiso(p.id)}
-                        className="mt-0.5 rounded text-blue-600 focus:ring-blue-500 border-slate-300 w-3.5 h-3.5 cursor-pointer accent-[#2563eb]"
+                        className="mt-0.5 rounded text-[#FF6B35] focus:ring-blue-500 border-slate-300 w-3.5 h-3.5 cursor-pointer accent-[#2563eb]"
                       />
                       <span className="text-[11px] leading-tight text-slate-700 group-hover:text-slate-950 font-normal">
                         {p.label}
@@ -439,7 +439,7 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Ej. Almacenero"
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-normal text-slate-800 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-normal text-slate-800 focus:outline-none focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] transition"
                 required
               />
             </div>
@@ -453,7 +453,7 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 placeholder="Ej. Gestión de inventario"
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-normal text-slate-800 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-normal text-slate-800 focus:outline-none focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] transition"
               />
             </div>
           </div>
@@ -492,7 +492,7 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
             type="button"
             onClick={handleSave}
             disabled={guardando}
-            className="w-1/2 sm:w-56 py-2 bg-[#10b981] hover:bg-[#059669] text-white text-xs font-semibold rounded-lg shadow-xs transition text-center disabled:opacity-50"
+            className="w-1/2 sm:w-56 py-2 bg-[#FF6B35] hover:bg-[#FF6B35] text-white text-xs font-semibold rounded-lg shadow-xs transition text-center disabled:opacity-50"
           >
             {guardando ? 'Guardando...' : 'Guardar'}
           </button>
@@ -502,3 +502,6 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
     </div>
   );
 }
+
+
+

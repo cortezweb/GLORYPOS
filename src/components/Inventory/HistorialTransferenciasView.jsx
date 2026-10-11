@@ -122,7 +122,7 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
             onClick={() => onSelectSubView && onSelectSubView('transferencias')}
             className="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
           >
-            <Plus className="w-3.5 h-3.5 text-emerald-600" />
+            <Plus className="w-3.5 h-3.5 text-[#FF6B35]" />
             <span>+ Nueva transferencia</span>
           </button>
         </div>
@@ -188,7 +188,7 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
 
                     {/* Estado (Confirmado en verde suave) */}
                     <td className="py-3 px-4 whitespace-nowrap">
-                      <span className="text-[#00a650] font-bold text-xs">
+                      <span className="text-[#FF6B35] font-bold text-xs">
                         {trf.estado || 'Confirmado'}
                       </span>
                     </td>
@@ -229,7 +229,7 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
           <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <ArrowRightLeft className="w-4 h-4" />
                 </div>
                 <div>
@@ -260,7 +260,7 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
 
               <div>
                 <span className="text-[10px] text-slate-400 font-bold block mb-1">ESTADO</span>
-                <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-[#00a650]">
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FF6B35]/10 text-[#FF6B35]">
                   {selectedTransfer.estado}
                 </span>
               </div>
@@ -283,7 +283,7 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
                         <p className="font-bold text-slate-800">{p.nombre || 'Producto'}</p>
                         <p className="text-[10px] text-slate-400">Presentación: {p.presentacion || 'Unidad'}</p>
                       </div>
-                      <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                      <span className="font-mono font-bold text-[#E85B28] bg-[#FF6B35]/10 px-2 py-0.5 rounded">
                         × {p.cantidad}
                       </span>
                     </div>
@@ -312,3 +312,5 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
     </div>
   );
 }
+
+

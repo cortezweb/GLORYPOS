@@ -202,7 +202,7 @@ function MainShell() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-slate-100 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-hidden">
+    <div className={`min-h-screen ${currentView === 'pos' ? 'lg:h-screen lg:overflow-hidden' : ''} w-full bg-slate-100 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-hidden`}>
       {/* BEGIN: Persistent Desktop Navigation Sidebar (>= 1024px) */}
       <DesktopSidebar
         currentView={currentView}
@@ -218,30 +218,32 @@ function MainShell() {
       {/* END: Persistent Desktop Navigation Sidebar */}
 
       {/* BEGIN: Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-slate-50 min-h-screen relative">
+      <div className={`flex-1 flex flex-col min-w-0 bg-slate-50 ${currentView === 'pos' ? 'lg:h-screen lg:overflow-hidden min-h-screen lg:min-h-0' : 'min-h-screen'} relative`}>
         {/* Top Header Bar */}
-        <TopBar
-          onOpenSidebar={() => setIsSidebarOpen(true)}
-          onOpenScanner={() => setIsScannerOpen(true)}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          isOnline={isOnline}
-          onLockTerminal={() => setIsTerminalLocked(true)}
-          currentRubro={currentRubro}
-          onOpenRubroModal={() => setIsRubroModalOpen(true)}
-          onSelectView={(v) => setCurrentView(v)}
-        />
+        <div className="shrink-0">
+          <TopBar
+            onOpenSidebar={() => setIsSidebarOpen(true)}
+            onOpenScanner={() => setIsScannerOpen(true)}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            isOnline={isOnline}
+            onLockTerminal={() => setIsTerminalLocked(true)}
+            currentRubro={currentRubro}
+            onOpenRubroModal={() => setIsRubroModalOpen(true)}
+            onSelectView={(v) => setCurrentView(v)}
+          />
+        </div>
 
         {/* Trial Countdown Banner (Solo Desktop; en móvil se muestra en la cabecera) */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block shrink-0">
           <TrialBanner onOpenSubscription={() => setCurrentView('subscription')} />
         </div>
 
         {/* Active Main View Container */}
         {currentView === 'pos' ? (
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex overflow-hidden min-h-0">
             {/* Left Catalog Area */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <PosView
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -255,13 +257,13 @@ function MainShell() {
             </div>
 
             {/* Desktop Docked Live Cart Panel (Visible on Desktop >= 1024px) */}
-            <div className="hidden lg:flex shrink-0">
+            <div className="hidden lg:flex shrink-0 h-full">
               <DesktopCartSidebar onOpenCheckout={() => setIsCheckoutOpen(true)} />
             </div>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto pb-20 lg:pb-8">
-            <div className="max-w-7xl mx-auto w-full p-2.5 sm:p-4 lg:p-6">
+          <div className="flex-1 overflow-y-auto pb-20 lg:pb-8 w-full">
+            <div className="w-full min-h-full">
               {/* Ventas Sub-Windows (Soporta múltiples alias para evitar pantallas en blanco) */}
               {['ventas_comprobantes', 'comprobantes', 'sales'].includes(currentView) && (
                 <ComprobantesView 
@@ -310,7 +312,7 @@ function MainShell() {
                   onOpenCloseCash={() => setIsCloseCashOpen(true)} 
                 />
               )}
-              {['reporte_cajas', 'reporte_caja'].includes(currentView) && (
+              {['reporte_cajas'].includes(currentView) && (
                 <CajaChicaView 
                   defaultTab="reporte_cajas"
                   onSelectSubView={(sub) => setCurrentView(sub)}
@@ -376,7 +378,7 @@ function MainShell() {
               )}
 
               {/* Reportes Especializados (7 Ventanas) */}
-              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas', 'reporte_cajas_tab', 'reportes_caja_finanzas'].includes(currentView) && (
+              {['reports', 'reportes', 'reporte_ventas', 'reporte_productos', 'ventas_por_producto', 'reporte_ventas_producto', 'reporte_compras', 'reporte_notas', 'notas_credito_debito', 'reporte_kardex', 'reporte_caja', 'reporte_cajas_tab'].includes(currentView) && (
                 <ReportsView 
                   initialTab={
                     currentView === 'reporte_productos' ? 'productos' :
@@ -384,7 +386,7 @@ function MainShell() {
                     currentView === 'reporte_compras' ? 'compras' :
                     ['reporte_notas', 'notas_credito_debito'].includes(currentView) ? 'notas' :
                     currentView === 'reporte_kardex' ? 'kardex' :
-                    ['reporte_caja', 'reporte_cajas', 'reporte_cajas_tab', 'reportes_caja_finanzas'].includes(currentView) ? 'caja' :
+                    ['reporte_caja', 'reporte_cajas_tab'].includes(currentView) ? 'caja' :
                     'ventas'
                   }
                   onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
@@ -654,3 +656,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+

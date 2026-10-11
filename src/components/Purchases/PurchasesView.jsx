@@ -746,7 +746,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-slideUp">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -760,7 +760,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             onClick={() => setActiveTab('nueva_compra')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'nueva_compra'
-                ? 'bg-[#00a650] text-white shadow-xs'
+                ? 'bg-[#FF6B35] text-white shadow-xs'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -773,7 +773,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             onClick={() => setActiveTab('compras')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'compras'
-                ? 'bg-[#00a650] text-white shadow-xs'
+                ? 'bg-[#FF6B35] text-white shadow-xs'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -793,7 +793,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             onClick={() => setActiveTab('proveedores')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'proveedores'
-                ? 'bg-[#00a650] text-white shadow-xs'
+                ? 'bg-[#FF6B35] text-white shadow-xs'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -854,7 +854,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     <select
                       value={selectedSupplier}
                       onChange={(e) => setSelectedSupplier(e.target.value)}
-                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition cursor-pointer"
+                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] transition cursor-pointer"
                     >
                       <option value="">Seleccionar proveedor...</option>
                       {proveedores.map(p => (
@@ -876,7 +876,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                       setSupplierForm({ id: '', razon_social: '', nit: '', contacto: '', telefono: '', ciudad: 'Lima', rubro: 'Distribución General' });
                       setIsSupplierModalOpen(true);
                     }}
-                    className="p-2 border border-slate-200 hover:border-emerald-500 rounded-lg text-emerald-600 bg-white hover:bg-emerald-50 transition shrink-0 shadow-2xs"
+                    className="p-2 border border-slate-200 hover:border-[#FF6B35] rounded-lg text-[#FF6B35] bg-white hover:bg-[#FF6B35]/10 transition shrink-0 shadow-2xs"
                     title="Registrar nuevo proveedor"
                   >
                     <UserPlus className="w-4 h-4" />
@@ -894,7 +894,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     <select
                       value={tipoDocumento}
                       onChange={(e) => setTipoDocumento(e.target.value)}
-                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer"
+                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] transition cursor-pointer"
                     >
                       <option value="FACTURA">FACTURA</option>
                       <option value="BOLETA">BOLETA</option>
@@ -916,7 +916,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     placeholder="Ej. F001"
                     value={serie}
                     onChange={(e) => setSerie(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] transition"
                   />
                 </div>
 
@@ -929,7 +929,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     placeholder="Ej. 00012345"
                     value={numeroComprobante}
                     onChange={(e) => setNumeroComprobante(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] transition"
                   />
                 </div>
               </div>
@@ -945,7 +945,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                       type="date"
                       value={fechaEmision}
                       onChange={(e) => setFechaEmision(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] transition"
                     />
                     <Calendar className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
@@ -959,7 +959,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     <select
                       value={metodoPago}
                       onChange={(e) => setMetodoPago(e.target.value)}
-                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer"
+                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] transition cursor-pointer"
                     >
                       <option value="CREDITO">Crédito (sin pago inmediato)</option>
                       <option value="EFECTIVO">Efectivo (Contado)</option>
@@ -986,7 +986,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     type="checkbox"
                     checked={incluyeIgv}
                     onChange={(e) => setIncluyeIgv(e.target.checked)}
-                    className="mt-0.5 rounded text-emerald-600 focus:ring-0 border-slate-300"
+                    className="mt-0.5 rounded text-[#FF6B35] focus:ring-0 border-slate-300"
                   />
                   <div>
                     <span className="text-xs font-semibold text-slate-800">
@@ -1007,7 +1007,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 <button
                   type="button"
                   onClick={() => setIsAddProductModalOpen(true)}
-                  className="px-3.5 py-1.5 bg-[#00a650] hover:bg-[#009245] text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                  className="px-3.5 py-1.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Agregar producto</span>
@@ -1016,7 +1016,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 <button
                   type="button"
                   onClick={() => setIsNewProductModalOpen(true)}
-                  className="px-3.5 py-1.5 bg-white hover:bg-emerald-50 text-[#00a650] border border-[#00a650] rounded-lg text-xs font-bold transition flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 bg-white hover:bg-[#FF6B35]/10 text-[#FF6B35] border border-[#FF6B35] rounded-lg text-xs font-bold transition flex items-center gap-1.5"
                 >
                   <PackagePlus className="w-3.5 h-3.5" />
                   <span>Nuevo producto</span>
@@ -1069,7 +1069,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                                 min="1"
                                 value={item.cantidad}
                                 onChange={(e) => handleUpdateItem(index, 'cantidad', e.target.value)}
-                                className="w-20 text-center py-1 px-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                                className="w-20 text-center py-1 px-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:border-[#FF6B35]"
                               />
                             </td>
                             <td className="py-2.5 px-4 text-right">
@@ -1081,7 +1081,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                                   min="0.01"
                                   value={item.costo_unitario}
                                   onChange={(e) => handleUpdateItem(index, 'costo_unitario', e.target.value)}
-                                  className="w-24 text-right py-1 px-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                                  className="w-24 text-right py-1 px-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:border-[#FF6B35]"
                                 />
                               </div>
                             </td>
@@ -1138,7 +1138,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <button
                 type="button"
                 onClick={handleSavePurchase}
-                className="w-full sm:w-1/2 py-2.5 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5"
+                className="w-full sm:w-1/2 py-2.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5"
               >
                 <span>Registrar compra</span>
               </button>
@@ -1167,7 +1167,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <button
                 type="button"
                 onClick={() => setActiveTab('nueva_compra')}
-                className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs self-start cursor-pointer active:scale-95"
+                className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs self-start cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Nueva compra</span>
@@ -1183,7 +1183,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar..."
-                  className="w-full pl-8.5 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500 transition shadow-2xs placeholder:text-slate-400"
+                  className="w-full pl-8.5 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#FF6B35] transition shadow-2xs placeholder:text-slate-400"
                 />
                 {search && (
                   <button
@@ -1244,7 +1244,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                           {/* CRE */}
                           <td className="py-3 px-4 text-center whitespace-nowrap">
                             {c.cre ? (
-                              <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20">
                                 {c.cre}
                               </span>
                             ) : (
@@ -1257,7 +1257,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                             <span className={`inline-block px-2.5 py-0.5 rounded text-[11px] font-medium ${
                               isAnulada
                                 ? 'bg-rose-50 text-rose-600'
-                                : 'bg-emerald-50 text-emerald-700'
+                                : 'bg-[#FF6B35]/10 text-[#E85B28]'
                             }`}>
                               {isAnulada ? 'Anulada' : 'Recibida'}
                             </span>
@@ -1270,7 +1270,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                               <button
                                 type="button"
                                 onClick={() => setSelectedCompraDetail(c)}
-                                className="p-1 text-emerald-600 hover:text-emerald-800 rounded hover:bg-emerald-50 transition"
+                                className="p-1 text-[#FF6B35] hover:text-[#1E2022] rounded hover:bg-[#FF6B35]/10 transition"
                                 title="Ver detalle de compra"
                               >
                                 <Eye className="w-4 h-4" />
@@ -1350,7 +1350,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     });
                     setIsSupplierModalOpen(true);
                   }}
-                  className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+                  className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>+ Nuevo proveedor</span>
@@ -1367,7 +1367,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar..."
-                  className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 shadow-2xs transition"
+                  className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6B35] shadow-2xs transition"
                 />
               </div>
 
@@ -1377,7 +1377,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                   type="button"
                   onClick={() => setSoloInactivos(!soloInactivos)}
                   className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    soloInactivos ? 'bg-[#00a650]' : 'bg-slate-300'
+                    soloInactivos ? 'bg-[#FF6B35]' : 'bg-slate-300'
                   }`}
                   aria-pressed={soloInactivos}
                 >
@@ -1440,7 +1440,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                                 isActivo
-                                  ? 'bg-emerald-50 text-emerald-700'
+                                  ? 'bg-[#FF6B35]/10 text-[#E85B28]'
                                   : 'bg-slate-100 text-slate-600'
                               }`}
                             >
@@ -1456,7 +1456,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                                 type="button"
                                 onClick={() => setSelectedSupplierDetail(prov)}
                                 title="Ver detalles del proveedor"
-                                className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition cursor-pointer"
+                                className="w-7 h-7 rounded-lg bg-[#FF6B35]/10 text-[#FF6B35] hover:bg-[#FF6B35]/20 flex items-center justify-center transition cursor-pointer"
                               >
                                 <Eye className="w-3.5 h-3.5" />
                               </button>
@@ -1466,7 +1466,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                                 type="button"
                                 onClick={() => setSelectedSupplierPurchases(prov)}
                                 title="Ver historial de compras"
-                                className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition cursor-pointer"
+                                className="w-7 h-7 rounded-lg bg-[#FF6B35]/10 text-[#FF6B35] hover:bg-[#FF6B35]/20 flex items-center justify-center transition cursor-pointer"
                               >
                                 <Receipt className="w-3.5 h-3.5" />
                               </button>
@@ -1525,7 +1525,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
           <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
@@ -1556,7 +1556,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <div className="flex justify-between">
                 <span className="text-slate-400">Estado:</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                  selectedCompraDetail.estado === 'Anulada' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                  selectedCompraDetail.estado === 'Anulada' ? 'bg-rose-100 text-rose-700' : 'bg-[#FF6B35]/20 text-[#E85B28]'
                 }`}>
                   {selectedCompraDetail.estado || 'Recibida'}
                 </span>
@@ -1608,7 +1608,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 </div>
                 <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-1 border-t border-slate-100">
                   <span>Total:</span>
-                  <span className="font-mono text-emerald-700">S/ {Number(selectedCompraDetail.total || 0).toFixed(2)}</span>
+                  <span className="font-mono text-[#E85B28]">S/ {Number(selectedCompraDetail.total || 0).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -1634,7 +1634,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
           <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <Package className="w-4 h-4" />
                 </div>
                 <div>
@@ -1668,14 +1668,14 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 <div
                   key={prod.id}
                   onClick={() => handleAddItemToPurchase(prod)}
-                  className="p-3 hover:bg-emerald-50/60 cursor-pointer transition flex items-center justify-between"
+                  className="p-3 hover:bg-[#FF6B35]/10/60 cursor-pointer transition flex items-center justify-between"
                 >
                   <div className="min-w-0 flex-1 pr-3">
                     <p className="text-xs font-bold text-slate-900 truncate">{prod.nombre}</p>
                     <span className="text-[10px] text-slate-400">{prod.categoria || 'General'} • Stock actual: {prod.stock_actual ?? 0} {prod.unidad_medida || 'Unid'}</span>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs font-bold text-emerald-700 block font-mono">
+                    <span className="text-xs font-bold text-[#E85B28] block font-mono">
                       Costo: S/ {Number(prod.precio_compra || 0).toFixed(2)}
                     </span>
                     <span className="text-[10px] text-slate-400">P. Venta: S/ {Number(prod.precio_venta || 0).toFixed(2)}</span>
@@ -1710,7 +1710,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
           <div className="bg-white rounded-3xl w-full max-w-md p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00a650] flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <PackagePlus className="w-4 h-4" />
                 </div>
                 <div>
@@ -1816,7 +1816,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-[#00a650] hover:bg-[#009245] rounded-xl transition shadow-2xs"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] rounded-xl transition shadow-2xs"
                 >
                   Crear y Agregar
                 </button>
@@ -1834,7 +1834,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
           <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00a650] flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                   <Building2 className="w-4 h-4" />
                 </div>
                 <div>
@@ -1973,7 +1973,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-[#00a650] hover:bg-[#009245] rounded-xl transition shadow-2xs cursor-pointer"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#E85B28] rounded-xl transition shadow-2xs cursor-pointer"
                 >
                   Guardar Proveedor
                 </button>
@@ -1999,7 +1999,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             <div className="bg-white rounded-3xl w-full max-w-md p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
@@ -2023,7 +2023,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               {/* Badges de Estado y Rubro */}
               <div className="flex items-center gap-2">
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                  isActivo ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
+                  isActivo ? 'bg-[#FF6B35]/10 text-[#E85B28]' : 'bg-slate-100 text-slate-600'
                 }`}>
                   {isActivo ? 'Activo' : 'Inactivo'}
                 </span>
@@ -2057,14 +2057,14 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               </div>
 
               {/* Estadísticas de compras */}
-              <div className="grid grid-cols-2 gap-2 bg-emerald-50/60 p-3 rounded-2xl border border-emerald-100 text-center">
+              <div className="grid grid-cols-2 gap-2 bg-[#FF6B35]/10/60 p-3 rounded-2xl border border-[#FF6B35]/10 text-center">
                 <div>
-                  <span className="text-[10px] text-emerald-600 font-bold uppercase block">Total Comprado</span>
-                  <span className="text-sm font-black text-emerald-900 font-mono">S/ {totalComprado.toFixed(2)}</span>
+                  <span className="text-[10px] text-[#FF6B35] font-bold uppercase block">Total Comprado</span>
+                  <span className="text-sm font-black text-[#1E2022] font-mono">S/ {totalComprado.toFixed(2)}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-emerald-600 font-bold uppercase block">N° de Compras</span>
-                  <span className="text-sm font-black text-emerald-900 font-mono">{provPurchases.length}</span>
+                  <span className="text-[10px] text-[#FF6B35] font-bold uppercase block">N° de Compras</span>
+                  <span className="text-sm font-black text-[#1E2022] font-mono">{provPurchases.length}</span>
                 </div>
               </div>
 
@@ -2076,7 +2076,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                     setSelectedSupplierDetail(null);
                     setSelectedSupplierPurchases(prov);
                   }}
-                  className="flex-1 py-2 text-xs font-bold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2 text-xs font-bold text-[#E85B28] bg-[#FF6B35]/20 hover:bg-[#FFB627]/50 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <Receipt className="w-3.5 h-3.5" />
                   <span>Ver historial compras</span>
@@ -2109,7 +2109,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             <div className="bg-white rounded-3xl w-full max-w-2xl p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                     <Receipt className="w-5 h-5" />
                   </div>
                   <div>
@@ -2134,7 +2134,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
                 <div>
                   <span className="text-slate-400 block text-[10px]">TOTAL ACUMULADO</span>
-                  <span className="font-extrabold text-slate-900 text-sm font-mono text-emerald-700">
+                  <span className="font-extrabold text-slate-900 text-sm font-mono text-[#E85B28]">
                     S/ {totalFacturado.toFixed(2)}
                   </span>
                 </div>
@@ -2177,7 +2177,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                         </td>
                         <td className="py-2.5 px-3 text-center whitespace-nowrap">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            c.estado === 'Anulada' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                            c.estado === 'Anulada' ? 'bg-rose-100 text-rose-700' : 'bg-[#FF6B35]/20 text-[#E85B28]'
                           }`}>
                             {c.estado || 'Recibida'}
                           </span>
@@ -2189,7 +2189,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                               setSelectedSupplierPurchases(null);
                               setSelectedCompraDetail(c);
                             }}
-                            className="p-1 text-emerald-600 hover:text-emerald-800 rounded hover:bg-emerald-50 transition cursor-pointer"
+                            className="p-1 text-[#FF6B35] hover:text-[#1E2022] rounded hover:bg-[#FF6B35]/10 transition cursor-pointer"
                             title="Ver detalle completo"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -2232,7 +2232,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
-                  <UploadCloud className="w-4 h-4 text-emerald-600" />
+                  <UploadCloud className="w-4 h-4 text-[#FF6B35]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-slate-900">Importar Proveedores</h3>
@@ -2249,8 +2249,8 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
             </div>
 
             <div className="space-y-3">
-              <div className="border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-2xl p-6 text-center transition cursor-pointer bg-slate-50/50">
-                <FileSpreadsheet className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
+              <div className="border-2 border-dashed border-slate-200 hover:border-[#FF6B35] rounded-2xl p-6 text-center transition cursor-pointer bg-slate-50/50">
+                <FileSpreadsheet className="w-8 h-8 text-[#FF6B35] mx-auto mb-2" />
                 <p className="text-xs font-bold text-slate-700">Arrastre su archivo .xlsx o .csv aquí</p>
                 <p className="text-[10px] text-slate-400 mt-1">O haga clic para examinar en su equipo</p>
                 <input
@@ -2267,7 +2267,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 />
                 <label
                   htmlFor="import-proveedores-input"
-                  className="inline-block mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer transition shadow-2xs"
+                  className="inline-block mt-3 px-3 py-1.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold cursor-pointer transition shadow-2xs"
                 >
                   Seleccionar archivo
                 </label>
@@ -2295,7 +2295,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                   document.body.removeChild(link);
                   showToast('Plantilla CSV descargada');
                 }}
-                className="text-xs font-semibold text-emerald-600 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-[#FF6B35] hover:underline cursor-pointer"
               >
                 Descargar plantilla CSV
               </button>
@@ -2315,3 +2315,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
     </div>
   );
 }
+
+
+
+

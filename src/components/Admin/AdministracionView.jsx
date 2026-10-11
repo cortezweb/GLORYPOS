@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, Users, Building2, Printer, Save, CheckCircle2, 
-  Settings, Download, FileSpreadsheet, HardDrive, Cloud, RefreshCw
+  Settings, Download, FileSpreadsheet, HardDrive, Cloud, RefreshCw,
+  Copy, ExternalLink, AlertTriangle, ChevronDown, ChevronUp, Database
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
@@ -10,6 +11,8 @@ import { syncService } from '../../services/syncService';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import RolesPermisosTab from './RolesPermisosTab';
 import UsuariosTab from './UsuariosTab';
+import masterSql from '../../../supabase_master_all_tables.sql?raw';
+import phase2Sql from '../../../supabase_phase2_security_rls.sql?raw';
 
 export default function AdministracionView({ initialTab = 'roles' }) {
   const { empresa } = useAuth();
@@ -17,6 +20,59 @@ export default function AdministracionView({ initialTab = 'roles' }) {
   const [saved, setSaved] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
+  const [cloudStatus, setCloudStatus] = useState(null);
+  const [checkingCloud, setCheckingCloud] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+  const [copiedRlsSql, setCopiedRlsSql] = useState(false);
+  const [showTablesDetail, setShowTablesDetail] = useState(false);
+
+  const checkStatus = async () => {
+    setCheckingCloud(true);
+    try {
+      const status = await syncService.checkCloudStatus();
+      setCloudStatus(status);
+    } catch (e) {
+      console.warn('Error verificando estado de Supabase:', e);
+    } finally {
+      setCheckingCloud(false);
+    }
+  };
+
+  useEffect(() => {
+    checkStatus();
+  }, []);
+
+  const handleCopySql = () => {
+    navigator.clipboard.writeText(masterSql);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 3000);
+  };
+
+  const handleDownloadSql = () => {
+    const blob = new Blob([masterSql], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GLORYPOS_SUPABASE_MASTER_SCHEMA.sql';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopyRlsSql = () => {
+    navigator.clipboard.writeText(phase2Sql);
+    setCopiedRlsSql(true);
+    setTimeout(() => setCopiedRlsSql(false), 3000);
+  };
+
+  const handleDownloadRlsSql = () => {
+    const blob = new Blob([phase2Sql], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GLORYPOS_FASE2_SEGURIDAD_RLS.sql';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleSyncSupabase = async () => {
     setSyncing(true);
@@ -24,6 +80,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
     try {
       const res = await syncService.syncLocalToCloud();
       setSyncResult(res);
+      await checkStatus();
     } catch (err) {
       setSyncResult({ success: false, error: err.message });
     } finally {
@@ -101,7 +158,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
           onClick={() => setActiveTab('roles')}
           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
             activeTab === 'roles'
-              ? 'bg-[#10b981] text-white shadow-xs'
+              ? 'bg-[#FF6B35] text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
@@ -114,7 +171,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
           onClick={() => setActiveTab('usuarios')}
           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
             activeTab === 'usuarios'
-              ? 'bg-[#10b981] text-white shadow-xs'
+              ? 'bg-[#FF6B35] text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
@@ -127,7 +184,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
           onClick={() => setActiveTab('empresa')}
           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
             activeTab === 'empresa'
-              ? 'bg-[#10b981] text-white shadow-xs'
+              ? 'bg-[#FF6B35] text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
@@ -157,7 +214,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
             {/* Formulario de Empresa */}
             <form onSubmit={handleSave} className="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
               <div className="flex items-center space-x-2 pb-3 border-b border-slate-100">
-                <Building2 className="w-5 h-5 text-emerald-600" />
+                <Building2 className="w-5 h-5 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-800">Datos Principales de la Empresa</h3>
               </div>
 
@@ -217,13 +274,13 @@ export default function AdministracionView({ initialTab = 'roles' }) {
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 {saved && (
-                  <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                  <span className="text-xs font-bold text-[#FF6B35] flex items-center gap-1">
                     <CheckCircle2 className="w-4 h-4" /> Datos guardados exitosamente
                   </span>
                 )}
                 <button
                   type="submit"
-                  className="ml-auto px-5 py-2.5 bg-[#10b981] hover:bg-[#059669] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+                  className="ml-auto px-5 py-2.5 bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
                 >
                   <Save className="w-4 h-4" />
                   <span>Guardar Configuración</span>
@@ -235,7 +292,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
             <div className="space-y-4">
               <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
                 <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
-                  <Printer className="w-5 h-5 text-emerald-600" />
+                  <Printer className="w-5 h-5 text-[#FF6B35]" />
                   <h3 className="font-bold text-sm text-slate-800">Impresora Térmica</h3>
                 </div>
                 <p className="text-xs text-slate-500">
@@ -246,46 +303,210 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                     <span className="font-bold text-slate-800 block">Formato Predeterminado</span>
                     <span className="text-slate-500 text-[11px]">80mm Rollo Completo</span>
                   </div>
-                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold text-[10px]">
+                  <span className="px-2 py-0.5 bg-[#FF6B35]/20 text-[#1E2022] rounded font-bold text-[10px]">
                     Activo
                   </span>
                 </div>
               </div>
 
-              {/* Sincronización en la Nube con Supabase */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+              {/* Sincronización en la Nube con Supabase y Gestión de Tablas */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                   <div className="flex items-center space-x-2">
-                    <Cloud className="w-5 h-5 text-emerald-600" />
-                    <h3 className="font-bold text-sm text-slate-800">Base de Datos Supabase</h3>
+                    <Database className="w-5 h-5 text-[#FF6B35]" />
+                    <div>
+                      <h3 className="font-bold text-sm text-slate-800">Base de Datos Supabase</h3>
+                      <p className="text-[11px] text-slate-400">PostgreSQL Cloud · zeftqkwnogcrbklolwzs</p>
+                    </div>
                   </div>
-                  <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
-                    isSupabaseConfigured ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                  }`}>
-                    {isSupabaseConfigured ? 'Conectado' : 'Sin Configurar'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={checkStatus}
+                      disabled={checkingCloud}
+                      title="Verificar tablas en la nube"
+                      className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${checkingCloud ? 'animate-spin text-[#FF6B35]' : ''}`} />
+                    </button>
+                    <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                      isSupabaseConfigured ? 'bg-[#FF6B35]/20 text-[#1E2022]' : 'bg-amber-100 text-amber-800'
+                    }`}>
+                      {isSupabaseConfigured ? 'Conectado' : 'Sin Configurar'}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500">
-                  Sincronización en la nube en tiempo real de productos, ventas, clientes, kardex, roles y usuarios.
-                </p>
-                
-                {syncResult && (
-                  <div className={`p-2.5 rounded-xl text-[11px] font-medium ${
-                    syncResult.success 
-                      ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' 
-                      : 'bg-rose-50 border border-rose-200 text-rose-800'
-                  }`}>
-                    {syncResult.success ? (
+
+                {/* Resumen de Tablas en Supabase */}
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-700">Estado de Tablas en la Nube:</span>
+                    <span className="font-bold text-slate-900">
+                      {cloudStatus ? `${cloudStatus.existingTables.length} de ${cloudStatus.existingTables.length + cloudStatus.missingTables.length} creadas` : 'Analizando...'}
+                    </span>
+                  </div>
+                  {cloudStatus && (
+                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+                      <div 
+                        className={`h-full transition-all duration-500 ${cloudStatus.missingTables.length === 0 ? 'bg-[#FF6B35]' : 'bg-amber-500'}`}
+                        style={{ width: `${Math.round((cloudStatus.existingTables.length / (cloudStatus.existingTables.length + cloudStatus.missingTables.length || 1)) * 100)}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* ALERTA: FALTAN TABLAS EN SUPABASE */}
+                {cloudStatus && cloudStatus.missingTables.length > 0 && (
+                  <div className="bg-amber-50/90 border border-amber-200 rounded-xl p-3.5 space-y-2.5">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> ¡Sincronizado con Supabase!
+                        <p className="text-xs font-bold text-amber-900">
+                          {cloudStatus.missingTables.length} tablas pendientes de creación en Supabase
                         </p>
-                        <p className="text-[10px] opacity-80 mt-0.5">
-                          Productos: {syncResult.summary?.productos || 0}, Ventas: {syncResult.summary?.ventas || 0}, Clientes: {syncResult.summary?.clientes || 0}
+                        <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+                          Por esta razón las nuevas ventanas (Finanzas, Guías GRE, Cotizaciones, etc.) aún no reflejan sus datos en la nube. Debes ejecutar el script SQL maestro en tu panel de Supabase.
                         </p>
                       </div>
-                    ) : (
-                      <p>Error: {syncResult.error || 'No se pudo sincronizar'}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={handleCopySql}
+                        className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] rounded-lg flex items-center gap-1.5 transition shadow-xs"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>{copiedSql ? '¡SQL Tablas Copiado!' : '1. Copiar SQL Tablas (Fase 1)'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyRlsSql}
+                        className="px-3 py-1.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-[11px] rounded-lg flex items-center gap-1.5 transition shadow-xs"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>{copiedRlsSql ? '¡SQL Seguridad Copiado!' : '2. Copiar SQL Seguridad RLS (Fase 2)'}</span>
+                      </button>
+
+                      <a
+                        href="https://supabase.com/dashboard/project/zeftqkwnogcrbklolwzs/sql"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-[11px] rounded-lg flex items-center gap-1.5 transition"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Abrir SQL Editor Supabase</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={handleDownloadSql}
+                        className="px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-[11px] rounded-lg flex items-center gap-1 transition"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Descargar Tablas .SQL</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleDownloadRlsSql}
+                        className="px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-[11px] rounded-lg flex items-center gap-1 transition"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Descargar RLS .SQL</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* DETALLE DESPLEGABLE DE TABLAS */}
+                {cloudStatus && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setShowTablesDetail(!showTablesDetail)}
+                      className="text-[11px] font-bold text-[#E85B28] hover:text-[#1E2022] flex items-center gap-1 transition"
+                    >
+                      <span>{showTablesDetail ? 'Ocultar listado de tablas' : 'Ver listado detallado de tablas (30 tablas)'}</span>
+                      {showTablesDetail ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+
+                    {showTablesDetail && (
+                      <div className="mt-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200 max-h-48 overflow-y-auto space-y-2 text-[11px]">
+                        <div>
+                          <span className="font-bold text-[#E85B28] block mb-1">
+                            ✓ Tablas activas en Supabase ({cloudStatus.existingTables.length}):
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {cloudStatus.existingTables.map(t => (
+                              <span key={t} className="px-1.5 py-0.5 bg-[#FF6B35]/20 text-[#1E2022] rounded text-[10px] font-mono">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {cloudStatus.missingTables.length > 0 && (
+                          <div className="pt-1.5 border-t border-slate-200">
+                            <span className="font-bold text-amber-700 block mb-1">
+                              ⚠ Tablas por crear en Supabase ({cloudStatus.missingTables.length}):
+                            </span>
+                            <div className="flex flex-wrap gap-1">
+                              {cloudStatus.missingTables.map(t => (
+                                <span key={t} className="px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-mono">
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* RESULTADO DE LA ÚLTIMA SINCRONIZACIÓN */}
+                {syncResult && (
+                  <div className={`p-3 rounded-xl text-[11px] font-medium space-y-1.5 ${
+                    syncResult.success 
+                      ? 'bg-[#FF6B35]/10 border border-[#FF6B35]/20 text-[#1E2022]' 
+                      : 'bg-amber-50 border border-amber-200 text-amber-900'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#FF6B35]" /> Sincronización Ejecutada
+                      </p>
+                      <span className="text-[10px] opacity-75 font-mono">
+                        {new Date().toLocaleTimeString()}
+                      </span>
+                    </div>
+
+                    {syncResult.summary && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 pt-1 text-[10px]">
+                        <div>Ventas: <span className="font-bold">{syncResult.summary.ventas}</span></div>
+                        <div>Productos: <span className="font-bold">{syncResult.summary.productos}</span></div>
+                        <div>Clientes: <span className="font-bold">{syncResult.summary.clientes}</span></div>
+                        <div>Proveedores: <span className="font-bold">{syncResult.summary.proveedores}</span></div>
+                        <div>Compras: <span className="font-bold">{syncResult.summary.compras}</span></div>
+                        <div>Kardex: <span className="font-bold">{syncResult.summary.kardex}</span></div>
+                        <div>Caja Chica: <span className="font-bold">{syncResult.summary.caja_chica}</span></div>
+                        <div>Sesiones Caja: <span className="font-bold">{syncResult.summary.sesiones_caja}</span></div>
+                        <div>Ingresos: <span className="font-bold">{syncResult.summary.ingresos_caja}</span></div>
+                        <div>Egresos: <span className="font-bold">{syncResult.summary.egresos_caja}</span></div>
+                        <div>Ctas. Bancarias: <span className="font-bold">{syncResult.summary.cuentas_bancarias}</span></div>
+                        <div>Ctas. Cobrar: <span className="font-bold">{syncResult.summary.cuentas_por_cobrar}</span></div>
+                        <div>Ctas. Pagar: <span className="font-bold">{syncResult.summary.cuentas_por_pagar}</span></div>
+                        <div>Guías Remitente: <span className="font-bold">{syncResult.summary.guias_remitente}</span></div>
+                        <div>Cotizaciones: <span className="font-bold">{syncResult.summary.cotizaciones}</span></div>
+                      </div>
+                    )}
+
+                    {syncResult.summary?.errors?.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-amber-200 text-[10px] text-amber-800">
+                        <p className="font-bold mb-0.5">Advertencia ({syncResult.summary.errors.length} tablas no creadas en Supabase):</p>
+                        <p>Ejecuta el script SQL maestro en Supabase para que estas tablas se guarden en la nube.</p>
+                      </div>
                     )}
                   </div>
                 )}
@@ -294,16 +515,16 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                   type="button"
                   onClick={handleSyncSupabase}
                   disabled={syncing}
-                  className="w-full py-2.5 px-3 bg-[#10b981] hover:bg-[#059669] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50"
+                  className="w-full py-2.5 px-3 bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
-                  <span>{syncing ? 'Sincronizando con Supabase...' : 'Sincronizar con Supabase Ahora'}</span>
+                  <span>{syncing ? 'Sincronizando todas las entidades con Supabase...' : 'Sincronizar Todas las Tablas con Supabase Ahora'}</span>
                 </button>
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
                 <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
-                  <HardDrive className="w-5 h-5 text-emerald-600" />
+                  <HardDrive className="w-5 h-5 text-[#FF6B35]" />
                   <h3 className="font-bold text-sm text-slate-800">Respaldos & Seguridad</h3>
                 </div>
                 <p className="text-xs text-slate-500">
@@ -344,3 +565,6 @@ export default function AdministracionView({ initialTab = 'roles' }) {
     </div>
   );
 }
+
+
+

@@ -79,14 +79,14 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
         <div className="flex items-center space-x-1.5 font-medium">
           <span className="text-gray-400">Módulo</span>
           <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
-          <span className="text-[#2563eb] font-bold">Ventas</span>
+          <span className="text-[#FF6B35] font-bold">Ventas</span>
           <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
           <span className="text-gray-800 font-semibold">
             {tabs.find(t => t.aliases.includes(currentSubView))?.label || 'Punto de Venta'}
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-gray-400">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="w-2 h-2 rounded-full bg-[#00B574] animate-pulse"></span>
           <span>Facturación Electrónica & Caja Activa</span>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
               onClick={() => onSelectSubView(tab.viewId)}
               className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all duration-150 shrink-0 ${
                 isActive
-                  ? 'bg-gradient-to-r from-[#2563eb] to-[#7c3aed] text-white font-semibold shadow-sm shadow-blue-500/25 ring-1 ring-blue-600/30'
+                  ? 'bg-[#1E2022] text-[#FDFBF7] font-semibold shadow-sm'
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200/80 font-medium'
               }`}
             >
@@ -112,7 +112,7 @@ export default function SalesSubNav({ currentSubView, onSelectSubView }) {
               {tab.badge && (
                 <span
                   className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-blue-50 text-[#2563eb]'
+                    isActive ? 'bg-white/20 text-white' : 'bg-[#FF6B35]/10 text-[#FF6B35]'
                   }`}
                 >
                   {tab.badge}

@@ -111,7 +111,7 @@ export default function ReporteProductosTab({ productos = [] }) {
               <select
                 value={categoria}
                 onChange={(e) => setCategoria(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
               >
                 <option value="Todas">Todas</option>
                 {categoriasList.map(c => (
@@ -128,7 +128,7 @@ export default function ReporteProductosTab({ productos = [] }) {
               <select
                 value={sucursal}
                 onChange={(e) => setSucursal(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
               >
                 <option value="Todas">Todas</option>
                 <option value="Principal">Principal</option>
@@ -145,7 +145,7 @@ export default function ReporteProductosTab({ productos = [] }) {
                 value={stockMenorA}
                 onChange={(e) => setStockMenorA(e.target.value)}
                 placeholder="Ej. 10"
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]"
               />
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function ReporteProductosTab({ productos = [] }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nombre, código o descripción..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] placeholder:text-slate-400"
             />
           </div>
 
@@ -181,7 +181,7 @@ export default function ReporteProductosTab({ productos = [] }) {
             <button
               type="button"
               onClick={handleExportExcel}
-              className="px-4 py-2 bg-[#12b76a] hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-[#1E2022] hover:bg-[#E85B28] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Exportar Excel</span>
@@ -230,3 +230,5 @@ export default function ReporteProductosTab({ productos = [] }) {
     </div>
   );
 }
+
+

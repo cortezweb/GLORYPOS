@@ -52,7 +52,7 @@ export default function ComprobantesPendientesView() {
           type="button"
           onClick={handleSyncAll}
           disabled={isSending}
-          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl transition flex items-center gap-2 shadow-sm disabled:opacity-50"
+          className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white text-xs font-black rounded-xl transition flex items-center gap-2 shadow-sm disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${isSending ? 'animate-spin' : ''}`} />
           <span>{isSending ? 'Enviando...' : 'Reenviar Todo Ahora'}</span>
@@ -106,3 +106,4 @@ export default function ComprobantesPendientesView() {
     </div>
   );
 }
+

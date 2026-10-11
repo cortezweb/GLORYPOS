@@ -22,6 +22,9 @@ export default function TopBar({
   const { empresa, currentUser, logout } = useAuth();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const notificationRef = useRef(null);
+  const mobileNotificationRef = useRef(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState(null);
@@ -95,6 +98,28 @@ export default function TopBar({
     ? currentUser.nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
     : 'EC';
 
+  const renderNotificationDropdown = () => (
+    <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden animate-fadeIn">
+      <div className="px-4 py-3 border-b border-slate-100">
+        <span className="text-[10px] font-bold text-slate-500 tracking-wide uppercase">
+          FACTURACIÓN ELECTRÓNICA
+        </span>
+      </div>
+      <div className="p-2">
+        <div className="flex items-start gap-3 p-2 hover:bg-slate-50 rounded-xl transition cursor-pointer">
+          <div className="mt-0.5 shrink-0 text-rose-500">
+            <X className="w-4 h-4 rounded-full border border-rose-500 p-0.5" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-slate-700 leading-tight">
+              9 comprobante(s) rechazados por SUNAT
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderUserDropdown = () => (
     <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 p-3.5 animate-fadeIn">
       {/* Encabezado: SUCURSAL */}
@@ -127,7 +152,7 @@ export default function TopBar({
           }}
           className="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-xl transition cursor-pointer text-left"
         >
-          <User className="w-4 h-4 text-[#10b981] shrink-0" />
+          <User className="w-4 h-4 text-[#FF6B35] shrink-0" />
           <span>Perfil</span>
         </button>
 
@@ -205,12 +230,12 @@ export default function TopBar({
         {/* Centro: Cápsula Verde de Suscripción (Idéntica a la imagen) */}
         <div 
           onClick={() => onSelectView && onSelectView('subscription')}
-          className="flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-[#eaf8ef] border border-emerald-400 text-center leading-tight cursor-pointer shadow-2xs active:scale-98 max-w-[155px]"
+          className="flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-[#eaf8ef] border border-[#FF6B35]/40 text-center leading-tight cursor-pointer shadow-2xs active:scale-98 max-w-[155px]"
         >
-          <span className="text-[9px] font-black text-emerald-800 tracking-tight whitespace-nowrap">
+          <span className="text-[9px] font-black text-[#1E2022] tracking-tight whitespace-nowrap">
             Plan: {empresa?.plan_tipo === 'TRIAL' ? 'Ilimitado (Trial)' : (empresa?.plan_tipo || 'Ilimitado')}
           </span>
-          <span className="text-[8px] font-bold text-emerald-700 whitespace-nowrap">
+          <span className="text-[8px] font-bold text-[#E85B28] whitespace-nowrap">
             Estado de cobro: Al corriente
           </span>
         </div>
@@ -218,17 +243,20 @@ export default function TopBar({
         {/* Derecha: Notificaciones + Avatar Perfil + Botón Hamburguesa de Menú */}
         <div className="flex items-center gap-1.5">
           {/* Campana Móvil con Badge Naranja */}
-          <button
-            type="button"
-            title="8 Notificaciones del sistema"
-            onClick={() => alert('Tienes 8 avisos del sistema: 3 comprobantes emitidos, 5 alertas de inventario.')}
-            className="relative p-1.5 rounded-xl text-slate-600 hover:bg-slate-100 transition cursor-pointer"
-          >
-            <Bell className="w-5 h-5 text-slate-600 stroke-[1.8]" />
-            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-0.5 rounded-full bg-amber-500 text-white text-[9px] font-black flex items-center justify-center shadow-xs border border-white">
-              8
-            </span>
-          </button>
+          <div className="relative" ref={mobileNotificationRef}>
+            <button
+              type="button"
+              title="9 Notificaciones del sistema"
+              onClick={() => setIsNotificationOpen(prev => !prev)}
+              className="relative p-1.5 rounded-xl text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+            >
+              <Bell className="w-5 h-5 text-slate-600 stroke-[1.8]" />
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-0.5 rounded-full bg-[#FFB627] text-white text-[9px] font-black flex items-center justify-center shadow-xs border border-white">
+                9
+              </span>
+            </button>
+            {isNotificationOpen && renderNotificationDropdown()}
+          </div>
 
           {/* Menú de Perfil Móvil */}
           <div className="relative" ref={mobileUserMenuRef}>
@@ -238,7 +266,7 @@ export default function TopBar({
               className="flex items-center gap-1 p-1 rounded-xl hover:bg-slate-100 transition cursor-pointer"
               title={userDisplayName}
             >
-              <div className="w-7 h-7 rounded-full bg-[#10b981] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+              <div className="w-7 h-7 rounded-full bg-[#FF6B35] text-white font-bold text-xs flex items-center justify-center shadow-xs">
                 {userInitial}
               </div>
               <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
@@ -260,9 +288,9 @@ export default function TopBar({
       </div>
 
       {/* ── DESKTOP TOP BANNER SUPERIOR ── */}
-      <div className="hidden lg:flex bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-blue-100 text-[10px] font-bold py-1 px-4 items-center justify-center tracking-wider uppercase font-mono border-b border-blue-900/40 shadow-xs">
+      <div className="hidden lg:flex bg-[#1E2022] text-[#FDFBF7] text-[10px] font-bold py-1 px-4 items-center justify-center tracking-wider uppercase font-mono border-b border-gray-800 shadow-xs">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00B574] animate-pulse"></span>
           <span>WWW.GLORYPOS.COM — PLATAFORMA CLOUD DE FACTURACIÓN & PUNTO DE VENTA</span>
         </div>
       </div>
@@ -301,7 +329,7 @@ export default function TopBar({
               type="button"
               onClick={() => onSelectView && onSelectView('ventas_comprobantes')}
               title="Emitir o buscar Nota de Crédito"
-              className="flex flex-col items-center justify-center px-2 py-1 rounded-lg border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-slate-700 transition"
+              className="flex flex-col items-center justify-center px-2 py-1 rounded-lg border border-slate-200 hover:border-[#FF6B35] hover:bg-[#FF6B35]/10 text-slate-700 transition"
             >
               <FileText className="w-3.5 h-3.5 text-slate-500" />
               <span className="text-[9px] font-black uppercase mt-0.5">NC</span>
@@ -312,7 +340,7 @@ export default function TopBar({
               type="button"
               onClick={() => onSelectView && onSelectView('ventas_notas')}
               title="Emitir Nota de Venta rápida"
-              className="flex flex-col items-center justify-center px-2 py-1 rounded-lg border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-slate-700 transition"
+              className="flex flex-col items-center justify-center px-2 py-1 rounded-lg border border-slate-200 hover:border-[#FF6B35] hover:bg-[#FF6B35]/10 text-slate-700 transition"
             >
               <FileText className="w-3.5 h-3.5 text-slate-500" />
               <span className="text-[9px] font-black uppercase mt-0.5">NV</span>
@@ -323,9 +351,9 @@ export default function TopBar({
               type="button"
               onClick={() => onSelectView && onSelectView('pos')}
               title="Abrir Terminal de Ventas (F4)"
-              className="flex flex-col items-center justify-center px-2.5 py-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-800 transition font-bold shadow-xs"
+              className="flex flex-col items-center justify-center px-2.5 py-1 rounded-lg border border-[#FF6B35] bg-[#FF6B35]/10 text-[#1E2022] transition font-bold shadow-xs"
             >
-              <ShoppingCart className="w-3.5 h-3.5 text-emerald-600" />
+              <ShoppingCart className="w-3.5 h-3.5 text-[#FF6B35]" />
               <span className="text-[9px] font-black uppercase mt-0.5">POS</span>
             </button>
 
@@ -333,7 +361,7 @@ export default function TopBar({
 
           {/* Plan & Payment Status Card (Exact from Image) */}
           <div className="hidden md:flex flex-col border border-slate-200 rounded-xl px-2.5 py-1 bg-slate-50/70 text-left leading-tight">
-            <span className="text-[10px] font-black text-emerald-600">
+            <span className="text-[10px] font-black text-[#FF6B35]">
               Plan: {empresa?.plan_tipo === 'TRIAL' ? 'Ilimitado (Trial)' : (empresa?.plan_tipo || 'Ilimitado')}
             </span>
             <span className="text-[9px] font-bold text-slate-700">
@@ -353,7 +381,7 @@ export default function TopBar({
           <button
             type="button"
             onClick={handleSupportClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00B574] hover:bg-[#009c63] text-white text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
           >
             <MessageSquare className="w-3.5 h-3.5 fill-white" />
             <span className="hidden sm:inline">Soporte</span>
@@ -365,21 +393,21 @@ export default function TopBar({
             onClick={handleManualSync}
             disabled={isSyncing}
             title={lastSyncTime ? `Último respaldo en la nube: ${lastSyncTime}. Clic para sincronizar.` : 'Sincronizar datos con la nube Supabase'}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/50 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-[#FF6B35] bg-white hover:bg-[#FF6B35]/10 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
           >
-            <Cloud className={`w-3.5 h-3.5 ${isSyncing ? 'text-blue-500 animate-spin' : 'text-emerald-600'}`} />
-            <span className="text-[10px] font-extrabold text-slate-700">
+            <Cloud className={`w-3.5 h-3.5 ${isSyncing ? 'text-[#FF6B35] animate-spin' : 'text-[#00B574]'}`} />
+            <span className="text-[10px] font-extrabold text-[#1E2022]">
               {isSyncing ? 'Sincronizando...' : (lastSyncTime ? `Nube: ${lastSyncTime}` : 'Nube OK')}
             </span>
           </button>
 
-          {/* Insignia Azul: Modo DEMO Conectado a SUNAT/SIAT (Exact from Image) */}
-          <div className="hidden sm:flex flex-col items-end px-2.5 py-1 rounded-xl bg-blue-700 text-white font-sans text-right leading-tight shadow-xs">
-            <span className="text-[10px] font-black tracking-tight">
+          {/* Insignia Azul Nocturno: Modo DEMO Conectado a SUNAT/SIAT */}
+          <div className="hidden sm:flex flex-col items-end px-2.5 py-1 rounded-xl bg-[#1E2022] text-white font-sans text-right leading-tight shadow-xs border border-slate-700">
+            <span className="text-[10px] font-black tracking-tight text-[#FFB627]">
               Modo: DEMO
             </span>
-            <span className="text-[8px] font-medium text-blue-100 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span className="text-[8px] font-medium text-slate-300 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00B574]"></span>
               Conectado a SUNAT/SIAT
             </span>
           </div>
@@ -392,23 +420,26 @@ export default function TopBar({
             className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
           >
             <ShoppingCart className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-slate-900 text-white text-[9px] font-black flex items-center justify-center">
+            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#1E2022] text-white text-[9px] font-black flex items-center justify-center">
               0
             </span>
           </button>
 
           {/* Campana de Notificaciones con Badge Naranja (Exacto a la imagen) */}
-          <button
-            type="button"
-            title="8 Notificaciones del sistema"
-            onClick={() => alert('Tienes 8 avisos del sistema: 3 comprobantes emitidos, 5 alertas de inventario.')}
-            className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-          >
-            <Bell className="w-5 h-5 text-slate-600 stroke-[1.8]" />
-            <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center justify-center shadow-xs border-2 border-white">
-              8
-            </span>
-          </button>
+          <div className="relative" ref={notificationRef}>
+            <button
+              type="button"
+              title="9 Notificaciones del sistema"
+              onClick={() => setIsNotificationOpen(prev => !prev)}
+              className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+            >
+              <Bell className="w-5 h-5 text-slate-600 stroke-[1.8]" />
+              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FFB627] text-white text-[10px] font-black flex items-center justify-center shadow-xs border-2 border-white">
+                9
+              </span>
+            </button>
+            {isNotificationOpen && renderNotificationDropdown()}
+          </div>
 
           {/* Menú de Perfil de Usuario (Estructura idéntica a la imagen adjunta) */}
           <div className="relative" ref={userMenuRef}>
@@ -419,7 +450,7 @@ export default function TopBar({
               title={`${userDisplayName} (${currentUser?.rol || 'ADMIN'})`}
             >
               {/* Círculo verde con la inicial */}
-              <div className="w-8 h-8 rounded-full bg-[#10b981] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-8 h-8 rounded-full bg-[#00B574] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
                 {userInitial}
               </div>
               {/* Nombre de usuario truncado */}
@@ -443,7 +474,7 @@ export default function TopBar({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-md overflow-hidden animate-scaleUp">
             {/* Header del Modal */}
-            <div className="relative p-6 pb-5 bg-gradient-to-br from-emerald-600 to-teal-700 text-white">
+            <div className="relative p-6 pb-5 bg-gradient-to-br from-[#FF6B35] to-[#E85B28] text-white">
               <button
                 type="button"
                 onClick={() => setIsProfileModalOpen(false)}
@@ -452,17 +483,17 @@ export default function TopBar({
                 <X className="w-4 h-4" />
               </button>
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-white text-emerald-700 font-black text-2xl flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-white text-[#E85B28] font-black text-2xl flex items-center justify-center shadow-lg">
                   {userInitial}
                 </div>
                 <div>
                   <h3 className="text-lg font-black leading-tight text-white">
                     {userDisplayName}
                   </h3>
-                  <p className="text-xs text-emerald-100 font-medium">
+                  <p className="text-xs text-[#FDFBF7] font-medium">
                     {currentUser?.email || 'admin@glorypos.com'}
                   </p>
-                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-emerald-500/40 text-emerald-100 text-[10px] font-bold rounded-full uppercase tracking-wider border border-white/20">
+                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-[#FF6B35]/40 text-[#FDFBF7] text-[10px] font-bold rounded-full uppercase tracking-wider border border-white/20">
                     {currentUser?.rol || 'SUPERADMIN'}
                   </span>
                 </div>
@@ -475,7 +506,7 @@ export default function TopBar({
                 <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sucursal</span>
                   <p className="text-xs font-bold text-slate-800 mt-0.5 flex items-center gap-1.5 truncate">
-                    <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <Building2 className="w-3.5 h-3.5 text-[#FF6B35] shrink-0" />
                     {empresa?.sucursal_activa || 'Principal'}
                   </p>
                 </div>
@@ -493,8 +524,8 @@ export default function TopBar({
                 </div>
                 <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Estado</span>
-                  <p className="text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <p className="text-xs font-bold text-[#FF6B35] mt-0.5 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-pulse"></span>
                     Activo / Conectado
                   </p>
                 </div>
@@ -533,3 +564,8 @@ export default function TopBar({
     </header>
   );
 }
+
+
+
+
+

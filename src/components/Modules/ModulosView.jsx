@@ -13,7 +13,7 @@ export default function ModulosView() {
       activo: true,
       badge: 'Incluido en todos los planes',
       icon: Smartphone,
-      color: 'bg-blue-50 text-blue-600'
+      color: 'bg-[#FF6B35]/10 text-[#FF6B35]'
     },
     {
       id: 'mod-siat',
@@ -22,7 +22,7 @@ export default function ModulosView() {
       activo: empresa?.plan_tipo === 'PRO',
       badge: empresa?.plan_tipo === 'PRO' ? 'Habilitado' : 'Requiere Plan PRO',
       icon: ShieldCheck,
-      color: 'bg-emerald-50 text-emerald-600'
+      color: 'bg-[#FF6B35]/10 text-[#FF6B35]'
     },
     {
       id: 'mod-ecommerce',
@@ -31,7 +31,7 @@ export default function ModulosView() {
       activo: true,
       badge: 'Activo',
       icon: Globe,
-      color: 'bg-purple-50 text-purple-600'
+      color: 'bg-[#FDFBF7] text-[#1E2022]'
     },
     {
       id: 'mod-print',
@@ -40,7 +40,7 @@ export default function ModulosView() {
       activo: true,
       badge: 'Activo',
       icon: Printer,
-      color: 'bg-indigo-50 text-indigo-600'
+      color: 'bg-indigo-50 text-[#1E2022]'
     },
     {
       id: 'mod-barcode',
@@ -59,8 +59,8 @@ export default function ModulosView() {
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-            <span className="text-[10px] font-bold uppercase text-blue-600">Ecosistema GLORYPOS</span>
+            <span className="w-2 h-2 rounded-full bg-[#FF6B35]"></span>
+            <span className="text-[10px] font-bold uppercase text-[#FF6B35]">Ecosistema GLORYPOS</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900 mt-0.5">Módulos & Extensiones del Sistema</h1>
           <p className="text-xs text-slate-500">Activa o administra las herramientas especializadas de tu negocio.</p>
@@ -79,7 +79,7 @@ export default function ModulosView() {
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-sm text-slate-900">{mod.nombre}</h3>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    mod.activo ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'
+                    mod.activo ? 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20' : 'bg-slate-100 text-slate-600'
                   }`}>
                     {mod.badge}
                   </span>
@@ -93,3 +93,7 @@ export default function ModulosView() {
     </div>
   );
 }
+
+
+
+

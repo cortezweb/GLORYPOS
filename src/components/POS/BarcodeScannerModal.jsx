@@ -406,9 +406,9 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
             </button>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className={`inline-block w-2 h-2 rounded-full ${cameraActive ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'}`}></span>
+                <span className={`inline-block w-2 h-2 rounded-full ${cameraActive ? 'bg-[#FFB627] animate-ping' : 'bg-amber-400'}`}></span>
                 <h1 className="font-bold text-sm tracking-tight leading-tight">Lector de Códigos</h1>
-                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#FF6B35]/20 text-[#FFB627] border border-[#FF6B35]/30">
                   v4.0
                 </span>
               </div>
@@ -466,7 +466,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
               className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center transition cursor-pointer"
               type="button"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isInitializing ? 'animate-spin text-emerald-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isInitializing ? 'animate-spin text-[#FFB627]' : ''}`} />
             </button>
           </div>
         </section>
@@ -482,7 +482,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           {/* Loader */}
           {isInitializing && (
             <div className="absolute inset-0 z-20 bg-slate-950/90 flex flex-col items-center justify-center text-white space-y-2">
-              <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-3 border-[#FF6B35] border-t-transparent rounded-full animate-spin"></div>
               <p className="text-xs text-slate-300 font-mono">Conectando sensor de cámara...</p>
             </div>
           )}
@@ -503,7 +503,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
                 <button
                   type="button"
                   onClick={() => startScanner()}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-3 py-1.5 bg-[#FF6B35] hover:bg-[#E85B28] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Reintentar</span>
@@ -522,8 +522,8 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
 
           {/* Helper Superior */}
           <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-center pointer-events-none">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-[11px] font-semibold text-emerald-300 shadow-lg">
-              <Scan className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-[11px] font-semibold text-[#FFB627] shadow-lg">
+              <Scan className="w-3.5 h-3.5 animate-pulse text-[#FFB627]" />
               <span>Apunta la línea al código</span>
             </span>
 
@@ -531,13 +531,13 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
             <div className="flex gap-1 pointer-events-auto">
               <button 
                 onClick={() => handleScanCode('7771234000018')}
-                className="px-2 py-0.5 bg-slate-900/80 text-white hover:bg-emerald-600 rounded text-[10px] font-bold border border-white/20 transition cursor-pointer"
+                className="px-2 py-0.5 bg-slate-900/80 text-white hover:bg-[#FF6B35] rounded text-[10px] font-bold border border-white/20 transition cursor-pointer"
               >
                 + Coca
               </button>
               <button 
                 onClick={() => handleScanCode('7771234000032')}
-                className="px-2 py-0.5 bg-slate-900/80 text-white hover:bg-emerald-600 rounded text-[10px] font-bold border border-white/20 transition cursor-pointer"
+                className="px-2 py-0.5 bg-slate-900/80 text-white hover:bg-[#FF6B35] rounded text-[10px] font-bold border border-white/20 transition cursor-pointer"
               >
                 + Paceña
               </button>
@@ -547,15 +547,15 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           {/* Retícula Central con Esquinas y Línea Láser */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
             <div className="relative w-64 max-w-[88%] h-28 flex items-center justify-center">
-              <div className="absolute top-0 left-0 w-7 h-7 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg shadow-[0_0_10px_#34d399]"></div>
-              <div className="absolute top-0 right-0 w-7 h-7 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg shadow-[0_0_10px_#34d399]"></div>
-              <div className="absolute bottom-0 left-0 w-7 h-7 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg shadow-[0_0_10px_#34d399]"></div>
-              <div className="absolute bottom-0 right-0 w-7 h-7 border-b-4 border-r-4 border-emerald-400 rounded-br-lg shadow-[0_0_10px_#34d399]"></div>
+              <div className="absolute top-0 left-0 w-7 h-7 border-t-4 border-l-4 border-[#FF6B35]/40 rounded-tl-lg shadow-[0_0_10px_#FFB627]"></div>
+              <div className="absolute top-0 right-0 w-7 h-7 border-t-4 border-r-4 border-[#FF6B35]/40 rounded-tr-lg shadow-[0_0_10px_#FFB627]"></div>
+              <div className="absolute bottom-0 left-0 w-7 h-7 border-b-4 border-l-4 border-[#FF6B35]/40 rounded-bl-lg shadow-[0_0_10px_#FFB627]"></div>
+              <div className="absolute bottom-0 right-0 w-7 h-7 border-b-4 border-r-4 border-[#FF6B35]/40 rounded-br-lg shadow-[0_0_10px_#FFB627]"></div>
 
-              <div className="absolute left-1 right-1 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_14px_#10b981] animate-pulse"></div>
+              <div className="absolute left-1 right-1 h-0.5 bg-gradient-to-r from-transparent via-[#FF6B35] to-transparent shadow-[0_0_14px_#FF6B35] animate-pulse"></div>
 
               {lastDetected && (
-                <div className="absolute -bottom-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-3 py-1 rounded-full text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-xl animate-bounce border border-white/30">
+                <div className="absolute -bottom-3 bg-gradient-to-r from-[#FF6B35] to-[#E85B28] text-white font-bold px-3 py-1 rounded-full text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-xl animate-bounce border border-white/30">
                   <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   <span className="truncate max-w-[200px]">{lastDetected.nombre}</span>
                 </div>
@@ -574,14 +574,14 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
                 <input 
                   value={manualCode}
                   onChange={(e) => setManualCode(e.target.value)}
-                  className="w-full bg-slate-800/90 text-white placeholder-slate-400 text-xs rounded-lg pl-8 pr-2 py-1.5 focus:ring-1 focus:ring-emerald-500 focus:outline-none border-0" 
+                  className="w-full bg-slate-800/90 text-white placeholder-slate-400 text-xs rounded-lg pl-8 pr-2 py-1.5 focus:ring-1 focus:ring-[#FF6B35] focus:outline-none border-0" 
                   placeholder="Ingreso manual de código..." 
                   type="text"
                 />
               </div>
               <button 
                 type="submit"
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1 active:scale-95 shrink-0 shadow-xs cursor-pointer"
+                className="bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1 active:scale-95 shrink-0 shadow-xs cursor-pointer"
               >
                 <span>Agregar</span>
               </button>
@@ -595,7 +595,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           <button
             type="button"
             onClick={handleForceCachePurge}
-            className="text-emerald-700 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+            className="text-[#E85B28] font-bold hover:underline flex items-center gap-1 cursor-pointer"
           >
             <RefreshCw className="w-3 h-3" />
             <span>Limpiar caché PWA</span>
@@ -611,7 +611,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
                 Productos en Carrito
               </h2>
-              <span className="inline-flex items-center justify-center bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center justify-center bg-[#FF6B35]/20 text-[#1E2022] text-[11px] font-bold px-2 py-0.5 rounded-full">
                 {count} {count === 1 ? 'ítem' : 'ítems'}
               </span>
             </div>
@@ -633,10 +633,10 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
             {items.map((it, idx) => (
               <article 
                 key={`${it.productId}-${it.presId}`}
-                className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs hover:border-emerald-300 transition-all relative"
+                className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs hover:border-[#FF6B35]/30 transition-all relative"
               >
                 {idx === items.length - 1 && (
-                  <div className="absolute -top-2 right-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[9px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider shadow-xs">
+                  <div className="absolute -top-2 right-3 bg-gradient-to-r from-[#FF6B35] to-[#E85B28] text-white text-[9px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider shadow-xs">
                     ¡Agregado recién!
                   </div>
                 )}
@@ -656,7 +656,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
                       <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded">
                         {it.codigo_barras || 'S/N'}
                       </span>
-                      <span className="text-[10px] text-emerald-600 font-semibold">
+                      <span className="text-[10px] text-[#FF6B35] font-semibold">
                         {it.presNombre}
                       </span>
                     </div>
@@ -680,7 +680,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
                           </span>
                           <button 
                             onClick={() => updateQuantity(it.productId, it.presId, 1)}
-                            className="w-5 h-5 rounded bg-emerald-600 text-white shadow-xs flex items-center justify-center font-bold text-xs active:bg-emerald-700 cursor-pointer" 
+                            className="w-5 h-5 rounded bg-[#FF6B35] text-white shadow-xs flex items-center justify-center font-bold text-xs active:bg-[#E85B28] cursor-pointer" 
                             type="button"
                           >
                             +
@@ -689,7 +689,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
                       </div>
 
                       <div className="text-right">
-                        <span className="text-xs font-extrabold text-emerald-700">
+                        <span className="text-xs font-extrabold text-[#E85B28]">
                           Bs. {it.subtotal.toFixed(2)}
                         </span>
                       </div>
@@ -730,7 +730,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
           <button 
             onClick={handleCheckout}
             disabled={count === 0}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-50 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer" 
+            className="w-full bg-[#FF6B35] hover:bg-[#E85B28] active:bg-[#1E2022] disabled:opacity-50 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-[#FF6B35]/30 flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer" 
             type="button"
           >
             <div className="flex items-center gap-2">
@@ -747,3 +747,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
     </div>
   );
 }
+
+
+
+

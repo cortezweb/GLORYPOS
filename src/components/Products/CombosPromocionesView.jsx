@@ -263,7 +263,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
                 <Sparkles className="w-5 h-5" />
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -278,7 +278,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition active:scale-95 self-start sm:self-center"
+            className="bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition active:scale-95 self-start sm:self-center"
           >
             <Plus className="w-4 h-4" />
             <span>Nuevo Combo / Promoción</span>
@@ -294,17 +294,17 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Combos Activos</span>
-            <span className="text-2xl font-black text-emerald-600 mt-1 block">{totalActivos}</span>
+            <span className="text-2xl font-black text-[#FF6B35] mt-1 block">{totalActivos}</span>
           </div>
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Ahorro Promedio</span>
-            <span className="text-2xl font-black text-blue-600 mt-1 block">{promedioAhorro}%</span>
+            <span className="text-2xl font-black text-[#FF6B35] mt-1 block">{promedioAhorro}%</span>
           </div>
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Estado de Campaña</span>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full inline-block mt-2">
+            <span className="text-xs font-bold text-[#E85B28] bg-[#FF6B35]/10 px-2.5 py-1 rounded-full inline-block mt-2">
               Vigente en POS
             </span>
           </div>
@@ -319,7 +319,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
               placeholder="Buscar por nombre o código..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#FF6B35] outline-none"
             />
           </div>
 
@@ -371,7 +371,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                       onClick={() => handleToggleEstado(combo.id)}
                       className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border transition shrink-0 ${
                         combo.estado === 'Activo'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          ? 'bg-[#FF6B35]/10 text-[#E85B28] border-[#FF6B35]/20'
                           : 'bg-slate-100 text-slate-500 border-slate-200'
                       }`}
                       title="Click para cambiar estado"
@@ -396,7 +396,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     {combo.productos.map((prod, idx) => (
                       <div key={idx} className="flex items-center justify-between text-xs bg-white p-2 rounded-lg border border-slate-100">
                         <div className="flex items-center gap-1.5 truncate mr-2">
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center justify-center shrink-0">
+                          <span className="w-5 h-5 rounded-full bg-[#FF6B35]/20 text-[#1E2022] text-[10px] font-bold flex items-center justify-center shrink-0">
                             {prod.cantidad}x
                           </span>
                           <span className="text-slate-700 font-medium truncate">{prod.nombre}</span>
@@ -417,7 +417,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                         Normal: S/ {combo.precio_regular.toFixed(2)}
                       </span>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-black text-emerald-700">
+                        <span className="text-lg font-black text-[#E85B28]">
                           S/ {combo.precio_combo.toFixed(2)}
                         </span>
                       </div>
@@ -477,7 +477,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto flex flex-col max-h-[90vh]">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <Sparkles className="w-4 h-4 text-[#FF6B35]" />
                 <h3 className="font-bold text-sm text-slate-800">
                   {editingCombo ? 'Editar Combo / Promoción' : 'Nuevo Combo / Promoción'}
                 </h3>
@@ -502,7 +502,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     value={formNombre}
                     onChange={(e) => setFormNombre(e.target.value)}
                     placeholder="Ej: Pack Familiar Fin de Semana"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -511,7 +511,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     type="text"
                     value={formCodigo}
                     onChange={(e) => setFormCodigo(e.target.value)}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 font-mono font-bold"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35] font-mono font-bold"
                   />
                 </div>
               </div>
@@ -523,7 +523,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                   value={formDescripcion}
                   onChange={(e) => setFormDescripcion(e.target.value)}
                   placeholder="Detalles de la promoción, restricciones o regalos incluidos..."
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 resize-none"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35] resize-none"
                 />
               </div>
 
@@ -537,7 +537,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                 <div className="flex gap-2">
                   <select
                     id="productSelector"
-                    className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 text-xs cursor-pointer"
+                    className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FF6B35] text-xs cursor-pointer"
                     defaultValue=""
                     onChange={(e) => {
                       if (e.target.value) {
@@ -595,7 +595,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
               </div>
 
               {/* Precios y Descuento */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#FF6B35]/10/70 p-3.5 rounded-xl border border-[#FF6B35]/20">
                 <div>
                   <span className="text-[11px] font-bold text-slate-600 block">Suma Regular:</span>
                   <span className="text-base font-black text-slate-800 block mt-0.5">
@@ -613,13 +613,13 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     value={formPrecioCombo}
                     onChange={(e) => setFormPrecioCombo(e.target.value)}
                     placeholder="0.00"
-                    className="w-full bg-white border-2 border-emerald-500 rounded-lg px-3 py-1.5 font-black text-slate-900 text-sm outline-none"
+                    className="w-full bg-white border-2 border-[#FF6B35] rounded-lg px-3 py-1.5 font-black text-slate-900 text-sm outline-none"
                   />
                 </div>
 
                 <div>
                   <span className="text-[11px] font-bold text-slate-600 block">Ahorro del Cliente:</span>
-                  <span className="text-sm font-black text-emerald-700 block mt-1">
+                  <span className="text-sm font-black text-[#E85B28] block mt-1">
                     S/ {formAhorro.toFixed(2)} ({formPorcentajeAhorro}%)
                   </span>
                 </div>
@@ -633,7 +633,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     type="date"
                     value={formFechaInicio}
                     onChange={(e) => setFormFechaInicio(e.target.value)}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -642,7 +642,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     type="date"
                     value={formFechaFin}
                     onChange={(e) => setFormFechaFin(e.target.value)}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -650,7 +650,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                   <select
                     value={formEstado}
                     onChange={(e) => setFormEstado(e.target.value)}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-emerald-500 bg-white"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-[#FF6B35] bg-white"
                   >
                     <option value="Activo">Activo</option>
                     <option value="Pausado">Pausado</option>
@@ -668,7 +668,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm transition active:scale-95"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm transition active:scale-95"
                 >
                   Guardar Combo
                 </button>
@@ -682,3 +682,6 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
     </div>
   );
 }
+
+
+

@@ -128,7 +128,7 @@ export default function MembresiasView({ onSelectSubView }) {
         <SalesSubNav currentSubView="membresias" onSelectSubView={onSelectSubView} />
       )}
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* 1. CABECERA: TÍTULO, SELECTOR DE ESTADOS & BOTÓN NUEVA MEMBRESÍA     */}
@@ -137,7 +137,7 @@ export default function MembresiasView({ onSelectSubView }) {
           
           {/* Left: Icono verde y Título */}
           <div className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-emerald-600" />
+            <CreditCard className="w-5 h-5 text-[#FF6B35]" />
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               Membresías y cuotas
             </h1>
@@ -176,7 +176,7 @@ export default function MembresiasView({ onSelectSubView }) {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Nueva membresía</span>
@@ -219,7 +219,7 @@ export default function MembresiasView({ onSelectSubView }) {
               value={searchCliente}
               onChange={e => setSearchCliente(e.target.value)}
               placeholder="Nombre, razón social o documento..."
-              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
             />
           </div>
 
@@ -296,7 +296,7 @@ export default function MembresiasView({ onSelectSubView }) {
                       <td className="py-3 px-4 text-center">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                           mem.estado === 'Activa' 
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                            ? 'bg-[#FF6B35]/10 text-[#E85B28] border border-[#FF6B35]/20' 
                             : 'bg-slate-100 text-slate-600'
                         }`}>
                           {mem.estado}
@@ -330,7 +330,7 @@ export default function MembresiasView({ onSelectSubView }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200">
             
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#00a650] text-white">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#FF6B35] text-white">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
                 <h3 className="font-bold text-base">Nueva Membresía / Cuota</h3>
@@ -354,7 +354,7 @@ export default function MembresiasView({ onSelectSubView }) {
                   value={formData.cliente_nombre}
                   onChange={e => setFormData({ ...formData, cliente_nombre: e.target.value })}
                   list="clients-list"
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                 />
                 <datalist id="clients-list">
                   {clientList.map(c => (
@@ -371,7 +371,7 @@ export default function MembresiasView({ onSelectSubView }) {
                     placeholder="Doc identidad"
                     value={formData.cliente_doc}
                     onChange={e => setFormData({ ...formData, cliente_doc: e.target.value })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -395,7 +395,7 @@ export default function MembresiasView({ onSelectSubView }) {
                   placeholder="Ej. Membresía Mensual VIP, Cuota Club"
                   value={formData.plan_nombre}
                   onChange={e => setFormData({ ...formData, plan_nombre: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                 />
               </div>
 
@@ -408,7 +408,7 @@ export default function MembresiasView({ onSelectSubView }) {
                     required
                     value={formData.monto_cuota}
                     onChange={e => setFormData({ ...formData, monto_cuota: e.target.value })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#FF6B35]"
                   />
                 </div>
                 <div>
@@ -457,7 +457,7 @@ export default function MembresiasView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold rounded-xl shadow-xs transition cursor-pointer"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold rounded-xl shadow-xs transition cursor-pointer"
                 >
                   Guardar Membresía
                 </button>
@@ -472,3 +472,6 @@ export default function MembresiasView({ onSelectSubView }) {
     </div>
   );
 }
+
+
+

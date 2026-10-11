@@ -112,11 +112,11 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans">
       <SalesSubNav currentSubView="cuentas_por_cobrar" onSelectSubView={onSelectSubView} />
 
-      <main className="max-w-6xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         {/* Toast */}
         {toastMsg && (
           <div className="fixed top-20 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 border border-slate-700 animate-fadeIn">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-[#FFB627]" />
             <span>{toastMsg}</span>
           </div>
         )}
@@ -168,7 +168,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
           </div>
 
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-blue-600">Clientes con Crédito</span>
+            <span className="text-[10px] font-black uppercase text-[#FF6B35]">Clientes con Crédito</span>
             <div className="text-2xl font-black text-slate-900 font-mono">
               {cuentas.filter(c => c.saldo_pendiente > 0).length}
             </div>
@@ -231,7 +231,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
                       </td>
                       <td className="py-2.5 px-3 text-center whitespace-nowrap">
                         {isPagado ? (
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#FF6B35]/20 text-[#1E2022]">
                             PAGADO
                           </span>
                         ) : isVencido ? (
@@ -249,7 +249,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
                           <button
                             type="button"
                             onClick={() => handleOpenAbono(c)}
-                            className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-lg transition active:scale-95 cursor-pointer shadow-xs"
+                            className="px-2.5 py-1 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white font-bold text-[11px] rounded-lg transition active:scale-95 cursor-pointer shadow-xs"
                           >
                             Registrar Cobro
                           </button>
@@ -329,7 +329,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md shadow-blue-600/20"
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#FF6B35]/90 rounded-xl transition shadow-md shadow-blue-600/20"
                 >
                   Confirmar Cobro
                 </button>
@@ -341,3 +341,6 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
     </div>
   );
 }
+
+
+

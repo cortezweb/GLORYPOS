@@ -6,6 +6,7 @@ import {
   Calculator, UtensilsCrossed, Pill, BedDouble, Clock, FileText, LayoutGrid, ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import GloryLogo from '../Common/GloryLogo';
 
 export default function DesktopSidebar({ 
   currentView, 
@@ -89,29 +90,18 @@ export default function DesktopSidebar({
       
       {/* ── 1. HEADER: BRAND LOGO & NOMBRE DE EMPRESA (GLORYPOS SAAS) ── */}
       <div className="p-4 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2.5 mb-2 cursor-pointer" onClick={() => onSelectView('inicio')}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center font-black text-white shadow-md shadow-blue-500/20 group hover:scale-105 transition-transform">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="flex items-baseline">
-              <span className="text-2xl font-black tracking-tight text-slate-900">GLORY</span>
-              <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-0.5">POS</span>
-            </div>
-            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block -mt-1">
-              Cloud System
-            </span>
-          </div>
+        <div className="mb-2 cursor-pointer" onClick={() => onSelectView('inicio')}>
+          <GloryLogo size="lg" subtitleText="Cloud System" />
         </div>
         
-        {/* Nombre de la empresa en mayúsculas idéntico al screenshot */}
-        <h2 className="text-[11px] font-black uppercase tracking-tight text-slate-800 truncate leading-snug">
+        {/* Nombre de la empresa en mayúsculas */}
+        <h2 className="text-[11px] font-black uppercase tracking-tight text-[#1E2022] truncate leading-snug">
           {empresa?.nombre || 'GLORYPOS BOLIVIA S.R.L.'}
         </h2>
         <div className="flex items-center gap-1.5 mt-0.5">
           <span className="text-[10px] text-slate-400 font-mono">NIT: {empresa?.nit_ci || '8472910014'}</span>
           <span className="text-[10px] text-slate-300">•</span>
-          <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded">
+          <span className="text-[10px] font-bold text-[#FF6B35] bg-orange-50 px-1.5 py-0.2 rounded border border-orange-100">
             {empresa?.plan_tipo || 'PRO'}
           </span>
         </div>
@@ -126,7 +116,7 @@ export default function DesktopSidebar({
           onClick={() => onSelectView('inicio')}
           className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition font-bold text-left ${
             currentView === 'inicio'
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
+              ? 'bg-gradient-to-r from-[#FF6B35] to-[#ea580c] text-white shadow-md shadow-orange-500/20'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
           }`}
         >
@@ -176,7 +166,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('ventas_cotizaciones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     ['ventas_cotizaciones', 'cotizaciones'].includes(currentView)
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -208,7 +198,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('pos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'pos'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -219,7 +209,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('nuevo_comprobante')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'nuevo_comprobante'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -230,7 +220,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('ventas_comprobantes')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     ['ventas_comprobantes', 'comprobantes'].includes(currentView)
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -241,7 +231,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('ventas_notas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     ['ventas_notas', 'notas_venta'].includes(currentView)
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -252,7 +242,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('cuentas_por_cobrar')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'cuentas_por_cobrar'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -263,7 +253,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('pedidos_web')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'pedidos_web'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -274,7 +264,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('membresias')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'membresias'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -285,7 +275,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('ventas_caja')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     currentView === 'ventas_caja'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -296,7 +286,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('reporte_cajas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
                     ['reporte_cajas', 'reporte_caja'].includes(currentView)
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
+                      ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -327,7 +317,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('nueva_compra')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'nueva_compra' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'nueva_compra' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Nueva Compra
@@ -336,7 +326,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('purchases')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['purchases', 'compras'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['purchases', 'compras'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Compras
@@ -345,7 +335,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('proveedores')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'proveedores' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'proveedores' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Proveedores
@@ -375,7 +365,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('clients')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'clients' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'clients' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Directorio de Clientes
@@ -405,7 +395,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('productos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['productos', 'products'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['productos', 'products'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Productos
@@ -414,7 +404,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('combos_promociones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['combos_promociones', 'combos', 'promociones'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['combos_promociones', 'combos', 'promociones'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Combos y Promociones
@@ -423,7 +413,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('servicios')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['servicios', 'services'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['servicios', 'services'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Servicios
@@ -432,7 +422,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('categorias')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['categorias', 'categorias_marcas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['categorias', 'categorias_marcas'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Categorías
@@ -441,7 +431,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('marcas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'marcas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'marcas' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Marcas
@@ -450,7 +440,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('unidades_medida')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['unidades_medida', 'unidades'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['unidades_medida', 'unidades'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Unidades de medida
@@ -480,7 +470,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('movimientos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['movimientos', 'inventory', 'inventario', 'inventario_movimientos'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['movimientos', 'inventory', 'inventario', 'inventario_movimientos'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Movimientos
@@ -489,7 +479,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('transferencias')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['transferencias', 'inventario_transferencias'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['transferencias', 'inventario_transferencias'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Transferencias
@@ -498,7 +488,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('historial_transferencias')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['historial_transferencias', 'inventario_historial_transferencias'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['historial_transferencias', 'inventario_historial_transferencias'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Historial de transferencias
@@ -507,7 +497,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('kardex')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['kardex', 'inventario_kardex'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['kardex', 'inventario_kardex'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Kardex
@@ -537,7 +527,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('sesiones_caja')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['sesiones_caja', 'finanzas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['sesiones_caja', 'finanzas'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Caja
@@ -546,7 +536,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('ingresos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'ingresos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'ingresos' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Ingresos
@@ -555,7 +545,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('egresos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'egresos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'egresos' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Egresos
@@ -564,7 +554,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('cuentas_bancarias')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'cuentas_bancarias' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'cuentas_bancarias' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Cuentas Bancarias
@@ -573,7 +563,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('cuentas_por_cobrar_finanzas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'cuentas_por_cobrar_finanzas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'cuentas_por_cobrar_finanzas' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Cuentas por cobrar
@@ -582,7 +572,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('cuentas_por_pagar')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'cuentas_por_pagar' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'cuentas_por_pagar' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Cuentas por pagar
@@ -591,7 +581,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reportes_caja_finanzas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'reportes_caja_finanzas' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'reportes_caja_finanzas' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reportes de caja
@@ -600,7 +590,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('metodos_pago')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'metodos_pago' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'metodos_pago' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Métodos de pago
@@ -630,7 +620,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('guias_remitente')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['guias_remitente', 'guias_remision', 'guias'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['guias_remitente', 'guias_remision', 'guias'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Remitente (09)
@@ -639,7 +629,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('guias_transportista')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'guias_transportista' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'guias_transportista' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Transportista (31)
@@ -648,7 +638,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('transportistas_gre')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['transportistas_gre', 'transportistas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['transportistas_gre', 'transportistas'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Transportistas
@@ -657,7 +647,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('conductores_gre')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['conductores_gre', 'conductores'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['conductores_gre', 'conductores'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Conductores
@@ -666,7 +656,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('vehiculos_gre')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['vehiculos_gre', 'vehiculos'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['vehiculos_gre', 'vehiculos'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Vehículos
@@ -696,7 +686,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('comprobantes_pendientes')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'comprobantes_pendientes' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'comprobantes_pendientes' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Cola Offline & Contingencia
@@ -733,7 +723,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('retenciones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['retenciones', 'documentos_avanzados', 'documentos'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['retenciones', 'documentos_avanzados', 'documentos'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Retenciones
@@ -742,7 +732,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('percepciones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'percepciones' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'percepciones' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Percepciones
@@ -751,7 +741,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reversiones')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'reversiones' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'reversiones' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reversiones
@@ -781,7 +771,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('contabilidad')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'contabilidad' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'contabilidad' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Libros Oficiales SIAT/PLE
@@ -818,7 +808,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reporte_ventas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['reports', 'reportes', 'reporte_ventas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['reports', 'reportes', 'reporte_ventas'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reporte de Ventas
@@ -827,7 +817,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reporte_productos')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'reporte_productos' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'reporte_productos' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reporte de Productos
@@ -836,7 +826,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('ventas_por_producto')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['ventas_por_producto', 'reporte_ventas_producto'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['ventas_por_producto', 'reporte_ventas_producto'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Ventas por Producto
@@ -845,7 +835,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reporte_compras')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'reporte_compras' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'reporte_compras' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reporte de Compras
@@ -854,7 +844,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reporte_notas')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['reporte_notas', 'notas_credito_debito'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['reporte_notas', 'notas_credito_debito'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Notas de Crédito & Débito
@@ -863,7 +853,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reporte_kardex')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'reporte_kardex' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'reporte_kardex' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reporte de Kardex
@@ -872,7 +862,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('reporte_caja')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['reporte_caja', 'reporte_cajas'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['reporte_caja', 'reporte_cajas'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Reporte de Caja
@@ -910,7 +900,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('admin_usuarios')}
                   className={`w-full flex items-center gap-2 text-left px-2.5 py-1.5 rounded-lg text-[11px] transition ${
                     ['admin_usuarios', 'usuarios'].includes(currentView)
-                      ? 'bg-[#10b981] text-white font-bold shadow-xs'
+                      ? 'bg-[#FF6B35] text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
@@ -922,7 +912,7 @@ export default function DesktopSidebar({
                   onClick={() => onSelectView('roles_permisos')}
                   className={`w-full flex items-center gap-2 text-left px-2.5 py-1.5 rounded-lg text-[11px] transition ${
                     ['roles_permisos', 'admin_roles'].includes(currentView)
-                      ? 'bg-[#10b981] text-white font-bold shadow-xs'
+                      ? 'bg-[#FF6B35] text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
@@ -941,7 +931,7 @@ export default function DesktopSidebar({
             onClick={() => onSelectView('modulos')}
             className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition text-left ${
               currentView === 'modulos'
-                ? 'bg-[#10b981] text-white font-bold shadow-xs'
+                ? 'bg-[#FF6B35] text-white font-bold shadow-xs'
                 : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
@@ -970,7 +960,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('tienda_virtual')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['tienda_virtual', 'catalogo_online', 'tienda', 'ecommerce'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['tienda_virtual', 'catalogo_online', 'tienda', 'ecommerce'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Tienda Virtual (Ecommerce)
@@ -979,7 +969,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('pedidos_web')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    ['pedidos_web', 'pedidosweb'].includes(currentView) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    ['pedidos_web', 'pedidosweb'].includes(currentView) ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Pedidos Web
@@ -1009,7 +999,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('restaurante')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'restaurante' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'restaurante' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Mesas, Salones & Comandas
@@ -1039,7 +1029,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('farmacia')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'farmacia' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'farmacia' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Control de Lotes & Vencimientos
@@ -1069,7 +1059,7 @@ export default function DesktopSidebar({
                   type="button"
                   onClick={() => onSelectView('hoteles')}
                   className={`w-full text-left px-2 py-1.5 rounded-lg text-[11px] transition ${
-                    currentView === 'hoteles' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+                    currentView === 'hoteles' ? 'bg-[#FF6B35]/10 text-[#E85B28] font-bold' : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   • Habitaciones & Check-in
@@ -1084,7 +1074,7 @@ export default function DesktopSidebar({
       {/* ── 3. FOOTER DEL MENÚ LATERAL ── */}
       <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-[#FF6B35] text-white font-bold text-xs flex items-center justify-center shrink-0">
             {currentUser?.nombre?.charAt(0) || 'U'}
           </div>
           <div className="min-w-0">
@@ -1106,3 +1096,5 @@ export default function DesktopSidebar({
     </aside>
   );
 }
+
+

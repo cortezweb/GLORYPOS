@@ -235,7 +235,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
         <SalesSubNav currentSubView="pedidos_web" onSelectSubView={onSelectSubView} />
       )}
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* 1. CABECERA: TÍTULO, SUBTÍTULO & SELECTOR DE ESTADOS                */}
@@ -316,7 +316,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
                           <button
                             type="button"
                             onClick={() => setExpandedOrderId(isExpanded ? null : ord.id)}
-                            className="text-[#00a650] hover:text-emerald-700 font-bold text-xs inline-flex items-center gap-1 cursor-pointer"
+                            className="text-[#FF6B35] hover:text-[#E85B28] font-bold text-xs inline-flex items-center gap-1 cursor-pointer"
                           >
                             <span>{itemsCount} {itemsCount === 1 ? 'producto' : 'productos'}</span>
                             <span className="text-[10px]">▼</span>
@@ -336,8 +336,8 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
                               onChange={e => handleUpdateStatus(ord.id, e.target.value)}
                               className={`appearance-none pl-3 pr-7 py-1 rounded-full text-xs font-semibold focus:outline-none cursor-pointer border ${
                                 isCerrado
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                                  : 'bg-blue-50/70 text-blue-600 border-blue-200'
+                                  ? 'bg-[#FF6B35]/10 text-[#E85B28] border-[#FF6B35]/30'
+                                  : 'bg-[#FF6B35]/10/70 text-[#FF6B35] border-blue-200'
                               }`}
                             >
                               <option value="Nuevo">Nuevo</option>
@@ -345,7 +345,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
                               <option value="Cerrado">Cerrado</option>
                             </select>
                             <ChevronDown className={`w-3 h-3 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none ${
-                              isCerrado ? 'text-emerald-500' : 'text-blue-400'
+                              isCerrado ? 'text-[#FF6B35]' : 'text-blue-400'
                             }`} />
                           </div>
                         </td>
@@ -368,7 +368,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
                                 window.open(`https://wa.me/${ord.telefono?.replace(/\D/g, '')}?text=${msg}`, '_blank');
                               }}
                               title="Contactar por WhatsApp"
-                              className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 rounded-lg transition"
+                              className="p-1.5 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 border border-slate-200 rounded-lg transition"
                             >
                               <Share2 className="w-3.5 h-3.5" />
                             </button>
@@ -388,9 +388,9 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
                               type="button"
                               onClick={() => handleConvertToPos(ord)}
                               title="Cargar productos al POS y emitir comprobante"
-                              className="px-2.5 py-1 text-emerald-700 hover:bg-emerald-50 border border-slate-200 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition cursor-pointer"
+                              className="px-2.5 py-1 text-[#E85B28] hover:bg-[#FF6B35]/10 border border-slate-200 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition cursor-pointer"
                             >
-                              <FileText className="w-3 h-3 text-emerald-600" />
+                              <FileText className="w-3 h-3 text-[#FF6B35]" />
                               <span>Convertir</span>
                             </button>
 
@@ -477,7 +477,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
                     handleConvertToPos(detailModalOrder);
                     setDetailModalOrder(null);
                   }}
-                  className="flex-1 py-2 bg-[#00a650] hover:bg-emerald-700 text-white font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   <span>Convertir a Venta POS</span>
@@ -491,3 +491,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenPosWithCart, hid
     </div>
   );
 }
+
+
+
+

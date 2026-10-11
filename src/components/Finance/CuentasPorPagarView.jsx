@@ -183,13 +183,13 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
               placeholder="Buscar proveedor o comprobante"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650] transition w-48 sm:w-60"
+              className="pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition w-48 sm:w-60"
             />
           </div>
 
           <button
             onClick={() => setIsNewModalOpen(true)}
-            className="px-4 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 whitespace-nowrap active:scale-95"
+            className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 whitespace-nowrap active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Registrar cuenta por pagar</span>
@@ -249,7 +249,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
           </div>
           <button
             onClick={() => setIsNewModalOpen(true)}
-            className="mt-2 px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200/60 transition flex items-center gap-1.5"
+            className="mt-2 px-4 py-2 text-xs font-bold text-[#E85B28] bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 rounded-xl border border-[#FF6B35]/20/60 transition flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Agregar primera cuenta por pagar</span>
@@ -298,7 +298,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
                     <td className="py-3 px-3 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">
                       S/ {Number(c.total).toFixed(2)}
                     </td>
-                    <td className="py-3 px-3 text-right font-mono text-emerald-600 font-semibold whitespace-nowrap">
+                    <td className="py-3 px-3 text-right font-mono text-[#FF6B35] font-semibold whitespace-nowrap">
                       S/ {Number(c.pagado).toFixed(2)}
                     </td>
                     <td className={`py-3 px-3 text-right font-mono font-black whitespace-nowrap ${
@@ -330,7 +330,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
             <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#00a650] text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6B35] text-white flex items-center justify-center font-bold">
                   <CreditCard className="w-5 h-5" />
                 </div>
                 <div>
@@ -355,7 +355,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
                   placeholder="Ej. Distribuidora del Valle S.A.C."
                   value={formProveedor}
                   onChange={(e) => setFormProveedor(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-[#00a650]/20 focus:border-[#00a650]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]"
                   autoFocus
                 />
               </div>
@@ -418,7 +418,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#00a650] hover:bg-[#009245] text-white rounded-xl font-bold shadow-sm"
+                  className="px-5 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white rounded-xl font-bold shadow-sm"
                 >
                   Guardar Cuenta
                 </button>
@@ -532,10 +532,13 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#FFB627]" />
           <span>{toastMsg}</span>
         </div>
       )}
     </div>
   );
 }
+
+
+

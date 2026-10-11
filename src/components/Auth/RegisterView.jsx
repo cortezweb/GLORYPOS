@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { playCashChime } from '../../utils/audio';
 import { tenantService, slugify } from '../../services/tenantService';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import GloryLogo from '../Common/GloryLogo';
 
 const RUBROS = [
   { id: 'ABARROTES', label: 'Minimarket / Abarrotes', emoji: '🏪' },
@@ -123,7 +124,7 @@ export default function RegisterView({ onGoToLogin }) {
         pin: hashedPin,
         pin_hash: hashedPin,
         rol: 'ADMIN',
-        color: 'from-emerald-600 to-teal-600',
+        color: 'from-[#FF6B35] to-[#E85B28]',
         activo: true,
         created_at: new Date().toISOString(),
       };
@@ -157,29 +158,21 @@ export default function RegisterView({ onGoToLogin }) {
     msg ? <p className="text-[11px] text-rose-500 font-medium mt-1">{msg}</p> : null;
 
   const inputClass = (hasError) =>
-    `w-full px-3 py-2.5 text-sm rounded-xl border ${hasError ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-white'} text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition`;
+    `w-full px-3 py-2.5 text-sm rounded-xl border ${hasError ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-white'} text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30 transition`;
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950 flex flex-col justify-between p-4 sm:p-6 text-slate-100 antialiased select-none">
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#1E2022] via-[#2a2d30] to-[#1E2022] flex flex-col justify-between p-4 sm:p-6 text-slate-100 antialiased select-none">
 
       {/* Top Bar */}
       <header className="max-w-lg mx-auto w-full flex items-center justify-between pt-2">
-        <div className="flex items-center space-x-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-[#712ae2] flex items-center justify-center font-black text-white text-base shadow-md">
-            GP
-          </div>
-          <div>
-            <span className="text-lg font-black tracking-tight text-white">
-              GLORY<span className="text-violet-400">POS</span>
-            </span>
-            <p className="text-[10px] text-slate-400 font-medium">Registro de Negocio</p>
-          </div>
+        <div className="bg-white/95 rounded-xl px-2.5 py-1">
+          <GloryLogo size="sm" subtitleText="Registro SaaS" />
         </div>
         <button
           type="button"
           onClick={onGoToLogin}
-          className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition"
+          className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Ya tengo cuenta
         </button>
@@ -194,11 +187,11 @@ export default function RegisterView({ onGoToLogin }) {
             {[1, 2, 3].map((s) => (
               <React.Fragment key={s}>
                 <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition
-                  ${step >= s ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                  ${step >= s ? 'bg-[#FF6B35] text-white' : 'bg-slate-100 text-slate-400'}`}>
                   {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
                 </div>
                 {s < 3 && (
-                  <div className={`flex-1 h-1 rounded-full transition ${step > s ? 'bg-blue-600' : 'bg-slate-100'}`} />
+                  <div className={`flex-1 h-1 rounded-full transition ${step > s ? 'bg-[#FF6B35]' : 'bg-slate-100'}`} />
                 )}
               </React.Fragment>
             ))}
@@ -209,7 +202,7 @@ export default function RegisterView({ onGoToLogin }) {
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-blue-600" /> Datos de tu Negocio
+                  <Building2 className="w-5 h-5 text-[#FF6B35]" /> Datos de tu Negocio
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">Paso 1 de 3 — Configura tu empresa</p>
               </div>
@@ -242,7 +235,7 @@ export default function RegisterView({ onGoToLogin }) {
                   <label className="text-xs font-bold text-slate-600 block mb-1">
                     Subdominio / Identificador de tu Empresa *
                   </label>
-                  <div className={`flex items-center rounded-xl border ${errors.slug ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-slate-50'} overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500/30 transition`}>
+                  <div className={`flex items-center rounded-xl border ${errors.slug ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-slate-50'} overflow-hidden focus-within:ring-2 focus-within:ring-[#FF6B35]/30 transition`}>
                     <span className="pl-3 text-slate-400 text-xs font-mono select-none">https://</span>
                     <input
                       type="text"
@@ -274,8 +267,8 @@ export default function RegisterView({ onGoToLogin }) {
                         onClick={() => { setNegocio(p => ({ ...p, rubro: r.id })); setErrors(prev => ({ ...prev, rubro: null })); }}
                         className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition
                           ${negocio.rubro === r.id
-                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-blue-50/50'}`}
+                            ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-[#FF6B35]'
+                            : 'border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-[#FF6B35]/10'}`}
                       >
                         <span>{r.emoji}</span> {r.label}
                       </button>
@@ -341,7 +334,7 @@ export default function RegisterView({ onGoToLogin }) {
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <User className="w-5 h-5 text-blue-600" /> Cuenta del Administrador
+                  <User className="w-5 h-5 text-[#FF6B35]" /> Cuenta del Administrador
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">Paso 2 de 3 — Tus credenciales de acceso</p>
               </div>
@@ -402,9 +395,9 @@ export default function RegisterView({ onGoToLogin }) {
                   <FieldError msg={errors.adminConfirm} />
                 </div>
 
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700">
+                <div className="bg-[#FF6B35]/10 border border-blue-100 rounded-xl p-3 text-xs text-[#FF6B35]">
                   <p className="font-bold">🔒 Tu PIN táctil inicial será: <span className="font-mono text-blue-900">1234</span></p>
-                  <p className="text-blue-500 mt-0.5">Puedes cambiarlo después desde Administración → Usuarios.</p>
+                  <p className="text-[#FF6B35] mt-0.5">Puedes cambiarlo después desde Administración → Usuarios.</p>
                 </div>
               </div>
             </div>
@@ -415,7 +408,7 @@ export default function RegisterView({ onGoToLogin }) {
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-500" /> ¡Todo listo!
+                  <Sparkles className="w-5 h-5 text-[#FF6B35]" /> ¡Todo listo!
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">Paso 3 de 3 — Confirma tu registro</p>
               </div>
@@ -437,9 +430,9 @@ export default function RegisterView({ onGoToLogin }) {
               </div>
 
               {/* Trial info */}
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3">
-                <p className="text-sm font-black text-emerald-700">🎉 Trial gratuito de 30 días activado</p>
-                <p className="text-xs text-emerald-600 mt-0.5">Acceso completo a todos los módulos sin costo. Luego elige tu plan.</p>
+              <div className="bg-[#FF6B35]/10 border border-[#FF6B35]/20 rounded-2xl px-4 py-3">
+                <p className="text-sm font-black text-[#E85B28]">🎉 Trial gratuito de 30 días activado</p>
+                <p className="text-xs text-[#FF6B35] mt-0.5">Acceso completo a todos los módulos sin costo. Luego elige tu plan.</p>
               </div>
 
               {errors.submit && (
@@ -465,7 +458,7 @@ export default function RegisterView({ onGoToLogin }) {
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-black transition"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl bg-[#FF6B35] hover:bg-[#ea580c] active:bg-[#c2410c] text-white text-sm font-black transition shadow-md shadow-orange-500/25"
               >
                 Siguiente <ChevronRight className="w-4 h-4" />
               </button>
@@ -474,7 +467,7 @@ export default function RegisterView({ onGoToLogin }) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-black transition disabled:opacity-60"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-[#00B574] hover:bg-[#009c63] active:bg-[#E85B28] text-white text-sm font-black transition disabled:opacity-60 shadow-md shadow-[#FF6B35]/30"
               >
                 {isSubmitting ? (
                   <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Registrando...</>
@@ -496,3 +489,9 @@ export default function RegisterView({ onGoToLogin }) {
     </div>
   );
 }
+
+
+
+
+
+

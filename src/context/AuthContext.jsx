@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { db, initDatabase } from '../db/dexie';
+import { db, initDatabase, switchTenantDatabase } from '../db/dexie';
 import { hashText } from '../utils/crypto';
 import { tenantService } from '../services/tenantService';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { syncService } from '../services/syncService';
 
 const AuthContext = createContext();
 
@@ -21,11 +23,14 @@ export function AuthProvider({ children }) {
     setTenantError(null);
 
     try {
-      await initDatabase();
-
-      // 1. Resolver el slug del tenant
+      // 1. Resolver el slug del tenant activo
       const activeSlug = forcedSlug || tenantService.getActiveTenantSlug();
       setTenantSlugState(activeSlug);
+
+      // Activar la base de datos Dexie aislada para este tenant
+      await switchTenantDatabase(activeSlug);
+      syncService.setupDexieSyncHooks(true);
+      await initDatabase(activeSlug);
 
       // 2. Cargar datos del inquilino (Supabase -> Dexie)
       const tenant = await tenantService.getTenantBySlug(activeSlug);
@@ -72,12 +77,33 @@ export function AuthProvider({ children }) {
     loadData();
   }, [loadData]);
 
-  // Cambiar de inquilino / empresa en caliente (Multi-Tenant GLORYPOS)
+  // Listener para sincronizar estado de Supabase Auth
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('glorypos_user_session');
+        setCurrentUser(null);
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  // Cambiar de inquilino / empresa en caliente con aislamiento de base de datos local
   const switchTenant = async (newSlug) => {
     if (!newSlug || newSlug.trim() === '') return { success: false, error: 'Ingresa un identificador' };
     const clean = newSlug.trim().toLowerCase();
     tenantService.setActiveTenantSlug(clean);
     setTenantSlugState(clean);
+
+    // Cambiar Dexie a la base de datos aislada GloryPosDB_<slug>
+    await switchTenantDatabase(clean);
+    syncService.setupDexieSyncHooks(true);
+    await initDatabase(clean);
 
     const tenant = await tenantService.getTenantBySlug(clean);
     if (!tenant) {
@@ -98,7 +124,7 @@ export function AuthProvider({ children }) {
     return { success: true, empresa: tenant };
   };
 
-  // Iniciar sesión con PIN táctil (4 dígitos) — compara hash SHA-256
+  // Iniciar sesión con PIN táctil (4 dígitos) — cajeros rápidos con hash SHA-256
   const loginWithPin = async (pin, specificUserId = null) => {
     if (!pin) return { success: false, error: 'Ingresa un PIN' };
 
@@ -108,7 +134,6 @@ export function AuthProvider({ children }) {
     if (specificUserId) {
       user = usuarios.find(u => u.id === specificUserId && (u.pin === hashedPin || u.pin_hash === hashedPin));
       if (!user) {
-        // Buscar en db local
         const target = await db.usuarios.get(specificUserId);
         if (target && (target.pin === hashedPin || target.pin_hash === hashedPin)) {
           user = target;
@@ -127,22 +152,62 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Iniciar sesión con Correo / Usuario y Contraseña — compara hash SHA-256
+  // Iniciar sesión con Correo / Usuario y Contraseña (Supabase Auth con Fallback Offline)
   const loginWithCredentials = async (identifier, password) => {
     if (!identifier || !password) {
       return { success: false, error: 'Completa todos los campos' };
     }
 
     const term = identifier.trim().toLowerCase();
+    const isEmail = term.includes('@');
+
+    // 1. Supabase Auth en la nube si hay conexión
+    if (isSupabaseConfigured && navigator.onLine && supabase && isEmail) {
+      try {
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email: term,
+          password: password,
+        });
+
+        if (!authError && authData?.user) {
+          let matchedUser = usuarios.find(u => u.email?.toLowerCase() === term);
+          if (!matchedUser) {
+            matchedUser = await db.usuarios.where('email').equalsIgnoreCase(term).first();
+          }
+
+          if (matchedUser) {
+            localStorage.setItem('glorypos_user_session', JSON.stringify(matchedUser));
+            setCurrentUser(matchedUser);
+            return { success: true, user: matchedUser, session: authData.session };
+          } else {
+            // Perfil inicial en el tenant si se autenticó exitosamente
+            const newAdminUser = {
+              id: authData.user.id,
+              empresa_id: empresa?.id || 'empresa_activa',
+              email: authData.user.email,
+              nombre: authData.user.user_metadata?.nombre || term.split('@')[0],
+              rol: 'ADMIN',
+              activo: true,
+              created_at: new Date().toISOString()
+            };
+            await db.usuarios.put(newAdminUser);
+            localStorage.setItem('glorypos_user_session', JSON.stringify(newAdminUser));
+            setCurrentUser(newAdminUser);
+            return { success: true, user: newAdminUser, session: authData.session };
+          }
+        }
+      } catch (cloudAuthErr) {
+        console.warn('[AuthContext] Supabase Auth falló o no respondió, usando verificación local:', cloudAuthErr);
+      }
+    }
+
+    // 2. Fallback offline o login por nombre de usuario con hash SHA-256
     const hashedPwd = await hashText(password);
-    
-    // Buscar usuario en la lista del tenant activo
     let user = usuarios.find(
       u => (u.email?.toLowerCase() === term || u.nombre?.toLowerCase() === term) &&
            (u.password === hashedPwd || u.password_hash === hashedPwd)
     );
 
-    // Fallback a Dexie si aún no estaba en memoria
     if (!user) {
       const allUsers = await db.usuarios.toArray();
       user = allUsers.find(
@@ -156,12 +221,60 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       return { success: true, user };
     } else {
-      return { success: false, error: 'Credenciales inválidas. Revisa correo y clave.' };
+      return { success: false, error: 'Credenciales inválidas. Revisa correo/usuario y clave.' };
     }
   };
 
+  // Registrar usuario en Supabase Auth y en Dexie local
+  const signUpWithCredentials = async (email, password, nombre = '', rol = 'CAJERO') => {
+    if (!email || !password) return { success: false, error: 'Correo y clave requeridos' };
+    const cleanEmail = email.trim().toLowerCase();
+    const hashedPwd = await hashText(password);
+    const newUserId = `usr-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+
+    if (isSupabaseConfigured && navigator.onLine && supabase) {
+      try {
+        await supabase.auth.signUp({
+          email: cleanEmail,
+          password: password,
+          options: {
+            data: {
+              nombre: nombre || cleanEmail.split('@')[0],
+              empresa_id: empresa?.id || 'empresa_activa',
+              rol: rol
+            }
+          }
+        });
+      } catch (err) {
+        console.warn('[AuthContext] Error registrando en Supabase Auth:', err);
+      }
+    }
+
+    const newUser = {
+      id: newUserId,
+      empresa_id: empresa?.id || 'empresa_activa',
+      email: cleanEmail,
+      nombre: nombre || cleanEmail.split('@')[0],
+      password: hashedPwd,
+      password_hash: hashedPwd,
+      rol: rol,
+      activo: true,
+      created_at: new Date().toISOString()
+    };
+    await db.usuarios.put(newUser);
+    setUsuarios(prev => [...prev.filter(u => u.id !== newUserId), newUser]);
+    return { success: true, user: newUser };
+  };
+
   // Cerrar sesión
-  const logout = () => {
+  const logout = async () => {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.auth.signOut();
+      } catch (err) {
+        console.warn('[AuthContext] Error cerrando sesión en Supabase:', err);
+      }
+    }
     localStorage.removeItem('glorypos_user_session');
     setCurrentUser(null);
   };
@@ -240,6 +353,7 @@ export function AuthProvider({ children }) {
         switchTenant,
         loginWithPin,
         loginWithCredentials,
+        signUpWithCredentials,
         logout,
         switchUser,
         updateEmpresa,
