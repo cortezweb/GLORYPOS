@@ -7,9 +7,10 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
+import { restaurantService } from '../../services/restaurantService';
 
 export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
-  const { items, total, count, clearCart } = useCart();
+  const { items, total, count, clearCart, comandaEnCobro } = useCart();
   const { empresa } = useAuth();
 
   const isPlanPro = empresa?.plan_tipo === 'PRO';
@@ -132,32 +133,19 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
         cambio: metodoPago === 'EFECTIVO' ? cambio : 0,
         estado_siat: docTipo === 'FACTURA' ? (isPlanPro ? 'EMITIDA_ONLINE_SIAT' : 'EMITIDA_OFFLINE_PROCESANDO') : 'NO_APLICA',
         cuf: docTipo === 'FACTURA' ? `CUF-GLORY-${Date.now()}-BOL` : null,
-        items: [...items]
+        items: [...items],
+        comanda_id: comandaEnCobro?.comandaId || null,
+        mesa: comandaEnCobro?.mesa || null
       };
 
       await db.ventas.add(venta);
 
-      // Descontar inventario local con redondeo seguro de 3 decimales (balanza/kilos/unidades)
-      for (const item of items) {
-        const prod = await db.productos_tienda.get(item.productId);
-        if (prod) {
-          const nuevoStock = Math.max(0, Math.round(((prod.stock_actual || 0) - item.cantidad) * 1000) / 1000);
-          await db.productos_tienda.update(item.productId, { stock_actual: nuevoStock });
+      // Descontar inventario local (platos con receta descuentan sus insumos; ver restaurantService)
+      await restaurantService.descontarInventarioVenta(items, venta.correlativo);
 
-          if (db.kardex) {
-            await db.kardex.add({
-              id: `kdx-${Date.now()}-${item.productId}`,
-              fecha: new Date().toISOString(),
-              producto_id: item.productId,
-              producto_nombre: item.nombre,
-              tipo: 'SALIDA',
-              cantidad: item.cantidad,
-              motivo: `Venta POS (${venta.correlativo})`,
-              saldo_nuevo: nuevoStock,
-              costo_unitario: prod.precio_compra || (prod.precio_venta * 0.8)
-            });
-          }
-        }
+      // GLORYCHEF: marcar los platos cobrados y liberar la mesa si la cuenta quedó saldada
+      if (comandaEnCobro?.comandaId) {
+        await restaurantService.registrarPago(comandaEnCobro.comandaId, comandaEnCobro.itemIds || [], venta);
       }
 
       // Update client stats

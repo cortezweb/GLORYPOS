@@ -19,6 +19,8 @@ import BarcodeScannerModal from './components/POS/BarcodeScannerModal';
 import UndoToast from './components/POS/UndoToast';
 import LockTerminalModal from './components/POS/LockTerminalModal';
 import { useBarcodeGunScanner } from './hooks/useBarcodeGunScanner';
+import { useModules } from './hooks/useModules';
+import { getModuleForView, getModuleLabel } from './config/modules';
 
 import ProductsView from './components/Products/ProductsView';
 import CategoriasMarcasView from './components/Products/CategoriasMarcasView';
@@ -73,6 +75,7 @@ import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
   const { isExpired, currentUser, isAuthenticated, loading, empresa, logout } = useAuth();
+  const { canOpenView, tiendaActiva } = useModules();
 
   // Navigation State (Por defecto inicia en la vista Inicio)
   const [currentView, setCurrentView] = useState('inicio');
@@ -193,6 +196,17 @@ function MainShell() {
 
   // Ruta pública directa de Ecommerce para clientes externos (sin requerir login)
   if (isEcommerceRoute) {
+    if (!tiendaActiva) {
+      return (
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-center">
+          <div className="max-w-sm space-y-2">
+            <Store className="w-10 h-10 text-slate-400 mx-auto" />
+            <h1 className="text-lg font-black text-slate-900">Tienda en línea no disponible</h1>
+            <p className="text-sm text-slate-500">{empresa?.nombre || 'Este negocio'} aún no tiene activada su tienda en línea.</p>
+          </div>
+        </div>
+      );
+    }
     return <EcommerceStorefront isEmbedded={false} />;
   }
 
@@ -262,6 +276,26 @@ function MainShell() {
         ) : (
           <div className="flex-1 overflow-y-auto pb-20 lg:pb-8">
             <div className="max-w-7xl mx-auto w-full p-2.5 sm:p-4 lg:p-6">
+              {!canOpenView(currentView) ? (
+                <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 space-y-4 shadow-sm">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+                    <AlertCircle className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">Módulo no contratado</h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      El módulo <strong className="text-slate-700">{getModuleLabel(getModuleForView(currentView))}</strong> no está activo para {empresa?.nombre || 'esta empresa'}. Solicita su activación al administrador de GLORYPOS.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setCurrentView('inicio')}
+                    className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs rounded-xl shadow-md"
+                  >
+                    Volver al inicio
+                  </button>
+                </div>
+              ) : (
+              <>
               {/* Ventas Sub-Windows (Soporta múltiples alias para evitar pantallas en blanco) */}
               {['ventas_comprobantes', 'comprobantes', 'sales'].includes(currentView) && (
                 <ComprobantesView 
@@ -459,7 +493,13 @@ function MainShell() {
 
               {/* Módulos Especializados */}
               {['contabilidad'].includes(currentView) && <ContabilidadView />}
-              {['restaurante'].includes(currentView) && <RestauranteView onSelectSubView={(v) => setCurrentView(v)} />}
+              {['restaurante', 'chef_mesas', 'chef_pedidos', 'chef_cocina', 'chef_carta', 'chef_reportes', 'chef_config'].includes(currentView) && (
+                <RestauranteView
+                  currentView={currentView}
+                  onSelectSubView={(v) => setCurrentView(v)}
+                  onOpenCheckout={() => setIsCheckoutOpen(true)}
+                />
+              )}
               {['farmacia'].includes(currentView) && <FarmaciaView />}
               {['hoteles'].includes(currentView) && <HotelesView />}
               {['comprobantes_pendientes', 'pendientes'].includes(currentView) && <ComprobantesPendientesView />}
@@ -498,7 +538,7 @@ function MainShell() {
                 'comprobantes_pendientes', 'pendientes',
                 'documentos_avanzados', 'documentos', 'retenciones', 'percepciones', 'reversiones',
                 'contabilidad',
-                'restaurante',
+                'restaurante', 'chef_mesas', 'chef_pedidos', 'chef_cocina', 'chef_carta', 'chef_reportes', 'chef_config',
                 'farmacia',
                 'hoteles',
                 'administracion', 'admin', 'configuracion', 'roles_permisos', 'admin_roles', 'usuarios', 'admin_usuarios',
@@ -521,6 +561,8 @@ function MainShell() {
                     Volver al Punto de Venta (POS)
                   </button>
                 </div>
+              )}
+              </>
               )}
             </div>
           </div>

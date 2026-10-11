@@ -7,6 +7,7 @@ import {
   ShieldCheck, LayoutGrid
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useModules } from '../../hooks/useModules';
 
 export default function Sidebar({ 
   isOpen, 
@@ -19,6 +20,7 @@ export default function Sidebar({
   currentRubro
 }) {
   const { empresa, currentUser, logout, diasRestantes, isExpired, tenantSlug } = useAuth();
+  const { hasModule, isSuperAdmin } = useModules();
 
   const [expandedMenus, setExpandedMenus] = useState({
     ventas: true,
@@ -46,23 +48,6 @@ export default function Sidebar({
     setExpandedMenus(prev => ({ ...prev, [menuId]: !prev[menuId] }));
   };
 
-  const isSuperAdmin = tenantSlug === 'admin' || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
-  const allowedModules = empresa?.modulos_activos || [
-    'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
-    'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
-    'contabilidad', 'reportes', 'administracion', 'modulos', 'tienda_virtual'
-  ];
-
-  const hasModule = (modId) => {
-    if (isSuperAdmin) return true;
-    const alwaysVisible = [
-      'preventa', 'ventas', 'compras', 'clientes', 'productos', 'inventario',
-      'finanzas', 'guias_remision', 'comprobantes_pendientes', 'documentos_avanzados',
-      'contabilidad', 'reportes', 'administracion', 'modulos'
-    ];
-    if (alwaysVisible.includes(modId)) return true;
-    return allowedModules.includes(modId);
-  };
 
   const handleNav = (view) => {
     onClose();
@@ -581,9 +566,9 @@ export default function Sidebar({
 
           {/* Restaurante */}
           {hasModule('restaurante') && (
-            <button type="button" onClick={() => handleNav('restaurante')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
+            <button type="button" onClick={() => handleNav('chef_mesas')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <UtensilsCrossed className="w-4 h-4 text-slate-500" />
-              <span>Restaurante</span>
+              <span>GLORYCHEF Restaurante</span>
             </button>
           )}
 

@@ -21,7 +21,8 @@ export default function PosView({
 
   const loadProducts = async () => {
     const list = await db.productos_tienda.toArray();
-    setProducts(list);
+    // Los insumos de cocina (GLORYCHEF) no se venden directo en el POS
+    setProducts(list.filter(p => !p.es_insumo));
     setLoading(false);
   };
 

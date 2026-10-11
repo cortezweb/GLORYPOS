@@ -8,6 +8,8 @@ export function CartProvider({ children }) {
   const [lastRemovedItem, setLastRemovedItem] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [isBumping, setIsBumping] = useState(false);
+  // GLORYCHEF: comanda (y sus ítems) que se está cobrando desde el carrito
+  const [comandaEnCobro, setComandaEnCobro] = useState(null);
 
   // Micro-vibration tactile feedback (15ms)
   const triggerHaptic = (pattern = 15) => {
@@ -162,6 +164,13 @@ export function CartProvider({ children }) {
       triggerHaptic([30, 60, 30]);
     }
     setItems([]);
+    setComandaEnCobro(null);
+  };
+
+  // Carga ítems ya armados (ej. una comanda de GLORYCHEF) reemplazando el carrito actual
+  const loadItems = (newItems, comandaInfo = null) => {
+    setItems(newItems);
+    setComandaEnCobro(comandaInfo);
   };
 
   const total = items.reduce((acc, curr) => acc + (Number(curr.subtotal) || 0), 0);
@@ -180,6 +189,8 @@ export function CartProvider({ children }) {
         lastRemovedItem,
         isBumping,
         clearCart,
+        loadItems,
+        comandaEnCobro,
         triggerHaptic,
         total,
         count

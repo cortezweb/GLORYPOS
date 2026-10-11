@@ -271,6 +271,44 @@ db.version(14).stores({
   roles: 'id, nombre, descripcion, permisos, activo',
   sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
 });
+db.version(15).stores({
+  catalogo_maestro: 'id, codigo_barras, nombre, categoria',
+  productos_tienda: 'id, maestro_id, codigo_barras, nombre, categoria, activo',
+  ventas: 'id, fecha, correlativo, tipo_documento, metodo_pago, total',
+  config_empresa: 'id, slug',
+  clientes: 'id, nit_ci, razon_social, telefono',
+  proveedores: 'id, nit, razon_social, telefono',
+  compras: 'id, fecha, proveedor_id, total',
+  cotizaciones: 'id, fecha, correlativo, cliente_nombre, estado, total',
+  movimientos_caja: 'id, fecha, tipo, monto, motivo',
+  kardex: 'id, fecha, producto_id, tipo, cantidad, motivo, saldo_nuevo',
+  usuarios: 'id, empresa_id, email, pin, rol, nombre',
+  membresias: 'id, cliente_nombre, plan_nombre, estado, proximo_cobro',
+  pedidos_web: 'id, fecha, cliente_nombre, estado, total',
+  unidades_medida: 'id, codigo, nombre, simbolo, estado',
+  transferencias_inventario: 'id, fecha, origen, destino, estado',
+  sesiones_caja: 'id, fecha_apertura, fecha_cierre, usuario, estado, saldo_actual',
+  ingresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  egresos_caja: 'id, fecha, sesion, categoria, usuario, metodo_pago, monto',
+  cuentas_bancarias: 'id, nombre, entidad, numero, tipo, saldo, estado',
+  cuentas_por_cobrar: 'id, comprobante, cliente_nombre, fecha_vencimiento, estado, saldo',
+  cuentas_por_pagar: 'id, proveedor_nombre, documento, fecha_emision, fecha_vencimiento, estado',
+  metodos_pago: 'id, nombre, codigo, destino, estado',
+  guias_remitente: 'id, fecha, guia, destinatario, estado_siat',
+  guias_transportista: 'id, fecha, guia, destinatario, estado_siat',
+  transportistas_gre: 'id, documento, nombre, mtc, estado',
+  conductores_gre: 'id, documento, nombre, licencia, telefono, estado',
+  vehiculos_gre: 'id, placa, marca, modelo, cert_habilitacion, estado',
+  retenciones: 'id, fecha, serie_nro, origen, proveedor_nombre, estado_sunat, retenido',
+  percepciones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, percibido',
+  reversiones: 'id, fecha, serie_nro, origen, sujeto_nombre, estado_sunat, monto',
+  roles: 'id, nombre, descripcion, permisos, activo',
+  // GLORYCHEF (módulo restaurante)
+  salones: 'id, nombre, orden',
+  mesas: 'id, salon_id, numero, estado',
+  comandas: 'id, numero, mesa_id, tipo, estado, fecha_apertura, fecha_cierre',
+  sync_queue: '++id, tabla, accion, registro_id, intentos, created_at, synced_at'
+});
 
 export async function initDatabase() {
   const masterCount = await db.catalogo_maestro.count();
