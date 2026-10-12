@@ -628,7 +628,7 @@ export const syncService = {
           const payload = localPedidos.map(p => ({
             id: String(p.id || `pw-${Date.now()}`),
             empresa_id: empresaId,
-            fecha: p.fecha || new Date().toISOString(),
+            fecha: p.fecha_iso || p.fecha || new Date().toISOString(),
             numero_orden: p.numero_orden || p.id,
             cliente_nombre: p.cliente_nombre || 'Cliente Web',
             telefono: p.telefono || null,
@@ -1069,7 +1069,7 @@ export const syncService = {
             const payload = localPerc.map(p => ({
               id: String(p.id),
               empresa_id: empresaId,
-              fecha: p.fecha || new Date().toISOString(),
+              fecha: p.fecha_iso || p.fecha || new Date().toISOString(),
               serie_nro: p.serie_nro || '',
               serie: p.serie || '',
               correlativo: p.correlativo || '',

@@ -12,6 +12,7 @@ import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { syncService } from '../../services/syncService';
 import PedidosWebView from '../Sales/PedidosWebView';
 import EcommerceStorefront from './EcommerceStorefront';
+import CheckoutSettingsPanel from './CheckoutSettingsPanel';
 
 const SLIDERS_STORAGE_KEY = 'glorypos_ecommerce_sliders';
 
@@ -36,7 +37,7 @@ const INITIAL_SLIDERS = [
   }
 ];
 
-export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView, onOpenPosWithCart }) {
+export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView, onOpenPosWithCart, onOpenReceipt }) {
   const { empresa } = useAuth();
   const [activeTab, setActiveTab] = useState(initialTab === 'pedidos' ? 'pedidos' : 'tienda');
   const [products, setProducts] = useState([]);
@@ -98,18 +99,10 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
   // Cargar conteo de pedidos web
   useEffect(() => {
     const updateCount = () => {
-      const saved = localStorage.getItem('glorypos_pedidos_web_v2');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            const nuevos = parsed.filter(p => p.estado === 'Nuevo').length;
-            setPedidosCount({ total: parsed.length, nuevos });
-          }
-        } catch {
-          // ignore
-        }
-      }
+      db.pedidos_web.toArray().then(lista => {
+        const nuevos = lista.filter(p => p.estado === 'NUEVO' || p.estado === 'Nuevo').length;
+        setPedidosCount({ total: lista.length, nuevos });
+      }).catch(() => {});
     };
     updateCount();
     window.addEventListener('glorypos_order_created', updateCount);
@@ -212,6 +205,18 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
             >
               <SlidersHorizontal className="w-4 h-4" />
               <span>Banners & Catálogo</span>
+            </button>
+
+            {/* Pestaña: Envíos, pagos y comprobante del checkout */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('envios')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTab === 'envios' ? 'bg-[#1E2022] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Settings className="w-4 h-4" />
+              <span>Envíos & Pagos</span>
             </button>
 
             {/* Pestaña 3: Pedidos Web */}
@@ -505,12 +510,15 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
         </div>
       )}
 
+      {activeTab === 'envios' && <CheckoutSettingsPanel />}
+
       {/* PESTAÑA 3: PEDIDOS WEB INTEGRADOS */}
       {activeTab === 'pedidos' && (
         <PedidosWebView 
           hideSubNav={true} 
           onOpenPosWithCart={onOpenPosWithCart}
           onSelectSubView={onSelectView}
+          onOpenReceipt={onOpenReceipt}
         />
       )}
 

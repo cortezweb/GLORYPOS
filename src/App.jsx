@@ -332,6 +332,7 @@ function MainShell() {
                 <PedidosWebView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenPosWithCart={() => setCurrentView('pos')} 
+                  onOpenReceipt={(venta) => setActiveTicketSale(venta)}
                 />
               )}
               {['cuentas_por_cobrar', 'cuentas_cobrar', 'creditos', 'ventas_cuentas_cobrar'].includes(currentView) && (
@@ -433,6 +434,7 @@ function MainShell() {
                   initialTab="tienda"
                   onSelectView={(v) => setCurrentView(v)}
                   onOpenPosWithCart={() => setCurrentView('pos')}
+                  onOpenReceipt={(venta) => setActiveTicketSale(venta)}
                 />
               )}
               {['finanzas', 'sesiones_caja', 'ingresos', 'egresos', 'cuentas_bancarias', 'cuentas_por_cobrar_finanzas', 'cuentas_por_pagar', 'reportes_caja_finanzas', 'metodos_pago'].includes(currentView) && (

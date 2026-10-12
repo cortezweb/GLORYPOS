@@ -10,8 +10,8 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { syncService } from '../../services/syncService';
 import GloryLogo from '../Common/GloryLogo';
+import CheckoutDrawer from './CheckoutDrawer';
 import { restaurantService } from '../../services/restaurantService';
-import { empresaHasModule, GLORYCHEF_MODULE_ID } from '../../config/modules';
 
 const CART_STORAGE_KEY = 'glorypos_ecommerce_cart';
 const SETTINGS_STORAGE_KEY = 'glorypos_ecommerce_settings';
@@ -43,6 +43,8 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
   
   // Data States
   const [products, setProducts] = useState([]);
+  // Todos los productos (incluye insumos) para calcular la disponibilidad de platos con receta
+  const [allById, setAllById] = useState({});
   const [loading, setLoading] = useState(true);
   const [sliders, setSliders] = useState(DEFAULT_SLIDERS);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -66,12 +68,8 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [modalQuantity, setModalQuantity] = useState(1);
 
-  // Checkout Form States
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [cartBump, setCartBump] = useState(false);
 
   // 1. Cargar Configuración y Sliders
   useEffect(() => {
@@ -114,6 +112,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
         }
 
         const activeList = (list || []).filter(p => p.activo !== false && !p.es_insumo);
+        setAllById(Object.fromEntries((list || []).map(p => [p.id, p])));
         setProducts(activeList);
 
         // Calcular límites de precio
@@ -214,6 +213,8 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
       }];
     });
     showToast(`¡"${product.nombre}" agregado al carrito!`);
+    setCartBump(true);
+    setTimeout(() => setCartBump(false), 450);
   };
 
   const handleUpdateQuantity = (productId, delta) => {
@@ -237,162 +238,12 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
     setModalQuantity(1);
   };
 
-  // Enviar Pedido a WhatsApp y Guardar en GLORYPOS
-  const handleSendOrderWhatsApp = async () => {
-    if (cart.length === 0) return;
-    if (!customerName.trim()) {
-      alert('Por favor, ingresa tu nombre para procesar el pedido.');
-      return;
-    }
-    if (!customerPhone.trim()) {
-      alert('Por favor, ingresa tu número de celular o WhatsApp de contacto.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const orderNumber = 'PW-' + Math.floor(1000 + Math.random() * 9000);
-      const newOrder = {
-        id: 'pw-' + Date.now(),
-        numero_orden: orderNumber,
-        fecha: new Date().toLocaleString('es-BO'),
-        cliente_nombre: customerName.trim(),
-        telefono: customerPhone.trim(),
-        direccion: customerAddress.trim() || 'Coordinar con el cliente',
-        total: cartTotalPrice,
-        estado: 'Nuevo',
-        items: cart.map(item => ({
-          producto_id: item.id,
-          nombre: item.nombre,
-          cantidad: item.cantidad,
-          precio: item.precio,
-          subtotal: item.cantidad * item.precio
-        }))
-      };
-
-      // 1. Guardar en Dexie pedidos_web
-      try {
-        if (db.pedidos_web) {
-          await db.pedidos_web.put(newOrder);
-        }
-      } catch (dxErr) {
-        console.warn('Error guardando pedido en Dexie:', dxErr);
-      }
-
-      // 1b. GLORYCHEF: si el restaurante también tiene el módulo, el pedido entra a cocina como delivery
-      if (empresaHasModule(empresa, GLORYCHEF_MODULE_ID)) {
-        try {
-          await restaurantService.crearComandaDesdeTienda(newOrder);
-        } catch (chefErr) {
-          console.warn('Error enviando pedido web a GLORYCHEF:', chefErr);
-        }
-      }
-
-      // 2. Guardar en la lista persistente de Pedidos Web de GLORYPOS (localStorage)
-      const existingSaved = localStorage.getItem('glorypos_pedidos_web_v2');
-      let orderList = [];
-      if (existingSaved) {
-        try { orderList = JSON.parse(existingSaved); } catch { orderList = []; }
-      }
-      orderList.unshift(newOrder);
-      localStorage.setItem('glorypos_pedidos_web_v2', JSON.stringify(orderList));
-
-      // 3. Sincronizar directamente con Supabase
-      if (isSupabaseConfigured && supabase) {
-        const empresaId = empresa?.id || 'empresa_activa';
-        
-        // 3a. Intentar guardar en pedidos_web
-        supabase.from('pedidos_web').upsert({
-          id: newOrder.id,
-          empresa_id: empresaId,
-          fecha: new Date().toISOString(),
-          cliente_nombre: newOrder.cliente_nombre,
-          telefono: newOrder.telefono,
-          total: Number(newOrder.total) || 0,
-          estado: 'Nuevo',
-          items: newOrder.items
-        }).then(({ error: pwErr }) => {
-          if (pwErr) {
-            console.warn('[Ecommerce] Tabla pedidos_web pendiente en Supabase:', pwErr.message);
-          }
-        }).catch(() => {});
-
-        // 3b. También reflejar en la tabla 'ventas' existente como tipo_documento = 'PEDIDO_WEB'
-        // para que se refleje inmediatamente en el Dashboard de Supabase
-        supabase.from('ventas').upsert({
-          id: `vta-${newOrder.id}`,
-          empresa_id: empresaId,
-          fecha: new Date().toISOString(),
-          correlativo: orderNumber,
-          tipo_documento: 'PEDIDO_WEB',
-          serie: 'WEB01',
-          cliente_nombre: newOrder.cliente_nombre,
-          cliente_ci_nit: newOrder.telefono,
-          metodo_pago: 'WHATSAPP',
-          subtotal: Number(newOrder.total) || 0,
-          total: Number(newOrder.total) || 0,
-          monto_recibido: 0,
-          cambio: 0,
-          estado_siat: 'NO_APLICA',
-          items: newOrder.items
-        }).then(({ error: vtaErr }) => {
-          if (vtaErr) console.warn('[Ecommerce] Error al registrar pedido en ventas Supabase:', vtaErr.message);
-          else console.info('[Ecommerce] ¡Pedido reflejado con éxito en Supabase!');
-        }).catch(() => {});
-      }
-
-      // 4. Disparar sincronización global en segundo plano
-      syncService.triggerBackgroundSync();
-
-      // 5. Disparar evento para que el panel de pedidos web se actualice en tiempo real
-      window.dispatchEvent(new CustomEvent('glorypos_order_created', { detail: newOrder }));
-
-      // Formatear Mensaje estructurado de WhatsApp (Exacto al modelo Tukifac)
-      const storeName = empresa?.nombre || 'GLORYPOS Tienda';
-      const itemsListText = cart.map(item => 
-        `• ${item.nombre} x${item.cantidad} — Bs. ${(item.cantidad * item.precio).toFixed(2)}`
-      ).join('\n');
-
-      const whatsappText = 
-`Hola *${storeName}*, quiero hacer este pedido (N° *${orderNumber}*):
-
-${itemsListText}
-
-*Total a Pagar:* Bs. ${cartTotalPrice.toFixed(2)}
-
-*Mis Datos:*
-Nombre: ${customerName.trim()}
-Celular: ${customerPhone.trim()}${customerAddress.trim() ? `\nDirección: ${customerAddress.trim()}` : ''}
-
-_¡Aguardo su confirmación para coordinar el pago y entrega!_`;
-
-      const storePhone = empresa?.telefono ? empresa.telefono.replace(/[^0-9]/g, '') : '59177012345';
-      const cleanPhone = storePhone.startsWith('591') ? storePhone : '591' + storePhone;
-      
-      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(whatsappText)}`;
-      window.open(whatsappUrl, '_blank');
-
-      // Limpiar carrito y cerrar
-      setCart([]);
-      setIsCartOpen(false);
-      setCustomerName('');
-      setCustomerPhone('');
-      setCustomerAddress('');
-      showToast('¡Pedido enviado con éxito! Continuando en WhatsApp...');
-    } catch (err) {
-      console.error('Error al procesar pedido:', err);
-      alert('No se pudo registrar el pedido. Intenta nuevamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className={`min-h-screen bg-[#FDFBF7] text-[#1E2022] flex flex-col font-sans select-none ${isEmbedded ? '' : 'relative'}`}>
       
       {/* ── NOTIFICACIÓN TOAST FLOTANTE ── */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-[500] bg-[#1E2022] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-slideUp border border-slate-700">
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[500] bg-[#1E2022] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-slideUp border border-slate-700">
           <Check className="w-4 h-4 text-[#00B574] shrink-0" />
           <span>{toastMessage}</span>
         </div>
@@ -636,7 +487,8 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
               {filteredProducts.map((prod) => {
                 const price = Number(prod.precio_venta || prod.precio || 0);
-                const stock = prod.stock_actual ?? 10;
+                const porciones = restaurantService.porcionesDisponibles(prod, allById);
+                const stock = porciones ?? prod.stock_actual ?? 10;
                 const isOutOfStock = stock <= 0;
 
                 return (
@@ -815,170 +667,36 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
         </div>
       )}
 
-      {/* ── DRAWER LATERAL DE CARRITO (Exacto a Tukifac) ── */}
+      {/* ── CARRITO FLOTANTE (siempre visible al tener productos) ── */}
+      {cart.length > 0 && !isCartOpen && (
+        <button
+          type="button"
+          onClick={() => setIsCartOpen(true)}
+          className={`fixed bottom-5 right-5 z-[250] flex items-center gap-3 pl-3 pr-4 py-3 rounded-2xl bg-[#1E2022] text-white shadow-2xl shadow-black/30 border border-white/10 transition-transform hover:scale-[1.03] active:scale-95 ${cartBump ? 'scale-110' : 'scale-100'}`}
+        >
+          <span className="relative w-10 h-10 rounded-xl bg-[#FF6B35] flex items-center justify-center">
+            <ShoppingCart className="w-5 h-5" />
+            <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-[#FFB627] text-[#1E2022] text-[10px] font-black flex items-center justify-center">
+              {cartTotalItems}
+            </span>
+          </span>
+          <span className="text-left">
+            <span className="block text-[10px] font-bold text-white/60 uppercase">Ver carrito</span>
+            <span className="block text-sm font-black">Bs. {cartTotalPrice.toFixed(2)}</span>
+          </span>
+        </button>
+      )}
+
+      {/* ── CARRITO Y CHECKOUT EN PASOS (datos, entrega y pago) ── */}
       {isCartOpen && (
-        <div className="fixed inset-0 z-[300] flex justify-end animate-fadeIn">
-          {/* Backdrop */}
-          <div
-            onClick={() => setIsCartOpen(false)}
-            className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
-          />
-
-          {/* Panel Deslizable */}
-          <div className="relative w-full max-w-md bg-white h-full flex flex-col shadow-2xl z-10 animate-slideLeft">
-            
-            {/* Header del Carrito */}
-            <div className="flex items-center justify-between p-4 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[#FF6B35]" />
-                <h3 className="font-black text-slate-800 text-base">
-                  Tu Carrito de Compras
-                </h3>
-                <span className="text-xs font-bold text-slate-400">({cartTotalItems})</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsCartOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Lista de Productos en el Carrito */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-slate-100">
-              {cart.length === 0 ? (
-                <div className="text-center text-slate-400 py-16 space-y-3">
-                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-300">
-                    <ShoppingCart className="w-8 h-8" />
-                  </div>
-                  <p className="font-bold text-slate-600 text-sm">Tu carrito está vacío</p>
-                  <p className="text-xs text-slate-400">Agrega productos del catálogo para armar tu pedido.</p>
-                </div>
-              ) : (
-                cart.map((item) => (
-                  <div key={item.id} className="pt-3 first:pt-0 flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center shrink-0 border border-slate-200/80">
-                      {item.imagen_url ? (
-                        <img src={item.imagen_url} alt={item.nombre} className="w-full h-full object-cover" />
-                      ) : (
-                        <Package className="w-6 h-6 text-slate-300" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-bold text-slate-800 truncate">
-                        {item.nombre}
-                      </h4>
-                      <p className="text-[11px] text-slate-400 font-mono">
-                        Bs. {item.precio.toFixed(2)} c/u
-                      </p>
-                    </div>
-
-                    {/* Controles de Cantidad */}
-                    <div className="flex items-center gap-1.5 shrink-0 bg-slate-50 border border-slate-200/80 rounded-xl px-1.5 py-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateQuantity(item.id, -1)}
-                        className="p-1 text-slate-500 hover:text-slate-800 transition"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="w-5 text-center text-xs font-bold font-mono">
-                        {item.cantidad}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateQuantity(item.id, 1)}
-                        className="p-1 text-slate-500 hover:text-slate-800 transition"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
-
-                    {/* Eliminar Ítem */}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveFromCart(item.id)}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 transition"
-                      title="Eliminar del carrito"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Formulario de Checkout y Botón WhatsApp (Exacto a Tukifac) */}
-            {cart.length > 0 && (
-              <div className="border-t border-slate-100 p-4 space-y-3 bg-slate-50/70">
-                <div className="space-y-2">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                      Tu Nombre Completo *
-                    </label>
-                    <input
-                      type="text"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Ej. Juan Pérez"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-[#FF6B35] transition"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                      Tu Celular / WhatsApp *
-                    </label>
-                    <input
-                      type="tel"
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                      placeholder="Ej. 77012345"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-[#FF6B35] transition font-mono"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                      Dirección de Entrega (Opcional)
-                    </label>
-                    <input
-                      type="text"
-                      value={customerAddress}
-                      onChange={(e) => setCustomerAddress(e.target.value)}
-                      placeholder="Ej. Av. Principal #123, Zona Central"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 outline-hidden focus:border-[#FF6B35] transition"
-                    />
-                  </div>
-                </div>
-
-                {/* Total */}
-                <div className="flex justify-between items-center pt-2 border-t border-slate-200 text-sm font-black text-slate-900">
-                  <span>Total a Pagar:</span>
-                  <span className="text-lg font-mono text-[#FF6B35]">
-                    Bs. {cartTotalPrice.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Botón Principal: Pedir por WhatsApp */}
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={handleSendOrderWhatsApp}
-                  className="w-full py-3.5 rounded-2xl bg-[#00B574] hover:bg-[#00965e] text-white font-black text-xs shadow-lg shadow-[#00B574]/30 transition active:scale-98 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  <MessageCircle className="w-4 h-4 fill-white" />
-                  <span>{isSubmitting ? 'Procesando pedido...' : 'Pedir por WhatsApp'}</span>
-                </button>
-              </div>
-            )}
-
-          </div>
-        </div>
+        <CheckoutDrawer
+          empresa={empresa}
+          cart={cart}
+          onClose={() => setIsCartOpen(false)}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemove={handleRemoveFromCart}
+          onClearCart={() => setCart([])}
+        />
       )}
 
       {/* ── FOOTER DE LA TIENDA VIRTUAL ── */}
@@ -994,7 +712,7 @@ _¡Aguardo su confirmación para coordinar el pago y entrega!_`;
               </span>
             </div>
             <p className="text-xs text-stone-300 leading-relaxed max-w-sm">
-              Tu tienda virtual en línea sincronizada en tiempo real con nuestro Punto de Venta. Pide por WhatsApp y recibe tus compras sin complicaciones.
+              Tu tienda virtual en línea sincronizada en tiempo real con nuestro Punto de Venta. Arma tu carrito, elige delivery o recojo y paga como prefieras.
             </p>
           </div>
 
