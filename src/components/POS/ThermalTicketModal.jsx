@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   X, Printer, Share2, Mail, FileText, Check, 
   ArrowLeft, Sparkles, Receipt, Zap, ShoppingBag 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { ticketHTML, imprimirTicket, getAnchoTicket } from '../../utils/ticketPrint';
 
 export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }) {
   const { empresa } = useAuth();
+  const [ancho, setAncho] = useState(getAnchoTicket);
 
   if (!isOpen || !venta) return null;
 
@@ -14,8 +16,10 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
   const fechaStr = fechaObj.toLocaleDateString('es-BO');
   const horaStr = fechaObj.toLocaleTimeString('es-BO');
 
-  const handlePrint = () => {
-    window.print();
+  // Imprime un ticket propio del ancho del rollo (nítido, negro y en negrita)
+  const handlePrint = (mm = ancho) => {
+    setAncho(mm);
+    imprimirTicket(venta, empresa, mm);
   };
 
   const handleShareWhatsApp = () => {
@@ -112,7 +116,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               </button>
 
               <button 
-                onClick={handlePrint}
+                onClick={() => handlePrint()}
                 className="bg-[#FF6B35] hover:bg-[#ea580c] active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs shadow-orange-500/20"
               >
                 <Printer className="w-3.5 h-3.5" />
@@ -138,7 +142,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
 
               {/* Row 3: Ticket Format & PDF Export */}
               <button 
-                onClick={handlePrint}
+                onClick={() => handlePrint(80)}
                 className="bg-slate-700 hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <FileText className="w-3.5 h-3.5" />
@@ -146,7 +150,8 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               </button>
 
               <button 
-                onClick={handlePrint}
+                onClick={() => handlePrint()}
+                title="En el diálogo de impresión elige 'Guardar como PDF'"
                 className="bg-[#FFB627] hover:bg-[#e6a21e] active:scale-[0.98] text-[#1E2022] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <FileText className="w-3.5 h-3.5" />
@@ -155,7 +160,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
 
               {/* Row 4: Mini Ticket & Nueva Venta */}
               <button 
-                onClick={handlePrint}
+                onClick={() => handlePrint(58)}
                 className="bg-slate-600 hover:bg-slate-700 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <Receipt className="w-3.5 h-3.5" />
@@ -172,191 +177,27 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
             </div>
             {/* END: ActionButtonsGrid */}
 
-            {/* BEGIN: ThermalReceiptPaper (Exact Stitch thermal simulation) */}
-            <article 
-              id="ticket-termico"
-              className="bg-[#fbfbfb] p-4 border border-slate-300 font-mono text-slate-800 text-[11px] leading-[1.3] select-none mx-auto max-w-[340px] shadow-sm rounded-sm"
-              data-purpose="thermal-receipt-preview"
-            >
-              {/* Company Logo & Branding */}
-              <header className="text-center mb-2 flex flex-col items-center">
-                <img src="/logo.png" alt="GloryPOS" className="h-7 object-contain mb-1" />
-                <div className="flex items-center justify-center gap-1 font-sans font-black text-sm text-slate-900 tracking-tighter">
-                  <span className="tracking-wide uppercase">{empresa?.nombre || 'GLORYPOS BOLIVIA'}</span>
-                </div>
-                <p className="text-[9px] font-sans font-semibold tracking-widest text-[#FF6B35] uppercase">
-                  PUNTO DE VENTA & FACTURACIÓN
-                </p>
-              </header>
-
-              {/* Company Tax & Business Details */}
-              <div className="text-center text-[10px] space-y-0.5 font-bold">
-                <p className="font-black text-[11px]">Casa Matriz: {empresa?.ciudad || 'Santa Cruz, Bolivia'}</p>
-                <p>{empresa?.direccion || 'Av. Monseñor Rivero #240'}</p>
-                <p className="font-bold">NIT: {empresa?.nit_ci || '8472910014'}</p>
-                <p className="text-[9.5px]">Telf: {empresa?.telefono || '77012345'}</p>
-              </div>
-
-              {/* Thermal Dashed Line */}
-              <div className="border-t-[1.5px] border-dashed border-slate-500 my-2"></div>
-
-              {/* Electronic Invoice Series & Number */}
-              <div className="text-center font-bold">
-                <p className="text-[11px] font-black uppercase">
-                  {isFactura ? 'FACTURA ELECTRÓNICA SIAT' : (isBoleta ? 'BOLETA DE VENTA ELECTRÓNICA' : 'NOTA DE VENTA')}
-                </p>
-                <p className="text-[12px] font-black tracking-wider text-[#FF6B35]">
-                  {venta.correlativo}
-                </p>
-              </div>
-
-              <div className="border-t-[1.5px] border-dashed border-slate-500 my-2"></div>
-
-              {/* Document Metadata */}
-              <div className="text-[10px] space-y-0.5">
-                <div className="flex justify-between">
-                  <span>Fecha Emisión:</span>
-                  <span className="font-semibold">{fechaStr}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Hora Emisión:</span>
-                  <span className="font-semibold">{horaStr}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Cliente:</span>
-                  <span className="font-bold truncate max-w-[160px]">{venta.cliente_nombre}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>NIT / CI:</span>
-                  <span>{venta.cliente_ci_nit}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Método Pago:</span>
-                  <span className="font-bold">{venta.metodo_pago}</span>
-                </div>
-                {venta.num_operacion && (
-                  <div className="flex justify-between">
-                    <span>N° Referencia:</span>
-                    <span>{venta.num_operacion}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="border-t-[1.5px] border-dashed border-slate-500 my-2"></div>
-
-              {/* Items Table */}
-              <div className="space-y-1 text-[10px]">
-                <div className="flex justify-between font-bold border-b border-dashed border-slate-400 pb-1">
-                  <span>DESCRIPCIÓN</span>
-                  <span>TOTAL</span>
-                </div>
-
-                {venta.items.map((item, idx) => {
-                  const isPeso = item.tipo_venta === 'PESO' || item.customDetails?.tipo === 'PESO';
-                  const details = item.customDetails;
-
-                  return (
-                    <div key={idx} className="flex justify-between items-baseline py-0.5 border-b border-dotted border-slate-200">
-                      <div className="flex-1 pr-2">
-                        {isPeso ? (
-                          <span className="font-bold">{Number(item.cantidad).toFixed(3)} Kg x </span>
-                        ) : (
-                          <span className="font-bold">{item.cantidad}x </span>
-                        )}
-                        <span>{item.nombre}</span>
-
-                        {isPeso && (
-                          <span className="text-[9px] text-slate-500 block">
-                            @ Bs. {Number(item.precio).toFixed(2)} / Kg
-                          </span>
-                        )}
-
-                        {item.presNombre && item.presNombre !== 'Unidad' && (
-                          <span className="text-[9px] text-slate-500 block">[{item.presNombre}]</span>
-                        )}
-
-                        {details?.tipo === 'ROPA' && (
-                          <span className="text-[9px] text-slate-600 font-semibold block">
-                            [Talla: {details.talla || '-'} • Color: {details.color || '-'}]
-                          </span>
-                        )}
-
-                        {details?.tipo === 'HELADERIA' && details.sabores?.length > 0 && (
-                          <span className="text-[9px] text-slate-600 block">
-                            [{details.sabores.join(', ')}]
-                          </span>
-                        )}
-
-                        {item.lote && (
-                          <span className="text-[8.5px] text-slate-500 block">
-                            Lote: {item.lote} {item.fecha_vencimiento ? `(Vence: ${item.fecha_vencimiento})` : ''}
-                          </span>
-                        )}
-                      </div>
-                      <span className="font-bold whitespace-nowrap">Bs. {Number(item.subtotal).toFixed(2)}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="border-t-[1.5px] border-dashed border-slate-500 my-2"></div>
-
-              {/* Totales */}
-              <div className="space-y-0.5 text-[10px]">
-                <div className="flex justify-between">
-                  <span>Subtotal:</span>
-                  <span>Bs. {Number(venta.subtotal || venta.total).toFixed(2)}</span>
-                </div>
-
-                {venta.descuento_porcentaje > 0 && (
-                  <div className="flex justify-between text-rose-600 font-bold">
-                    <span>Descuento ({venta.descuento_porcentaje}%):</span>
-                    <span>- Bs. {(((venta.subtotal || venta.total) * venta.descuento_porcentaje) / 100).toFixed(2)}</span>
-                  </div>
-                )}
-
-                <div className="flex justify-between text-xs font-black pt-1 border-t border-slate-300">
-                  <span>TOTAL A PAGAR:</span>
-                  <span>Bs. {Number(venta.total).toFixed(2)}</span>
-                </div>
-
-                {venta.metodo_pago === 'EFECTIVO' && (
-                  <>
-                    <div className="flex justify-between pt-0.5">
-                      <span>Monto Pagado:</span>
-                      <span>Bs. {Number(venta.monto_recibido || venta.total).toFixed(2)}</span>
-                    </div>
-                    {venta.cambio > 0 && (
-                      <div className="flex justify-between font-bold text-[#E85B28]">
-                        <span>Cambio / Vuelto:</span>
-                        <span>Bs. {Number(venta.cambio).toFixed(2)}</span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* CUF & SIAT QR if Factura */}
-              {isFactura && (
-                <div className="mt-3 pt-2 border-t-[1.5px] border-dashed border-slate-500 text-center text-[9px] space-y-1">
-                  <p className="font-bold">CÓDIGO ÚNICO DE FACTURA (CUF):</p>
-                  <p className="font-mono break-all text-[8px] text-slate-600">
-                    {venta.cuf || '48291048201948201482019482019482019482019482014820'}
-                  </p>
-                  <p className="font-bold text-[8.5px]">"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"</p>
-                </div>
-              )}
-
-              {/* QR Code Graphic */}
-              <div className="mt-3 flex flex-col items-center justify-center">
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=GLORYPOS_VENTA_${venta.id}`}
-                  alt="QR Comprobante"
-                  className="w-20 h-20 bg-white p-1 border border-slate-300"
-                />
-                <span className="text-[9px] text-slate-500 mt-1">GLORYPOS Bolivia • Impresión Térmica</span>
-              </div>
-            </article>
+            {/* Vista previa: es exactamente el mismo ticket que se imprime */}
+            <div className="flex items-center justify-center gap-1 text-[11px] font-bold">
+              {[80, 58].map(mm => (
+                <button
+                  key={mm}
+                  type="button"
+                  onClick={() => setAncho(mm)}
+                  className={`px-3 py-1 rounded-lg border ${ancho === mm ? 'bg-[#1E2022] text-white border-[#1E2022]' : 'bg-white text-slate-600 border-slate-200'}`}
+                >
+                  Rollo {mm} mm
+                </button>
+              ))}
+            </div>
+            <div className="bg-slate-100 rounded-xl p-3 flex justify-center">
+              <iframe
+                title="Vista previa del ticket"
+                srcDoc={ticketHTML(venta, empresa, ancho)}
+                className="bg-white shadow-md border border-slate-300"
+                style={{ width: `${ancho}mm`, height: '640px' }}
+              />
+            </div>
             {/* END: ThermalReceiptPaper */}
           </div>
         </section>
