@@ -9,6 +9,8 @@ import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { syncService } from '../../services/syncService';
+import { restaurantService } from '../../services/restaurantService';
+import { empresaHasModule, GLORYCHEF_MODULE_ID } from '../../config/modules';
 
 const CART_STORAGE_KEY = 'glorypos_ecommerce_cart';
 const SETTINGS_STORAGE_KEY = 'glorypos_ecommerce_settings';
@@ -110,7 +112,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
           }
         }
 
-        const activeList = (list || []).filter(p => p.activo !== false);
+        const activeList = (list || []).filter(p => p.activo !== false && !p.es_insumo);
         setProducts(activeList);
 
         // Calcular límites de precio
@@ -259,6 +261,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
         total: cartTotalPrice,
         estado: 'Nuevo',
         items: cart.map(item => ({
+          producto_id: item.id,
           nombre: item.nombre,
           cantidad: item.cantidad,
           precio: item.precio,
@@ -273,6 +276,15 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
         }
       } catch (dxErr) {
         console.warn('Error guardando pedido en Dexie:', dxErr);
+      }
+
+      // 1b. GLORYCHEF: si el restaurante también tiene el módulo, el pedido entra a cocina como delivery
+      if (empresaHasModule(empresa, GLORYCHEF_MODULE_ID)) {
+        try {
+          await restaurantService.crearComandaDesdeTienda(newOrder);
+        } catch (chefErr) {
+          console.warn('Error enviando pedido web a GLORYCHEF:', chefErr);
+        }
       }
 
       // 2. Guardar en la lista persistente de Pedidos Web de GLORYPOS (localStorage)

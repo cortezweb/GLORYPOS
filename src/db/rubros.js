@@ -72,6 +72,18 @@ export const RUBROS_CONFIG = {
     unidades_sugeridas: ['Porción / Vaso', 'Cono', 'Copa', 'Litro / Pote', 'Taza', 'Porción'],
     categorias: ['Conos & Vasos', 'Copas & Sundaes', 'Cafetería & Bebidas Calientes', 'Tortas & Repostería', 'Frappes & Bebidas Frías', 'Packs Familiares'],
     features: ['Sabores y Bolas', 'Toppings y Salsas', 'Comanda Rápida']
+  },
+  RESTAURANTE: {
+    id: 'RESTAURANTE',
+    nombre: 'Restaurante (GLORYCHEF)',
+    subtitulo: 'Restaurantes, pollerías, parrillas y comida típica',
+    icono: 'ChefHat',
+    color: 'orange',
+    badge: 'GLORYCHEF',
+    descripcion: 'Mesas y salones, comandas a cocina, recetas que descuentan insumos del inventario.',
+    unidades_sugeridas: ['Plato / Porción', 'Vaso', 'Jarra', 'Kilogramo (Kg)', 'Gramo (g)', 'Litro', 'Unidad'],
+    categorias: ['Entradas', 'Platos de Fondo', 'Parrilla', 'Bebidas', 'Postres', 'Insumos de Cocina'],
+    features: ['Mesas y Comandas', 'Pantalla de Cocina', 'Recetas e Insumos']
   }
 };
 
@@ -480,6 +492,57 @@ export const DEMO_CATALOGS = {
       stock_minimo: 20,
       codigo_barras: '7776001004',
       tipo_venta: 'UNIDAD'
+    }
+  ],
+  RESTAURANTE: [
+    // Insumos de cocina (no se muestran en el POS; se descuentan por receta)
+    { id: 'ins-pollo', nombre: 'Pollo entero (insumo)', categoria: 'Insumos de Cocina', unidad_medida: 'Kilogramo (Kg)', precio_venta: 0, precio_compra: 22.00, stock_actual: 40, stock_minimo: 8, tipo_venta: 'PESO', es_insumo: true },
+    { id: 'ins-carne', nombre: 'Carne de res (insumo)', categoria: 'Insumos de Cocina', unidad_medida: 'Kilogramo (Kg)', precio_venta: 0, precio_compra: 55.00, stock_actual: 25, stock_minimo: 5, tipo_venta: 'PESO', es_insumo: true },
+    { id: 'ins-arroz', nombre: 'Arroz (insumo)', categoria: 'Insumos de Cocina', unidad_medida: 'Kilogramo (Kg)', precio_venta: 0, precio_compra: 8.00, stock_actual: 50, stock_minimo: 10, tipo_venta: 'PESO', es_insumo: true },
+    { id: 'ins-papa', nombre: 'Papa (insumo)', categoria: 'Insumos de Cocina', unidad_medida: 'Kilogramo (Kg)', precio_venta: 0, precio_compra: 5.00, stock_actual: 60, stock_minimo: 10, tipo_venta: 'PESO', es_insumo: true },
+    { id: 'ins-aceite', nombre: 'Aceite (insumo)', categoria: 'Insumos de Cocina', unidad_medida: 'Litro', precio_venta: 0, precio_compra: 14.00, stock_actual: 20, stock_minimo: 4, tipo_venta: 'PESO', es_insumo: true },
+    { id: 'ins-limon', nombre: 'Limón (insumo)', categoria: 'Insumos de Cocina', unidad_medida: 'Unidad', precio_venta: 0, precio_compra: 0.50, stock_actual: 200, stock_minimo: 40, tipo_venta: 'UNIDAD', es_insumo: true },
+    // Platos de la carta con su receta
+    {
+      id: 'plato-pollo-broaster', nombre: 'Pollo Broaster con Papas', categoria: 'Platos de Fondo', unidad_medida: 'Plato / Porción',
+      foto_url: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=400&q=80', precio_venta: 28.00, precio_compra: 0, stock_actual: 0, stock_minimo: 0, tipo_venta: 'UNIDAD',
+      es_plato: true, estacion: 'COCINA', merma_pct: 5,
+      receta: [
+        { insumo_id: 'ins-pollo', cantidad: 0.25 },
+        { insumo_id: 'ins-papa', cantidad: 0.20 },
+        { insumo_id: 'ins-aceite', cantidad: 0.05 }
+      ]
+    },
+    {
+      id: 'plato-silpancho', nombre: 'Silpancho Cochabambino', categoria: 'Platos de Fondo', unidad_medida: 'Plato / Porción',
+      foto_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80', precio_venta: 32.00, precio_compra: 0, stock_actual: 0, stock_minimo: 0, tipo_venta: 'UNIDAD',
+      es_plato: true, estacion: 'COCINA', merma_pct: 5,
+      receta: [
+        { insumo_id: 'ins-carne', cantidad: 0.18 },
+        { insumo_id: 'ins-arroz', cantidad: 0.15 },
+        { insumo_id: 'ins-papa', cantidad: 0.20 },
+        { insumo_id: 'ins-aceite', cantidad: 0.03 }
+      ]
+    },
+    {
+      id: 'plato-parrillada', nombre: 'Parrillada para 2', categoria: 'Parrilla', unidad_medida: 'Plato / Porción',
+      foto_url: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80', precio_venta: 95.00, precio_compra: 0, stock_actual: 0, stock_minimo: 0, tipo_venta: 'UNIDAD',
+      es_plato: true, estacion: 'PARRILLA', merma_pct: 8,
+      receta: [
+        { insumo_id: 'ins-carne', cantidad: 0.60 },
+        { insumo_id: 'ins-papa', cantidad: 0.30 }
+      ]
+    },
+    {
+      id: 'plato-limonada', nombre: 'Limonada Natural (Jarra)', categoria: 'Bebidas', unidad_medida: 'Jarra',
+      foto_url: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=400&q=80', precio_venta: 18.00, precio_compra: 0, stock_actual: 0, stock_minimo: 0, tipo_venta: 'UNIDAD',
+      es_plato: true, estacion: 'BAR', merma_pct: 0,
+      receta: [{ insumo_id: 'ins-limon', cantidad: 6 }]
+    },
+    {
+      id: 'prod-coca-2l-rest', nombre: 'Coca-Cola 2L', categoria: 'Bebidas', unidad_medida: 'Botella',
+      foto_url: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80', precio_venta: 15.00, precio_compra: 9.50, stock_actual: 48, stock_minimo: 12, tipo_venta: 'UNIDAD',
+      estacion: 'BAR'
     }
   ]
 };
