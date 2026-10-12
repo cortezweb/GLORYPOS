@@ -12,7 +12,7 @@ import { hotelService } from '../../services/hotelService';
 
 export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   const { items, total, count, clearCart, comandaEnCobro } = useCart();
-  const { empresa } = useAuth();
+  const { empresa, currentUser } = useAuth();
 
   const isPlanPro = empresa?.plan_tipo === 'PRO';
 
@@ -137,6 +137,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
         items: [...items],
         comanda_id: comandaEnCobro?.comandaId || null,
         reserva_id: comandaEnCobro?.reservaId || null,
+        cajero: currentUser?.nombre || null,
         mesa: comandaEnCobro?.mesa || null
       };
 
