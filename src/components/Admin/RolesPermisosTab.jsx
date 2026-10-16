@@ -259,7 +259,7 @@ export default function RolesPermisosTab() {
 
       {/* ── 4. MODAL DE CONFIRMACIÓN DE ELIMINACIÓN ── */}
       {rolToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-200">
             <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
               <AlertTriangle className="w-6 h-6" />

@@ -776,7 +776,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
       {/* ── MODAL: INGRESO RÁPIDO ── */}
       {isIngresoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -861,7 +861,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
       {/* ── MODAL: EGRESO RÁPIDO ── */}
       {isEgresoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -932,8 +932,8 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
       {/* ── MODAL: REPORTES DE CAJA / DETALLE DE SESIÓN (media_1789932485053.png) ── */}
       {selectedArqueoSesion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/60 backdrop-blur-xs overflow-y-auto animate-fadeIn">
-          <div className="relative w-full max-w-5xl bg-white rounded-3xl p-5 sm:p-6 shadow-2xl z-10 space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/60 backdrop-blur-xs overflow-y-auto animate-fadeIn [&>*]:my-auto">
+          <div className="relative w-full max-w-5xl bg-white rounded-3xl p-5 sm:p-6 shadow-2xl z-10 space-y-4 border border-slate-200 max-h-[92dvh] overflow-y-auto text-xs">
             
             {/* Cabecera del modal */}
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">

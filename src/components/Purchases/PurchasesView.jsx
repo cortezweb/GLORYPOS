@@ -1521,7 +1521,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       {/* MODAL: VER DETALLE DE COMPRA (OJO VERDE)                           */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {selectedCompraDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1630,7 +1630,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       {/* MODAL 1: AGREGAR PRODUCTO DESDE CATÁLOGO                           */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isAddProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1706,7 +1706,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       {/* MODAL 2: NUEVO PRODUCTO RÁPIDO                                     */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isNewProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-md p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1830,7 +1830,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       {/* MODAL 3: CREAR / EDITAR PROVEEDOR                                  */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isSupplierModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-lg p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1995,7 +1995,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
         const isActivo = selectedSupplierDetail.estado !== 'Inactivo';
 
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
             <div className="bg-white rounded-3xl w-full max-w-md p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
@@ -2105,7 +2105,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
         const totalFacturado = provPurchases.reduce((acc, c) => acc + (c.estado !== 'Anulada' ? Number(c.total || 0) : 0), 0);
 
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
             <div className="bg-white rounded-3xl w-full max-w-2xl p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
@@ -2227,7 +2227,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       {/* MODAL 6: IMPORTAR PROVEEDORES DESDE ARCHIVO                         */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isImportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-md p-5 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">

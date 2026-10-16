@@ -1103,8 +1103,8 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 1: CATÁLOGO MAESTRO (PRESERVADO ÍNTEGRAMENTE)                 */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isMasterModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl z-10 flex flex-col max-h-[88vh] overflow-hidden border border-slate-200 animate-scaleUp">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
+          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl z-10 flex flex-col max-h-[88dvh] overflow-hidden border border-slate-200 animate-scaleUp">
             <div className="p-4 bg-gradient-to-r from-[#FF6B35] to-[#1E2022] text-white flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-1.5">
@@ -1222,8 +1222,8 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 2: NUEVO PRODUCTO RÁPIDO Y COMPLETO                          */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isCustomProductModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92vh] overflow-y-auto border border-slate-200 animate-scaleUp">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92dvh] overflow-y-auto border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
@@ -1398,8 +1398,8 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 3: EDITAR PRODUCTO                                           */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isEditProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92vh] overflow-y-auto border border-slate-200 animate-scaleUp">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-3.5 max-h-[92dvh] overflow-y-auto border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
@@ -1535,7 +1535,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 4: AJUSTAR STOCK RÁPIDO (BOTÓN "AJUSTAR")                    */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isAdjustStockModalOpen && productForAdjust && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1611,7 +1611,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 5: ACTUALIZACIÓN MASIVA DE PRECIOS                           */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isPriceUpdateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1692,7 +1692,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 6: GRUPOS DE EXTRAS / MODIFICADORES                          */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isExtrasModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="relative w-full max-w-lg bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -1779,7 +1779,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
       {/* MODAL 7: IMPORTAR EXCEL / CSV                                      */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isImportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200 animate-scaleUp">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">

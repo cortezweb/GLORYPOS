@@ -58,7 +58,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
   const isBoleta = venta.tipo_documento === 'BOLETA';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 animate-fadeIn overflow-y-auto [&>*]:my-auto">
       {/* Backdrop */}
       <div 
         onClick={onClose}
@@ -66,7 +66,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
       />
 
       {/* Main Device Container mimicking Stitch Ticket preview */}
-      <main className="w-full max-w-[420px] bg-[#eaedff] rounded-[28px] overflow-hidden shadow-2xl border-4 border-neutral-800 flex flex-col h-[94vh] max-h-[890px] z-10 animate-scaleUp">
+      <main className="w-full max-w-[420px] bg-[#eaedff] rounded-[28px] overflow-hidden shadow-2xl border-4 border-neutral-800 flex flex-col h-[94dvh] max-h-[890px] z-10 animate-scaleUp">
         {/* Inner Modal Card */}
         <section className="bg-white rounded-2xl m-2.5 flex-1 flex flex-col shadow-xs border border-[#dbe1ff] overflow-hidden">
           

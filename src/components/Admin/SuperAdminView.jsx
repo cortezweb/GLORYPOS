@@ -1330,7 +1330,7 @@ export default function SuperAdminView({
 
       {/* ── 8. MODAL DE CREDENCIALES & WHATSAPP ── */}
       {credentialsModalClient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 text-slate-800 space-y-4 shadow-2xl relative border border-slate-200">
             <button
               onClick={() => setCredentialsModalClient(null)}
@@ -1418,8 +1418,8 @@ export default function SuperAdminView({
 
       {/* ── 9. MODAL EDITAR MÓDULOS DE CLIENTE EXISTENTE ── */}
       {editingModulesClient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 text-slate-800 space-y-4 shadow-2xl relative border border-slate-200 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 text-slate-800 space-y-4 shadow-2xl relative border border-slate-200 flex flex-col max-h-[90dvh]">
             <button
               onClick={() => setEditingModulesClient(null)}
               className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"

@@ -90,7 +90,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn overflow-y-auto sm:[&>*]:my-auto">
       {/* Dimmed and blurred backdrop */}
       <div 
         onClick={onClose}
@@ -99,7 +99,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
 
       {/* BEGIN: ConfirmationModalCard (Exact Stitch Layout) */}
       <div 
-        className="relative z-10 w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-100 transform transition-all animate-slideUp max-h-[92vh] flex flex-col"
+        className="relative z-10 w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-100 transform transition-all animate-slideUp max-h-[92dvh] flex flex-col"
         role="dialog"
       >
         {/* Bottom Sheet Drag Indicator (Visible on Mobile) */}

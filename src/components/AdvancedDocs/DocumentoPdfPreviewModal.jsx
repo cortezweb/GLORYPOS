@@ -27,7 +27,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-fadeIn [&>*]:my-auto">
       <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-6">
         {/* Modal Controls Bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b border-slate-200 bg-slate-100/80">
@@ -50,7 +50,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
         </div>
 
         {/* Printable Paper Canvas */}
-        <div className="p-8 bg-white text-slate-900 font-sans space-y-6 max-h-[80vh] overflow-y-auto print:p-0 print:max-h-none">
+        <div className="p-8 bg-white text-slate-900 font-sans space-y-6 max-h-[80dvh] overflow-y-auto print:p-0 print:max-h-none">
           {/* Header row: Company logo / info on left, SUNAT RUC box on right */}
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-1">

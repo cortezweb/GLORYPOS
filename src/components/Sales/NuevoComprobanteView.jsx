@@ -1064,8 +1064,8 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       {/* MODAL: AGREGAR PRODUCTO DESDE CATÁLOGO */}
       {/* ========================================================= */}
       {showAddProductModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85dvh]">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
                 <Package className="w-4 h-4 text-[#FF6B35]" />
@@ -1134,7 +1134,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       {/* MODAL: PRODUCTO MANUAL */}
       {/* ========================================================= */}
       {showManualProductModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
               <div className="flex items-center gap-2">
@@ -1257,7 +1257,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       {/* MODAL: ESCANEAR CÓDIGO DE BARRAS */}
       {/* ========================================================= */}
       {showScanModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-[#FF6B35]/10">
               <div className="flex items-center gap-2">
@@ -1309,7 +1309,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       {/* MODAL: NUEVO CLIENTE RÁPIDO */}
       {/* ========================================================= */}
       {showNewClientModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
@@ -1488,7 +1488,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       {/* MODAL: EDITAR DATOS DE EMPRESA */}
       {/* ========================================================= */}
       {showEditEmpresaModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">

@@ -569,8 +569,8 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
 
       {/* ── MODAL: DETALLE DEL PRODUCTO (Exacto a Tukifac) ── */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-scaleUp max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs animate-fadeIn overflow-y-auto sm:[&>*]:my-auto">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-scaleUp max-h-[90dvh] flex flex-col">
             
             {/* Cabecera del modal */}
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">

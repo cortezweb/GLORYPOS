@@ -167,7 +167,7 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
             className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 text-xs"
           />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto pr-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60dvh] overflow-y-auto pr-1">
           {filtrados.map(p => {
             const disp = restaurantService.porcionesDisponibles(p, productosById);
             const agotado = disp === 0;
@@ -217,7 +217,7 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
           {comanda.direccion && <p className="text-[11px] text-slate-500">Entrega: {comanda.direccion} {comanda.telefono ? `· ${comanda.telefono}` : ''}</p>}
         </div>
 
-        <div className="flex-1 space-y-1.5 max-h-[45vh] overflow-y-auto pr-1">
+        <div className="flex-1 space-y-1.5 max-h-[45dvh] overflow-y-auto pr-1">
           {items.length === 0 && <p className="text-xs text-slate-400 text-center py-8">Agrega platos desde la carta.</p>}
           {items.map(it => (
             <div key={it.id} className={`rounded-2xl border p-2.5 ${it.pagado ? 'opacity-50' : ''}`}>

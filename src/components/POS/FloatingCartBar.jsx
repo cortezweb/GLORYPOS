@@ -8,7 +8,7 @@ export default function FloatingCartBar({ onOpenCheckout }) {
   if (count === 0) return null;
 
   return (
-    <aside className="absolute bottom-20 right-4 z-40 animate-scaleUp" data-purpose="floating-cart">
+    <aside className="fixed bottom-20 right-4 z-40 animate-scaleUp safe-bottom" data-purpose="floating-cart">
       <button 
         onClick={onOpenCheckout}
         className={`relative group flex items-center bg-gradient-to-r from-blue-600 via-[#1E2022] to-[#FF6B35] hover:from-blue-700 hover:to-[#1E2022] active:scale-95 text-white font-bold py-3 px-4 rounded-full shadow-xl transition-all duration-200 ease-in-out shadow-indigo-500/30 ${

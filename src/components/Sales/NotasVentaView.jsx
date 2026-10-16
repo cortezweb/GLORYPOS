@@ -525,7 +525,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
       {/* 4. MODAL: EMITIR COMPROBANTE SUNAT (BOLETA / FACTURA)               */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {emitirModalNota && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 text-xs">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
               <div className="flex items-center gap-2">

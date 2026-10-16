@@ -300,7 +300,7 @@ export default function ClientsView() {
 
       {/* Modal: Registrar Nuevo Cliente */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div 
             onClick={() => setIsModalOpen(false)}
             className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
