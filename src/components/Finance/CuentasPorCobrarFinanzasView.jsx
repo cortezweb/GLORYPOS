@@ -340,7 +340,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
 
       {/* Modal Registrar Cobro */}
       {selectedCobrarItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
             <div className="p-4 bg-[#FF6B35]/10 border-b border-[#FF6B35]/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -442,7 +442,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
 
       {/* Modal Confirmar SPOT Banco de la Nación */}
       {selectedConfirmBN && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
             <div className="p-4 bg-[#FF6B35]/10 border-b border-blue-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -513,7 +513,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
 
       {/* Modal Estado de Cuenta */}
       {selectedEstadoCuenta && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 space-y-4">
             <div className="flex items-center justify-between border-b pb-3 border-slate-100">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">

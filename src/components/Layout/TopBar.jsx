@@ -210,18 +210,18 @@ export default function TopBar({
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 font-sans select-none shadow-xs">
       
       {/* ── MOBILE HEADER (IDÉNTICO A LAS 5 CAPTURAS DE LA IMAGEN) ── */}
-      <div className="lg:hidden px-3.5 py-2.5 flex items-center justify-between bg-white border-b border-slate-100 shadow-2xs">
+      <div className="lg:hidden px-3 py-2.5 flex items-center justify-between gap-2 bg-white border-b border-slate-100 shadow-2xs">
         
         {/* Izquierda: Reloj + Fecha en 2 líneas */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-2xs">
             <Clock className="w-4 h-4 text-slate-700" />
           </div>
           <div className="flex flex-col text-left leading-tight">
-            <span className="text-[10px] text-slate-500 font-semibold capitalize truncate max-w-[125px]">
+            <span className="text-[10px] text-slate-500 font-semibold capitalize truncate max-w-[90px] min-[400px]:max-w-[125px]">
               {currentDateTime.date}
             </span>
-            <span className="text-xs font-black text-slate-900 font-mono tracking-tight">
+            <span className="text-xs font-black text-slate-900 font-mono tracking-tight whitespace-nowrap">
               {currentDateTime.time}
             </span>
           </div>
@@ -230,18 +230,18 @@ export default function TopBar({
         {/* Centro: Cápsula Verde de Suscripción (Idéntica a la imagen) */}
         <div 
           onClick={() => onSelectView && onSelectView('subscription')}
-          className="flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-[#eaf8ef] border border-[#FF6B35]/40 text-center leading-tight cursor-pointer shadow-2xs active:scale-98 max-w-[155px]"
+          className="hidden min-[360px]:flex flex-col items-center justify-center px-2 py-1 rounded-xl bg-[#eaf8ef] border border-[#FF6B35]/40 text-center leading-tight cursor-pointer shadow-2xs active:scale-98 min-w-0 shrink max-w-[155px] overflow-hidden"
         >
-          <span className="text-[9px] font-black text-[#1E2022] tracking-tight whitespace-nowrap">
+          <span className="text-[9px] font-black text-[#1E2022] tracking-tight whitespace-nowrap truncate max-w-full">
             Plan: {empresa?.plan_tipo === 'TRIAL' ? 'Ilimitado (Trial)' : (empresa?.plan_tipo || 'Ilimitado')}
           </span>
-          <span className="text-[8px] font-bold text-[#E85B28] whitespace-nowrap">
+          <span className="text-[8px] font-bold text-[#E85B28] whitespace-nowrap truncate max-w-full">
             Estado de cobro: Al corriente
           </span>
         </div>
 
         {/* Derecha: Notificaciones + Avatar Perfil + Botón Hamburguesa de Menú */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 shrink-0">
           {/* Campana Móvil con Badge Naranja */}
           <div className="relative" ref={mobileNotificationRef}>
             <button
@@ -471,7 +471,7 @@ export default function TopBar({
 
       {/* ── MODAL: MI PERFIL DE USUARIO ── */}
       {isProfileModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-md overflow-hidden animate-scaleUp">
             {/* Header del Modal */}
             <div className="relative p-6 pb-5 bg-gradient-to-br from-[#FF6B35] to-[#E85B28] text-white">

@@ -43,14 +43,14 @@ export default function ModifierModal({ product, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn overflow-y-auto [&>*]:my-auto">
       {/* Backdrop */}
       <div 
         onClick={onClose}
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
       />
 
-      <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 flex flex-col gap-4 animate-scaleUp max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl z-10 flex flex-col gap-4 animate-scaleUp max-h-[90dvh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5 min-w-0">

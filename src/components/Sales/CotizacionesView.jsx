@@ -562,8 +562,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
       {/* 4. MODAL: CREAR NUEVA COTIZACIÓN                                    */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isNewModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
+          <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90dvh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
             
             {/* Modal Header */}
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#FF6B35] text-white">
@@ -745,7 +745,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
       {/* 5. MODAL: VISTA PREVIA DE COTIZACIÓN                                */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {previewCotizacion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
               <div className="flex items-center gap-2">

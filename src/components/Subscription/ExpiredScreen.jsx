@@ -13,7 +13,7 @@ export default function ExpiredScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn overflow-y-auto [&>*]:my-auto">
       <div className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl text-center space-y-4 animate-scaleUp">
         {/* Icon */}
         <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl mx-auto flex items-center justify-center shadow-inner">

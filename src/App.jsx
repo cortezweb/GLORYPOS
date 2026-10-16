@@ -255,7 +255,7 @@ function MainShell() {
 
         {/* Active Main View Container */}
         {currentView === 'pos' ? (
-          <div className="flex-1 flex overflow-hidden min-h-0">
+          <div className="flex-1 flex overflow-hidden min-h-0 pb-20 lg:pb-0">
             {/* Left Catalog Area */}
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <PosView
@@ -587,7 +587,7 @@ function MainShell() {
 
         {/* Mobile Fixed Bottom Navigation (Oculto en Inicio para ser idéntico al mockup móvil) */}
         {currentView !== 'inicio' && (
-          <div className="lg:hidden">
+          <div className="lg:hidden fixed bottom-0 inset-x-0 z-30">
             <BottomNav
               currentView={currentView}
               onSelectView={(view) => {

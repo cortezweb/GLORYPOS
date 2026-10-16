@@ -327,7 +327,7 @@ export default function MembresiasView({ onSelectSubView }) {
       {/* 4. MODAL: REGISTRAR NUEVA MEMBRESÍA                                 */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200">
             
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-[#FF6B35] text-white">

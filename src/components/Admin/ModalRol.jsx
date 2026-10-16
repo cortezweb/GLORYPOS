@@ -419,8 +419,8 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-2xs animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-2xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92dvh] flex flex-col overflow-hidden border border-slate-200">
         
         {/* Cabecera del Modal (Exacta a media_1790121199245.png) */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">

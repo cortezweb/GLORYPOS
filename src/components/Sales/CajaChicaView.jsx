@@ -495,7 +495,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
 
       {/* Modal: Registrar Movimiento de Caja */}
       {isNewMovementModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
             <h3 className="text-base font-bold text-slate-900">Registrar Movimiento de Caja</h3>
             

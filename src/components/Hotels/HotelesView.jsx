@@ -53,7 +53,7 @@ export default function HotelesView({ currentView = 'hotel_recepcion', onSelectS
   };
 
   return (
-    <div className="space-y-4 font-sans pb-12">
+    <div className="space-y-4 font-sans pb-12 px-3 pt-3 lg:px-0 lg:pt-0">
       <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 border border-sky-200 flex items-center justify-center">

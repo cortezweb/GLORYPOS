@@ -76,9 +76,9 @@ export default function ReservaModal({ inicial, data, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-3">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-3 overflow-y-auto sm:[&>*]:my-auto">
       <div className="fixed inset-0 bg-slate-900/60" onClick={onClose} />
-      <form onSubmit={guardar} className="relative z-10 w-full max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[94vh] overflow-y-auto">
+      <form onSubmit={guardar} className="relative z-10 w-full max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[94dvh] overflow-y-auto">
         <div className="sticky top-0 bg-white px-5 py-4 border-b border-slate-100 flex items-center justify-between z-10">
           <div>
             <h3 className="text-base font-black text-slate-900">{esEdicion ? `Editar reserva ${inicial.codigo}` : walkin ? 'Walk-in · Check-in directo' : 'Nueva reserva'}</h3>

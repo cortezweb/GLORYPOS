@@ -60,7 +60,7 @@ export default function ScaleModal({ product, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn overflow-y-auto [&>*]:my-auto">
       {/* Backdrop */}
       <div 
         onClick={onClose}

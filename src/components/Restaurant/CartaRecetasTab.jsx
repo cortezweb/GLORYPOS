@@ -164,9 +164,9 @@ export default function CartaRecetasTab({ data }) {
       )}
 
       {editando && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 overflow-y-auto [&>*]:my-auto">
           <div className="fixed inset-0 bg-slate-900/60" onClick={() => setEditando(null)} />
-          <div className="relative z-10 w-full max-w-lg bg-white rounded-3xl p-5 space-y-3 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative z-10 w-full max-w-lg bg-white rounded-3xl p-5 space-y-3 shadow-2xl max-h-[90dvh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-slate-900">Receta · {editando.nombre}</h3>
               <button type="button" onClick={() => setEditando(null)} className="p-1 text-slate-400"><X className="w-5 h-5" /></button>

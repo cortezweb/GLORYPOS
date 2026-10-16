@@ -184,7 +184,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn overflow-y-auto sm:[&>*]:my-auto">
       {/* Backdrop */}
       <div 
         onClick={onClose}
@@ -192,7 +192,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
       />
 
       {/* Main Container mimicking Stitch mobile/modal */}
-      <main className="w-full max-w-[430px] bg-white rounded-t-[32px] sm:rounded-2xl shadow-2xl flex flex-col justify-between relative overflow-hidden max-h-[94vh] z-10 animate-slideUp">
+      <main className="w-full max-w-[430px] bg-white rounded-t-[32px] sm:rounded-2xl shadow-2xl flex flex-col justify-between relative overflow-hidden max-h-[94dvh] z-10 animate-slideUp">
         {/* BEGIN: ModalHeader (Exact Stitch Layout) */}
         <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-20">
           <div className="flex items-center space-x-2">

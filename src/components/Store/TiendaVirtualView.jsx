@@ -524,7 +524,7 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
 
       {/* ── MODAL: CÓDIGO QR DE LA TIENDA ── */}
       {isQrModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-sm overflow-hidden p-6 text-center space-y-4 animate-scaleUp">
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
               <h3 className="text-sm font-black text-slate-900">Código QR de tu Tienda</h3>

@@ -284,7 +284,7 @@ export default function PedidosWebView({ onSelectSubView, hideSubNav = false, on
       </main>
 
       {cerrando && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 overflow-y-auto [&>*]:my-auto">
           <div className="fixed inset-0 bg-slate-900/60" onClick={() => setCerrando(null)} />
           <div className="relative z-10 w-full max-w-sm bg-white rounded-3xl p-5 space-y-4 shadow-2xl">
             <div>

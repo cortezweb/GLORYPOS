@@ -55,14 +55,14 @@ export default function RubroSelectorModal({ isOpen, onClose, currentRubro = 'AB
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 animate-fadeIn overflow-y-auto [&>*]:my-auto">
       {/* Backdrop */}
       <div 
         onClick={onClose}
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
       />
 
-      <div className="relative w-full max-w-xl bg-white rounded-3xl p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-4 animate-scaleUp max-h-[90vh] overflow-hidden">
+      <div className="relative w-full max-w-xl bg-white rounded-3xl p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-4 animate-scaleUp max-h-[90dvh] overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-slate-100 pb-3">
           <div>
