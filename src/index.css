@@ -17,6 +17,13 @@
   scrollbar-width: none;
 }
 
+/* Con mouse (PC o ventana angosta) se muestra una barra fina en los carruseles para indicar que hay más */
+@media (hover: hover) and (pointer: fine) {
+  .no-scrollbar.overflow-x-auto { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+  .no-scrollbar.overflow-x-auto::-webkit-scrollbar { display: block; height: 4px; }
+  .no-scrollbar.overflow-x-auto::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+}
+
 .safe-top {
   padding-top: env(safe-area-inset-top, 0px);
 }
