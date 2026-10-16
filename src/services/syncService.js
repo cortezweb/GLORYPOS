@@ -10,6 +10,28 @@ const BACKOFF_MS = [2000, 5000, 15000];
 let backgroundSyncTimeout = null;
 let hooksAttached = false;
 
+// Id real de la empresa en Supabase (en Dexie la empresa vive bajo la clave 'empresa_activa')
+async function getCloudEmpresaId() {
+  try {
+    const local = await db.config_empresa.get('empresa_activa');
+    if (!local) return null;
+    if (local.cloud_id) return local.cloud_id;
+    return local.id && local.id !== 'empresa_activa' ? local.id : null;
+  } catch {
+    return null;
+  }
+}
+
+// Solo se sincroniza con una sesión de Supabase Auth: RLS rechaza todo lo demás
+async function hasCloudSession() {
+  try {
+    const { data } = await supabase.auth.getSession();
+    return Boolean(data?.session);
+  } catch {
+    return false;
+  }
+}
+
 export const ALL_SYSTEM_TABLES = [
   'empresas',
   'roles',
@@ -136,6 +158,11 @@ export const syncService = {
     let synced = 0;
     let failed = 0;
 
+    const empresaId = await getCloudEmpresaId();
+    if (!empresaId || !(await hasCloudSession())) {
+      return { synced: 0, failed: 0, reason: 'sin_sesion_o_empresa' };
+    }
+
     try {
       const pending = await db.sync_queue
         .filter(item => !item.synced_at && item.intentos < MAX_INTENTOS)
@@ -143,17 +170,18 @@ export const syncService = {
 
       for (const item of pending) {
         try {
-          const data = JSON.parse(item.data || '{}');
+          const data = { ...JSON.parse(item.data || '{}'), empresa_id: empresaId };
 
           if (item.accion === 'upsert') {
             const { error } = await supabase
               .from(item.tabla)
-              .upsert(data, { onConflict: 'id' });
+              .upsert(data, { onConflict: 'empresa_id,id' });
             if (error) throw error;
           } else if (item.accion === 'delete') {
             const { error } = await supabase
               .from(item.tabla)
               .delete()
+              .eq('empresa_id', empresaId)
               .eq('id', item.registro_id);
             if (error) throw error;
           }
@@ -229,9 +257,13 @@ export const syncService = {
       errors: []
     };
 
+    const empresaId = await getCloudEmpresaId();
+    if (!empresaId || !(await hasCloudSession())) {
+      return { success: false, reason: 'sin_sesion_o_empresa', summary };
+    }
+
     try {
       const localEmpresa = await db.config_empresa.get('empresa_activa');
-      const empresaId = localEmpresa?.id || 'empresa_activa';
 
       // 1. Procesar cola offline primero
       try {
@@ -243,24 +275,20 @@ export const syncService = {
       // 2. Sincronizar Empresa
       if (localEmpresa) {
         try {
+          // Plan, vencimiento, módulos y subdominio los controla el Super Admin en la nube
           const empresaPayload = {
-            id: empresaId,
-            slug: localEmpresa.slug || 'admin',
             nombre: localEmpresa.nombre || 'GLORYPOS BOLIVIA S.R.L.',
             nit_ci: String(localEmpresa.nit_ci || '0'),
             rubro: localEmpresa.rubro || 'ABARROTES',
-            plan_tipo: localEmpresa.plan_tipo || 'PRO',
             ciudad: localEmpresa.ciudad || 'Santa Cruz, Bolivia',
             direccion: localEmpresa.direccion || '',
             telefono: localEmpresa.telefono || '',
             email: localEmpresa.email || '',
             propietario: localEmpresa.propietario || '',
-            estado_suscripcion: localEmpresa.estado_suscripcion || 'ACTIVO',
-            dias_prueba: Number(localEmpresa.dias_prueba) || 30,
             updated_at: new Date().toISOString()
           };
 
-          const { error: empErr } = await supabase.from('empresas').upsert(empresaPayload, { onConflict: 'id' });
+          const { error: empErr } = await supabase.from('empresas').update(empresaPayload).eq('id', empresaId);
           if (empErr) {
             summary.errors.push({ tabla: 'empresas', error: empErr.message });
           } else {
@@ -287,7 +315,7 @@ export const syncService = {
               updated_at: new Date().toISOString()
             }));
 
-            const { error: rolErr } = await supabase.from('roles').upsert(payload, { onConflict: 'id' });
+            const { error: rolErr } = await supabase.from('roles').upsert(payload, { onConflict: 'empresa_id,id' });
             if (rolErr) summary.errors.push({ tabla: 'roles', error: rolErr.message });
             else summary.roles = payload.length;
           }
@@ -317,7 +345,7 @@ export const syncService = {
               updated_at: new Date().toISOString()
             }));
 
-            const { error: usrErr } = await supabase.from('usuarios').upsert(payload, { onConflict: 'id' });
+            const { error: usrErr } = await supabase.from('usuarios').upsert(payload, { onConflict: 'empresa_id,id' });
             if (usrErr) summary.errors.push({ tabla: 'usuarios', error: usrErr.message });
             else summary.usuarios = payload.length;
           }
@@ -345,7 +373,7 @@ export const syncService = {
               updated_at: new Date().toISOString()
             }));
 
-            const { error: cliErr } = await supabase.from('clientes').upsert(payload, { onConflict: 'id' });
+            const { error: cliErr } = await supabase.from('clientes').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cliErr) summary.errors.push({ tabla: 'clientes', error: cliErr.message });
             else summary.clientes = payload.length;
           }
@@ -372,7 +400,7 @@ export const syncService = {
               updated_at: new Date().toISOString()
             }));
 
-            const { error: provErr } = await supabase.from('proveedores').upsert(payload, { onConflict: 'id' });
+            const { error: provErr } = await supabase.from('proveedores').upsert(payload, { onConflict: 'empresa_id,id' });
             if (provErr) summary.errors.push({ tabla: 'proveedores', error: provErr.message });
             else summary.proveedores = payload.length;
           }
@@ -411,7 +439,7 @@ export const syncService = {
               updated_at: new Date().toISOString()
             }));
 
-            const { error: prodErr } = await supabase.from('productos').upsert(payload, { onConflict: 'id' });
+            const { error: prodErr } = await supabase.from('productos').upsert(payload, { onConflict: 'empresa_id,id' });
             if (prodErr) summary.errors.push({ tabla: 'productos', error: prodErr.message });
             else summary.productos = payload.length;
           }
@@ -449,7 +477,7 @@ export const syncService = {
               informacion_adicional: v.informacion_adicional || {}
             }));
 
-            const { error: vtaErr } = await supabase.from('ventas').upsert(payload, { onConflict: 'id' });
+            const { error: vtaErr } = await supabase.from('ventas').upsert(payload, { onConflict: 'empresa_id,id' });
             if (vtaErr) summary.errors.push({ tabla: 'ventas', error: vtaErr.message });
             else summary.ventas = payload.length;
           }
@@ -483,7 +511,7 @@ export const syncService = {
               almacen_destino: c.almacen_destino || 'Almacén Principal'
             }));
 
-            const { error: cmpErr } = await supabase.from('compras').upsert(payload, { onConflict: 'id' });
+            const { error: cmpErr } = await supabase.from('compras').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cmpErr) summary.errors.push({ tabla: 'compras', error: cmpErr.message });
             else summary.compras = payload.length;
           }
@@ -510,7 +538,7 @@ export const syncService = {
               costo_unitario: Number(k.costo_unitario) || 0
             }));
 
-            const { error: kdxErr } = await supabase.from('kardex').upsert(payload, { onConflict: 'id' });
+            const { error: kdxErr } = await supabase.from('kardex').upsert(payload, { onConflict: 'empresa_id,id' });
             if (kdxErr) summary.errors.push({ tabla: 'kardex', error: kdxErr.message });
             else summary.kardex = payload.length;
           }
@@ -544,7 +572,7 @@ export const syncService = {
               comprobante: m.comprobante || null
             }));
 
-            const { error: cajaErr } = await supabase.from('caja_chica').upsert(payload, { onConflict: 'id' });
+            const { error: cajaErr } = await supabase.from('caja_chica').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cajaErr) summary.errors.push({ tabla: 'caja_chica', error: cajaErr.message });
             else summary.caja_chica = payload.length;
           }
@@ -576,7 +604,7 @@ export const syncService = {
               estado: c.estado || 'Vigente'
             }));
 
-            const { error: cotErr } = await supabase.from('cotizaciones').upsert(payload, { onConflict: 'id' });
+            const { error: cotErr } = await supabase.from('cotizaciones').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cotErr) summary.errors.push({ tabla: 'cotizaciones', error: cotErr.message });
             else summary.cotizaciones = payload.length;
           }
@@ -608,7 +636,7 @@ export const syncService = {
             estado: m.estado || 'Activa'
           }));
 
-          const { error: memErr } = await supabase.from('membresias').upsert(payload, { onConflict: 'id' });
+          const { error: memErr } = await supabase.from('membresias').upsert(payload, { onConflict: 'empresa_id,id' });
           if (memErr) summary.errors.push({ tabla: 'membresias', error: memErr.message });
           else summary.membresias = payload.length;
         }
@@ -637,7 +665,7 @@ export const syncService = {
             items: Array.isArray(p.items) ? p.items : []
           }));
 
-          const { error: pwErr } = await supabase.from('pedidos_web').upsert(payload, { onConflict: 'id' });
+          const { error: pwErr } = await supabase.from('pedidos_web').upsert(payload, { onConflict: 'empresa_id,id' });
           if (pwErr) summary.errors.push({ tabla: 'pedidos_web', error: pwErr.message });
           else summary.pedidos_web = payload.length;
         }
@@ -660,7 +688,7 @@ export const syncService = {
               estado: u.estado || 'Activa'
             }));
 
-            const { error: uErr } = await supabase.from('unidades_medida').upsert(payload, { onConflict: 'id' });
+            const { error: uErr } = await supabase.from('unidades_medida').upsert(payload, { onConflict: 'empresa_id,id' });
             if (uErr) summary.errors.push({ tabla: 'unidades_medida', error: uErr.message });
             else summary.unidades_medida = payload.length;
           }
@@ -687,7 +715,7 @@ export const syncService = {
               notas: t.notas || null
             }));
 
-            const { error: trfErr } = await supabase.from('transferencias_inventario').upsert(payload, { onConflict: 'id' });
+            const { error: trfErr } = await supabase.from('transferencias_inventario').upsert(payload, { onConflict: 'empresa_id,id' });
             if (trfErr) summary.errors.push({ tabla: 'transferencias_inventario', error: trfErr.message });
             else summary.transferencias_inventario = payload.length;
           }
@@ -714,7 +742,7 @@ export const syncService = {
               arqueo_estado: s.arqueo_estado || 'Arqueo'
             }));
 
-            const { error: sErr } = await supabase.from('sesiones_caja').upsert(payload, { onConflict: 'id' });
+            const { error: sErr } = await supabase.from('sesiones_caja').upsert(payload, { onConflict: 'empresa_id,id' });
             if (sErr) summary.errors.push({ tabla: 'sesiones_caja', error: sErr.message });
             else summary.sesiones_caja = payload.length;
           }
@@ -741,7 +769,7 @@ export const syncService = {
               monto: Number(i.monto) || 0
             }));
 
-            const { error: iErr } = await supabase.from('ingresos_caja').upsert(payload, { onConflict: 'id' });
+            const { error: iErr } = await supabase.from('ingresos_caja').upsert(payload, { onConflict: 'empresa_id,id' });
             if (iErr) summary.errors.push({ tabla: 'ingresos_caja', error: iErr.message });
             else summary.ingresos_caja = payload.length;
           }
@@ -769,7 +797,7 @@ export const syncService = {
               monto: Number(e.monto) || 0
             }));
 
-            const { error: eErr } = await supabase.from('egresos_caja').upsert(payload, { onConflict: 'id' });
+            const { error: eErr } = await supabase.from('egresos_caja').upsert(payload, { onConflict: 'empresa_id,id' });
             if (eErr) summary.errors.push({ tabla: 'egresos_caja', error: eErr.message });
             else summary.egresos_caja = payload.length;
           }
@@ -795,7 +823,7 @@ export const syncService = {
               estado: cb.estado || 'Activa'
             }));
 
-            const { error: cbErr } = await supabase.from('cuentas_bancarias').upsert(payload, { onConflict: 'id' });
+            const { error: cbErr } = await supabase.from('cuentas_bancarias').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cbErr) summary.errors.push({ tabla: 'cuentas_bancarias', error: cbErr.message });
             else summary.cuentas_bancarias = payload.length;
           }
@@ -827,7 +855,7 @@ export const syncService = {
               can_confirm_bn: Boolean(c.canConfirmBN)
             }));
 
-            const { error: cpcErr } = await supabase.from('cuentas_por_cobrar').upsert(payload, { onConflict: 'id' });
+            const { error: cpcErr } = await supabase.from('cuentas_por_cobrar').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cpcErr) summary.errors.push({ tabla: 'cuentas_por_cobrar', error: cpcErr.message });
             else summary.cuentas_por_cobrar = payload.length;
           }
@@ -854,7 +882,7 @@ export const syncService = {
               saldo: Number(p.saldo) || 0
             }));
 
-            const { error: cppErr } = await supabase.from('cuentas_por_pagar').upsert(payload, { onConflict: 'id' });
+            const { error: cppErr } = await supabase.from('cuentas_por_pagar').upsert(payload, { onConflict: 'empresa_id,id' });
             if (cppErr) summary.errors.push({ tabla: 'cuentas_por_pagar', error: cppErr.message });
             else summary.cuentas_por_pagar = payload.length;
           }
@@ -879,7 +907,7 @@ export const syncService = {
               is_protected: Boolean(m.isProtected)
             }));
 
-            const { error: mpErr } = await supabase.from('metodos_pago').upsert(payload, { onConflict: 'id' });
+            const { error: mpErr } = await supabase.from('metodos_pago').upsert(payload, { onConflict: 'empresa_id,id' });
             if (mpErr) summary.errors.push({ tabla: 'metodos_pago', error: mpErr.message });
             else summary.metodos_pago = payload.length;
           }
@@ -912,7 +940,7 @@ export const syncService = {
               motivo: g.motivo || null
             }));
 
-            const { error: grErr } = await supabase.from('guias_remitente').upsert(payload, { onConflict: 'id' });
+            const { error: grErr } = await supabase.from('guias_remitente').upsert(payload, { onConflict: 'empresa_id,id' });
             if (grErr) summary.errors.push({ tabla: 'guias_remitente', error: grErr.message });
             else summary.guias_remitente = payload.length;
           }
@@ -946,7 +974,7 @@ export const syncService = {
               motivo: g.motivo || null
             }));
 
-            const { error: gtErr } = await supabase.from('guias_transportista').upsert(payload, { onConflict: 'id' });
+            const { error: gtErr } = await supabase.from('guias_transportista').upsert(payload, { onConflict: 'empresa_id,id' });
             if (gtErr) summary.errors.push({ tabla: 'guias_transportista', error: gtErr.message });
             else summary.guias_transportista = payload.length;
           }
@@ -969,7 +997,7 @@ export const syncService = {
               estado: t.estado || 'Activo'
             }));
 
-            const { error: tErr } = await supabase.from('transportistas_gre').upsert(payload, { onConflict: 'id' });
+            const { error: tErr } = await supabase.from('transportistas_gre').upsert(payload, { onConflict: 'empresa_id,id' });
             if (tErr) summary.errors.push({ tabla: 'transportistas_gre', error: tErr.message });
             else summary.transportistas_gre = payload.length;
           }
@@ -994,7 +1022,7 @@ export const syncService = {
               estado: c.estado || 'Activo'
             }));
 
-            const { error: condErr } = await supabase.from('conductores_gre').upsert(payload, { onConflict: 'id' });
+            const { error: condErr } = await supabase.from('conductores_gre').upsert(payload, { onConflict: 'empresa_id,id' });
             if (condErr) summary.errors.push({ tabla: 'conductores_gre', error: condErr.message });
             else summary.conductores_gre = payload.length;
           }
@@ -1018,7 +1046,7 @@ export const syncService = {
               estado: v.estado || 'Activo'
             }));
 
-            const { error: vehErr } = await supabase.from('vehiculos_gre').upsert(payload, { onConflict: 'id' });
+            const { error: vehErr } = await supabase.from('vehiculos_gre').upsert(payload, { onConflict: 'empresa_id,id' });
             if (vehErr) summary.errors.push({ tabla: 'vehiculos_gre', error: vehErr.message });
             else summary.vehiculos_gre = payload.length;
           }
@@ -1052,7 +1080,7 @@ export const syncService = {
               observacion: r.observacion || null
             }));
 
-            const { error: retErr } = await supabase.from('retenciones').upsert(payload, { onConflict: 'id' });
+            const { error: retErr } = await supabase.from('retenciones').upsert(payload, { onConflict: 'empresa_id,id' });
             if (retErr) summary.errors.push({ tabla: 'retenciones', error: retErr.message });
             else summary.retenciones = payload.length;
           }
@@ -1085,7 +1113,7 @@ export const syncService = {
               observacion: p.observacion || null
             }));
 
-            const { error: percErr } = await supabase.from('percepciones').upsert(payload, { onConflict: 'id' });
+            const { error: percErr } = await supabase.from('percepciones').upsert(payload, { onConflict: 'empresa_id,id' });
             if (percErr) summary.errors.push({ tabla: 'percepciones', error: percErr.message });
             else summary.percepciones = payload.length;
           }
@@ -1116,7 +1144,7 @@ export const syncService = {
               observacion: r.observacion || null
             }));
 
-            const { error: revErr } = await supabase.from('reversiones').upsert(payload, { onConflict: 'id' });
+            const { error: revErr } = await supabase.from('reversiones').upsert(payload, { onConflict: 'empresa_id,id' });
             if (revErr) summary.errors.push({ tabla: 'reversiones', error: revErr.message });
             else summary.reversiones = payload.length;
           }
@@ -1170,7 +1198,7 @@ export const syncService = {
           const filas = await t.leer();
           if (!filas || filas.length === 0) continue;
           const payload = filas.map(f => ({ ...t.mapear(f), updated_at: new Date().toISOString() }));
-          const { error: gcErr } = await supabase.from(t.tabla).upsert(payload, { onConflict: t.conflicto || 'id' });
+          const { error: gcErr } = await supabase.from(t.tabla).upsert(payload, { onConflict: `empresa_id,${t.conflicto || 'id'}` });
           if (gcErr) {
             // No marca toda la sincronización como fallida si aún no se ejecutó glorychef_schema.sql
             summary.glorychef_errors.push({ tabla: t.tabla, error: gcErr.message });
@@ -1222,10 +1250,12 @@ export const syncService = {
       return { success: false, reason: 'offline_or_unconfigured' };
     }
 
-    try {
-      const localEmpresa = await db.config_empresa.get('empresa_activa');
-      const empresaId = localEmpresa?.id || 'empresa_activa';
+    const empresaId = await getCloudEmpresaId();
+    if (!empresaId || !(await hasCloudSession())) {
+      return { success: false, reason: 'sin_sesion_o_empresa' };
+    }
 
+    try {
       const { data: cloudProducts, error } = await supabase
         .from('productos')
         .select('*')

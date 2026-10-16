@@ -18,7 +18,11 @@ export default function LoginView({ onGoToRegister }) {
     usuarios, 
     switchTenant, 
     loginWithPin, 
-    loginWithCredentials 
+    loginWithCredentials,
+    signUpInvited,
+    unlinkDevice,
+    deviceLinked,
+    isDemoMode
   } = useAuth();
 
   // Modo de acceso: 'credentials' (SaaS estándar) o 'pin' (Cajero rápido)
@@ -43,6 +47,9 @@ export default function LoginView({ onGoToRegister }) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  // Persona invitada a la empresa que aún no tiene su acceso creado
+  const [inviteMode, setInviteMode] = useState(false);
+  const [infoMsg, setInfoMsg] = useState(null);
 
   // Sincronizar input de empresa con el slug activo
   useEffect(() => {
@@ -188,9 +195,15 @@ export default function LoginView({ onGoToRegister }) {
 
     setIsLoggingIn(true);
     setErrorMsg(null);
+    setInfoMsg(null);
 
-    const res = await loginWithCredentials(identifier, password);
-    if (res.success) {
+    const res = inviteMode
+      ? await signUpInvited(identifier, password)
+      : await loginWithCredentials(identifier, password);
+    if (res.success && res.needsConfirmation) {
+      setInfoMsg('Te enviamos un correo. Confírmalo y luego inicia sesión aquí.');
+      setInviteMode(false);
+    } else if (res.success) {
       playCashChime();
     } else {
       registerFailedAttempt();
@@ -422,9 +435,23 @@ export default function LoginView({ onGoToRegister }) {
                 disabled={isLoggingIn || isLocked}
                 className="w-full py-3 bg-gradient-to-r from-[#FF6B35] to-[#ea580c] hover:from-[#ea580c] hover:to-[#c2410c] active:from-[#c2410c] active:to-[#9a3412] text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-500/25 transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <span>{isLoggingIn ? 'Iniciando sesión...' : 'Ingresar'}</span>
+                <span>{isLoggingIn ? 'Iniciando sesión...' : inviteMode ? 'Crear mi acceso' : 'Ingresar'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
+
+              {infoMsg && (
+                <p className="text-[11px] text-emerald-700 font-bold text-center">{infoMsg}</p>
+              )}
+
+              {!isDemoMode && (
+                <button
+                  type="button"
+                  onClick={() => { setInviteMode(v => !v); setErrorMsg(null); setInfoMsg(null); }}
+                  className="w-full text-center text-[11px] font-bold text-slate-500 hover:text-[#FF6B35] transition"
+                >
+                  {inviteMode ? 'Ya tengo acceso, quiero ingresar' : '¿Te invitaron a esta empresa? Crea tu acceso'}
+                </button>
+              )}
             </form>
           )}
 
@@ -556,7 +583,7 @@ export default function LoginView({ onGoToRegister }) {
           )}
 
           {/* Accesos rápidos de prueba (1-clic) */}
-          {usuarios.length > 0 && (
+          {isDemoMode && usuarios.length > 0 && (
             <div className="pt-3 border-t border-slate-100 space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block text-center">
                 Acceso Rápido de Prueba:
@@ -595,6 +622,15 @@ export default function LoginView({ onGoToRegister }) {
           >
             <UserPlus className="w-3.5 h-3.5" />
             ¿Quieres registrar una nueva empresa? Haz clic aquí →
+          </button>
+        )}
+        {!isDemoMode && deviceLinked && (
+          <button
+            type="button"
+            onClick={unlinkDevice}
+            className="block mx-auto text-[11px] font-bold text-slate-400 hover:text-rose-600 transition cursor-pointer"
+          >
+            Desvincular este dispositivo
           </button>
         )}
         <p className="text-[11px] text-slate-400 font-medium">

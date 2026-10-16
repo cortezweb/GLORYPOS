@@ -8,7 +8,7 @@ import { hashText } from '../../utils/crypto';
 import { useAuth } from '../../context/AuthContext';
 import { playCashChime } from '../../utils/audio';
 import { tenantService, slugify } from '../../services/tenantService';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { isDemoMode } from '../../lib/supabase';
 import GloryLogo from '../Common/GloryLogo';
 
 const RUBROS = [
@@ -27,8 +27,9 @@ function generateId(prefix) {
 }
 
 export default function RegisterView({ onGoToLogin }) {
-  const { refresh } = useAuth();
+  const { refresh, registerCompanyCloud } = useAuth();
   const [step, setStep] = useState(1); // 1 | 2 | 3
+  const [confirmEmailMsg, setConfirmEmailMsg] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -92,8 +93,45 @@ export default function RegisterView({ onGoToLogin }) {
   // ── Registro final ──────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    const empresaData = {
+      nombre: negocio.nombre.trim(),
+      slug: negocio.slug.trim().toLowerCase(),
+      nit_ci: negocio.nit_ci.trim(),
+      rubro: negocio.rubro,
+      ciudad: negocio.ciudad,
+      direccion: negocio.direccion.trim(),
+      telefono: negocio.telefono.trim(),
+      email: admin.email.trim().toLowerCase(),
+      adminNombre: admin.nombre.trim(),
+    };
+
+    // Con Supabase: cuenta en Supabase Auth + empresa creada por el servidor
+    if (!isDemoMode) {
+      try {
+        const res = await registerCompanyCloud({
+          empresaData,
+          adminNombre: admin.nombre.trim(),
+          email: admin.email,
+          password: admin.password,
+        });
+        if (!res.success) {
+          setErrors({ submit: res.error || 'Ocurrió un error. Intenta de nuevo.' });
+        } else if (res.needsConfirmation) {
+          setConfirmEmailMsg(`Te enviamos un correo a ${admin.email.trim().toLowerCase()}. Confírmalo y luego inicia sesión: tu empresa se creará en ese momento.`);
+        } else {
+          playCashChime();
+        }
+      } catch (err) {
+        console.error('[RegisterView] Error al registrar:', err);
+        setErrors({ submit: err.message || 'Ocurrió un error. Intenta de nuevo.' });
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
     try {
-      // 1. Registrar empresa con slug vía tenantService
+      // 1. Registrar empresa con slug vía tenantService (modo demo, solo en este navegador)
       const newEmpresa = await tenantService.registerTenant({
         nombre: negocio.nombre.trim(),
         slug: negocio.slug.trim().toLowerCase(),
@@ -128,15 +166,6 @@ export default function RegisterView({ onGoToLogin }) {
         activo: true,
         created_at: new Date().toISOString(),
       };
-
-      // Guardar en Supabase si está disponible
-      if (isSupabaseConfigured && navigator.onLine && supabase) {
-        try {
-          await supabase.from('usuarios').insert(adminUser);
-        } catch (err) {
-          console.warn('[RegisterView] Error al guardar admin en Supabase:', err);
-        }
-      }
 
       // Guardar en Dexie
       await db.usuarios.put(adminUser);
@@ -435,6 +464,9 @@ export default function RegisterView({ onGoToLogin }) {
                 <p className="text-xs text-[#FF6B35] mt-0.5">Acceso completo a todos los módulos sin costo. Luego elige tu plan.</p>
               </div>
 
+              {confirmEmailMsg && (
+                <p className="text-xs text-emerald-700 font-bold text-center">{confirmEmailMsg}</p>
+              )}
               {errors.submit && (
                 <p className="text-xs text-rose-600 font-bold text-center">{errors.submit}</p>
               )}
@@ -466,7 +498,7 @@ export default function RegisterView({ onGoToLogin }) {
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || Boolean(confirmEmailMsg)}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-[#00B574] hover:bg-[#009c63] active:bg-[#E85B28] text-white text-sm font-black transition disabled:opacity-60 shadow-md shadow-[#FF6B35]/30"
               >
                 {isSubmitting ? (

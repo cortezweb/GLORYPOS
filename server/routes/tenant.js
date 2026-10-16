@@ -74,7 +74,8 @@ router.get('/:slug', async (req, res) => {
  * POST /api/tenants
  * Registro de una nueva empresa / inquilino en la plataforma SaaS
  */
-router.post('/', async (req, res) => {
+// Solo el Super Admin crea empresas desde la API (el autoregistro usa la RPC registrar_empresa)
+router.post('/', authenticateUser, requireRole(['SUPERADMIN']), async (req, res) => {
   try {
     const {
       nombre,
@@ -191,9 +192,9 @@ router.post('/', async (req, res) => {
 
 /**
  * PUT /api/tenants/:slug/modules
- * Actualiza los módulos habilitados para el inquilino (Protegido: ADMIN / SUPERADMIN)
+ * Actualiza los módulos habilitados para el inquilino (Protegido: solo SUPERADMIN)
  */
-router.put('/:slug/modules', authenticateUser, requireRole(['ADMIN', 'SUPERADMIN']), async (req, res) => {
+router.put('/:slug/modules', authenticateUser, requireRole(['SUPERADMIN']), async (req, res) => {
   try {
     const { modulos_activos } = req.body;
     const slug = req.params.slug;

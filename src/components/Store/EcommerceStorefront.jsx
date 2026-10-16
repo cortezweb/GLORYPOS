@@ -98,7 +98,8 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
         // Si la base de datos local Dexie aún no tiene productos, intentar traerlos desde Supabase
         if ((!list || list.length === 0) && isSupabaseConfigured && supabase) {
           try {
-            const { data, error } = await supabase.from('productos').select('*');
+            // Catálogo público de ESTA empresa (sin costos), aunque el visitante no tenga sesión
+            const { data, error } = await supabase.rpc('tienda_catalogo', { p_slug: empresa?.slug });
             if (!error && data && data.length > 0) {
               list = data;
               // Guardar en Dexie para soporte offline

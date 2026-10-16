@@ -76,7 +76,7 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
 
         if ((!list || list.length === 0) && isSupabaseConfigured && supabase) {
           try {
-            const { data, error } = await supabase.from('productos').select('*');
+            const { data, error } = await supabase.from('productos').select('*').eq('empresa_id', empresa?.id);
             if (!error && data && data.length > 0) {
               list = data;
               for (const p of data) {
