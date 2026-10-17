@@ -8,7 +8,7 @@ import {
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import SalesSubNav from './SalesSubNav';
-import { simbolo } from '../../utils/currency';
+import { simbolo, nombreMoneda, getCurrencyCode } from '../../utils/currency';
 
 export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   const { currentUser, empresa, can } = useAuth();
@@ -354,7 +354,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   <ID>${venta.correlativo}</ID>
   <IssueDate>${(venta.fecha || '').slice(0, 10)}</IssueDate>
   <InvoiceTypeCode>${venta.tipo_documento === 'FACTURA' ? '01' : '03'}</InvoiceTypeCode>
-  <DocumentCurrencyCode>PEN</DocumentCurrencyCode>
+  <DocumentCurrencyCode>${getCurrencyCode()}</DocumentCurrencyCode>
   <AccountingSupplierParty>
     <CustomerAssignedAccountID>${empresa?.nit || '20601234567'}</CustomerAssignedAccountID>
     <PartyName><Name>${empresa?.nombre || 'GLORYPOS S.A.C.'}</Name></PartyName>
@@ -364,7 +364,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
     <PartyName><Name>${venta.cliente_nombre || 'Clientes Varios'}</Name></PartyName>
   </AccountingCustomerParty>
   <LegalMonetaryTotal>
-    <PayableAmount currencyID="PEN">${Number(venta.total || 0).toFixed(2)}</PayableAmount>
+    <PayableAmount currencyID="${getCurrencyCode()}">${Number(venta.total || 0).toFixed(2)}</PayableAmount>
   </LegalMonetaryTotal>
 </Invoice>`;
     const blob = new Blob([xmlContent], { type: 'application/xml' });
@@ -986,7 +986,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                   <div>
                     <span className="font-bold text-slate-500 block">FECHA DE EMISIÓN:</span>
                     <span className="font-bold text-slate-800">{formatDateDisplay(previewA4Sale.fecha)}</span>
-                    <span className="text-slate-500 block mt-1">MONEDA: SOLES (PEN)</span>
+                    <span className="text-slate-500 block mt-1">MONEDA: {nombreMoneda().toUpperCase()} ({getCurrencyCode()})</span>
                   </div>
                 </div>
 

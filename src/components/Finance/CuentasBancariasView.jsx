@@ -261,7 +261,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   Saldo Disponible
                 </span>
                 <span className="text-xl font-black text-slate-900 tracking-tight font-mono">
-                  {acc.moneda || 'PEN'} {Number(acc.saldo || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {acc.moneda || getCurrencyCode()} {Number(acc.saldo || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>

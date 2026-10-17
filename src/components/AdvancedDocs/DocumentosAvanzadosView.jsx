@@ -10,7 +10,7 @@ import NuevaReversionModal from './NuevaReversionModal';
 import DetalleDocumentoModal from './DetalleDocumentoModal';
 import EstadoSunatModal from './EstadoSunatModal';
 import DocumentoPdfPreviewModal from './DocumentoPdfPreviewModal';
-import { simbolo } from '../../utils/currency';
+import { simbolo, getCurrencyCode } from '../../utils/currency';
 
 export default function DocumentosAvanzadosView({ initialTab = 'retenciones', onSelectSubView }) {
   // Pestaña activa: 'retenciones', 'percepciones', 'reversiones'
@@ -187,7 +187,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
   <IssueDate>${doc.fecha}</IssueDate>
   <PartyIdentification>${doc.proveedor_doc || doc.sujeto_doc || '000000'}</PartyIdentification>
   <PartyName>${doc.proveedor_nombre || doc.sujeto_nombre || 'Clientes varios'}</PartyName>
-  <TotalAmount currencyID="PEN">${doc.retenido || doc.percibido || doc.monto}</TotalAmount>
+  <TotalAmount currencyID="${getCurrencyCode()}">${doc.retenido || doc.percibido || doc.monto}</TotalAmount>
   <DocumentReference>${doc.origen}</DocumentReference>
   <SunatStatus>${doc.estado_sunat}</SunatStatus>
 </RetentionPerceptionDocument>`;
