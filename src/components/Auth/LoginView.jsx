@@ -185,7 +185,7 @@ export default function LoginView({ onGoToRegister }) {
     if (isLocked) return;
 
     // Si el usuario modificó el identificador de empresa pero no dio enter, aplicarlo primero
-    if (isLocalDev && companyIdInput.trim() !== tenantSlug) {
+    if (!detectedSubdomain && companyIdInput.trim() !== tenantSlug) {
       const switchRes = await switchTenant(companyIdInput.trim());
       if (!switchRes.success) {
         triggerError(switchRes.error || 'Empresa no encontrada');
