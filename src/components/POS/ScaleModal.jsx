@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Scale, X, Check, Delete, ArrowRight, Sparkles } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { simbolo } from '../../utils/currency';
 
 export default function ScaleModal({ product, isOpen, onClose }) {
   const { addToCart } = useCart();
@@ -82,7 +83,7 @@ export default function ScaleModal({ product, isOpen, onClose }) {
                 {product.nombre}
               </h3>
               <span className="text-xs font-bold text-slate-500">
-                Bs. {pricePerKg.toFixed(2)} / Kg
+                {simbolo()} {pricePerKg.toFixed(2)} / Kg
               </span>
             </div>
           </div>
@@ -109,7 +110,7 @@ export default function ScaleModal({ product, isOpen, onClose }) {
           <div className="w-full mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
             <span className="text-slate-400">Total a Cobrar:</span>
             <span className="text-lg font-black text-white">
-              Bs. {totalCalculated.toFixed(2)}
+              {simbolo()} {totalCalculated.toFixed(2)}
             </span>
           </div>
         </div>
@@ -181,7 +182,7 @@ export default function ScaleModal({ product, isOpen, onClose }) {
           className="w-full h-12 bg-rose-600 hover:bg-rose-700 active:scale-95 disabled:opacity-50 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-rose-500/25 flex items-center justify-center gap-2 transition"
         >
           <Check className="w-4 h-4" />
-          <span>Agregar ({weightNum} Kg • Bs. {totalCalculated.toFixed(2)})</span>
+          <span>Agregar ({weightNum} Kg • {simbolo()} {totalCalculated.toFixed(2)})</span>
         </button>
       </div>
     </div>

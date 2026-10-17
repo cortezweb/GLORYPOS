@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Calendar, FileText, Download } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function ReporteCajaTab({ movimientosCaja = [] }) {
   const [sucursal, setSucursal] = useState('Todas');
@@ -196,7 +197,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
             TOTAL INGRESOS
           </span>
           <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-            S/ 169546.17
+            {simbolo()} 169546.17
           </div>
         </div>
 
@@ -206,7 +207,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
             TOTAL EGRESOS
           </span>
           <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-            S/ 20486.81
+            {simbolo()} 20486.81
           </div>
         </div>
 
@@ -216,7 +217,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
             NETO EN CAJA
           </span>
           <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-            S/ 149059.36
+            {simbolo()} 149059.36
           </div>
         </div>
 
@@ -262,7 +263,7 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
                   <td className="py-2.5 px-3 text-center font-mono text-slate-700">{row.sesion}</td>
                   <td className="py-2.5 px-3 text-slate-700">{row.metodo}</td>
                   <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
-                    S/ {row.monto.toFixed(2)}
+                    {simbolo()} {row.monto.toFixed(2)}
                   </td>
                 </tr>
               ))}

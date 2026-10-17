@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import FinanceSubNav from './FinanceSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function ReportesCajaView({ onSelectSubView }) {
   const [activeTab, setActiveTab] = useState('resumen'); // 'resumen' | 'movimientos'
@@ -242,7 +243,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Total Ventas Facturadas</span>
               <span className="text-xl font-black text-slate-900 block font-mono">
-                S/ {totalVentas.toFixed(2)}
+                {simbolo()} {totalVentas.toFixed(2)}
               </span>
               <span className="text-[11px] text-[#FF6B35] font-semibold">14 operaciones en el periodo</span>
             </div>
@@ -250,7 +251,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Efectivo Total Recibido</span>
               <span className="text-xl font-black text-[#FF6B35] block font-mono">
-                S/ {efectivoTotal.toFixed(2)}
+                {simbolo()} {efectivoTotal.toFixed(2)}
               </span>
               <span className="text-[11px] text-slate-500">Cobrado directamente en gaveta</span>
             </div>
@@ -258,7 +259,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Pagos Digitales (Yape/POS)</span>
               <span className="text-xl font-black text-[#FF6B35] block font-mono">
-                S/ {totalDigitales.toFixed(2)}
+                {simbolo()} {totalDigitales.toFixed(2)}
               </span>
               <span className="text-[11px] text-slate-500">Acreditados a cuentas bancarias</span>
             </div>
@@ -266,7 +267,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
             <div className="bg-white p-4 rounded-2xl border border-blue-200 bg-[#FF6B35]/10/20 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6B35] block mb-1">Saldo en Gaveta (Caja)</span>
               <span className="text-xl font-black text-blue-900 block font-mono">
-                S/ {saldoFinalCaja.toFixed(2)}
+                {simbolo()} {saldoFinalCaja.toFixed(2)}
               </span>
               <span className="text-[11px] text-[#FF6B35] font-medium">Efectivo + Ingresos - Egresos</span>
             </div>
@@ -281,7 +282,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               <div className="space-y-1">
                 <div className="flex justify-between font-semibold">
                   <span className="text-slate-700">Efectivo</span>
-                  <span className="text-slate-900 font-mono">S/ {efectivoTotal.toFixed(2)} (38.6%)</span>
+                  <span className="text-slate-900 font-mono">{simbolo()} {efectivoTotal.toFixed(2)} (38.6%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-[#FF6B35] rounded-full" style={{ width: '38.6%' }}></div>
@@ -292,7 +293,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               <div className="space-y-1">
                 <div className="flex justify-between font-semibold">
                   <span className="text-slate-700">Billetera Yape</span>
-                  <span className="text-slate-900 font-mono">S/ {yapeTotal.toFixed(2)} (31.6%)</span>
+                  <span className="text-slate-900 font-mono">{simbolo()} {yapeTotal.toFixed(2)} (31.6%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-[#FF6B35] rounded-full" style={{ width: '31.6%' }}></div>
@@ -303,7 +304,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               <div className="space-y-1">
                 <div className="flex justify-between font-semibold">
                   <span className="text-slate-700">Billetera Plin</span>
-                  <span className="text-slate-900 font-mono">S/ {plinTotal.toFixed(2)} (13.5%)</span>
+                  <span className="text-slate-900 font-mono">{simbolo()} {plinTotal.toFixed(2)} (13.5%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-[#FF6B35] rounded-full" style={{ width: '13.5%' }}></div>
@@ -314,7 +315,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
               <div className="space-y-1">
                 <div className="flex justify-between font-semibold">
                   <span className="text-slate-700">Tarjetas POS (Niubiz / Izipay)</span>
-                  <span className="text-slate-900 font-mono">S/ {tarjetaTotal.toFixed(2)} (16.3%)</span>
+                  <span className="text-slate-900 font-mono">{simbolo()} {tarjetaTotal.toFixed(2)} (16.3%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-amber-500 rounded-full" style={{ width: '16.3%' }}></div>
@@ -377,13 +378,13 @@ export default function ReportesCajaView({ onSelectSubView }) {
                       {m.usuario}
                     </td>
                     <td className="py-3 px-3 text-right font-mono text-[#FF6B35] font-semibold whitespace-nowrap">
-                      {m.ingreso > 0 ? `+ S/ ${m.ingreso.toFixed(2)}` : '—'}
+                      {m.ingreso > 0 ? `+ ${simbolo()} ${m.ingreso.toFixed(2)}` : '—'}
                     </td>
                     <td className="py-3 px-3 text-right font-mono text-rose-600 font-semibold whitespace-nowrap">
-                      {m.egreso > 0 ? `- S/ ${m.egreso.toFixed(2)}` : '—'}
+                      {m.egreso > 0 ? `- ${simbolo()} ${m.egreso.toFixed(2)}` : '—'}
                     </td>
                     <td className="py-3 px-4 text-right font-mono font-bold text-slate-800 whitespace-nowrap">
-                      S/ {m.saldo.toFixed(2)}
+                      {simbolo()} {m.saldo.toFixed(2)}
                     </td>
                   </tr>
                 ))}

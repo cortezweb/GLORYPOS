@@ -2,6 +2,7 @@ import Dexie from 'dexie';
 import { MASTER_PRODUCTS } from './seedMaster';
 import { hashText, isAlreadyHashed } from '../utils/crypto';
 import { isDemoMode } from '../lib/supabase';
+import { simbolo } from '../utils/currency';
 
 export function applyDexieSchema(dexieInstance) {
   dexieInstance.version(2).stores({
@@ -1273,7 +1274,7 @@ export async function initDatabase(targetSlug = null) {
           proveedor_nombre: 'Clientes varios',
           proveedor_doc: '000000',
           retenido: 6.45,
-          moneda: 'S/',
+          moneda: simbolo(),
           tasa_porcentaje: 3,
           monto_total_comprobante: 215.00,
           estado_sunat: 'Error envio',

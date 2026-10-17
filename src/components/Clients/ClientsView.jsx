@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
+import { simbolo } from '../../utils/currency';
 
 export default function ClientsView() {
   const [clientes, setClientes] = useState([]);
@@ -133,7 +134,7 @@ export default function ClientsView() {
             <span className="text-xs font-bold text-slate-500">Cartera por Cobrar</span>
             <div className="mt-1">
               <span className="text-xl sm:text-2xl font-black text-rose-700">
-                Bs. {totalCreditDebt.toFixed(2)}
+                {simbolo()} {totalCreditDebt.toFixed(2)}
               </span>
               <span className="text-[10px] text-rose-600 font-bold block mt-0.5">
                 {debtClientsCount} con saldo pendiente
@@ -194,7 +195,7 @@ export default function ClientsView() {
 
           // Pre-drafted WhatsApp reminder message
           const waMessage = encodeURIComponent(
-            `Hola estimado(a) ${cli.razon_social}, le saludamos cordialmente de GLORYPOS. Le recordamos que cuenta con un saldo pendiente de Bs. ${(Number(cli.saldo_credito) || 0).toFixed(2)}. Agradecemos su preferencia y quedamos atentos a su pago. ¡Muchas gracias!`
+            `Hola estimado(a) ${cli.razon_social}, le saludamos cordialmente de GLORYPOS. Le recordamos que cuenta con un saldo pendiente de ${simbolo()} ${(Number(cli.saldo_credito) || 0).toFixed(2)}. Agradecemos su preferencia y quedamos atentos a su pago. ¡Muchas gracias!`
           );
 
           return (
@@ -239,7 +240,7 @@ export default function ClientsView() {
                 {hasDebt ? (
                   <div className="text-right shrink-0">
                     <span className="px-2.5 py-1 rounded-xl bg-rose-100 text-rose-800 text-[11px] font-black border border-rose-300 block">
-                      Debe: Bs. {Number(cli.saldo_credito).toFixed(2)}
+                      Debe: {simbolo()} {Number(cli.saldo_credito).toFixed(2)}
                     </span>
                     <span className="text-[10px] text-rose-600 font-medium block mt-0.5">
                       Crédito activo
@@ -401,7 +402,7 @@ export default function ClientsView() {
 
             <div>
               <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                Saldo de Deuda / Crédito Inicial (Bs.)
+                Saldo de Deuda / Crédito Inicial ({simbolo()})
               </label>
               <input
                 type="number"

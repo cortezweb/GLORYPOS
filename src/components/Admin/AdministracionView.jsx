@@ -13,6 +13,7 @@ import RolesPermisosTab from './RolesPermisosTab';
 import UsuariosTab from './UsuariosTab';
 import masterSql from '../../../supabase_master_all_tables.sql?raw';
 import phase2Sql from '../../../supabase_phase2_security_rls.sql?raw';
+import { CURRENCIES, DEFAULT_CURRENCY, getCurrencyCode, setCurrency } from '../../utils/currency';
 
 export default function AdministracionView({ initialTab = 'roles' }) {
   const { empresa } = useAuth();
@@ -104,6 +105,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
     nit_ci: empresa?.nit_ci || '',
     propietario: empresa?.propietario || '',
     ciudad: empresa?.ciudad || '',
+    moneda: empresa?.moneda || DEFAULT_CURRENCY,
     direccion: empresa?.direccion || '',
     telefono: empresa?.telefono || ''
   });
@@ -111,6 +113,13 @@ export default function AdministracionView({ initialTab = 'roles' }) {
   const handleSave = async (e) => {
     e.preventDefault();
     await db.config_empresa.update('empresa_activa', formData);
+    // Cambiar la moneda cambia todos los montos que se muestran: se sube a la nube y se recarga
+    if (formData.moneda !== getCurrencyCode()) {
+      setCurrency(formData.moneda);
+      try { await syncService.syncLocalToCloud(); } catch { /* se reintenta en segundo plano */ }
+      window.location.reload();
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -259,6 +268,17 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                     onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-500 mb-1">Moneda</label>
+                  <select
+                    value={formData.moneda}
+                    onChange={(e) => setFormData({ ...formData, moneda: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold"
+                  >
+                    {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+                  </select>
                 </div>
 
                 <div className="sm:col-span-2">

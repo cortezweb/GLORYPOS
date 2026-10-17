@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, Percent, FileText, AlertCircle, Building2 } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumber = 2 }) {
   const today = new Date();
@@ -50,7 +51,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
       proveedor_nombre: form.proveedor_nombre.trim(),
       proveedor_doc: form.proveedor_doc.trim() || '000000',
       retenido: parseFloat(montoRetenido),
-      moneda: 'S/',
+      moneda: simbolo(),
       tasa_porcentaje: tasaNum,
       monto_total_comprobante: montoTotalNum,
       estado_sunat: 'Aceptado',
@@ -194,7 +195,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Monto Total Factura (S/)
+                Monto Total Factura ({simbolo()})
               </label>
               <input
                 type="number"
@@ -211,7 +212,7 @@ export default function NuevaRetencionModal({ isOpen, onClose, onSave, nextNumbe
                 Total Retenido Calculado
               </label>
               <div className="w-full px-3 py-2 bg-[#FF6B35]/10 border border-[#FF6B35]/20 rounded-xl text-xs font-bold text-[#1E2022]">
-                S/ {montoRetenido}
+                {simbolo()} {montoRetenido}
               </div>
             </div>
           </div>

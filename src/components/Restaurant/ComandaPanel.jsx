@@ -10,6 +10,7 @@ import {
   restaurantService, ITEM_ESTADOS, TIPOS_PEDIDO, totalComanda, totalPendienteCobro, itemActivo
 } from '../../services/restaurantService';
 import { money, minutosDesde, formatMinutos } from './useGlorychefData';
+import { simbolo } from '../../utils/currency';
 
 const ESTADO_COLOR = {
   PENDIENTE: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -108,8 +109,8 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
       <p>Comanda #${comanda.numero} ${comanda.mesa_numero ? '· Mesa ' + comanda.mesa_numero : '· ' + TIPOS_PEDIDO[comanda.tipo]}</p>
       <p>Mozo: ${comanda.mozo || '-'} · Comensales: ${comanda.comensales || 1}</p><hr/>
       <table>${filas}</table><hr/>
-      <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>Bs. ${totalPendienteCobro(comanda).toFixed(2)}</b></td></tr>
-      <tr><td>Por persona (${comanda.comensales || 1})</td><td style="text-align:right">Bs. ${(totalPendienteCobro(comanda) / (comanda.comensales || 1)).toFixed(2)}</td></tr></table>
+      <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>${simbolo()} ${totalPendienteCobro(comanda).toFixed(2)}</b></td></tr>
+      <tr><td>Por persona (${comanda.comensales || 1})</td><td style="text-align:right">${simbolo()} ${(totalPendienteCobro(comanda) / (comanda.comensales || 1)).toFixed(2)}</td></tr></table>
       <script>window.print()</script></body></html>`);
     w.document.close();
   };

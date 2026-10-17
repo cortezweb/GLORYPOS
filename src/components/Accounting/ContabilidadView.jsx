@@ -4,17 +4,18 @@ import {
   CheckCircle2, ArrowUpDown, BookOpen, AlertCircle, TrendingUp, DollarSign
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { simbolo } from '../../utils/currency';
 
 export default function ContabilidadView() {
   const { empresa } = useAuth();
   const [activePeriod, setActivePeriod] = useState('2026-09');
 
   const books = [
-    { id: '14.1', code: 'RCE-14.1', name: 'Registro de Ventas e Ingresos Electrónico', count: 184, total: 'Bs. 42,950.00', status: 'CERRADO' },
-    { id: '8.1', code: 'RCE-8.1', name: 'Registro de Compras Electrónico', count: 48, total: 'Bs. 21,300.00', status: 'PENDIENTE' },
-    { id: '5.1', code: 'LD-5.1', name: 'Libro Diario Formato Simplificado', count: 232, total: 'Bs. 64,250.00', status: 'GENERADO' },
-    { id: '6.1', code: 'LM-6.1', name: 'Libro Mayor Acumulado', count: 18, total: 'Bs. 64,250.00', status: 'GENERADO' },
-    { id: '3.7', code: 'INV-3.7', name: 'Kardex / Registro de Inventario Permanente Valorizado', count: 450, total: 'Bs. 89,120.00', status: 'ACTIVO' }
+    { id: '14.1', code: 'RCE-14.1', name: 'Registro de Ventas e Ingresos Electrónico', count: 184, total: `${simbolo()} 42,950.00`, status: 'CERRADO' },
+    { id: '8.1', code: 'RCE-8.1', name: 'Registro de Compras Electrónico', count: 48, total: `${simbolo()} 21,300.00`, status: 'PENDIENTE' },
+    { id: '5.1', code: 'LD-5.1', name: 'Libro Diario Formato Simplificado', count: 232, total: `${simbolo()} 64,250.00`, status: 'GENERADO' },
+    { id: '6.1', code: 'LM-6.1', name: 'Libro Mayor Acumulado', count: 18, total: `${simbolo()} 64,250.00`, status: 'GENERADO' },
+    { id: '3.7', code: 'INV-3.7', name: 'Kardex / Registro de Inventario Permanente Valorizado', count: 450, total: `${simbolo()} 89,120.00`, status: 'ACTIVO' }
   ];
 
   const handleExport = (bookName) => {
@@ -60,17 +61,17 @@ export default function ContabilidadView() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200">
           <span className="text-xs font-bold text-slate-400 block mb-1">Total Débito Fiscal Estimado</span>
-          <p className="text-2xl font-black text-slate-900">Bs. 5,583.50</p>
+          <p className="text-2xl font-black text-slate-900">{simbolo()} 5,583.50</p>
           <span className="text-[11px] text-[#FF6B35] font-bold mt-1 inline-block">13% sobre ventas declaradas</span>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-200">
           <span className="text-xs font-bold text-slate-400 block mb-1">Total Crédito Fiscal Compras</span>
-          <p className="text-2xl font-black text-indigo-600">Bs. 2,769.00</p>
+          <p className="text-2xl font-black text-indigo-600">{simbolo()} 2,769.00</p>
           <span className="text-[11px] text-slate-500 font-medium mt-1 inline-block">48 facturas de proveedores</span>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-200">
           <span className="text-xs font-bold text-slate-400 block mb-1">Saldo Tributario del Periodo</span>
-          <p className="text-2xl font-black text-[#E85B28]">Bs. 2,814.50</p>
+          <p className="text-2xl font-black text-[#E85B28]">{simbolo()} 2,814.50</p>
           <span className="text-[11px] text-slate-500 font-medium mt-1 inline-block">Impuesto neto por liquidar</span>
         </div>
       </div>

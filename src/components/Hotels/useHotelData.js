@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { db } from '../../db/dexie';
 import { hotelService, onHotelChange } from '../../services/hotelService';
+import { simbolo } from '../../utils/currency';
 
 // Datos en vivo del hotel: se recargan cuando cambia una reserva, habitación o limpieza
 export function useHotelData() {
@@ -35,4 +36,4 @@ export function useHotelData() {
   return { tipos, habitaciones, reservas, tiposById, habById, reservasById, loading, reload };
 }
 
-export const money = (n) => `Bs. ${(Number(n) || 0).toFixed(2)}`;
+export const money = (n) => `${simbolo()} ${(Number(n) || 0).toFixed(2)}`;

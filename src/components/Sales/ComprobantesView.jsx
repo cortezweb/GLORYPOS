@@ -8,6 +8,7 @@ import {
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import SalesSubNav from './SalesSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   const { currentUser, empresa, can } = useAuth();
@@ -341,7 +342,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
 
   // Enviar por WhatsApp
   const handleSendWhatsApp = (venta) => {
-    const texto = `Hola ${venta.cliente_nombre || 'Cliente'}, le enviamos su comprobante de pago electrónico ${venta.correlativo} emitido por ${empresa?.nombre || 'GLORYPOS'} por un total de S/ ${(Number(venta.total) || 0).toFixed(2)}. ¡Gracias por su preferencia!`;
+    const texto = `Hola ${venta.cliente_nombre || 'Cliente'}, le enviamos su comprobante de pago electrónico ${venta.correlativo} emitido por ${empresa?.nombre || 'GLORYPOS'} por un total de ${simbolo()} ${(Number(venta.total) || 0).toFixed(2)}. ¡Gracias por su preferencia!`;
     const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
     window.open(url, '_blank');
   };
@@ -652,7 +653,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
 
                         {/* Total */}
                         <td className="py-3 px-3 font-black text-slate-900 text-xs whitespace-nowrap">
-                          S/ {(Number(v.total) || 0).toFixed(2)}
+                          {simbolo()} {(Number(v.total) || 0).toFixed(2)}
                         </td>
 
                         {/* Estado SUNAT */}
@@ -1004,8 +1005,8 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                       <tr key={idx}>
                         <td className="py-2 px-2 font-bold">{it.cantidad}</td>
                         <td className="py-2 px-2 font-medium">{it.nombre || it.descripcion}</td>
-                        <td className="py-2 px-2 text-right">S/ {Number(it.precio || it.precio_unitario || 0).toFixed(2)}</td>
-                        <td className="py-2 px-2 text-right font-bold">S/ {Number(it.subtotal || ((it.cantidad || 1) * (it.precio || 0))).toFixed(2)}</td>
+                        <td className="py-2 px-2 text-right">{simbolo()} {Number(it.precio || it.precio_unitario || 0).toFixed(2)}</td>
+                        <td className="py-2 px-2 text-right font-bold">{simbolo()} {Number(it.subtotal || ((it.cantidad || 1) * (it.precio || 0))).toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1017,18 +1018,18 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                     <div className="flex justify-between text-slate-500">
                       <span>Op. Gravada:</span>
                       <span className="font-semibold text-slate-700">
-                        S/ {((Number(previewA4Sale.total) || 0) / 1.18).toFixed(2)}
+                        {simbolo()} {((Number(previewA4Sale.total) || 0) / 1.18).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-500">
                       <span>I.G.V. (18%):</span>
                       <span className="font-semibold text-slate-700">
-                        S/ {((Number(previewA4Sale.total) || 0) - ((Number(previewA4Sale.total) || 0) / 1.18)).toFixed(2)}
+                        {simbolo()} {((Number(previewA4Sale.total) || 0) - ((Number(previewA4Sale.total) || 0) / 1.18)).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm font-black text-slate-900 pt-1 border-t border-slate-300">
                       <span>IMPORTE TOTAL:</span>
-                      <span>S/ {(Number(previewA4Sale.total) || 0).toFixed(2)}</span>
+                      <span>{simbolo()} {(Number(previewA4Sale.total) || 0).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -1097,7 +1098,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                         <span className="text-slate-700">{it.nombre || it.descripcion}</span>
                       </div>
                       <span className="font-bold text-slate-900">
-                        S/ {Number(it.subtotal || ((it.cantidad || 1) * (it.precio || 0))).toFixed(2)}
+                        {simbolo()} {Number(it.subtotal || ((it.cantidad || 1) * (it.precio || 0))).toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -1106,7 +1107,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
 
               <div className="pt-2 flex justify-between items-center text-sm font-black border-t border-slate-100">
                 <span>TOTAL:</span>
-                <span className="text-[#E85B28]">S/ {(Number(detailSale.total) || 0).toFixed(2)}</span>
+                <span className="text-[#E85B28]">{simbolo()} {(Number(detailSale.total) || 0).toFixed(2)}</span>
               </div>
             </div>
           </div>

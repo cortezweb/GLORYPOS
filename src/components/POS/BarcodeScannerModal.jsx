@@ -7,6 +7,7 @@ import {
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useCart } from '../../context/CartContext';
 import { db } from '../../db/dexie';
+import { simbolo } from '../../utils/currency';
 
 export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout }) {
   const { items, total, count, updateQuantity, removeFromCart, clearCart, addToCart } = useCart();
@@ -665,7 +666,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
                     <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-100">
                       <div className="flex items-center gap-1.5">
                         <span className="text-[11px] text-slate-500">
-                          Bs. {Number(it.precio).toFixed(2)}
+                          {simbolo()} {Number(it.precio).toFixed(2)}
                         </span>
                         <div className="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 ml-1">
                           <button 
@@ -690,7 +691,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
 
                       <div className="text-right">
                         <span className="text-xs font-extrabold text-[#E85B28]">
-                          Bs. {it.subtotal.toFixed(2)}
+                          {simbolo()} {it.subtotal.toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -722,7 +723,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
             </div>
             <div className="text-right">
               <span className="text-xl font-extrabold text-slate-900 tracking-tight">
-                Bs. {Number(total).toFixed(2)}
+                {simbolo()} {Number(total).toFixed(2)}
               </span>
             </div>
           </div>
@@ -737,7 +738,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
               <span className="text-sm">Cobrar</span>
             </div>
             <div className="flex items-center gap-1 font-extrabold text-sm">
-              <span>Bs. {Number(total).toFixed(2)}</span>
+              <span>{simbolo()} {Number(total).toFixed(2)}</span>
               <ChevronRight className="w-4 h-4 stroke-[3]" />
             </div>
           </button>

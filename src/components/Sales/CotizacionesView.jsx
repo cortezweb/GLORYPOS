@@ -8,6 +8,7 @@ import {
 import { db } from '../../db/dexie';
 import { useCart } from '../../context/CartContext';
 import SalesSubNav from './SalesSubNav';
+import { simbolo } from '../../utils/currency';
 
 const SEED_COTIZACIONES = [
   {
@@ -124,7 +125,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
   // Formatear moneda en Soles
   const formatSoles = (amount) => {
     const val = Number(amount) || 0;
-    return `S/ ${val.toFixed(2)}`;
+    return `${simbolo()} ${val.toFixed(2)}`;
   };
 
   // Filtrar cotizaciones

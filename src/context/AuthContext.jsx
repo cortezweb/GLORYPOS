@@ -4,6 +4,7 @@ import { hashText } from '../utils/crypto';
 import { tenantService } from '../services/tenantService';
 import { supabase, isSupabaseConfigured, isDemoMode } from '../lib/supabase';
 import { syncService } from '../services/syncService';
+import { setCurrency } from '../utils/currency';
 import { resolvePermisos, hasAnyPermission, canAccessViewWith, groupPermissionList } from '../config/permissions';
 
 const AuthContext = createContext();
@@ -40,6 +41,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   // Acceso del dispositivo a la empresa, verificado por Supabase Auth + membresía
   const [cloudAccess, setCloudAccess] = useState(isDemoMode ? DEMO_ACCESS : NO_ACCESS);
+  // Moneda de la empresa: al cambiar de empresa se vuelve a dibujar la app con su símbolo
+  const [, setCurrencyTick] = useState(0);
+  useEffect(() => {
+    if (empresa && setCurrency(empresa.moneda)) setCurrencyTick(t => t + 1);
+  }, [empresa]);
+
   // Roles de la empresa (permisos editables en Administración > Roles y permisos)
   const [roles, setRoles] = useState([]);
 

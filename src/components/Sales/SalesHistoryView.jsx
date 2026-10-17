@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Printer, Search, Calendar, Banknote, QrCode, CreditCard, ChevronRight } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { simbolo } from '../../utils/currency';
 
 export default function SalesHistoryView({ onOpenReceipt }) {
   const [ventas, setVentas] = useState([]);
@@ -41,7 +42,7 @@ export default function SalesHistoryView({ onOpenReceipt }) {
               Total Recaudado
             </span>
             <span className="text-lg font-extrabold text-slate-900">
-              Bs. {totalRecaudado.toFixed(2)}
+              {simbolo()} {totalRecaudado.toFixed(2)}
             </span>
           </div>
 
@@ -110,7 +111,7 @@ export default function SalesHistoryView({ onOpenReceipt }) {
               <div className="flex items-center gap-2 shrink-0">
                 <div className="text-right">
                   <span className="font-extrabold text-xs text-slate-900 block">
-                    Bs. {Number(v.total).toFixed(2)}
+                    {simbolo()} {Number(v.total).toFixed(2)}
                   </span>
                   <span className="text-[10px] text-slate-400">
                     {fechaStr} • {v.metodo_pago}

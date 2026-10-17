@@ -16,6 +16,7 @@ import { hashText } from '../../utils/crypto';
 import { ALL_CLIENT_MODULES, MODULE_PRESETS } from '../../config/modules';
 import { playCashChime } from '../../utils/audio';
 import GloryLogo from '../Common/GloryLogo';
+import { CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currency';
 
 export const RUBROS = [
   { id: 'ABARROTES', label: 'Minimarket & Abarrotes', icon: '🏪' },
@@ -255,6 +256,7 @@ export default function SuperAdminView({
     nit_ci: '',
     rubro: 'ABARROTES',
     ciudad: 'Santa Cruz',
+    moneda: DEFAULT_CURRENCY,
     telefono: '',
     adminNombre: '',
     email: '',
@@ -308,6 +310,7 @@ export default function SuperAdminView({
       nit_ci: '',
       rubro: 'ABARROTES',
       ciudad: 'Santa Cruz',
+      moneda: DEFAULT_CURRENCY,
       telefono: '',
       adminNombre: '',
       email: '',
@@ -417,6 +420,7 @@ export default function SuperAdminView({
         nit_ci: drawerData.nit_ci.trim() || '0',
         rubro: drawerData.rubro,
         ciudad: drawerData.ciudad,
+        moneda: drawerData.moneda,
         telefono: drawerData.telefono.trim(),
         email: drawerData.email.trim().toLowerCase(),
         adminNombre: drawerData.adminNombre.trim() || 'Administrador',
@@ -1147,6 +1151,18 @@ export default function SuperAdminView({
                       ))}
                     </select>
                   </div>
+                </div>
+
+                {/* Moneda del cliente */}
+                <div>
+                  <label className="text-slate-700 font-bold block mb-1">Moneda</label>
+                  <select
+                    value={drawerData.moneda}
+                    onChange={e => setDrawerData(prev => ({ ...prev, moneda: e.target.value }))}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  >
+                    {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+                  </select>
                 </div>
 
                 {/* 4. Rubro Comercial */}

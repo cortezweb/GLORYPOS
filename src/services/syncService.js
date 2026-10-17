@@ -1,5 +1,6 @@
 import { db } from '../db/dexie';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { simbolo } from '../utils/currency';
 
 // ── Cola de Sincronización Offline → Nube ─────────────────────────────────────
 // Manejo automático de sincronización en tiempo real y offline-first con Supabase.
@@ -281,6 +282,7 @@ export const syncService = {
             nit_ci: String(localEmpresa.nit_ci || '0'),
             rubro: localEmpresa.rubro || 'ABARROTES',
             ciudad: localEmpresa.ciudad || 'Santa Cruz, Bolivia',
+            moneda: localEmpresa.moneda || 'BOB',
             direccion: localEmpresa.direccion || '',
             telefono: localEmpresa.telefono || '',
             email: localEmpresa.email || '',
@@ -1071,7 +1073,7 @@ export const syncService = {
               proveedor_nombre: r.proveedor_nombre || '',
               proveedor_doc: r.proveedor_doc || '',
               retenido: Number(r.retenido) || 0,
-              moneda: r.moneda || 'S/',
+              moneda: r.moneda || simbolo(),
               tasa_porcentaje: Number(r.tasa_porcentaje) || 3,
               monto_total_comprobante: Number(r.monto_total_comprobante) || 0,
               estado_sunat: r.estado_sunat || 'Registrado',
@@ -1105,7 +1107,7 @@ export const syncService = {
               sujeto_nombre: p.sujeto_nombre || '',
               sujeto_doc: p.sujeto_doc || '',
               percibido: Number(p.percibido) || 0,
-              moneda: p.moneda || 'S/',
+              moneda: p.moneda || simbolo(),
               tasa_porcentaje: Number(p.tasa_porcentaje) || 2,
               monto_total_comprobante: Number(p.monto_total_comprobante) || 0,
               estado_sunat: p.estado_sunat || 'Registrado',

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import FinanceSubNav from './FinanceSubNav';
+import { simbolo, CURRENCIES, getCurrencyCode } from '../../utils/currency';
 
 export default function CuentasBancariasView({ onSelectSubView }) {
   const [cuentas, setCuentas] = useState([]);
@@ -23,7 +24,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
   const [formNumero, setFormNumero] = useState('');
   const [formTipo, setFormTipo] = useState('Bancaria');
   const [formSaldo, setFormSaldo] = useState('');
-  const [formMoneda, setFormMoneda] = useState('PEN');
+  const [formMoneda, setFormMoneda] = useState(getCurrencyCode());
   const [toastMsg, setToastMsg] = useState(null);
 
   // Transfer Form states
@@ -114,7 +115,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
     setFormNumero(acc.numero || '');
     setFormTipo(acc.tipo || 'Bancaria');
     setFormSaldo(acc.saldo?.toString() || '0');
-    setFormMoneda(acc.moneda || 'PEN');
+    setFormMoneda(acc.moneda || getCurrencyCode());
     setIsNewAccountModalOpen(true);
   };
 
@@ -147,7 +148,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
       };
       setMovimientos([newMov, ...movimientos]);
 
-      showToast(`Transferidos S/ ${monto.toFixed(2)} de ${cOrigen.nombre} a ${cDestino.nombre}`);
+      showToast(`Transferidos ${simbolo()} ${monto.toFixed(2)} de ${cOrigen.nombre} a ${cDestino.nombre}`);
       setIsTransferModalOpen(false);
       setTransferMonto('');
       setTransferRef('');
@@ -343,10 +344,10 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   <td className={`py-3 px-4 text-right font-black whitespace-nowrap font-mono text-xs ${
                     m.monto >= 0 ? 'text-[#FF6B35]' : 'text-rose-600'
                   }`}>
-                    {m.monto >= 0 ? `+ S/ ${Number(m.monto).toFixed(2)}` : `- S/ ${Math.abs(Number(m.monto)).toFixed(2)}`}
+                    {m.monto >= 0 ? `+ ${simbolo()} ${Number(m.monto).toFixed(2)}` : `- ${simbolo()} ${Math.abs(Number(m.monto)).toFixed(2)}`}
                   </td>
                   <td className="py-3 px-4 text-right font-mono font-semibold text-slate-700 whitespace-nowrap">
-                    S/ {Number(m.saldo_despues).toLocaleString('es-PE', { minimumFractionDigits: 2 })}
+                    {simbolo()} {Number(m.saldo_despues).toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
               ))}
@@ -439,8 +440,9 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                     onChange={(e) => setFormMoneda(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium"
                   >
-                    <option value="PEN">PEN - Soles (S/)</option>
-                    <option value="BOB">BOB - Bolivianos (Bs.)</option>
+                    {CURRENCIES.map(c => (
+                      <option key={c.code} value={c.code}>{c.code} - {c.name} ({c.symbol})</option>
+                    ))}
                     <option value="USD">USD - Dólares ($)</option>
                   </select>
                 </div>
@@ -513,7 +515,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   >
                     <option value="">Seleccionar...</option>
                     {cuentas.map(c => (
-                      <option key={c.id} value={c.id}>{c.nombre} (S/ {c.saldo})</option>
+                      <option key={c.id} value={c.id}>{c.nombre} ({simbolo()} {c.saldo})</option>
                     ))}
                   </select>
                 </div>
@@ -528,14 +530,14 @@ export default function CuentasBancariasView({ onSelectSubView }) {
                   >
                     <option value="">Seleccionar...</option>
                     {cuentas.map(c => (
-                      <option key={c.id} value={c.id}>{c.nombre} (S/ {c.saldo})</option>
+                      <option key={c.id} value={c.id}>{c.nombre} ({simbolo()} {c.saldo})</option>
                     ))}
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Monto a Transferir (S/)</label>
+                <label className="block font-semibold text-slate-700 mb-1">Monto a Transferir ({simbolo()})</label>
                 <input
                   type="number"
                   step="0.01"

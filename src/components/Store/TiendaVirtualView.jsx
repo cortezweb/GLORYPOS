@@ -13,6 +13,7 @@ import { syncService } from '../../services/syncService';
 import PedidosWebView from '../Sales/PedidosWebView';
 import EcommerceStorefront from './EcommerceStorefront';
 import CheckoutSettingsPanel from './CheckoutSettingsPanel';
+import { simbolo } from '../../utils/currency';
 
 const SLIDERS_STORAGE_KEY = 'glorypos_ecommerce_sliders';
 
@@ -484,7 +485,7 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
                         </td>
                         <td className="py-2.5 px-3 text-slate-500">{prod.categoria || 'General'}</td>
                         <td className="py-2.5 px-3 text-right font-mono font-bold text-[#FF6B35]">
-                          Bs. {price.toFixed(2)}
+                          {simbolo()} {price.toFixed(2)}
                         </td>
                         <td className="py-2.5 px-3 text-center">
                           <button

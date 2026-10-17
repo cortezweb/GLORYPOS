@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Layers, Scale, Sparkles, AlertCircle, Package } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { simbolo } from '../../utils/currency';
 
 export default function ProductCard({ product, onOpenVariants, onOpenScale, onOpenModifiers }) {
   const { addToCart } = useCart();
@@ -138,7 +139,7 @@ export default function ProductCard({ product, onOpenVariants, onOpenScale, onOp
             {isScaleItem ? 'Por Kilo' : 'Precio'}
           </span>
           <span className="text-sm font-bold text-gray-900">
-            Bs. {Number(product.precio_venta).toFixed(2)}
+            {simbolo()} {Number(product.precio_venta).toFixed(2)}
             {isScaleItem && <span className="text-[10px] font-normal text-slate-500"> /Kg</span>}
           </span>
         </div>

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
+import { simbolo } from '../../utils/currency';
 
 export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
   const { empresa } = useAuth();
@@ -53,7 +54,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
   // Formateador de moneda en Soles (según imagen)
   const formatSoles = (amount) => {
     const val = Number(amount) || 0;
-    return `S/ ${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `${simbolo()} ${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   // Manejo de botones de período rápido

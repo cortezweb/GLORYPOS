@@ -6,6 +6,7 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { useAuth } from '../../context/AuthContext';
+import { simbolo } from '../../utils/currency';
 
 export default function CloseCashModal({ isOpen, onClose }) {
   const { empresa } = useAuth();
@@ -140,7 +141,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               <p className="text-xs text-slate-600 leading-relaxed bg-amber-50/80 border border-amber-200/70 p-3 rounded-xl">
                 <span className="font-semibold text-amber-800">Atención:</span> Tienes la caja activa 
                 <span className="font-bold text-slate-700"> (Caja 01 - Turno Mañana)</span> con ventas registradas de 
-                <span className="font-bold text-[#FF6B35]"> Bs. {ventasStats.total.toFixed(2)}</span>. Te recomendamos realizar el arqueo de caja antes de salir.
+                <span className="font-bold text-[#FF6B35]"> {simbolo()} {ventasStats.total.toFixed(2)}</span>. Te recomendamos realizar el arqueo de caja antes de salir.
               </p>
             </div>
 
@@ -149,7 +150,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Ventas Turno</span>
-                  <span className="text-base font-black text-[#FF6B35]">Bs. {ventasStats.total.toFixed(2)}</span>
+                  <span className="text-base font-black text-[#FF6B35]">{simbolo()} {ventasStats.total.toFixed(2)}</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs">
@@ -234,7 +235,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
                   Efectivo Esperado (Sistema)
                 </span>
                 <span className="text-xl font-black text-slate-900 block">
-                  Bs. {ventasStats.efectivo.toFixed(2)}
+                  {simbolo()} {ventasStats.efectivo.toFixed(2)}
                 </span>
               </div>
               <Banknote className="w-7 h-7 text-[#FF6B35]" />
@@ -248,11 +249,11 @@ export default function CloseCashModal({ isOpen, onClose }) {
 
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
-                  { key: 'b200', label: 'Bs. 200', mult: 200 },
-                  { key: 'b100', label: 'Bs. 100', mult: 100 },
-                  { key: 'b50', label: 'Bs. 50', mult: 50 },
-                  { key: 'b20', label: 'Bs. 20', mult: 20 },
-                  { key: 'b10', label: 'Bs. 10', mult: 10 },
+                  { key: 'b200', label: `${simbolo()} 200`, mult: 200 },
+                  { key: 'b100', label: `${simbolo()} 100`, mult: 100 },
+                  { key: 'b50', label: `${simbolo()} 50`, mult: 50 },
+                  { key: 'b20', label: `${simbolo()} 20`, mult: 20 },
+                  { key: 'b10', label: `${simbolo()} 10`, mult: 10 },
                 ].map((den) => (
                   <div key={den.key} className="p-2 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
                     <span className="font-bold text-slate-700">{den.label}</span>
@@ -268,7 +269,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
                 ))}
 
                 <div className="p-2 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
-                  <span className="font-bold text-slate-700">Monedas Bs.</span>
+                  <span className="font-bold text-slate-700">Monedas {simbolo()}</span>
                   <input
                     type="number"
                     min="0"
@@ -286,7 +287,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1 text-xs">
               <div className="flex justify-between items-center text-slate-600">
                 <span>Total Físico Contado:</span>
-                <span className="font-bold text-sm text-slate-900">Bs. {totalContado.toFixed(2)}</span>
+                <span className="font-bold text-sm text-slate-900">{simbolo()} {totalContado.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Diferencia de Caja:</span>
@@ -297,7 +298,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
                       ? 'text-[#FF6B35]' 
                       : 'text-rose-600'
                 }`}>
-                  {diferencia === 0 ? 'Exacto (Bs. 0.00)' : `Bs. ${diferencia.toFixed(2)}`}
+                  {diferencia === 0 ? `Exacto (${simbolo()} 0.00)` : `${simbolo()} ${diferencia.toFixed(2)}`}
                 </span>
               </div>
             </div>
@@ -333,15 +334,15 @@ export default function CloseCashModal({ isOpen, onClose }) {
               </div>
               <div className="flex justify-between">
                 <span>Ventas Sistema:</span>
-                <span>Bs. {ventasStats.total.toFixed(2)}</span>
+                <span>{simbolo()} {ventasStats.total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold">
                 <span>Efectivo Contado:</span>
-                <span>Bs. {totalContado.toFixed(2)}</span>
+                <span>{simbolo()} {totalContado.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Diferencia:</span>
-                <span>Bs. {diferencia.toFixed(2)}</span>
+                <span>{simbolo()} {diferencia.toFixed(2)}</span>
               </div>
             </div>
 

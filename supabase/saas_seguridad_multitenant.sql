@@ -19,6 +19,9 @@
 -- Después de ejecutarlo, regístrate como Super Admin (ver el final del archivo).
 -- ════════════════════════════════════════════════════════════════════════════
 
+-- Moneda de la empresa (BOB, PEN, ARS o CLP). Por defecto Bolivianos.
+ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS moneda TEXT NOT NULL DEFAULT 'BOB';
+
 -- ── 1. SUPER ADMINISTRADORES DE LA PLATAFORMA ───────────────────────────────
 CREATE TABLE IF NOT EXISTS public.platform_admins (
   user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -388,6 +391,7 @@ DECLARE
   v_plan text;
   v_dias int;
   v_admin_email text := NULLIF(lower(trim(p_empresa->>'admin_email')), '');
+  v_moneda text := upper(COALESCE(NULLIF(p_empresa->>'moneda', ''), 'BOB'));
 BEGIN
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'Sesión requerida';
@@ -409,6 +413,10 @@ BEGIN
     RAISE EXCEPTION 'El identificador ya está en uso';
   END IF;
 
+  IF v_moneda NOT IN ('BOB', 'PEN', 'ARS', 'CLP') THEN
+    RAISE EXCEPTION 'Moneda no válida';
+  END IF;
+
   IF v_super THEN
     v_plan := COALESCE(NULLIF(p_empresa->>'plan_tipo', ''), 'TRIAL');
     v_dias := COALESCE(NULLIF(p_empresa->>'duracion_dias', '')::int, 30);
@@ -422,7 +430,7 @@ BEGIN
   v_id := 'emp-' || substr(md5(random()::text || clock_timestamp()::text), 1, 12);
 
   INSERT INTO public.empresas (
-    id, slug, nombre, nit_ci, rubro, ciudad, direccion, telefono, email, propietario,
+    id, slug, nombre, nit_ci, rubro, ciudad, moneda, direccion, telefono, email, propietario,
     plan_tipo, estado_suscripcion, fecha_inicio, fecha_vencimiento, dias_prueba, created_at, updated_at
   ) VALUES (
     v_id, v_slug,
@@ -430,6 +438,7 @@ BEGIN
     COALESCE(NULLIF(trim(p_empresa->>'nit_ci'), ''), '0'),
     COALESCE(NULLIF(p_empresa->>'rubro', ''), 'ABARROTES'),
     COALESCE(p_empresa->>'ciudad', ''),
+    v_moneda,
     COALESCE(p_empresa->>'direccion', ''),
     COALESCE(p_empresa->>'telefono', ''),
     COALESCE(NULLIF(lower(p_empresa->>'email'), ''), v_admin_email, v_email),
@@ -461,7 +470,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public
 AS $$
   SELECT jsonb_build_object(
     'id', e.id, 'slug', e.slug, 'nombre', e.nombre, 'rubro', e.rubro,
-    'ciudad', e.ciudad, 'direccion', e.direccion, 'telefono', e.telefono,
+    'ciudad', e.ciudad, 'moneda', e.moneda, 'direccion', e.direccion, 'telefono', e.telefono,
     'logo_url', to_jsonb(e)->'logo_url',
     'plan_tipo', e.plan_tipo, 'estado_suscripcion', e.estado_suscripcion,
     'fecha_vencimiento', e.fecha_vencimiento, 'modulos_activos', e.modulos_activos

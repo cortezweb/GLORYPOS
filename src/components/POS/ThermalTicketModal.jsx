@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ticketHTML, imprimirTicket, getAnchoTicket } from '../../utils/ticketPrint';
+import { simbolo } from '../../utils/currency';
 
 export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }) {
   const { empresa } = useAuth();
@@ -32,22 +33,22 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
     venta.items.forEach(it => {
       const isPeso = it.tipo_venta === 'PESO' || it.customDetails?.tipo === 'PESO';
       if (isPeso) {
-        text += `${Number(it.cantidad).toFixed(3)} Kg x ${it.nombre} (@ Bs. ${Number(it.precio).toFixed(2)}/Kg) = Bs. ${it.subtotal.toFixed(2)}\n`;
+        text += `${Number(it.cantidad).toFixed(3)} Kg x ${it.nombre} (@ ${simbolo()} ${Number(it.precio).toFixed(2)}/Kg) = ${simbolo()} ${it.subtotal.toFixed(2)}\n`;
       } else if (it.customDetails?.tipo === 'ROPA') {
-        text += `${it.cantidad}x ${it.nombre} [T: ${it.customDetails.talla || '-'} • ${it.customDetails.color || '-'}] = Bs. ${it.subtotal.toFixed(2)}\n`;
+        text += `${it.cantidad}x ${it.nombre} [T: ${it.customDetails.talla || '-'} • ${it.customDetails.color || '-'}] = ${simbolo()} ${it.subtotal.toFixed(2)}\n`;
       } else if (it.customDetails?.tipo === 'HELADERIA') {
-        text += `${it.cantidad}x ${it.nombre} [${(it.customDetails.sabores || []).join(', ')}] = Bs. ${it.subtotal.toFixed(2)}\n`;
+        text += `${it.cantidad}x ${it.nombre} [${(it.customDetails.sabores || []).join(', ')}] = ${simbolo()} ${it.subtotal.toFixed(2)}\n`;
       } else if (it.lote) {
-        text += `${it.cantidad}x ${it.nombre} (Lote: ${it.lote}) = Bs. ${it.subtotal.toFixed(2)}\n`;
+        text += `${it.cantidad}x ${it.nombre} (Lote: ${it.lote}) = ${simbolo()} ${it.subtotal.toFixed(2)}\n`;
       } else {
         const pres = it.presNombre && it.presNombre !== 'Unidad' ? ` (${it.presNombre})` : '';
-        text += `${it.cantidad}x ${it.nombre}${pres} = Bs. ${it.subtotal.toFixed(2)}\n`;
+        text += `${it.cantidad}x ${it.nombre}${pres} = ${simbolo()} ${it.subtotal.toFixed(2)}\n`;
       }
     });
     text += `--------------------------\n`;
-    text += `*TOTAL: Bs. ${Number(venta.total).toFixed(2)}*\n`;
+    text += `*TOTAL: ${simbolo()} ${Number(venta.total).toFixed(2)}*\n`;
     text += `Método de Pago: ${venta.metodo_pago}\n`;
-    if (venta.cambio > 0) text += `Cambio: Bs. ${Number(venta.cambio).toFixed(2)}\n`;
+    if (venta.cambio > 0) text += `Cambio: ${simbolo()} ${Number(venta.cambio).toFixed(2)}\n`;
     text += `\n¡Gracias por su compra con GLORYPOS Bolivia!`;
 
     const encoded = encodeURIComponent(text);

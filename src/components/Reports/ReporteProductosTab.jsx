@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, FileText, Download } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function ReporteProductosTab({ productos = [] }) {
   const [categoria, setCategoria] = useState('Todas');
@@ -215,8 +216,8 @@ export default function ReporteProductosTab({ productos = [] }) {
                   <td className="py-2.5 px-3 font-semibold text-slate-900">{p.nombre}</td>
                   <td className="py-2.5 px-3 text-slate-600">{p.categoria}</td>
                   <td className="py-2.5 px-3 text-slate-600">{p.unidad}</td>
-                  <td className="py-2.5 px-3 font-mono text-slate-800">S/ {p.p_venta.toFixed(2)}</td>
-                  <td className="py-2.5 px-3 font-mono text-slate-600">S/ {p.p_compra.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 font-mono text-slate-800">{simbolo()} {p.p_venta.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 font-mono text-slate-600">{simbolo()} {p.p_compra.toFixed(2)}</td>
                   <td className="py-2.5 px-3 text-center text-slate-400">{p.stock_total ?? '—'}</td>
                   <td className="py-2.5 px-3 text-center text-slate-400">{p.por_sucursal ?? '—'}</td>
                   <td className="py-2.5 px-3 text-center text-slate-400">{p.series ?? '—'}</td>

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import InventorySubNav from './InventorySubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function KardexView({ onSelectSubView, initialProduct }) {
   const [products, setProducts] = useState([]);
@@ -326,12 +327,12 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block font-semibold">COSTO UNIT.</span>
-                  <span className="text-sm font-bold text-slate-700">Bs. {Number(selectedProduct.precio_compra || 0).toFixed(2)}</span>
+                  <span className="text-sm font-bold text-slate-700">{simbolo()} {Number(selectedProduct.precio_compra || 0).toFixed(2)}</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block font-semibold">VALOR TOTAL</span>
                   <span className="text-sm font-bold text-blue-700">
-                    Bs. {((selectedProduct.stock_actual ?? 0) * (selectedProduct.precio_compra || 0)).toFixed(2)}
+                    {simbolo()} {((selectedProduct.stock_actual ?? 0) * (selectedProduct.precio_compra || 0)).toFixed(2)}
                   </span>
                 </div>
                 <button

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, RotateCcw, AlertCircle } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumber = 1 }) {
   const today = new Date();
@@ -49,7 +50,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
       sujeto_doc: form.sujeto_doc.trim() || '000000',
       monto: montoNum,
       motivo: form.motivo,
-      moneda: 'S/',
+      moneda: simbolo(),
       estado_sunat: 'Aceptado',
       rr: '—',
       observacion: form.observacion || `Reversión por ${form.motivo}`
@@ -175,7 +176,7 @@ export default function NuevaReversionModal({ isOpen, onClose, onSave, nextNumbe
             </div>
             <div>
               <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Monto Revertido (S/)
+                Monto Revertido ({simbolo()})
               </label>
               <input
                 type="number"

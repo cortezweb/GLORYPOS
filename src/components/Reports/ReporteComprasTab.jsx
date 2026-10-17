@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, Calendar, FileText, Download } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function ReporteComprasTab({ compras = [] }) {
   const [desde, setDesde] = useState('01/09/2026');
@@ -266,9 +267,9 @@ export default function ReporteComprasTab({ compras = [] }) {
                   <td className="py-2.5 px-3 font-mono text-slate-700">{c.serie}</td>
                   <td className="py-2.5 px-3 font-mono text-slate-700">{c.numero}</td>
                   <td className="py-2.5 px-3 font-medium text-slate-900">{c.proveedor}</td>
-                  <td className="py-2.5 px-3 text-right font-mono text-slate-700">S/ {c.subtotal.toFixed(2)}</td>
-                  <td className="py-2.5 px-3 text-right font-mono text-slate-700">S/ {c.igv.toFixed(2)}</td>
-                  <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">S/ {c.total.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-slate-700">{simbolo()} {c.subtotal.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-slate-700">{simbolo()} {c.igv.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">{simbolo()} {c.total.toFixed(2)}</td>
                   <td className="py-2.5 px-3 text-slate-700">
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                       c.estado === 'Recibida' ? 'bg-slate-100 text-slate-700' : 'bg-rose-50 text-rose-700'

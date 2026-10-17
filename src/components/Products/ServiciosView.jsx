@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import ProductsSubNav from './ProductsSubNav';
+import { simbolo } from '../../utils/currency';
 
 const DEFAULT_SERVICIOS = [
   {
@@ -289,7 +290,7 @@ export default function ServiciosView({ onSelectSubView }) {
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Precio Promedio</span>
-            <span className="text-2xl font-black text-[#FF6B35] mt-1 block">S/ {precioPromedio}</span>
+            <span className="text-2xl font-black text-[#FF6B35] mt-1 block">{simbolo()} {precioPromedio}</span>
           </div>
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
@@ -394,12 +395,12 @@ export default function ServiciosView({ onSelectSubView }) {
 
                       {/* Precio Venta */}
                       <td className="py-3 px-3 text-right font-black text-slate-900">
-                        S/ {Number(s.precio_venta).toFixed(2)}
+                        {simbolo()} {Number(s.precio_venta).toFixed(2)}
                       </td>
 
                       {/* Costo Estimado */}
                       <td className="py-3 px-3 text-right text-slate-500 font-semibold">
-                        S/ {Number(s.costo_estimado || 0).toFixed(2)}
+                        {simbolo()} {Number(s.costo_estimado || 0).toFixed(2)}
                       </td>
 
                       {/* Unidad */}
@@ -530,7 +531,7 @@ export default function ServiciosView({ onSelectSubView }) {
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Precio de Venta (S/) *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Precio de Venta ({simbolo()}) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -543,7 +544,7 @@ export default function ServiciosView({ onSelectSubView }) {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Costo Estimado (S/)</label>
+                  <label className="block font-bold text-slate-700 mb-1">Costo Estimado ({simbolo()})</label>
                   <input
                     type="number"
                     step="0.01"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer, Download, QrCode } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { simbolo, nombreMoneda } from '../../utils/currency';
 
 export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 'retencion' }) {
   const { empresa } = useAuth();
@@ -87,7 +88,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
               </div>
               <div>
                 <span className="text-slate-400 text-[10px] font-bold uppercase">Moneda: </span>
-                <span className="font-semibold text-slate-800">SOLES (S/)</span>
+                <span className="font-semibold text-slate-800">{nombreMoneda().toUpperCase()} ({simbolo()})</span>
               </div>
               <div>
                 <span className="text-slate-400 text-[10px] font-bold uppercase">Estado SUNAT: </span>
@@ -112,9 +113,9 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
                 <tr>
                   <td className="py-3 px-3 font-mono font-bold text-[#E85B28]">{doc.origen || '—'}</td>
                   <td className="py-3 px-3 text-slate-600">{doc.fecha}</td>
-                  <td className="py-3 px-3 text-right font-medium text-slate-700">S/ {Number(totalBase).toFixed(2)}</td>
+                  <td className="py-3 px-3 text-right font-medium text-slate-700">{simbolo()} {Number(totalBase).toFixed(2)}</td>
                   <td className="py-3 px-3 text-center font-bold text-slate-700">{doc.tasa_porcentaje || 3}%</td>
-                  <td className="py-3 px-3 text-right font-bold text-slate-900">S/ {Number(amountVal).toFixed(2)}</td>
+                  <td className="py-3 px-3 text-right font-bold text-slate-900">{simbolo()} {Number(amountVal).toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
@@ -129,11 +130,11 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
             <div className="w-56 space-y-1.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200">
               <div className="flex justify-between text-slate-600">
                 <span>Total Operación:</span>
-                <span className="font-semibold">S/ {Number(totalBase).toFixed(2)}</span>
+                <span className="font-semibold">{simbolo()} {Number(totalBase).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-900 font-black text-sm pt-1.5 border-t border-slate-200">
                 <span>{amountLabel}:</span>
-                <span className="text-[#E85B28]">S/ {Number(amountVal).toFixed(2)}</span>
+                <span className="text-[#E85B28]">{simbolo()} {Number(amountVal).toFixed(2)}</span>
               </div>
             </div>
           </div>

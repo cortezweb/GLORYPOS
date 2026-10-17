@@ -9,6 +9,7 @@ import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { restaurantService } from '../../services/restaurantService';
 import { hotelService } from '../../services/hotelService';
+import { simbolo } from '../../utils/currency';
 
 export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   const { items, total, count, clearCart, comandaEnCobro } = useCart();
@@ -543,7 +544,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                   <div className="flex-1 space-y-1">
                     <div className="text-[11px] text-slate-500">Monto exacto a transferir:</div>
                     <div className="text-xl font-black text-indigo-900">
-                      Bs. {totalFinal.toFixed(2)}
+                      {simbolo()} {totalFinal.toFixed(2)}
                     </div>
                     <p className="text-[10px] text-slate-500 leading-tight">
                       El cliente debe escanear desde su app bancaria (BCP, Banco Unión, BNB, Soli, Fie).
@@ -583,7 +584,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
               <div>
                 <label className="block text-[10px] text-slate-400 mb-0.5">Monto recibido</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-500 font-semibold text-xs">Bs.</span>
+                  <span className="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-500 font-semibold text-xs">{simbolo()}</span>
                   <input 
                     type="number"
                     step="0.1"
@@ -634,7 +635,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                           : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
-                      Bs. {val}
+                      {simbolo()} {val}
                     </button>
                   ))}
                 </div>
@@ -660,7 +661,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
             {!pagoExacto && cambio > 0 && (
               <div className="p-2.5 bg-[#FF6B35]/10 rounded-xl border border-[#FF6B35]/20 flex items-center justify-between text-xs animate-fadeIn shadow-xs">
                 <span className="font-bold text-[#1E2022]">Cambio a Entregar (Vuelto):</span>
-                <span className="text-base font-black text-[#FF6B35]">Bs. {cambio.toFixed(2)}</span>
+                <span className="text-base font-black text-[#FF6B35]">{simbolo()} {cambio.toFixed(2)}</span>
               </div>
             )}
           </section>
@@ -670,18 +671,18 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
           <section className="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-1.5" data-purpose="totales-resumen">
             <div className="flex justify-between items-center text-slate-500 text-xs">
               <span>Op. Gravadas</span>
-              <span className="font-medium text-slate-700">Bs. {opGravadas.toFixed(2)}</span>
+              <span className="font-medium text-slate-700">{simbolo()} {opGravadas.toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between items-center text-slate-500 text-xs">
               <span>I.V.A. (13%) / Impuestos</span>
-              <span className="font-medium text-slate-700">Bs. {ivaCalculado.toFixed(2)}</span>
+              <span className="font-medium text-slate-700">{simbolo()} {ivaCalculado.toFixed(2)}</span>
             </div>
 
             {descuentoMonto > 0 && (
               <div className="flex justify-between items-center text-rose-600 text-xs">
                 <span>Descuento ({descuentoPorcentaje}%)</span>
-                <span className="font-bold">- Bs. {descuentoMonto.toFixed(2)}</span>
+                <span className="font-bold">- {simbolo()} {descuentoMonto.toFixed(2)}</span>
               </div>
             )}
 
@@ -689,12 +690,12 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
 
             <div className="flex justify-between items-baseline pt-0.5">
               <span className="font-bold text-slate-700 text-sm">Total a pagar</span>
-              <span className="font-black text-slate-900 text-lg tracking-tight">Bs. {totalFinal.toFixed(2)}</span>
+              <span className="font-black text-slate-900 text-lg tracking-tight">{simbolo()} {totalFinal.toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between items-center text-slate-500 text-xs pt-0.5">
               <span className="font-medium">Suma de pagos</span>
-              <span className="font-bold text-[#FF6B35]">Bs. {montoEntregado.toFixed(2)}</span>
+              <span className="font-bold text-[#FF6B35]">{simbolo()} {montoEntregado.toFixed(2)}</span>
             </div>
           </section>
           {/* END: ResumenVenta */}

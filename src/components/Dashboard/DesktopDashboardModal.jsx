@@ -4,6 +4,7 @@ import {
   Users, FileText, ArrowUpRight, AlertTriangle, ShieldCheck 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { simbolo } from '../../utils/currency';
 
 export default function DesktopDashboardModal({ isOpen, onClose }) {
   const { empresa } = useAuth();
@@ -50,7 +51,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
                 Ventas Totales (Mes)
               </span>
               <span className="text-2xl font-black text-slate-900 block">
-                Bs. 18,450.00
+                {simbolo()} 18,450.00
               </span>
               <span className="text-[11px] font-semibold text-[#FF6B35] flex items-center gap-0.5">
                 <ArrowUpRight className="w-3.5 h-3.5" /> +14.2% vs mes anterior
@@ -86,7 +87,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
                 Ticket Promedio
               </span>
               <span className="text-2xl font-black text-slate-900 block">
-                Bs. 44.78
+                {simbolo()} 44.78
               </span>
               <span className="text-[11px] font-medium text-slate-500">
                 Por transacción
@@ -99,7 +100,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Evolución de Ventas Semanal</h3>
-                <p className="text-xs text-slate-500">Comportamiento en Bolivianos (Bs.)</p>
+                <p className="text-xs text-slate-500">Comportamiento en Bolivianos ({simbolo()})</p>
               </div>
               <span className="text-xs font-bold text-[#1E2022] bg-indigo-50 px-2.5 py-1 rounded-lg">
                 Esta Semana
@@ -119,7 +120,7 @@ export default function DesktopDashboardModal({ isOpen, onClose }) {
               ].map((b) => (
                 <div key={b.day} className="flex-1 flex flex-col items-center gap-2 group">
                   <span className="text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition">
-                    Bs. {b.monto}
+                    {simbolo()} {b.monto}
                   </span>
                   <div 
                     className="w-full bg-gradient-to-t from-blue-600 to-[#1E2022] rounded-t-xl group-hover:from-blue-700 group-hover:to-indigo-700 transition-all shadow-xs"

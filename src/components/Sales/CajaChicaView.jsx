@@ -7,6 +7,7 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaultTab = 'mis_cajas' }) {
   const [activeTab, setActiveTab] = useState(defaultTab); // 'mis_cajas' | 'reporte_cajas'
@@ -222,12 +223,12 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                   </div>
                   <div className="flex justify-between items-center text-slate-600">
                     <span className="text-slate-400 font-medium">Monto inicial:</span>
-                    <span className="font-mono font-bold text-slate-800">Bs. {fondoApertura.toFixed(2)}</span>
+                    <span className="font-mono font-bold text-slate-800">{simbolo()} {fondoApertura.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-slate-200">
                     <span className="text-[#1E2022] font-black">Efectivo en Gaveta:</span>
                     <span className="font-mono text-base font-black text-[#FF6B35]">
-                      Bs. {efectivoEsperadoEnGaveta.toFixed(2)}
+                      {simbolo()} {efectivoEsperadoEnGaveta.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -289,12 +290,12 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                   </div>
                   <div className="flex justify-between items-center text-slate-600">
                     <span className="text-slate-400 font-medium">Monto inicial:</span>
-                    <span className="font-mono font-bold text-slate-700">Bs. 300.00</span>
+                    <span className="font-mono font-bold text-slate-700">{simbolo()} 300.00</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-slate-200">
                     <span className="text-slate-700 font-bold">Total Arqueado:</span>
                     <span className="font-mono text-base font-bold text-slate-800">
-                      Bs. 2,140.00
+                      {simbolo()} 2,140.00
                     </span>
                   </div>
                 </div>
@@ -385,7 +386,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                   </div>
                 </div>
                 <div className="text-2xl font-black text-slate-900 font-mono tracking-tight">
-                  Bs. {totalIngresos.toFixed(2)}
+                  {simbolo()} {totalIngresos.toFixed(2)}
                 </div>
                 <p className="text-[10px] text-slate-400">Apertura + ventas + ingresos extras</p>
               </div>
@@ -401,7 +402,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                   </div>
                 </div>
                 <div className="text-2xl font-black text-rose-600 font-mono tracking-tight">
-                  - Bs. {totalEgresos.toFixed(2)}
+                  - {simbolo()} {totalEgresos.toFixed(2)}
                 </div>
                 <p className="text-[10px] text-slate-400">Gastos menores y retiros autorizados</p>
               </div>
@@ -417,7 +418,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                   </div>
                 </div>
                 <div className="text-2xl font-black text-[#FF6B35] font-mono tracking-tight">
-                  Bs. {efectivoEsperadoEnGaveta.toFixed(2)}
+                  {simbolo()} {efectivoEsperadoEnGaveta.toFixed(2)}
                 </div>
                 <p className="text-[10px] text-slate-400">Efectivo físico disponible en gaveta</p>
               </div>
@@ -474,7 +475,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                       <span className={`text-sm font-black font-mono ${
                         isEgreso ? 'text-rose-600' : 'text-[#FF6B35]'
                       }`}>
-                        {isEgreso ? '-' : '+'} Bs. {Number(mov.monto).toFixed(2)}
+                        {isEgreso ? '-' : '+'} {simbolo()} {Number(mov.monto).toFixed(2)}
                       </span>
                     </div>
                   );
@@ -529,7 +530,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Monto (Bs.) *</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Monto ({simbolo()}) *</label>
                 <input
                   type="number"
                   step="0.5"

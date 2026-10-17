@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import SalesSubNav from './SalesSubNav';
+import { simbolo } from '../../utils/currency';
 
 const DEFAULT_CUENTAS = [
   {
@@ -100,7 +101,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
     setCuentas(updated);
     localStorage.setItem('glorypos_cuentas_cobrar', JSON.stringify(updated));
     setIsAbonoModalOpen(false);
-    setToastMsg(`¡Cobro de Bs. ${monto.toFixed(2)} registrado exitosamente!`);
+    setToastMsg(`¡Cobro de ${simbolo()} ${monto.toFixed(2)} registrado exitosamente!`);
     setTimeout(() => setToastMsg(null), 3000);
   };
 
@@ -154,7 +155,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
             <span className="text-[10px] font-black uppercase text-amber-600">Total por Cobrar</span>
             <div className="text-2xl font-black text-amber-600 font-mono">
-              Bs. {totalPorCobrar.toFixed(2)}
+              {simbolo()} {totalPorCobrar.toFixed(2)}
             </div>
             <p className="text-[10px] text-slate-400">Saldos activos de clientes</p>
           </div>
@@ -162,7 +163,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
             <span className="text-[10px] font-black uppercase text-rose-600">Créditos Vencidos</span>
             <div className="text-2xl font-black text-rose-600 font-mono">
-              Bs. {totalVencido.toFixed(2)}
+              {simbolo()} {totalVencido.toFixed(2)}
             </div>
             <p className="text-[10px] text-slate-400">Plazo de pago superado</p>
           </div>
@@ -224,10 +225,10 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
                         <span className="text-slate-400 block">Vence: {c.fecha_vencimiento}</span>
                       </td>
                       <td className="py-2.5 px-3 text-right font-mono text-slate-500">
-                        Bs. {Number(c.total_deuda).toFixed(2)}
+                        {simbolo()} {Number(c.total_deuda).toFixed(2)}
                       </td>
                       <td className="py-2.5 px-3 text-right font-mono font-black text-rose-600">
-                        Bs. {Number(c.saldo_pendiente).toFixed(2)}
+                        {simbolo()} {Number(c.saldo_pendiente).toFixed(2)}
                       </td>
                       <td className="py-2.5 px-3 text-center whitespace-nowrap">
                         {isPagado ? (
@@ -285,13 +286,13 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
             <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl flex justify-between items-center text-xs">
               <span className="text-amber-800 font-bold">Saldo Actual Deudor:</span>
               <span className="font-mono text-base font-black text-rose-600">
-                Bs. {Number(selectedCuenta.saldo_pendiente).toFixed(2)}
+                {simbolo()} {Number(selectedCuenta.saldo_pendiente).toFixed(2)}
               </span>
             </div>
 
             <form onSubmit={handleRegistrarAbono} className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Monto a Cobrar (Bs.) *</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Monto a Cobrar ({simbolo()}) *</label>
                 <input
                   type="number"
                   step="0.5"

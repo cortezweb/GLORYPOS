@@ -10,6 +10,7 @@ import { playCashChime } from '../../utils/audio';
 import { tenantService, slugify } from '../../services/tenantService';
 import { isDemoMode } from '../../lib/supabase';
 import GloryLogo from '../Common/GloryLogo';
+import { CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currency';
 
 const RUBROS = [
   { id: 'ABARROTES', label: 'Minimarket / Abarrotes', emoji: '🏪' },
@@ -42,6 +43,7 @@ export default function RegisterView({ onGoToLogin }) {
     rubro: '',
     nit_ci: '',
     ciudad: 'Santa Cruz',
+    moneda: DEFAULT_CURRENCY,
     direccion: '',
     telefono: '',
   });
@@ -99,6 +101,7 @@ export default function RegisterView({ onGoToLogin }) {
       nit_ci: negocio.nit_ci.trim(),
       rubro: negocio.rubro,
       ciudad: negocio.ciudad,
+      moneda: negocio.moneda,
       direccion: negocio.direccion.trim(),
       telefono: negocio.telefono.trim(),
       email: admin.email.trim().toLowerCase(),
@@ -138,6 +141,7 @@ export default function RegisterView({ onGoToLogin }) {
         nit_ci: negocio.nit_ci.trim(),
         rubro: negocio.rubro,
         ciudad: negocio.ciudad,
+        moneda: negocio.moneda,
         direccion: negocio.direccion.trim(),
         telefono: negocio.telefono.trim(),
         email: admin.email.trim().toLowerCase(),
@@ -331,6 +335,18 @@ export default function RegisterView({ onGoToLogin }) {
                   </div>
                 </div>
 
+                {/* Moneda */}
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1">Moneda de tu negocio</label>
+                  <select
+                    value={negocio.moneda}
+                    onChange={e => setNegocio(p => ({ ...p, moneda: e.target.value }))}
+                    className={inputClass(false)}
+                  >
+                    {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+                  </select>
+                </div>
+
                 {/* Dirección y Teléfono */}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -452,6 +468,7 @@ export default function RegisterView({ onGoToLogin }) {
                   <div className="flex justify-between"><span className="text-slate-500">Rubro:</span> <span className="font-bold text-slate-800">{RUBROS.find(r => r.id === negocio.rubro)?.emoji} {RUBROS.find(r => r.id === negocio.rubro)?.label}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">NIT/CI:</span> <span className="font-bold text-slate-800">{negocio.nit_ci}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">Ciudad:</span> <span className="font-bold text-slate-800">{negocio.ciudad}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">Moneda:</span> <span className="font-bold text-slate-800">{CURRENCIES.find(c => c.code === negocio.moneda)?.label}</span></div>
                 </div>
                 <hr className="border-slate-200" />
                 <div className="flex justify-between"><span className="text-slate-500">Administrador:</span> <span className="font-bold text-slate-800">{admin.nombre}</span></div>

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import SalesSubNav from './SalesSubNav';
 import { db } from '../../db/dexie';
+import { simbolo } from '../../utils/currency';
 
 export default function MembresiasView({ onSelectSubView }) {
   const [membresias, setMembresias] = useState([]);
@@ -53,7 +54,7 @@ export default function MembresiasView({ onSelectSubView }) {
 
   const formatSoles = (amount) => {
     const val = Number(amount) || 0;
-    return `S/ ${val.toFixed(2)}`;
+    return `${simbolo()} ${val.toFixed(2)}`;
   };
 
   // Filtrado
@@ -401,7 +402,7 @@ export default function MembresiasView({ onSelectSubView }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">Monto de la Cuota (S/) *</label>
+                  <label className="text-slate-700 font-bold block mb-1">Monto de la Cuota ({simbolo()}) *</label>
                   <input
                     type="number"
                     step="0.01"

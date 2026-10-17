@@ -10,6 +10,7 @@ import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { RUBROS_CONFIG } from '../../db/rubros';
 import ProductsSubNav from './ProductsSubNav';
+import { simbolo } from '../../utils/currency';
 
 // ── REGISTROS SEMILLA EXACTOS AL SCREENSHOT ──
 const SEED_PRODUCTOS_LIST = [
@@ -946,7 +947,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
 
                       {/* PRECIO VENTA */}
                       <td className="py-3.5 px-3 font-mono font-bold text-slate-900 whitespace-nowrap">
-                        S/ {Number(prod.precio_venta || 0).toFixed(2)}
+                        {simbolo()} {Number(prod.precio_venta || 0).toFixed(2)}
                       </td>
 
                       {/* IGV */}
@@ -1148,7 +1149,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                         {m.nombre}
                       </h5>
                       <span className="text-[10px] text-slate-400 block font-mono">
-                        Sugerido: S/ {Number(m.precio_sugerido || 10).toFixed(2)}
+                        Sugerido: {simbolo()} {Number(m.precio_sugerido || 10).toFixed(2)}
                       </span>
                     </div>
 
@@ -1179,7 +1180,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] font-bold text-slate-600 block mb-1">
-                      Precio de Venta (S/)
+                      Precio de Venta ({simbolo()})
                     </label>
                     <input
                       type="number"
@@ -1284,7 +1285,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
 
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio Venta (S/) *</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio Venta ({simbolo()}) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1296,7 +1297,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo Compra (S/)</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo Compra ({simbolo()})</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1454,7 +1455,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
 
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio Venta (S/) *</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio Venta ({simbolo()}) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1465,7 +1466,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo Compra (S/)</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo Compra ({simbolo()})</label>
                   <input
                     type="number"
                     step="0.01"

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
+import { simbolo } from '../../utils/currency';
 
 // ── REGISTROS INICIALES EXACTOS AL SCREENSHOT ──
 const SEED_COMPRAS = [
@@ -1074,7 +1075,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                             </td>
                             <td className="py-2.5 px-4 text-right">
                               <div className="inline-flex items-center gap-1 justify-end">
-                                <span className="text-[11px] text-slate-400 font-medium">S/</span>
+                                <span className="text-[11px] text-slate-400 font-medium">{simbolo()}</span>
                                 <input
                                   type="number"
                                   step="0.01"
@@ -1086,7 +1087,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                               </div>
                             </td>
                             <td className="py-2.5 px-4 text-right font-bold text-slate-800">
-                              S/ {sub.toFixed(2)}
+                              {simbolo()} {sub.toFixed(2)}
                             </td>
                             <td className="py-2.5 px-2 text-center">
                               <button
@@ -1112,15 +1113,15 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <div className="w-64 space-y-1.5 text-xs text-right">
                 <div className="flex justify-between items-center text-slate-500">
                   <span>Subtotal</span>
-                  <span className="font-medium text-slate-700 font-mono">S/ {subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-slate-700 font-mono">{simbolo()} {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-slate-500">
                   <span>IGV</span>
-                  <span className="font-medium text-slate-700 font-mono">S/ {igv.toFixed(2)}</span>
+                  <span className="font-medium text-slate-700 font-mono">{simbolo()} {igv.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center pt-1 border-t border-slate-100 text-sm font-bold text-slate-900">
                   <span>Total</span>
-                  <span className="text-base font-extrabold text-slate-900 font-mono">S/ {total.toFixed(2)}</span>
+                  <span className="text-base font-extrabold text-slate-900 font-mono">{simbolo()} {total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -1238,7 +1239,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
 
                           {/* TOTAL */}
                           <td className="py-3 px-4 text-right font-extrabold text-slate-900 whitespace-nowrap">
-                            S/ {Number(c.total || 0).toFixed(2)}
+                            {simbolo()} {Number(c.total || 0).toFixed(2)}
                           </td>
 
                           {/* CRE */}
@@ -1580,8 +1581,8 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                       <tr key={idx}>
                         <td className="py-2 px-3 text-slate-800 font-medium">{it.producto_nombre}</td>
                         <td className="py-2 px-2 text-center font-bold text-slate-700">{it.cantidad}</td>
-                        <td className="py-2 px-3 text-right text-slate-600 font-mono">S/ {Number(it.costo_unitario || 0).toFixed(2)}</td>
-                        <td className="py-2 px-3 text-right font-bold text-slate-900 font-mono">S/ {Number(it.subtotal || (it.cantidad * it.costo_unitario) || 0).toFixed(2)}</td>
+                        <td className="py-2 px-3 text-right text-slate-600 font-mono">{simbolo()} {Number(it.costo_unitario || 0).toFixed(2)}</td>
+                        <td className="py-2 px-3 text-right font-bold text-slate-900 font-mono">{simbolo()} {Number(it.subtotal || (it.cantidad * it.costo_unitario) || 0).toFixed(2)}</td>
                       </tr>
                     ))
                   ) : (
@@ -1600,15 +1601,15 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <div className="w-48 space-y-1 text-xs text-right">
                 <div className="flex justify-between text-slate-500">
                   <span>Subtotal:</span>
-                  <span className="font-mono">S/ {Number(selectedCompraDetail.subtotal || selectedCompraDetail.total * 0.82).toFixed(2)}</span>
+                  <span className="font-mono">{simbolo()} {Number(selectedCompraDetail.subtotal || selectedCompraDetail.total * 0.82).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-slate-500">
                   <span>IGV (18%):</span>
-                  <span className="font-mono">S/ {Number(selectedCompraDetail.igv || selectedCompraDetail.total * 0.18).toFixed(2)}</span>
+                  <span className="font-mono">{simbolo()} {Number(selectedCompraDetail.igv || selectedCompraDetail.total * 0.18).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-1 border-t border-slate-100">
                   <span>Total:</span>
-                  <span className="font-mono text-[#E85B28]">S/ {Number(selectedCompraDetail.total || 0).toFixed(2)}</span>
+                  <span className="font-mono text-[#E85B28]">{simbolo()} {Number(selectedCompraDetail.total || 0).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -1676,9 +1677,9 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                   </div>
                   <div className="text-right shrink-0">
                     <span className="text-xs font-bold text-[#E85B28] block font-mono">
-                      Costo: S/ {Number(prod.precio_compra || 0).toFixed(2)}
+                      Costo: {simbolo()} {Number(prod.precio_compra || 0).toFixed(2)}
                     </span>
-                    <span className="text-[10px] text-slate-400">P. Venta: S/ {Number(prod.precio_venta || 0).toFixed(2)}</span>
+                    <span className="text-[10px] text-slate-400">P. Venta: {simbolo()} {Number(prod.precio_venta || 0).toFixed(2)}</span>
                   </div>
                 </div>
               ))}
@@ -1770,7 +1771,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo de Compra (S/) *</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Costo de Compra ({simbolo()}) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1783,7 +1784,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio de Venta (S/)</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Precio de Venta ({simbolo()})</label>
                   <input
                     type="number"
                     step="0.01"
@@ -2060,7 +2061,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
               <div className="grid grid-cols-2 gap-2 bg-[#FF6B35]/10/60 p-3 rounded-2xl border border-[#FF6B35]/10 text-center">
                 <div>
                   <span className="text-[10px] text-[#FF6B35] font-bold uppercase block">Total Comprado</span>
-                  <span className="text-sm font-black text-[#1E2022] font-mono">S/ {totalComprado.toFixed(2)}</span>
+                  <span className="text-sm font-black text-[#1E2022] font-mono">{simbolo()} {totalComprado.toFixed(2)}</span>
                 </div>
                 <div>
                   <span className="text-[10px] text-[#FF6B35] font-bold uppercase block">N° de Compras</span>
@@ -2135,7 +2136,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 <div>
                   <span className="text-slate-400 block text-[10px]">TOTAL ACUMULADO</span>
                   <span className="font-extrabold text-slate-900 text-sm font-mono text-[#E85B28]">
-                    S/ {totalFacturado.toFixed(2)}
+                    {simbolo()} {totalFacturado.toFixed(2)}
                   </span>
                 </div>
                 <div>
@@ -2173,7 +2174,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-right font-bold text-slate-900 font-mono whitespace-nowrap">
-                          S/ {Number(c.total || 0).toFixed(2)}
+                          {simbolo()} {Number(c.total || 0).toFixed(2)}
                         </td>
                         <td className="py-2.5 px-3 text-center whitespace-nowrap">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
