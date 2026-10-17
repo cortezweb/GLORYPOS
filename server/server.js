@@ -5,6 +5,7 @@ const helmet = require('helmet');
 
 const tenantRoutes = require('./routes/tenant');
 const salesRoutes = require('./routes/sales');
+const emailRoutes = require('./routes/email');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -60,6 +61,7 @@ app.get('/api/health', (req, res) => {
 // ── RUTAS PRINCIPALES DEL SAAS ───────────────────────────────────────────────
 app.use('/api/tenants', tenantRoutes);
 app.use('/api/sales', salesRoutes);
+app.use('/api/email', emailRoutes);
 
 // ── MANEJO GLOBAL DE ERRORES ────────────────────────────────────────────────
 app.use((err, req, res, next) => {

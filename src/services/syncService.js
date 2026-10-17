@@ -283,6 +283,7 @@ export const syncService = {
             rubro: localEmpresa.rubro || 'ABARROTES',
             ciudad: localEmpresa.ciudad || 'Santa Cruz, Bolivia',
             moneda: localEmpresa.moneda || 'BOB',
+            ...(Object.prototype.hasOwnProperty.call(localEmpresa, 'logo_url') ? { logo_url: localEmpresa.logo_url || null } : {}),
             direccion: localEmpresa.direccion || '',
             telefono: localEmpresa.telefono || '',
             email: localEmpresa.email || '',

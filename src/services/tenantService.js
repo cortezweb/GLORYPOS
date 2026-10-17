@@ -184,8 +184,9 @@ export const tenantService = {
             id: 'empresa_activa',
             cloud_id: data.id,
             slug: cleanSlug,
+            ...(data.logo_url || !previa?.logo_url || previa?.cloud_id !== data.id ? {} : { logo_url: previa.logo_url }),
           });
-          return data;
+          return data.logo_url || !previa?.logo_url || previa?.cloud_id !== data.id ? data : { ...data, logo_url: previa.logo_url };
         }
       } catch (err) {
         console.warn('[tenantService] Error al consultar Supabase:', err);
