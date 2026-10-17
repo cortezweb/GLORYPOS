@@ -1,0 +1,80 @@
+const express = require('express');
+const router = express.Router();
+const { authenticateUser } = require('../middleware/auth');
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const MAX_PDF_BASE64 = 7 * 1024 * 1024; // ~5 MB de PDF
+
+// Límite sencillo por usuario: 20 correos por hora
+const envios = new Map();
+function dentroDelLimite(userId) {
+  const ahora = Date.now();
+  const recientes = (envios.get(userId) || []).filter(t => ahora - t < 60 * 60 * 1000);
+  if (recientes.length >= 20) return false;
+  recientes.push(ahora);
+  envios.set(userId, recientes);
+  return true;
+}
+
+const escapar = (t) => String(t || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/**
+ * POST /api/email/documento
+ * Envía un PDF (cotización) por correo con Resend. Solo usuarios con sesión y empresa.
+ * Variables: RESEND_API_KEY y MAIL_FROM (ej. "GLORYPOS <documentos@tudominio.com>").
+ */
+router.post('/documento', authenticateUser, async (req, res) => {
+  try {
+    if (!process.env.RESEND_API_KEY || !process.env.MAIL_FROM) {
+      return res.status(503).json({ success: false, error: 'El envío de correos no está configurado en el servidor.' });
+    }
+    if (!req.user?.empresa_id && req.user?.rol !== 'SUPERADMIN') {
+      return res.status(403).json({ success: false, error: 'Tu cuenta no pertenece a una empresa.' });
+    }
+
+    const { para, asunto, mensaje, nombreArchivo, pdfBase64, responderA, nombreRemitente } = req.body || {};
+
+    if (!EMAIL_RE.test(String(para || '').trim())) {
+      return res.status(400).json({ success: false, error: 'El correo del destinatario no es válido.' });
+    }
+    if (!pdfBase64 || typeof pdfBase64 !== 'string' || pdfBase64.length > MAX_PDF_BASE64) {
+      return res.status(400).json({ success: false, error: 'El PDF falta o es demasiado grande.' });
+    }
+    if (!/^[A-Za-z0-9+/=]+$/.test(pdfBase64)) {
+      return res.status(400).json({ success: false, error: 'El PDF no es válido.' });
+    }
+    if (!dentroDelLimite(req.user.id)) {
+      return res.status(429).json({ success: false, error: 'Demasiados correos enviados. Intenta más tarde.' });
+    }
+
+    const archivo = String(nombreArchivo || 'documento.pdf').replace(/[^\w.\-]/g, '_').slice(0, 80);
+    const remitente = String(nombreRemitente || '').replace(/[<>"\r\n]/g, '').slice(0, 80);
+    const cuerpo = escapar(String(mensaje || 'Le enviamos el documento adjunto.').slice(0, 2000)).replace(/\n/g, '<br>');
+
+    const payload = {
+      from: process.env.MAIL_FROM,
+      to: [String(para).trim()],
+      subject: String(asunto || 'Documento').replace(/[\r\n]/g, ' ').slice(0, 150),
+      html: `<div style="font-family:Arial,sans-serif;font-size:14px;color:#1E2022">${cuerpo}<br><br><span style="color:#888;font-size:12px">${escapar(remitente)}${remitente ? ' · ' : ''}Enviado con GLORYPOS</span></div>`,
+      attachments: [{ filename: archivo, content: pdfBase64 }],
+    };
+    if (EMAIL_RE.test(String(responderA || '').trim())) payload.reply_to = String(responderA).trim();
+
+    const resp = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) {
+      const detalle = await resp.text().catch(() => '');
+      console.error('[email route] Resend respondió', resp.status, detalle.slice(0, 300));
+      return res.status(502).json({ success: false, error: 'El servicio de correo rechazó el envío.' });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[email route] Error enviando correo:', err);
+    res.status(500).json({ success: false, error: 'Error al enviar el correo.' });
+  }
+});
+
+module.exports = router;

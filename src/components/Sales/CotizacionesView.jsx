@@ -10,6 +10,10 @@ import { useCart } from '../../context/CartContext';
 import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
 import { isDemoMode } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+import { descargarCotizacionPdf } from '../../utils/cotizacionPdf';
+import CotizacionPdfModal from './CotizacionPdfModal';
+import CotizacionEmailModal from './CotizacionEmailModal';
 
 const SEED_COTIZACIONES = [
   {
@@ -89,6 +93,13 @@ const ESTADO_CLASES = {
 
 export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart }) {
   const { addItem, clearCart } = useCart();
+  const { empresa, currentUser } = useAuth();
+  const vendedor = currentUser?.nombre || '';
+
+  // PDF A4: ver/imprimir y enviar por correo
+  const [pdfCot, setPdfCot] = useState(null);
+  const [pdfAutoPrint, setPdfAutoPrint] = useState(false);
+  const [emailCot, setEmailCot] = useState(null);
   
   const [cotizaciones, setCotizaciones] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -459,8 +470,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 1. Ver / Vista previa (Ojo en rojo) */}
                           <button
                             type="button"
-                            onClick={() => setPreviewCotizacion(cot)}
-                            title="Vista previa PDF"
+                            onClick={() => { setPdfAutoPrint(false); setPdfCot(cot); }}
+                            title="Ver comprobante A4"
                             className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -469,9 +480,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 2. Descargar A4 (Descarga en rojo) */}
                           <button
                             type="button"
-                            onClick={() => {
-                              alert(`Descargando PDF A4 de la cotización ${cot.correlativo}...`);
-                            }}
+                            onClick={() => descargarCotizacionPdf(cot, empresa, vendedor)}
                             title="Descargar PDF A4"
                             className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition"
                           >
@@ -502,19 +511,11 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                             <FileText className="w-3.5 h-3.5" />
                           </button>
 
-                          {/* 5. Enviar por correo / WhatsApp (Sobre en azul) */}
+                          {/* 5. Enviar el PDF por correo (Sobre) */}
                           <button
                             type="button"
-                            onClick={() => {
-                              const msg = encodeURIComponent(
-                                `*COTIZACIÓN GLORYPOS* - ${cot.correlativo}\n` +
-                                `Cliente: ${cot.cliente_nombre}\n` +
-                                `TOTAL: ${formatSoles(cot.total)}\n` +
-                                `¡Gracias por su preferencia!`
-                              );
-                              window.open(`https://wa.me/?text=${msg}`, '_blank');
-                            }}
-                            title="Enviar por Correo o WhatsApp"
+                            onClick={() => setEmailCot(cot)}
+                            title="Enviar PDF por correo"
                             className="p-1 text-[#FF6B35] hover:text-[#FF6B35] hover:bg-[#FF6B35]/10 rounded transition"
                           >
                             <Mail className="w-3.5 h-3.5" />
@@ -523,7 +524,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 6. Imprimir directo (Impresora en verde) */}
                           <button
                             type="button"
-                            onClick={() => window.print()}
+                            onClick={() => { setPdfAutoPrint(true); setPdfCot(cot); }}
                             title="Imprimir"
                             className="p-1 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 rounded transition"
                           >
@@ -829,6 +830,26 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
       {/* ══════════════════════════════════════════════════════════════════ */}
       {/* 5. MODAL: VISTA PREVIA DE COTIZACIÓN                                */}
       {/* ══════════════════════════════════════════════════════════════════ */}
+      {pdfCot && (
+        <CotizacionPdfModal
+          cot={pdfCot}
+          empresa={empresa}
+          vendedor={vendedor}
+          autoPrint={pdfAutoPrint}
+          onClose={() => setPdfCot(null)}
+        />
+      )}
+
+      {emailCot && (
+        <CotizacionEmailModal
+          cot={emailCot}
+          empresa={empresa}
+          vendedor={vendedor}
+          correoInicial={clientList.find(c => (c.nit_ci && c.nit_ci === emailCot.cliente_ci_nit) || c.razon_social === emailCot.cliente_nombre)?.email || ''}
+          onClose={() => setEmailCot(null)}
+        />
+      )}
+
       {previewCotizacion && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
           <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200">
