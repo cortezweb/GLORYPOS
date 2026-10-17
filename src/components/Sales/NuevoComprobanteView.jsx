@@ -12,8 +12,11 @@ import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
 import { CURRENCIES, getCurrency } from '../../utils/currency';
 
-export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt }) {
+// modo 'comprobante' (por defecto) emite ventas; modo 'cotizacion' guarda una cotización
+// (pre venta: no mueve caja, stock ni saldos).
+export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, modo = 'comprobante' }) {
   const { empresa } = useAuth();
+  const esCotizacion = modo === 'cotizacion';
 
   // Fecha actual formateada para inputs YYYY-MM-DD
   const todayStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
@@ -29,11 +32,16 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
 
   // Fechas
   const [fechaEmision, setFechaEmision] = useState(todayStr);
-  const [fechaVencimiento, setFechaVencimiento] = useState(todayStr);
+  // Vigencia de la cotización: 15 días por defecto
+  const [fechaVencimiento, setFechaVencimiento] = useState(() => {
+    const d = new Date();
+    if (esCotizacion) d.setDate(d.getDate() + 15);
+    return d.toISOString().slice(0, 10);
+  });
 
   // 2. Parámetros del Comprobante
-  const [tipoComprobante, setTipoComprobante] = useState('Boleta'); // Boleta, Factura, Nota de Venta, Nota de Crédito, Cotización
-  const [serie, setSerie] = useState('B001');
+  const [tipoComprobante, setTipoComprobante] = useState(esCotizacion ? 'Cotización' : 'Boleta'); // Boleta, Factura, Nota de Venta, Nota de Crédito, Cotización
+  const [serie, setSerie] = useState(esCotizacion ? 'CT01' : 'B001');
   const [tipoOperacion, setTipoOperacion] = useState('Venta interna');
 
   // Actualizar serie según tipo de comprobante
@@ -42,7 +50,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
     else if (tipoComprobante === 'Factura') setSerie('F001');
     else if (tipoComprobante === 'Nota de Venta') setSerie('NV01');
     else if (tipoComprobante === 'Nota de Crédito') setSerie('NC01');
-    else if (tipoComprobante === 'Cotización') setSerie('COT1');
+    else if (tipoComprobante === 'Cotización') setSerie('CT01');
   }, [tipoComprobante]);
 
   // 3. Cliente y Moneda
@@ -88,13 +96,20 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
   });
 
   // 5. Métodos de Pago y Totales
-  const [metodosPago, setMetodosPago] = useState([
-    { id: 1, metodo: 'Efectivo', referencia: '', monto: 0 }
-  ]);
+  const [metodosPago, setMetodosPago] = useState(
+    esCotizacion ? [] : [{ id: 1, metodo: 'Efectivo', referencia: '', monto: 0 }]
+  );
   const [condicionPago, setCondicionPago] = useState('Contado'); // Contado, Crédito
   const [descuentoGlobalPorcentaje, setDescuentoGlobalPorcentaje] = useState(0);
 
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Solo cotización: notas, términos y condiciones y vista previa
+  const [notas, setNotas] = useState('');
+  const [mostrarTerminos, setMostrarTerminos] = useState(() => {
+    try { return localStorage.getItem('glorypos_cot_terminos') === '1'; } catch { return false; }
+  });
+  const [showPreview, setShowPreview] = useState(false);
 
   // Cargar catálogo de productos y clientes desde Dexie
   useEffect(() => {
@@ -261,7 +276,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
     const faltante = Math.max(0, totalComprobante - sumaPagos);
     setMetodosPago([
       ...metodosPago,
-      { id: Date.now(), metodo: 'Efectivo', referencia: '', monto: faltante }
+      { id: Date.now(), metodo: 'Efectivo', referencia: '', monto: esCotizacion ? 0 : faltante }
     ]);
   };
 
@@ -272,7 +287,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
   };
 
   const handleRemovePago = (index) => {
-    if (metodosPago.length === 1) return;
+    if (!esCotizacion && metodosPago.length === 1) return;
     setMetodosPago(metodosPago.filter((_, i) => i !== index));
   };
 
@@ -396,6 +411,69 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
     }, 1000);
   };
 
+  // Guardar cotización (no descuenta stock ni registra cobros)
+  const handleGuardarCotizacion = async () => {
+    if (items.length === 0) {
+      alert('Agrega al menos un ítem a la cotización.');
+      return;
+    }
+    if (!cliente.razon_social?.trim()) {
+      alert('Selecciona un cliente.');
+      return;
+    }
+
+    const existentes = await db.cotizaciones.toArray();
+    const ultimo = existentes
+      .filter(c => String(c.correlativo || '').startsWith(`${serie}-`))
+      .reduce((max, c) => Math.max(max, parseInt(String(c.correlativo).split('-')[1], 10) || 0), 0);
+    const correlativo = `${serie}-${String(ultimo + 1).padStart(8, '0')}`;
+
+    const msDia = 24 * 60 * 60 * 1000;
+    const validez = Math.max(1, Math.round((new Date(`${fechaVencimiento}T00:00:00`) - new Date(`${fechaEmision}T00:00:00`)) / msDia));
+
+    const nueva = {
+      id: `cot-${Date.now()}`,
+      fecha: fechaEmision,
+      fecha_vencimiento: fechaVencimiento,
+      validez_dias: validez,
+      correlativo,
+      serie,
+      cliente_nombre: cliente.razon_social,
+      cliente_ci_nit: cliente.nit_ci,
+      cliente_direccion: cliente.direccion || '',
+      cliente_telefono: '',
+      moneda,
+      tipo_cambio: Number(tipoCambio) || 1,
+      notas,
+      metodos_pago_referencia: metodosPago.map(m => ({ metodo: m.metodo, referencia: m.referencia })),
+      mostrar_terminos: mostrarTerminos,
+      items: items.map(it => ({
+        id: it.producto_id,
+        nombre: it.descripcion,
+        codigo: it.codigo,
+        unidad: it.unidad,
+        cantidad: Number(it.cantidad) || 1,
+        precio: Number(it.precio_unitario) || 0,
+        afectacion: it.afectacion,
+        igv_incluido: it.igv_incluido,
+        descuento: Number(it.descuento) || 0,
+        subtotal: Math.max(0, (Number(it.cantidad) || 1) * (Number(it.precio_unitario) || 0) - (Number(it.descuento) || 0))
+      })),
+      subtotal: subtotalBruto,
+      descuento: totalDescuentosItems + descuentoGlobalMonto,
+      total: totalComprobante,
+      estado: 'Borrador'
+    };
+
+    await db.cotizaciones.add(nueva);
+    syncService.triggerBackgroundSync();
+    setIsSuccess(true);
+    setTimeout(() => {
+      setIsSuccess(false);
+      if (onSelectSubView) onSelectSubView('ventas_cotizaciones');
+    }, 700);
+  };
+
   const handleResetForm = () => {
     if (window.confirm('¿Deseas reiniciar el formulario de comprobante?')) {
       setItems([]);
@@ -412,9 +490,10 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
   return (
     <div className="flex-1 flex flex-col bg-[#f8fafc] min-h-screen font-sans relative pb-16">
       {/* Subnavegación Superior para Ventas */}
-      <SalesSubNav currentSubView="nuevo_comprobante" onSelectSubView={onSelectSubView} />
+      <SalesSubNav currentSubView={esCotizacion ? 'cotizaciones' : 'nuevo_comprobante'} onSelectSubView={onSelectSubView} />
 
       {/* Botón Flotante Lateral Derecho: "Abrir información adicional >" */}
+      {!esCotizacion && (
       <button
         type="button"
         onClick={() => setShowAdditionalInfoDrawer(true)}
@@ -424,6 +503,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
       >
         Abrir información adicional &gt;
       </button>
+      )}
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         
@@ -481,7 +561,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
 
             <div>
               <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">
-                Fec. Vencimiento
+                {esCotizacion ? 'Vigencia hasta' : 'Fec. Vencimiento'}
               </label>
               <div className="relative">
                 <input
@@ -499,11 +579,19 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
         {/* ========================================================= */}
         {/* FILA 1 DE PARÁMETROS: TIPO COMPROBANTE, SERIE, TIPO OPERACIÓN */}
         {/* ========================================================= */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className={`bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5 grid grid-cols-1 ${esCotizacion ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-4`}>
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Tipo comprobante
             </label>
+            {esCotizacion ? (
+              <input
+                type="text"
+                value="Cotización"
+                readOnly
+                className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 outline-none"
+              />
+            ) : (
             <div className="relative">
               <select
                 value={tipoComprobante}
@@ -518,6 +606,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               </select>
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
+            )}
           </div>
 
           <div>
@@ -535,6 +624,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             </div>
           </div>
 
+          {!esCotizacion && (
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Tipo operación
@@ -553,6 +643,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
+          )}
         </div>
 
         {/* ========================================================= */}
@@ -676,6 +767,19 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             </p>
           </div>
         </div>
+
+        {esCotizacion && (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5">
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Notas</label>
+            <input
+              type="text"
+              value={notas}
+              onChange={(e) => setNotas(e.target.value)}
+              placeholder="Opcional"
+              className="w-full lg:w-1/2 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none"
+            />
+          </div>
+        )}
 
         {/* ========================================================= */}
         {/* BARRA DE ACCIONES: AGREGAR PRODUCTO, MANUAL, ESCANEAR */}
@@ -866,6 +970,87 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
         {/* ========================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           
+          {esCotizacion ? (
+          <div className="lg:col-span-7 space-y-4">
+            {/* Método de pago (solo referencia) */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-3">
+              <span className="text-[11px] font-black text-slate-600 uppercase tracking-wider block">
+                MÉTODO DE PAGO (REFERENCIA)
+              </span>
+              <p className="text-[11px] text-slate-500">
+                Cómo piensa pagar el cliente. Es solo una referencia: no registra ningún cobro ni afecta la caja ni los saldos.
+              </p>
+
+              {metodosPago.length === 0 && (
+                <p className="text-[11px] text-slate-400">Sin método de pago indicado.</p>
+              )}
+
+              {metodosPago.map((pago, idx) => (
+                <div key={pago.id} className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                  <div className="w-full sm:w-56 relative">
+                    <select
+                      value={pago.metodo}
+                      onChange={(e) => handleUpdatePago(idx, 'metodo', e.target.value)}
+                      className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] outline-none cursor-pointer pr-8"
+                    >
+                      <option value="Efectivo">💵 Efectivo</option>
+                      <option value="Tarjeta">💳 Tarjeta Débito / Crédito</option>
+                      <option value="QR">📱 QR / Transferencia</option>
+                      <option value="Depósito">🏦 Depósito en Cuenta</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Referencia (opc.)"
+                    value={pago.referencia}
+                    onChange={(e) => handleUpdatePago(idx, 'referencia', e.target.value)}
+                    className="flex-1 min-w-[140px] bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#FF6B35] outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePago(idx)}
+                    className="text-slate-400 hover:text-red-500 p-1.5 transition"
+                    aria-label="Quitar método de pago"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={handleAddPago}
+                className="text-[#FF6B35] hover:text-[#E85B28] font-semibold text-xs flex items-center gap-1 transition"
+              >
+                + Agregar método de pago
+              </button>
+            </div>
+
+            {/* Opciones del documento */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5">
+              <span className="text-[11px] font-black text-slate-600 uppercase tracking-wider block mb-3">
+                OPCIONES DEL DOCUMENTO
+              </span>
+              <label className="flex items-start justify-between gap-3 cursor-pointer">
+                <span>
+                  <span className="block text-sm text-slate-800">Mostrar términos y condiciones</span>
+                  <span className="block text-[10px] text-slate-400">Preferencia de la empresa: aplica a cotizaciones futuras hasta desactivarla.</span>
+                </span>
+                <input
+                  type="checkbox"
+                  checked={mostrarTerminos}
+                  onChange={(e) => {
+                    setMostrarTerminos(e.target.checked);
+                    try { localStorage.setItem('glorypos_cot_terminos', e.target.checked ? '1' : '0'); } catch { /* sin almacenamiento */ }
+                  }}
+                  className="mt-1 w-4 h-4 accent-[#FF6B35]"
+                />
+              </label>
+            </div>
+          </div>
+          ) : (
+          <>
           {/* Tarjeta Izquierda: Métodos de Pago & Condición */}
           <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-4">
             <span className="text-[11px] font-black text-slate-600 uppercase tracking-wider block">
@@ -913,7 +1098,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                   </div>
 
                   {/* Eliminar fila de pago si hay más de una */}
-                  {metodosPago.length > 1 && (
+                  {(esCotizacion || metodosPago.length > 1) && (
                     <button
                       type="button"
                       onClick={() => handleRemovePago(idx)}
@@ -979,6 +1164,9 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             </div>
           </div>
 
+          </>
+          )}
+
           {/* Tarjeta Derecha: Descuento y Total Comprobante */}
           <div className="lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-5">
             
@@ -1015,6 +1203,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
             </div>
 
             {/* Botones de acción principales */}
+            {!esCotizacion && (
             <div className="pt-2 space-y-2">
               <button
                 type="button"
@@ -1043,9 +1232,42 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 Limpiar Formulario
               </button>
             </div>
+            )}
           </div>
         </div>
 
+        {/* Cotización: Cancelar, Guardar y Previsualizar */}
+        {esCotizacion && (
+          <div className="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
+            <button
+              type="button"
+              onClick={() => onSelectSubView && onSelectSubView('ventas_cotizaciones')}
+              className="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-semibold text-xs transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleGuardarCotizacion}
+              disabled={isSuccess || items.length === 0}
+              className="px-5 py-2.5 rounded-xl bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs shadow-xs transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+            >
+              {isSuccess ? <CheckCircle2 className="w-4 h-4 animate-bounce" /> : null}
+              {isSuccess ? 'Cotización guardada' : 'Guardar cotización'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              disabled={items.length === 0}
+              className="px-5 py-2.5 rounded-xl border border-amber-400 bg-white text-amber-800 hover:bg-amber-50 font-semibold text-xs transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previsualizar
+            </button>
+          </div>
+        )}
+
+        {!esCotizacion && (
+        <>
         {/* ========================================================= */}
         {/* BARRA INFORMATIVA INFERIOR (ESTILO CAPTURA) */}
         {/* ========================================================= */}
@@ -1061,7 +1283,73 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
           </div>
         </div>
 
+        </>
+        )}
+
       </main>
+
+      {esCotizacion && showPreview && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <h3 className="font-bold text-sm text-slate-800">Vista previa de la cotización</h3>
+              <button type="button" onClick={() => setShowPreview(false)} className="text-slate-400 hover:text-slate-600 p-1" aria-label="Cerrar">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4 text-xs text-slate-700">
+              <div className="flex flex-wrap justify-between gap-2">
+                <div>
+                  <p className="font-black text-slate-900 uppercase">{empresaDatos.nombre}</p>
+                  <p className="text-slate-500">{empresaDatos.direccion}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-slate-900">COTIZACIÓN {serie}</p>
+                  <p>Emisión: {fechaEmision}</p>
+                  <p>Vigencia hasta: {fechaVencimiento}</p>
+                </div>
+              </div>
+              <p><span className="font-semibold">Cliente:</span> {cliente.razon_social} — {cliente.nit_ci}</p>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-200 text-[10px] uppercase text-slate-500">
+                    <th className="py-1.5">Descripción</th>
+                    <th className="py-1.5 text-right">Cant.</th>
+                    <th className="py-1.5 text-right">P. unit.</th>
+                    <th className="py-1.5 text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {items.map(it => {
+                    const t = Math.max(0, (Number(it.cantidad) || 0) * (Number(it.precio_unitario) || 0) - (Number(it.descuento) || 0));
+                    return (
+                      <tr key={it.id}>
+                        <td className="py-1.5">{it.descripcion}</td>
+                        <td className="py-1.5 text-right">{it.cantidad}</td>
+                        <td className="py-1.5 text-right">{currencySymbol} {(Number(it.precio_unitario) || 0).toFixed(2)}</td>
+                        <td className="py-1.5 text-right font-semibold">{currencySymbol} {t.toFixed(2)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <div className="flex justify-between border-t border-slate-200 pt-3 text-sm">
+                <span className="font-black uppercase">Total</span>
+                <span className="font-black">{currencySymbol} {totalComprobante.toFixed(2)}</span>
+              </div>
+              {notas && <p><span className="font-semibold">Notas:</span> {notas}</p>}
+              {mostrarTerminos && (
+                <p className="text-[11px] text-slate-500">Términos y condiciones: precios válidos hasta la fecha de vigencia. Sujeto a disponibilidad de stock.</p>
+              )}
+            </div>
+            <div className="p-4 border-t border-slate-200 flex justify-end">
+              <button type="button" onClick={() => setShowPreview(false)} className="px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-semibold text-xs">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================= */}
       {/* MODAL: AGREGAR PRODUCTO DESDE CATÁLOGO */}

@@ -188,6 +188,7 @@ add(['membresias', 'suscripciones', 'ventas_membresias'], PERMS.membresias);
 add(['pedidos_web', 'pedidosweb', 'ventas_pedidosweb'], PERMS.pedidos_web);
 add(['cuentas_por_cobrar', 'cuentas_cobrar', 'creditos', 'ventas_cuentas_cobrar'], PERMS.cxc);
 add(['ventas_cotizaciones', 'cotizaciones', 'preventa'], PERMS.cotizaciones);
+add(['nueva_cotizacion'], ['crear_cotizaciones']);
 add(['ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja'], PERMS.caja);
 add(['productos', 'products', 'combos_promociones', 'combos', 'promociones', 'servicios', 'services', 'categorias_marcas', 'categorias', 'marcas', 'unidades_medida', 'unidades', 'unidades-medida'], PERMS.productos);
 add(['inventory', 'inventario', 'movimientos', 'inventario_movimientos', 'transferencias', 'inventario_transferencias', 'historial_transferencias', 'inventario_historial_transferencias', 'kardex', 'inventario_kardex'], PERMS.inventario);

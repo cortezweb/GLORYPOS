@@ -341,6 +341,12 @@ function MainShell() {
                   onOpenPosWithCart={() => setCurrentView('pos')} 
                 />
               )}
+              {currentView === 'nueva_cotizacion' && (
+                <NuevoComprobanteView
+                  modo="cotizacion"
+                  onSelectSubView={(sub) => setCurrentView(sub)}
+                />
+              )}
               {['nuevo_comprobante', 'ventas_nuevo'].includes(currentView) && (
                 <NuevoComprobanteView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
@@ -564,7 +570,7 @@ function MainShell() {
                 'pedidos_web', 'pedidosweb', 'ventas_pedidosweb',
                 'cuentas_por_cobrar', 'cuentas_cobrar', 'creditos', 'ventas_cuentas_cobrar',
                 'ventas_notas', 'notas_venta', 'notas',
-                'ventas_cotizaciones', 'cotizaciones', 'preventa',
+                'ventas_cotizaciones', 'cotizaciones', 'preventa', 'nueva_cotizacion',
                 'ventas_caja', 'caja_chica', 'caja', 'reporte_cajas', 'reporte_caja',
                 'productos', 'products', 'combos_promociones', 'combos', 'promociones', 'servicios', 'services', 'categorias_marcas', 'categorias', 'marcas', 'unidades_medida', 'unidades', 'unidades-medida',
                 'inventory', 'inventario', 'movimientos', 'inventario_movimientos', 'transferencias', 'inventario_transferencias', 'historial_transferencias', 'inventario_historial_transferencias', 'kardex', 'inventario_kardex',
