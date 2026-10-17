@@ -91,7 +91,11 @@ export const VIEW_MODULE_MAP = {
   hotel_config: 'hoteles',
 };
 
-export function isSuperAdminSession(tenantSlug, currentUser) {
+// Super Admin real = lo confirma Supabase (tabla platform_admins). Solo en modo demo, sin
+// Supabase, se reconoce por el slug 'admin' o el usuario de prueba.
+export function isSuperAdminSession(tenantSlug, currentUser, { isPlatformAdmin = false, isDemoMode = false } = {}) {
+  if (isPlatformAdmin) return true;
+  if (!isDemoMode) return false;
   return tenantSlug === 'admin' || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
 }
 
@@ -99,8 +103,8 @@ export function getEmpresaModules(empresa) {
   return Array.isArray(empresa?.modulos_activos) ? empresa.modulos_activos : DEFAULT_CLIENT_MODULES;
 }
 
-export function empresaHasModule(empresa, modId, { tenantSlug, currentUser } = {}) {
-  if (isSuperAdminSession(tenantSlug, currentUser)) return true;
+export function empresaHasModule(empresa, modId, { tenantSlug, currentUser, isPlatformAdmin, isDemoMode } = {}) {
+  if (isSuperAdminSession(tenantSlug, currentUser, { isPlatformAdmin, isDemoMode })) return true;
   if (CORE_MODULES.includes(modId)) return true;
   return getEmpresaModules(empresa).includes(modId);
 }

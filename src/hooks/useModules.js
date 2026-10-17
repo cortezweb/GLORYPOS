@@ -10,8 +10,8 @@ import {
 
 // Hook único para saber qué módulos tiene contratados la empresa activa (subdominio).
 export function useModules() {
-  const { empresa, tenantSlug, currentUser } = useAuth();
-  const ctx = { tenantSlug, currentUser };
+  const { empresa, tenantSlug, currentUser, isPlatformAdmin, isDemoMode } = useAuth();
+  const ctx = { tenantSlug, currentUser, isPlatformAdmin, isDemoMode };
 
   const hasModule = (modId) => empresaHasModule(empresa, modId, ctx);
   const canOpenView = (view) => {
@@ -22,7 +22,7 @@ export function useModules() {
   return {
     hasModule,
     canOpenView,
-    isSuperAdmin: isSuperAdminSession(tenantSlug, currentUser),
+    isSuperAdmin: isSuperAdminSession(tenantSlug, currentUser, ctx),
     glorychefActivo: hasModule(GLORYCHEF_MODULE_ID),
     tiendaActiva: hasModule(TIENDA_MODULE_ID),
     hotelActivo: hasModule(HOTEL_MODULE_ID),

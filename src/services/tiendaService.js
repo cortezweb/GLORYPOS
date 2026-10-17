@@ -147,13 +147,24 @@ export const tiendaService = {
     // así no se repite aunque muchos clientes compren a la vez desde sus celulares.
     pedido.comprobante = { tipo: settings.tipo_comprobante, serie: settings.serie, numero: null, correlativo: null, estado: 'PENDIENTE' };
 
+    const { data: sesion } = isSupabaseConfigured && supabase ? await supabase.auth.getSession() : { data: null };
+    if (isSupabaseConfigured && supabase && !sesion?.session) {
+      // Cliente sin sesión: el servidor asigna la empresa según el subdominio de la tienda.
+      // Si falla, el cliente debe saberlo (desde su celular el pedido no se reintenta solo).
+      const { error } = await supabase.rpc('tienda_crear_pedido', {
+        p_slug: empresa?.slug,
+        p_pedido: payloadNube(pedido, null),
+      });
+      if (error) throw new Error('No se pudo enviar tu pedido. Revisa tu conexión e intenta de nuevo.');
+    }
+
     await db.pedidos_web.put(pedido);
     // GLORYCHEF: si el negocio también es restaurante, el pedido entra a cocina como delivery
     if (empresaHasModule(empresa, GLORYCHEF_MODULE_ID)) {
       restaurantService.crearComandaDesdeTienda(pedido).catch(err => console.warn('[tiendaService] GLORYCHEF:', err));
     }
     try {
-      await subirPedido(pedido, empresa?.id || 'empresa_activa');
+      if (sesion?.session) await subirPedido(pedido, empresa?.id);
     } catch (err) {
       console.warn('[tiendaService] Pedido guardado local; se sincronizará luego:', err);
     }

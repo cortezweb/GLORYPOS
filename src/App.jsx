@@ -75,7 +75,7 @@ import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
   const { isExpired, currentUser, isAuthenticated, loading, empresa, logout } = useAuth();
-  const { canOpenView, tiendaActiva } = useModules();
+  const { canOpenView, tiendaActiva, isSuperAdmin } = useModules();
 
   // Navigation State (Por defecto inicia en la vista Inicio)
   const [currentView, setCurrentView] = useState('inicio');
@@ -515,7 +515,13 @@ function MainShell() {
               {['comprobantes_pendientes', 'pendientes'].includes(currentView) && <ComprobantesPendientesView />}
 
               {/* Consola SuperAdmin SaaS */}
-              {['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView) && (
+              {['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView) && !isSuperAdmin && (
+                <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 shadow-sm">
+                  <h3 className="text-base font-bold text-slate-900">Acceso restringido</h3>
+                  <p className="text-xs text-slate-500 mt-1">Esta consola es solo para el administrador de la plataforma GLORYPOS.</p>
+                </div>
+              )}
+              {['superadmin', 'admin_dashboard', 'dashboard'].includes(currentView) && isSuperAdmin && (
                 <SuperAdminView
                   onSelectView={(v) => setCurrentView(v)}
                   onOpenCloseCash={() => setIsCloseCashOpen(true)}

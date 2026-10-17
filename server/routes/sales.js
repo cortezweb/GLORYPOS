@@ -18,8 +18,8 @@ router.post('/atomic', authenticateUser, async (req, res) => {
       });
     }
 
-    // Asegurar que la empresa_id pertenezca al usuario autenticado (Prevenir spoofing)
-    venta.empresa_id = req.user.empresa_id || venta.empresa_id || 'empresa_activa';
+    // La empresa la decide la base de datos según la sesión del usuario (get_current_tenant_id)
+    delete venta.empresa_id;
     venta.usuario_id = req.user.id || venta.usuario_id;
     venta.usuario_nombre = req.user.nombre || venta.usuario_nombre;
 
@@ -33,7 +33,7 @@ router.post('/atomic', authenticateUser, async (req, res) => {
     }
 
     // Llamar a la función RPC atómica en PostgreSQL
-    const { data, error } = await supabaseAdmin.rpc('realizar_venta_pos_atomica', {
+    const { data, error } = await req.supabaseUser.rpc('realizar_venta_pos_atomica', {
       p_venta: venta,
       p_items: items
     });

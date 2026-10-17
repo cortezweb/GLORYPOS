@@ -11,7 +11,7 @@ import AdminDashboardView from './AdminDashboardView';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { tenantService, slugify } from '../../services/tenantService';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured, isDemoMode } from '../../lib/supabase';
 import { hashText } from '../../utils/crypto';
 import { ALL_CLIENT_MODULES, MODULE_PRESETS } from '../../config/modules';
 import { playCashChime } from '../../utils/audio';
@@ -421,7 +421,10 @@ export default function SuperAdminView({
         email: drawerData.email.trim().toLowerCase(),
         adminNombre: drawerData.adminNombre.trim() || 'Administrador',
         plan_tipo: drawerData.plan_tipo,
-        modulos_activos: drawerData.modulos_activos
+        duracion_dias: duracion,
+        modulos_activos: drawerData.modulos_activos,
+        // Con Supabase queda como invitación: el cliente crea su acceso con este correo
+        admin_email: drawerData.email.trim().toLowerCase()
       });
 
       // 2. Registrar usuario administrador
@@ -454,7 +457,8 @@ export default function SuperAdminView({
         }
       }
 
-      await db.usuarios.put(adminUser);
+      // En modo demo todo vive en este navegador; con Supabase el perfil ya quedó en la nube
+      if (isDemoMode) await db.usuarios.put(adminUser);
 
       const fullCreated = {
         ...newEmpresa,

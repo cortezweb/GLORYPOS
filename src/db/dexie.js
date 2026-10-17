@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 import { MASTER_PRODUCTS } from './seedMaster';
 import { hashText, isAlreadyHashed } from '../utils/crypto';
+import { isDemoMode } from '../lib/supabase';
 
 export function applyDexieSchema(dexieInstance) {
   dexieInstance.version(2).stores({
@@ -470,6 +471,9 @@ export async function initDatabase(targetSlug = null) {
     await db.catalogo_maestro.bulkAdd(MASTER_PRODUCTS);
   }
 
+  // Datos y usuarios de demostración: solo en modo demo (sin Supabase). Una empresa real
+  // empieza vacía y sus usuarios entran con Supabase Auth.
+  if (isDemoMode) {
   const tiendaCount = await db.productos_tienda.count();
   if (tiendaCount === 0) {
     const initialShopProducts = [
@@ -1120,6 +1124,8 @@ export async function initDatabase(targetSlug = null) {
     }
   }
 
+  }
+
   // ─── Métodos de Pago (Seed exacto al screenshot media_1789925791176.png) ────
   if (db.metodos_pago) {
     const mpCount = await db.metodos_pago.count();
@@ -1134,6 +1140,7 @@ export async function initDatabase(targetSlug = null) {
     }
   }
 
+  if (isDemoMode) {
   // ─── Guías Remitente (Seed exacto al screenshot media_1789932575569.png) ────
   if (db.guias_remitente) {
     const grCount = await db.guias_remitente.count();
@@ -1276,6 +1283,8 @@ export async function initDatabase(targetSlug = null) {
         }
       ]);
     }
+  }
+
   }
 
   // ─── Roles y Permisos (Seed exacto al screenshot media_1790120030272.png) ─────

@@ -1,7 +1,8 @@
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, isSupabaseConfigured, isDemoMode, setSupabaseTenantSlug } from '../lib/supabase';
 import { db, switchTenantDatabase } from '../db/dexie';
 
 const RESERVED_SUBDOMAINS = ['www', 'app', 'pos', 'api', 'cdn', 'static', 'mail', 'staging', 'dev'];
+const BASE_DOMAIN = String(import.meta.env.VITE_BASE_DOMAIN || '').toLowerCase().replace(/^\.+/, '');
 
 /**
  * Convierte un nombre en un slug URL-friendly
@@ -44,7 +45,15 @@ export const tenantService = {
     if (typeof window === 'undefined') return null;
     if (this.isLocalDev()) return null;
 
-    const parts = window.location.hostname.split('.');
+    const host = window.location.hostname.toLowerCase();
+    // Con VITE_BASE_DOMAIN (ej. "glorypos.com.bo") el subdominio se calcula sin ambigüedad
+    if (BASE_DOMAIN) {
+      if (!host.endsWith(`.${BASE_DOMAIN}`)) return null;
+      const sub = host.slice(0, -(BASE_DOMAIN.length + 1)).split('.').pop();
+      return sub && !RESERVED_SUBDOMAINS.includes(sub) ? sub : null;
+    }
+
+    const parts = host.split('.');
     // Necesitamos al menos 3 partes (sub.dominio.tld) o 4 (sub.dominio.com.bo)
     if (parts.length >= 3) {
       const sub = parts[0].toLowerCase();
@@ -56,29 +65,39 @@ export const tenantService = {
   },
 
   /**
+   * Dirección web de una empresa (su subdominio), o null si no hay dominio base configurado
+   */
+  urlForTenant(slug) {
+    if (typeof window === 'undefined' || !BASE_DOMAIN || this.isLocalDev()) return null;
+    return `${window.location.protocol}//${slugify(slug)}.${BASE_DOMAIN}`;
+  },
+
+  /**
    * Obtiene el slug de la empresa activa según prioridad:
-   * 1. Query param (?empresa=xxx o ?tenant=xxx)
-   * 2. Subdominio en producción
-   * 3. localStorage (entorno local)
+   * 1. Subdominio en producción
+   * 2. Query param (?empresa=xxx), solo en desarrollo local o modo demo
+   * 3. localStorage (empresa elegida en este dispositivo)
    * 4. Fallback por defecto ('admin')
    */
   getActiveTenantSlug() {
     if (typeof window === 'undefined') return 'admin';
 
-    // 1. Query param para pruebas directas en cualquier entorno
-    const params = new URLSearchParams(window.location.search);
-    const paramSlug = params.get('empresa') || params.get('tenant');
-    if (paramSlug) return slugify(paramSlug);
-
-    // 2. Subdominio web
+    // 1. Subdominio web: en producción manda siempre el subdominio
     const sub = this.detectSubdomain();
     if (sub) return sub;
 
-    // 3. Almacenamiento local (desarrollo)
+    // 2. Query param solo para pruebas en desarrollo local o modo demo
+    if (this.isLocalDev() || isDemoMode) {
+      const params = new URLSearchParams(window.location.search);
+      const paramSlug = params.get('empresa') || params.get('tenant');
+      if (paramSlug) return slugify(paramSlug);
+    }
+
+    // 3. Empresa elegida en este dispositivo
     const stored = localStorage.getItem('glorypos_tenant_slug');
     if (stored) return slugify(stored);
 
-    // 4. Default
+    // 4. Default: consola de la plataforma (solo entra un Super Admin autenticado)
     return 'admin';
   },
 
@@ -102,27 +121,64 @@ export const tenantService = {
   },
 
   /**
-   * Consulta los datos de la empresa por su slug
-   * Busca en Supabase si hay conexión, con fallback a Dexie
+   * ¿Hay una sesión de Supabase Auth en este dispositivo?
+   */
+  async hasCloudSession() {
+    if (!isSupabaseConfigured || !supabase) return false;
+    try {
+      const { data } = await supabase.auth.getSession();
+      return Boolean(data?.session);
+    } catch {
+      return false;
+    }
+  },
+
+  /**
+   * Id real de la empresa en la nube. En Dexie la empresa se guarda con la clave
+   * 'empresa_activa'; su id de Supabase va en cloud_id.
+   */
+  async getCloudEmpresaId() {
+    try {
+      const local = await db.config_empresa.get('empresa_activa');
+      if (!local) return null;
+      if (local.cloud_id) return local.cloud_id;
+      return local.id && local.id !== 'empresa_activa' ? local.id : null;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Consulta los datos de la empresa por su slug.
+   * Sin sesión solo se leen los datos públicos (RPC empresa_publica); con sesión,
+   * la fila completa que permite RLS. Fallback a Dexie sin conexión.
    */
   async getTenantBySlug(slug) {
     const cleanSlug = slugify(slug);
     if (!cleanSlug) return null;
+    setSupabaseTenantSlug(cleanSlug);
 
     // 1. Intentar consultar en Supabase
     if (isSupabaseConfigured && navigator.onLine && supabase) {
       try {
-        const { data, error } = await supabase
-          .from('empresas')
-          .select('*')
-          .eq('slug', cleanSlug)
-          .maybeSingle();
-
-        if (data && !error) {
-          // Guardar copia local en Dexie para soporte offline
+        const { data: publica, error } = await supabase.rpc('empresa_publica', { p_slug: cleanSlug });
+        if (!error && publica?.id) {
+          let data = publica;
+          if (await this.hasCloudSession()) {
+            const { data: completa } = await supabase
+              .from('empresas')
+              .select('*')
+              .eq('id', publica.id)
+              .maybeSingle();
+            if (completa) data = completa;
+          }
+          const previa = await db.config_empresa.get('empresa_activa');
+          // Guardar copia local en Dexie para soporte offline (conserva los ajustes locales)
           await db.config_empresa.put({
+            ...(previa?.cloud_id === data.id ? previa : {}),
             ...data,
             id: 'empresa_activa',
+            cloud_id: data.id,
             slug: cleanSlug,
           });
           return data;
@@ -135,9 +191,10 @@ export const tenantService = {
     // 2. Fallback a Dexie local
     try {
       const local = await db.config_empresa.get('empresa_activa');
-      if (local && (local.slug === cleanSlug || cleanSlug === 'admin')) {
+      if (local && (local.slug === cleanSlug || (cleanSlug === 'admin' && isDemoMode))) {
         return {
           ...local,
+          id: local.cloud_id || local.id,
           slug: local.slug || cleanSlug,
         };
       }
@@ -145,7 +202,7 @@ export const tenantService = {
       console.warn('[tenantService] Error al consultar Dexie:', err);
     }
 
-    // 3. Fallback especial para slug 'admin' (empresa demo predeterminada)
+    // 3. Fallback especial para slug 'admin' (consola de la plataforma / demo local)
     if (cleanSlug === 'admin') {
       return {
         id: 'empresa_activa',
@@ -170,10 +227,23 @@ export const tenantService = {
   },
 
   /**
-   * Carga los usuarios pertenecientes al tenant
+   * Rol del usuario autenticado en la empresa del subdominio (y si es Super Admin).
+   * También vincula invitaciones pendientes hechas a su correo.
+   */
+  async getMembership(slug) {
+    if (!isSupabaseConfigured || !supabase) return null;
+    const { data, error } = await supabase.rpc('mi_membresia', { p_slug: slugify(slug) });
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Carga los usuarios pertenecientes al tenant. Con Supabase solo se consultan
+   * con una sesión iniciada (RLS deja ver únicamente los de la propia empresa).
    */
   async getTenantUsers(empresaId) {
-    if (isSupabaseConfigured && navigator.onLine && supabase && empresaId && empresaId !== 'empresa_activa') {
+    if (isSupabaseConfigured && navigator.onLine && supabase && empresaId && empresaId !== 'empresa_activa'
+        && await this.hasCloudSession()) {
       try {
         const { data, error } = await supabase
           .from('usuarios')
@@ -189,7 +259,7 @@ export const tenantService = {
       }
     }
 
-    // Fallback a los usuarios locales en Dexie
+    // Fallback a los usuarios locales en Dexie (los de este dispositivo)
     try {
       const localUsers = await db.usuarios.toArray();
       return localUsers.filter(u => u.activo !== false);
@@ -202,6 +272,12 @@ export const tenantService = {
    * Registra una nueva empresa en el SaaS con sus módulos decididos por el SuperAdmin
    */
   async registerTenant(empresaData) {
+    // Con Supabase, la empresa la crea el servidor (RPC registrar_empresa): decide el id,
+    // valida el subdominio, fija la prueba de 30 días y deja al usuario como ADMIN.
+    if (isSupabaseConfigured && supabase && !isDemoMode) {
+      return this.registerTenantCloud(empresaData);
+    }
+
     const slug = slugify(empresaData.slug || empresaData.nombre);
     const empresaId = `emp-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
@@ -225,37 +301,7 @@ export const tenantService = {
       updated_at: new Date().toISOString(),
     };
 
-    // 1. Guardar en Supabase si está disponible
-    if (isSupabaseConfigured && navigator.onLine && supabase) {
-      try {
-        const { error } = await supabase.from('empresas').insert(newEmpresa);
-        if (error) {
-          // Si falló por columnas que aún no existen en el schema remoto (slug, modulos_activos),
-          // guardar con las columnas base garantizadas para que no se pierda el registro en la nube
-          const sanitized = {
-            id: newEmpresa.id,
-            nombre: newEmpresa.nombre,
-            nit_ci: newEmpresa.nit_ci,
-            rubro: newEmpresa.rubro,
-            plan_tipo: newEmpresa.plan_tipo,
-            ciudad: newEmpresa.ciudad,
-            direccion: newEmpresa.direccion,
-            telefono: newEmpresa.telefono,
-            email: newEmpresa.email,
-            created_at: newEmpresa.created_at,
-            updated_at: newEmpresa.updated_at
-          };
-          const fallbackRes = await supabase.from('empresas').insert(sanitized);
-          if (fallbackRes.error) {
-            console.warn('[tenantService] Error al guardar empresa sanitizada en Supabase:', fallbackRes.error);
-          }
-        }
-      } catch (err) {
-        console.warn('[tenantService] Excepción al guardar en Supabase:', err);
-      }
-    }
-
-    // 2. Cambiar a la base de datos local aislada del nuevo inquilino
+    // Cambiar a la base de datos local aislada del nuevo inquilino
     await switchTenantDatabase(slug);
 
     // Guardar en Dexie como empresa activa dentro de su base aislada
@@ -271,6 +317,39 @@ export const tenantService = {
 
     this.setActiveTenantSlug(slug);
     return newEmpresa;
+  },
+
+  async registerTenantCloud(empresaData) {
+    const { data, error } = await supabase.rpc('registrar_empresa', {
+      p_empresa: {
+        slug: slugify(empresaData.slug || empresaData.nombre),
+        nombre: empresaData.nombre,
+        nit_ci: empresaData.nit_ci,
+        rubro: empresaData.rubro,
+        ciudad: empresaData.ciudad,
+        direccion: empresaData.direccion,
+        telefono: empresaData.telefono,
+        email: empresaData.email,
+        propietario: empresaData.adminNombre,
+        // Solo los toma en cuenta el servidor si quien llama es Super Admin
+        plan_tipo: empresaData.plan_tipo,
+        duracion_dias: empresaData.duracion_dias,
+        modulos_activos: empresaData.modulos_activos,
+        admin_email: empresaData.admin_email,
+      },
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  },
+
+  /**
+   * Prepara la base local del dispositivo para una empresa ya creada en la nube.
+   */
+  async activateCloudTenantLocally(empresa) {
+    await switchTenantDatabase(empresa.slug);
+    await db.config_empresa.put({ ...empresa, id: 'empresa_activa', cloud_id: empresa.id });
+    this.setActiveTenantSlug(empresa.slug);
+    setSupabaseTenantSlug(empresa.slug);
   },
 
   /**
