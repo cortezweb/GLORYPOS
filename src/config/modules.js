@@ -96,7 +96,8 @@ export const VIEW_MODULE_MAP = {
 export function isSuperAdminSession(tenantSlug, currentUser, { isPlatformAdmin = false, isDemoMode = false } = {}) {
   if (isPlatformAdmin) return true;
   if (!isDemoMode) return false;
-  return tenantSlug === 'admin' || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
+  const esAdmin = ['admin', 'administrador', 'superadmin'].includes(String(currentUser?.rol || '').toLowerCase());
+  return (tenantSlug === 'admin' && esAdmin) || currentUser?.rol === 'SUPERADMIN' || currentUser?.id === 'usr-admin';
 }
 
 export function getEmpresaModules(empresa) {

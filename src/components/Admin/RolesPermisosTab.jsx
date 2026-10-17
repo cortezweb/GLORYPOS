@@ -1,108 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { db } from '../../db/dexie';
-import ModalRol, { COLUMNA_IZQUIERDA_CATEGORIAS, COLUMNA_DERECHA_CATEGORIAS, getAllCategoryPermissionIds } from './ModalRol';
+import ModalRol from './ModalRol';
 
-const ALL_PERMISSION_IDS = [
-  ...COLUMNA_IZQUIERDA_CATEGORIAS.flatMap(getAllCategoryPermissionIds),
-  ...COLUMNA_DERECHA_CATEGORIAS.flatMap(getAllCategoryPermissionIds)
-];
-
-const ALMACENERO_PERMISOS = [
-  'ver_dashboard',
-  'anular_ventas',
-  'cambiar_precio_vender',
-  'gestionar_inventario',
-  'ver_inventario',
-  'crear_contactos',
-  'editar_contactos',
-  'eliminar_contactos',
-  'ver_contactos',
-  'registrar_arqueo_caja',
-  'retenciones_percepciones_reversiones',
-  'emitir_nota_debito',
-  'anular_venta_nota_credito',
-  'emitir_guias_remision',
-  'enviar_sunat',
-  'ver_reporte_kardex',
-  'gestionar_transportistas_flota',
-  'ver_transportistas_flota',
-  'configurar_tienda_virtual',
-  'ver_tienda_virtual_pedidos',
-  'gestionar_pedidos_web',
-  'editar_config_empresa',
-  'ver_config_empresa',
-  'activar_desactivar_modulos',
-  'registrar_pagos_paquetes',
-  'ver_suscripcion_facturacion'
-];
-
-const DEFAULT_ROLES = [
-  {
-    id: 'rol-admin',
-    nombre: 'Administrador',
-    descripcion: 'Acceso completo al sistema',
-    permisos: ALL_PERMISSION_IDS,
-    activo: true,
-    esSistema: true
-  },
-  {
-    id: 'rol-almacenero',
-    nombre: 'Almacenero',
-    descripcion: 'Gestión de inventario',
-    permisos: ALMACENERO_PERMISOS,
-    activo: true,
-    esSistema: true
-  },
-  {
-    id: 'rol-cajero',
-    nombre: 'Cajero',
-    descripcion: 'Caja y movimientos',
-    permisos: [
-      'ver_dashboard', 'usar_pos', 'crear_ventas', 'ver_ventas',
-      'registrar_arqueo_caja', 'cerrar_caja', 'abrir_caja', 'movimientos_caja',
-      'ver_caja_bancos', 'ver_productos', 'ver_contactos', 'crear_contactos'
-    ],
-    activo: true,
-    esSistema: true
-  },
-  {
-    id: 'rol-contador',
-    nombre: 'Contador',
-    descripcion: 'Gestión contable',
-    permisos: [
-      'ver_dashboard', 'ver_ventas', 'ver_compras', 'ver_cuentas_cobrar', 'ver_cuentas_pagar',
-      'ver_todos_reportes', 'ver_reporte_ventas', 'ver_reporte_compras', 'ver_reporte_caja',
-      'ver_reporte_kardex', 'ver_reporte_notas', 'retenciones_percepciones_reversiones'
-    ],
-    activo: true,
-    esSistema: true
-  },
-  {
-    id: 'rol-supervisor',
-    nombre: 'Supervisor',
-    descripcion: 'Supervisión y reportes',
-    permisos: [
-      'ver_dashboard', 'ver_ventas', 'anular_ventas', 'crear_ventas', 'usar_pos',
-      'ver_cotizaciones', 'ver_cuentas_cobrar', 'ver_compras', 'ver_cuentas_pagar',
-      'ver_productos', 'ver_inventario', 'gestionar_inventario', 'ver_caja_bancos',
-      'ver_todos_reportes', 'ver_reporte_ventas', 'ver_reporte_caja'
-    ],
-    activo: true,
-    esSistema: true
-  },
-  {
-    id: 'rol-vendedor',
-    nombre: 'Vendedor',
-    descripcion: 'Gestión de ventas y POS',
-    permisos: [
-      'usar_pos', 'crear_ventas', 'ver_ventas', 'crear_cotizaciones', 'ver_cotizaciones',
-      'ver_productos', 'crear_contactos', 'ver_contactos'
-    ],
-    activo: true,
-    esSistema: true
-  }
-];
+import { DEFAULT_ROLES } from '../../config/permissions';
 
 export default function RolesPermisosTab() {
   const [roles, setRoles] = useState([]);
@@ -165,6 +66,7 @@ export default function RolesPermisosTab() {
       }
       setRoles(prev => prev.filter(r => r.id !== rolToDelete.id));
       setRolToDelete(null);
+      window.dispatchEvent(new CustomEvent('glorypos_roles_changed'));
     } catch (err) {
       console.error('Error eliminando rol:', err);
     }

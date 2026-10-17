@@ -75,7 +75,7 @@ import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
   const { isExpired, currentUser, isAuthenticated, loading, empresa, logout, isDemoMode } = useAuth();
-  const { canOpenView, tiendaActiva, isSuperAdmin } = useModules();
+  const { canOpenView, tiendaActiva, isSuperAdmin, canAccessView } = useModules();
 
   // Navigation State (Por defecto inicia en la vista Inicio)
   const [currentView, setCurrentView] = useState('inicio');
@@ -258,7 +258,27 @@ function MainShell() {
         </div>
 
         {/* Active Main View Container */}
-        {currentView === 'pos' ? (
+        {!canAccessView(currentView) ? (
+          <div className="flex-1 overflow-y-auto pb-20 lg:pb-8 w-full">
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 space-y-4 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+                <AlertCircle className="w-7 h-7" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900">No tienes permiso para esta sección</h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Tu rol ({currentUser?.rol || 'sin rol'}) no incluye acceso aquí. Pide al administrador de {empresa?.nombre || 'tu empresa'} que lo habilite en Roles y permisos.
+                </p>
+              </div>
+              <button
+                onClick={() => setCurrentView('inicio')}
+                className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs rounded-xl shadow-md"
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </div>
+        ) : currentView === 'pos' ? (
           <div className="flex-1 flex overflow-hidden min-h-0 pb-20 lg:pb-0">
             {/* Left Catalog Area */}
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">

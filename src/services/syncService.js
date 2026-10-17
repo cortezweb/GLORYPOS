@@ -1245,6 +1245,29 @@ export const syncService = {
   },
 
   // ── DESCARGA DESDE LA NUBE ────────────────────────────────────────────────
+  // Trae los roles y permisos de la empresa (la nube manda: así todos los dispositivos aplican lo mismo)
+  async pullRoles() {
+    if (!isSupabaseConfigured || !supabase || (typeof navigator !== 'undefined' && !navigator.onLine)) return 0;
+    const empresaId = await getCloudEmpresaId();
+    if (!empresaId || !(await hasCloudSession())) return 0;
+    try {
+      const { data, error } = await supabase.from('roles').select('*').eq('empresa_id', empresaId);
+      if (error || !data || data.length === 0) return 0;
+      await db.roles.bulkPut(data.map(r => ({
+        id: r.id,
+        nombre: r.nombre,
+        descripcion: r.descripcion || '',
+        permisos: Array.isArray(r.permisos) ? r.permisos : [],
+        activo: r.activo !== false,
+        esSistema: Boolean(r.es_sistema),
+      })));
+      return data.length;
+    } catch (err) {
+      console.warn('[syncService] No se pudieron traer los roles:', err);
+      return 0;
+    }
+  },
+
   async pullFromCloud() {
     if (!isSupabaseConfigured || (typeof navigator !== 'undefined' && !navigator.onLine) || !supabase) {
       return { success: false, reason: 'offline_or_unconfigured' };

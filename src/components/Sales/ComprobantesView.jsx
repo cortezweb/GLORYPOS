@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import SalesSubNav from './SalesSubNav';
 
 export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
-  const { currentUser, empresa } = useAuth();
+  const { currentUser, empresa, can } = useAuth();
 
   // Pestañas superiores
   const [activeTab, setActiveTab] = useState('facturas_boletas'); // 'facturas_boletas', 'notas_credito', 'resumenes_bajas'
@@ -851,7 +851,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                                 <Send className="w-3.5 h-3.5 text-slate-500" />
                                 Enviar por Correo
                               </button>
-                              {v.estado !== 'ANULADO' && (
+                              {v.estado !== 'ANULADO' && can('anular_ventas') && (
                                 <button
                                   type="button"
                                   onClick={() => {
