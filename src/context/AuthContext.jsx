@@ -4,6 +4,7 @@ import { hashText } from '../utils/crypto';
 import { tenantService } from '../services/tenantService';
 import { supabase, isSupabaseConfigured, isDemoMode } from '../lib/supabase';
 import { syncService } from '../services/syncService';
+import { resolvePermisos, hasAnyPermission, canAccessViewWith, groupPermissionList } from '../config/permissions';
 
 const AuthContext = createContext();
 
@@ -39,6 +40,22 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   // Acceso del dispositivo a la empresa, verificado por Supabase Auth + membresía
   const [cloudAccess, setCloudAccess] = useState(isDemoMode ? DEMO_ACCESS : NO_ACCESS);
+  // Roles de la empresa (permisos editables en Administración > Roles y permisos)
+  const [roles, setRoles] = useState([]);
+
+  const loadRoles = useCallback(async () => {
+    try {
+      setRoles(db.roles ? await db.roles.toArray() : []);
+    } catch {
+      setRoles([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadRoles();
+    window.addEventListener('glorypos_roles_changed', loadRoles);
+    return () => window.removeEventListener('glorypos_roles_changed', loadRoles);
+  }, [loadRoles]);
 
   const isLocalDev = tenantService.isLocalDev();
   const detectedSubdomain = tenantService.detectSubdomain();
@@ -86,9 +103,11 @@ export function AuthProvider({ children }) {
 
       if (tenant) {
         setEmpresa(tenant);
-        // 3. Cargar usuarios asignados a este tenant
+        // 3. Cargar usuarios asignados a este tenant y los roles de la nube
         const userList = await tenantService.getTenantUsers(tenant.id);
         setUsuarios(userList);
+        if (access.ok && !isDemoMode) await syncService.pullRoles?.();
+        await loadRoles();
 
         // 4. Recuperar sesión persistente de usuario si pertenece a este tenant y el
         //    dispositivo sigue autenticado en la nube
@@ -130,7 +149,7 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [resolveCloudAccess]);
+  }, [resolveCloudAccess, loadRoles]);
 
   useEffect(() => {
     loadData();
@@ -253,6 +272,8 @@ export function AuthProvider({ children }) {
     if (tenant) setEmpresa(tenant);
     const userList = await tenantService.getTenantUsers(tenant?.id);
     setUsuarios(userList);
+    await syncService.pullRoles?.();
+    await loadRoles();
 
     let matchedUser = userList.find(u => u.email?.toLowerCase() === email)
       || await db.usuarios.where('email').equalsIgnoreCase(email).first();
@@ -487,6 +508,15 @@ export function AuthProvider({ children }) {
 
   const isExpired = empresa?.estado_suscripcion === 'VENCIDO' || calcularDiasRestantes() <= 0;
 
+  // Permisos del usuario activo (null = administrador: todos)
+  const permisos = (!isDemoMode && cloudAccess.superAdmin)
+    ? null
+    : resolvePermisos(currentUser?.rol, roles);
+  const can = (permiso) => hasAnyPermission(permisos, [permiso]);
+  const canAny = (lista) => hasAnyPermission(permisos, lista);
+  const canAccessView = (view) => canAccessViewWith(permisos, view);
+  const canShowGroup = (modId) => hasAnyPermission(permisos, groupPermissionList(modId));
+
   // Cambiar entre planes de prueba o comercial (para probar el sistema)
   const setTrialDays = async (dias) => {
     const ahora = new Date();
@@ -531,6 +561,10 @@ export function AuthProvider({ children }) {
         usuarios,
         isAuthenticated: !!currentUser,
         deviceLinked: cloudAccess.ok,
+        can,
+        canAny,
+        canAccessView,
+        canShowGroup,
         isPlatformAdmin: !isDemoMode && cloudAccess.superAdmin,
         loading,
         diasRestantes: calcularDiasRestantes(),

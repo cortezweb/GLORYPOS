@@ -10,7 +10,7 @@ import {
 
 // Hook único para saber qué módulos tiene contratados la empresa activa (subdominio).
 export function useModules() {
-  const { empresa, tenantSlug, currentUser, isPlatformAdmin, isDemoMode } = useAuth();
+  const { empresa, tenantSlug, currentUser, isPlatformAdmin, isDemoMode, canAccessView, canShowGroup } = useAuth();
   const ctx = { tenantSlug, currentUser, isPlatformAdmin, isDemoMode };
 
   const hasModule = (modId) => empresaHasModule(empresa, modId, ctx);
@@ -19,8 +19,13 @@ export function useModules() {
     return !modId || hasModule(modId);
   };
 
+  // Grupo del menú: módulo contratado Y permiso del rol del usuario
+  const showGroup = (modId) => hasModule(modId) && canShowGroup(modId);
+
   return {
     hasModule,
+    showGroup,
+    canAccessView,
     canOpenView,
     isSuperAdmin: isSuperAdminSession(tenantSlug, currentUser, ctx),
     glorychefActivo: hasModule(GLORYCHEF_MODULE_ID),

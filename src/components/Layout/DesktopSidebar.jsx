@@ -45,7 +45,7 @@ export default function DesktopSidebar({
   };
 
   // Permisos: Superadmin ve todo; cliente ve módulos activos + módulos estándar
-  const { hasModule, isSuperAdmin } = useModules();
+  const { showGroup, isSuperAdmin } = useModules();
 
   // Auto-expandir el menú si la vista actual pertenece a ese módulo
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 3. PREVENTA (Acordeón con Cotizaciones y Pedidos) */}
-        {hasModule('preventa') && (
+        {showGroup('preventa') && (
           <div>
             <button
               type="button"
@@ -163,7 +163,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 4. VENTAS (Acordeón con Nueva Venta POS, Comprobantes, Notas, Caja) */}
-        {hasModule('ventas') && (
+        {showGroup('ventas') && (
           <div>
             <button
               type="button"
@@ -283,7 +283,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 5. COMPRAS (Acordeón) */}
-        {hasModule('compras') && (
+        {showGroup('compras') && (
           <div>
             <button
               type="button"
@@ -331,7 +331,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 6. CLIENTES (Acordeón) */}
-        {hasModule('clientes') && (
+        {showGroup('clientes') && (
           <div>
             <button
               type="button"
@@ -361,7 +361,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 7. PRODUCTOS / SERVICIOS (Acordeón) */}
-        {hasModule('productos') && (
+        {showGroup('productos') && (
           <div>
             <button
               type="button"
@@ -436,7 +436,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 8. INVENTARIO (Acordeón) */}
-        {hasModule('inventario') && (
+        {showGroup('inventario') && (
           <div>
             <button
               type="button"
@@ -493,7 +493,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 9. FINANZAS (Acordeón) */}
-        {hasModule('finanzas') && (
+        {showGroup('finanzas') && (
           <div>
             <button
               type="button"
@@ -586,7 +586,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 10. GUÍAS DE REMISIÓN (Acordeón) */}
-        {hasModule('guias_remision') && (
+        {showGroup('guias_remision') && (
           <div>
             <button
               type="button"
@@ -652,7 +652,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 11. COMPROBANTES PENDIENTES (Acordeón) */}
-        {hasModule('comprobantes_pendientes') && (
+        {showGroup('comprobantes_pendientes') && (
           <div>
             <button
               type="button"
@@ -682,7 +682,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 12. DOCUMENTOS AVANZADOS (Acordeón exacto a media_1790120030276.png) */}
-        {hasModule('documentos_avanzados') && (
+        {showGroup('documentos_avanzados') && (
           <div>
             <button
               type="button"
@@ -737,7 +737,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 13. CONTABILIDAD (Acordeón) */}
-        {hasModule('contabilidad') && (
+        {showGroup('contabilidad') && (
           <div>
             <button
               type="button"
@@ -767,7 +767,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 14. REPORTES (Acordeón) */}
-        {hasModule('reportes') && (
+        {showGroup('reportes') && (
           <div>
             <button
               type="button"
@@ -858,7 +858,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 15. ADMINISTRACIÓN (Acordeón exacto a media_1790120030276.png) */}
-        {hasModule('administracion') && (
+        {showGroup('administracion') && (
           <div>
             <button
               type="button"
@@ -910,7 +910,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 16. MÓDULOS (Botón directo exacto a media_1790120030276.png) */}
-        {hasModule('modulos') && (
+        {showGroup('modulos') && (
           <button
             type="button"
             onClick={() => onSelectView('modulos')}
@@ -926,7 +926,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 17. TIENDA VIRTUAL (Acordeón) */}
-        {hasModule('tienda_virtual') && (
+        {showGroup('tienda_virtual') && (
           <div>
             <button
               type="button"
@@ -965,7 +965,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 16. RESTAURANTE (Acordeón) */}
-        {hasModule('restaurante') && (
+        {showGroup('restaurante') && (
           <div>
             <button
               type="button"
@@ -1005,7 +1005,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 17. FARMACIA (Acordeón) */}
-        {hasModule('farmacia') && (
+        {showGroup('farmacia') && (
           <div>
             <button
               type="button"
@@ -1035,7 +1035,7 @@ export default function DesktopSidebar({
         )}
 
         {/* 18. HOTELES (Acordeón) */}
-        {hasModule('hoteles') && (
+        {showGroup('hoteles') && (
           <div>
             <button
               type="button"

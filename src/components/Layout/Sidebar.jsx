@@ -21,7 +21,7 @@ export default function Sidebar({
   currentRubro
 }) {
   const { empresa, currentUser, logout, diasRestantes, isExpired, tenantSlug } = useAuth();
-  const { hasModule, isSuperAdmin } = useModules();
+  const { showGroup, isSuperAdmin } = useModules();
 
   const [expandedMenus, setExpandedMenus] = useState({
     ventas: true,
@@ -118,7 +118,7 @@ export default function Sidebar({
           )}
 
           {/* Preventa */}
-          {hasModule('preventa') && (
+          {showGroup('preventa') && (
             <div>
               <button
                 type="button"
@@ -142,7 +142,7 @@ export default function Sidebar({
           )}
 
           {/* Ventas */}
-          {hasModule('ventas') && (
+          {showGroup('ventas') && (
             <div>
               <button
                 type="button"
@@ -190,7 +190,7 @@ export default function Sidebar({
           )}
 
           {/* Compras */}
-          {hasModule('compras') && (
+          {showGroup('compras') && (
             <div>
               <button
                 type="button"
@@ -220,7 +220,7 @@ export default function Sidebar({
           )}
 
           {/* Clientes */}
-          {hasModule('clientes') && (
+          {showGroup('clientes') && (
             <button type="button" onClick={() => handleNav('clients')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <Users className="w-4 h-4 text-slate-500" />
               <span>Clientes</span>
@@ -228,7 +228,7 @@ export default function Sidebar({
           )}
 
           {/* Productos/Servicios (Acordeón) */}
-          {hasModule('productos') && (
+          {showGroup('productos') && (
             <div>
               <button
                 type="button"
@@ -270,7 +270,7 @@ export default function Sidebar({
           )}
 
           {/* Inventario */}
-          {hasModule('inventario') && (
+          {showGroup('inventario') && (
             <div>
               <button
                 type="button"
@@ -303,7 +303,7 @@ export default function Sidebar({
           )}
 
           {/* Finanzas */}
-          {hasModule('finanzas') && (
+          {showGroup('finanzas') && (
             <div>
               <button
                 type="button"
@@ -348,7 +348,7 @@ export default function Sidebar({
           )}
 
           {/* Guías de remisión */}
-          {hasModule('guias_remision') && (
+          {showGroup('guias_remision') && (
             <div>
               <button
                 type="button"
@@ -384,7 +384,7 @@ export default function Sidebar({
           )}
 
           {/* Comprobantes pendientes */}
-          {hasModule('comprobantes_pendientes') && (
+          {showGroup('comprobantes_pendientes') && (
             <button type="button" onClick={() => handleNav('comprobantes_pendientes')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <Clock className="w-4 h-4 text-slate-500" />
               <span>Comprobantes pendientes</span>
@@ -392,7 +392,7 @@ export default function Sidebar({
           )}
 
           {/* Documentos avanzados (Acordeón) */}
-          {hasModule('documentos_avanzados') && (
+          {showGroup('documentos_avanzados') && (
             <div>
               <button
                 type="button"
@@ -426,7 +426,7 @@ export default function Sidebar({
           )}
 
           {/* Contabilidad */}
-          {hasModule('contabilidad') && (
+          {showGroup('contabilidad') && (
             <button type="button" onClick={() => handleNav('contabilidad')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <Calculator className="w-4 h-4 text-slate-500" />
               <span>Contabilidad</span>
@@ -434,7 +434,7 @@ export default function Sidebar({
           )}
 
           {/* Reportes (Acordeón) */}
-          {hasModule('reportes') && (
+          {showGroup('reportes') && (
             <div>
               <button
                 type="button"
@@ -483,7 +483,7 @@ export default function Sidebar({
           )}
 
           {/* Administración (Acordeón) */}
-          {hasModule('administracion') && (
+          {showGroup('administracion') && (
             <div>
               <button
                 type="button"
@@ -517,7 +517,7 @@ export default function Sidebar({
           )}
 
           {/* Módulos */}
-          {hasModule('modulos') && (
+          {showGroup('modulos') && (
             <button
               type="button"
               onClick={() => handleNav('modulos')}
@@ -531,7 +531,7 @@ export default function Sidebar({
           )}
 
           {/* Tienda Virtual (Acordeón) */}
-          {hasModule('tienda_virtual') && (
+          {showGroup('tienda_virtual') && (
             <div>
               <button
                 type="button"
@@ -558,7 +558,7 @@ export default function Sidebar({
           )}
 
           {/* Restaurante */}
-          {hasModule('restaurante') && (
+          {showGroup('restaurante') && (
             <button type="button" onClick={() => handleNav('chef_mesas')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <UtensilsCrossed className="w-4 h-4 text-slate-500" />
               <span>GLORYCHEF Restaurante</span>
@@ -566,7 +566,7 @@ export default function Sidebar({
           )}
 
           {/* Farmacia */}
-          {hasModule('farmacia') && (
+          {showGroup('farmacia') && (
             <button type="button" onClick={() => handleNav('farmacia')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <Pill className="w-4 h-4 text-slate-500" />
               <span>Farmacia</span>
@@ -574,7 +574,7 @@ export default function Sidebar({
           )}
 
           {/* Hoteles */}
-          {hasModule('hoteles') && (
+          {showGroup('hoteles') && (
             <button type="button" onClick={() => handleNav('hotel_recepcion')} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100">
               <BedDouble className="w-4 h-4 text-slate-500" />
               <span>Hoteles</span>

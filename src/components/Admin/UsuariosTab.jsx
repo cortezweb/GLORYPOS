@@ -1,9 +1,11 @@
+import { useAuth } from '../../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, CheckCircle2, XCircle, Shield, Key, AlertTriangle } from 'lucide-react';
 import { db } from '../../db/dexie';
 import ModalUsuario from './ModalUsuario';
 
 export default function UsuariosTab() {
+  const { can } = useAuth();
   const [usuarios, setUsuarios] = useState([]);
   const [roles, setRoles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,6 +102,7 @@ export default function UsuariosTab() {
           </p>
         </div>
 
+        {can('crear_usuarios') && (
         <button
           type="button"
           onClick={handleOpenNew}
@@ -108,6 +111,7 @@ export default function UsuariosTab() {
           <Plus className="w-3.5 h-3.5 stroke-[3]" />
           <span>Nuevo usuario</span>
         </button>
+        )}
       </div>
 
       {/* Barra de Filtro */}
@@ -225,6 +229,7 @@ export default function UsuariosTab() {
                     {/* Acciones */}
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
+                        {can('editar_usuarios') && (
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(user)}
@@ -233,7 +238,9 @@ export default function UsuariosTab() {
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
+                        )}
 
+                        {can('eliminar_usuarios') && (
                         <button
                           type="button"
                           onClick={() => setUserToDelete(user)}
@@ -242,6 +249,7 @@ export default function UsuariosTab() {
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
+                        )}
                       </div>
                     </td>
 

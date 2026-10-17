@@ -327,6 +327,7 @@ export default function ModalRol({ isOpen, onClose, rolToEdit, onSaved }) {
       };
 
       await db.roles.put(rolData);
+      window.dispatchEvent(new CustomEvent('glorypos_roles_changed'));
       if (onSaved) onSaved(rolData);
       onClose();
     } catch (err) {
