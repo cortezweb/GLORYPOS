@@ -2,6 +2,7 @@ import { supabase, isSupabaseConfigured, isDemoMode, setSupabaseTenantSlug } fro
 import { db, switchTenantDatabase } from '../db/dexie';
 
 const RESERVED_SUBDOMAINS = ['www', 'app', 'pos', 'api', 'cdn', 'static', 'mail', 'staging', 'dev'];
+const HOSTING_DOMAINS = ['.pages.dev', '.workers.dev', '.vercel.app', '.netlify.app', '.up.railway.app', '.onrender.com'];
 const BASE_DOMAIN = String(import.meta.env.VITE_BASE_DOMAIN || '').toLowerCase().replace(/^\.+/, '');
 
 /**
@@ -46,6 +47,9 @@ export const tenantService = {
     if (this.isLocalDev()) return null;
 
     const host = window.location.hostname.toLowerCase();
+    // Sin dominio propio configurado, los dominios de prueba de los hostings
+    // (glorypos.pages.dev, xxx.up.railway.app ...) no son subdominios de una empresa
+    if (!BASE_DOMAIN && HOSTING_DOMAINS.some(d => host.endsWith(d))) return null;
     // Con VITE_BASE_DOMAIN (ej. "glorypos.com.bo") el subdominio se calcula sin ambigüedad
     if (BASE_DOMAIN) {
       if (!host.endsWith(`.${BASE_DOMAIN}`)) return null;
@@ -87,7 +91,7 @@ export const tenantService = {
     if (sub) return sub;
 
     // 2. Query param solo para pruebas en desarrollo local o modo demo
-    if (this.isLocalDev() || isDemoMode) {
+    if (this.isLocalDev() || isDemoMode || !BASE_DOMAIN) {
       const params = new URLSearchParams(window.location.search);
       const paramSlug = params.get('empresa') || params.get('tenant');
       if (paramSlug) return slugify(paramSlug);
