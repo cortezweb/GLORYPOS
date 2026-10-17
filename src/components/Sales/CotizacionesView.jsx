@@ -330,7 +330,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
 
           <button
             type="button"
-            onClick={() => setIsNewModalOpen(true)}
+            onClick={() => (onSelectSubView ? onSelectSubView('nueva_cotizacion') : setIsNewModalOpen(true))}
             className="px-4 py-2 bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
