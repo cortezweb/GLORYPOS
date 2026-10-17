@@ -4,7 +4,7 @@ import {
   Printer, DollarSign, User, ShieldCheck, ArrowRight, 
   QrCode, CreditCard, Banknote, Clock, Sparkles,
   Calendar, Edit3, X, ChevronRight, ChevronDown, 
-  Package, Barcode, Truck, Info, AlertCircle, RefreshCw
+  Package, Barcode, Truck, Info, AlertCircle, RefreshCw, Boxes, Tag
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
@@ -111,6 +111,36 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   });
   const [showPreview, setShowPreview] = useState(false);
 
+  // Selector de productos: se queda abierto para agregar varios
+  const [lastAddedKey, setLastAddedKey] = useState(null);
+  const [addedToast, setAddedToast] = useState(null);
+  const [prodPage, setProdPage] = useState(1);
+  const [presentacionDe, setPresentacionDe] = useState(null);
+  const [infoAbierta, setInfoAbierta] = useState(null); // { id, tipo: 'stock' | 'precios' }
+  const PROD_PAGE_SIZE = 10;
+
+  // El aviso "agregado" desaparece solo
+  useEffect(() => {
+    if (!addedToast) return undefined;
+    const t = setTimeout(() => setAddedToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [addedToast]);
+
+  // ESC cierra el selector de productos
+  useEffect(() => {
+    if (!showAddProductModal) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        if (presentacionDe) setPresentacionDe(null);
+        else setShowAddProductModal(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showAddProductModal, presentacionDe]);
+
+  useEffect(() => { setProdPage(1); }, [searchProductQuery]);
+
   // Cargar catálogo de productos y clientes desde Dexie
   useEffect(() => {
     const loadData = async () => {
@@ -138,9 +168,10 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
 
   // Productos filtrados para el modal de agregar producto
   const filteredProducts = useMemo(() => {
-    if (!searchProductQuery.trim()) return productsCatalog.slice(0, 15);
+    const activos = productsCatalog.filter(p => p.activo !== false && !p.es_insumo);
+    if (!searchProductQuery.trim()) return activos;
     const q = searchProductQuery.toLowerCase();
-    return productsCatalog.filter(p => 
+    return activos.filter(p => 
       p.nombre?.toLowerCase().includes(q) || 
       p.codigo_barras?.toLowerCase().includes(q) ||
       p.categoria?.toLowerCase().includes(q)
@@ -177,11 +208,11 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   }, [totalComprobante]);
 
   // Manejadores de Ítems
-  const handleAddProductFromCatalog = (product) => {
-    const existsIndex = items.findIndex(i => i.producto_id === product.id);
+  const handleAddProductFromCatalog = (product, presentacion = null) => {
+    const presId = presentacion?.id || null;
+    const existsIndex = items.findIndex(i => i.producto_id === product.id && (i.presentacion_id || null) === presId);
     if (existsIndex >= 0) {
-      const updated = [...items];
-      updated[existsIndex].cantidad = Number(updated[existsIndex].cantidad || 1) + 1;
+      const updated = items.map((it, idx) => idx === existsIndex ? { ...it, cantidad: Number(it.cantidad || 1) + 1 } : it);
       setItems(updated);
     } else {
       setItems([
@@ -189,18 +220,22 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
         {
           id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
           producto_id: product.id,
-          descripcion: product.nombre,
+          presentacion_id: presId,
+          factor: Number(presentacion?.factor) || 1,
+          descripcion: presentacion ? `${product.nombre} · ${presentacion.nombre}` : product.nombre,
           codigo: product.codigo_barras || `PROD-${product.id}`,
           unidad: product.unidad_medida || 'NIU',
           cantidad: 1,
-          precio_unitario: Number(product.precio_venta) || 0,
+          precio_unitario: Number(presentacion ? presentacion.precio : product.precio_venta) || 0,
           afectacion: 'Gravado - Operación Onerosa',
           igv_incluido: true,
           descuento: 0
         }
       ]);
     }
-    setShowAddProductModal(false);
+    setLastAddedKey(`${product.id}::${presId || ''}`);
+    setAddedToast(`"${presentacion ? `${product.nombre} · ${presentacion.nombre}` : product.nombre}" agregado`);
+    setPresentacionDe(null);
   };
 
   const [manualForm, setManualForm] = useState({
@@ -381,7 +416,8 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
       if (item.producto_id && !String(item.producto_id).startsWith('manual-')) {
         const prod = await db.productos_tienda.get(item.producto_id);
         if (prod) {
-          const nuevoStock = Math.max(0, (prod.stock_actual || 0) - Number(item.cantidad));
+          const unidades = Number(item.cantidad) * (Number(item.factor) || 1);
+          const nuevoStock = Math.max(0, (prod.stock_actual || 0) - unidades);
           await db.productos_tienda.update(prod.id, { stock_actual: nuevoStock });
           
           await db.kardex.add({
@@ -390,7 +426,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
             producto_id: prod.id,
             producto_nombre: prod.nombre,
             tipo: 'VENTA',
-            cantidad: Number(item.cantidad),
+            cantidad: unidades,
             motivo: `Emisión comprobante ${correlativoFinal}`,
             saldo_nuevo: nuevoStock
           });
@@ -1352,74 +1388,223 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
       )}
 
       {/* ========================================================= */}
-      {/* MODAL: AGREGAR PRODUCTO DESDE CATÁLOGO */}
+      {/* MODAL: SELECCIONAR PRODUCTO (se queda abierto para agregar varios) */}
       {/* ========================================================= */}
-      {showAddProductModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85dvh]">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <div className="flex items-center gap-2">
-                <Package className="w-4 h-4 text-[#FF6B35]" />
-                <h3 className="font-bold text-sm text-slate-800">Seleccionar Producto del Catálogo</h3>
-              </div>
-              <button 
+      {showAddProductModal && (() => {
+        const totalProds = filteredProducts.length;
+        const totalPaginas = Math.max(1, Math.ceil(totalProds / PROD_PAGE_SIZE));
+        const pagina = Math.min(prodPage, totalPaginas);
+        const desde = (pagina - 1) * PROD_PAGE_SIZE;
+        const filas = filteredProducts.slice(desde, desde + PROD_PAGE_SIZE);
+        const enDetalle = new Set(items.map(i => i.producto_id));
+
+        return (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto" onClick={() => setShowAddProductModal(false)}>
+          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92dvh] relative" onClick={(e) => e.stopPropagation()}>
+            <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-slate-900">Seleccionar producto</h3>
+              <button
                 type="button"
                 onClick={() => setShowAddProductModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="text-slate-500 hover:text-slate-800 p-1"
+                aria-label="Cerrar"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-4 border-b border-slate-100 bg-white">
+            <div className="px-5 pb-3">
               <div className="relative">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Buscar por nombre, código de barras o categoría..."
+                  placeholder="Buscar por nombre, código o código de barras..."
                   value={searchProductQuery}
                   onChange={(e) => setSearchProductQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:border-[#FF6B35]"
+                  className="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35]"
                   autoFocus
                 />
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 divide-y divide-slate-100">
-              {filteredProducts.length === 0 ? (
-                <div className="py-8 text-center text-xs text-slate-400">
-                  No se encontraron productos en el inventario.
-                </div>
-              ) : (
-                filteredProducts.map((p) => (
-                  <div key={p.id} className="py-2.5 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
-                    <div>
-                      <div className="font-semibold text-xs text-slate-800">{p.nombre}</div>
-                      <div className="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
-                        <span>Cód: {p.codigo_barras || 'S/C'}</span>
-                        <span>•</span>
-                        <span>Stock: <strong className={p.stock_actual > 0 ? 'text-[#E85B28]' : 'text-red-500'}>{p.stock_actual || 0}</strong></span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="font-black text-xs text-slate-900">
-                        {currencySymbol} {Number(p.precio_venta || 0).toFixed(2)}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleAddProductFromCatalog(p)}
-                        className="bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#E85B28] font-bold px-3 py-1 rounded-lg text-xs transition border border-[#FF6B35]/20"
-                      >
-                        + Agregar
-                      </button>
-                    </div>
+            {/* Aviso: producto agregado */}
+            {addedToast && (
+              <div className="absolute top-3 right-14 z-10 flex items-center gap-2 bg-[#FDFBF7] border border-[#FF6B35]/30 text-[#E85B28] text-xs font-semibold rounded-xl px-3 py-2 shadow-md">
+                <CheckCircle2 className="w-4 h-4" />
+                {addedToast}
+              </div>
+            )}
+
+            <div className="mx-5 border border-slate-200 rounded-xl overflow-hidden flex-1 min-h-0 flex flex-col">
+              <div className="grid grid-cols-[170px_1fr_110px_110px_56px] items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <span></span>
+                <span>Producto</span>
+                <span>P. venta</span>
+                <span>Código</span>
+                <span></span>
+              </div>
+
+              <div className="overflow-y-auto divide-y divide-slate-100">
+                {filas.length === 0 ? (
+                  <div className="py-10 text-center text-xs text-slate-400">
+                    No se encontraron productos.
                   </div>
-                ))
-              )}
+                ) : (
+                  filas.map((p) => {
+                    const presentaciones = Array.isArray(p.presentaciones) ? p.presentaciones : [];
+                    const tienePres = presentaciones.length > 1;
+                    const esUltimo = lastAddedKey && lastAddedKey.startsWith(`${p.id}::`);
+                    const yaEnDetalle = enDetalle.has(p.id);
+                    const abierto = infoAbierta?.id === p.id ? infoAbierta.tipo : null;
+                    return (
+                      <div
+                        key={p.id}
+                        className={`relative grid grid-cols-[170px_1fr_110px_110px_56px] items-center gap-2 px-4 py-3 border-l-4 transition ${
+                          esUltimo ? 'bg-amber-50/70 border-l-amber-400' : yaEnDetalle ? 'bg-slate-100/70 border-l-slate-400' : 'border-l-transparent hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => (tienePres ? setPresentacionDe(p) : handleAddProductFromCatalog(p))}
+                            className="bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold px-4 py-1.5 rounded-lg text-xs transition active:scale-95"
+                          >
+                            {tienePres ? 'Configurar' : 'Agregar'}
+                          </button>
+                          <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white">
+                            <button
+                              type="button"
+                              onClick={() => setInfoAbierta(abierto === 'stock' ? null : { id: p.id, tipo: 'stock' })}
+                              title="Stock disponible"
+                              className="p-1.5 text-slate-500 hover:bg-slate-50"
+                            >
+                              <Boxes className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setInfoAbierta(abierto === 'precios' ? null : { id: p.id, tipo: 'precios' })}
+                              title="Precios y presentaciones"
+                              className="p-1.5 text-slate-500 hover:bg-slate-50 border-l border-slate-200"
+                            >
+                              <Tag className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="text-sm text-slate-800 flex items-center gap-2 flex-wrap">
+                            <span className="truncate">{p.nombre}</span>
+                            {esUltimo && (
+                              <span className="text-[9px] font-black tracking-wide bg-amber-100 text-amber-800 border border-amber-300 rounded px-1.5 py-0.5">ÚLTIMO</span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">
+                            {[p.categoria, p.unidad_medida].filter(Boolean).join(' · ') || 'Sin categoría'}
+                          </div>
+                          {tienePres && <div className="text-[10px] font-semibold text-[#FF6B35] mt-0.5">Presentaciones</div>}
+                          {abierto === 'stock' && (
+                            <div className="mt-1 text-[11px] text-slate-600">
+                              Stock disponible: <strong className={Number(p.stock_actual) > 0 ? 'text-[#E85B28]' : 'text-red-500'}>{p.stock_actual || 0}</strong>
+                            </div>
+                          )}
+                          {abierto === 'precios' && (
+                            <div className="mt-1 text-[11px] text-slate-600 space-y-0.5">
+                              {(presentaciones.length > 0 ? presentaciones : [{ id: 'u', nombre: p.unidad_medida || 'Unidad', precio: p.precio_venta }]).map(pr => (
+                                <div key={pr.id}>{pr.nombre}: <strong>{currencySymbol} {Number(pr.precio || 0).toFixed(2)}</strong></div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-sm text-slate-700">
+                          {currencySymbol} {Number(p.precio_venta || 0).toFixed(2)}
+                        </div>
+                        <div className="font-mono text-xs text-slate-600 truncate">{p.codigo_barras || 'S/C'}</div>
+                        <div className="w-10 h-10 rounded-lg border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center">
+                          {p.foto_url || p.imagen_url ? (
+                            <img src={p.foto_url || p.imagen_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                          ) : (
+                            <Package className="w-4 h-4 text-slate-300" />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
+
+            <div className="px-5 pt-3 flex flex-wrap items-center gap-4 text-[11px] text-slate-500">
+              <span className="inline-flex items-center gap-1.5"><span className="w-5 h-3 rounded border border-amber-400 bg-amber-50"></span> Último agregado</span>
+              <span className="inline-flex items-center gap-1.5"><span className="w-5 h-3 rounded border border-slate-300 bg-slate-100"></span> Ya en el detalle</span>
+            </div>
+
+            <div className="px-5 pt-3 mt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+              <span>
+                {totalProds === 0 ? 'Sin resultados' : `Mostrando ${desde + 1}-${Math.min(desde + PROD_PAGE_SIZE, totalProds)} de ${totalProds} productos`}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setProdPage(Math.max(1, pagina - 1))}
+                  disabled={pagina === 1}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Anterior
+                </button>
+                <span>Pág. {pagina} de {totalPaginas}</span>
+                <button
+                  type="button"
+                  onClick={() => setProdPage(Math.min(totalPaginas, pagina + 1))}
+                  disabled={pagina === totalPaginas}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+
+            <div className="p-5">
+              <button
+                type="button"
+                onClick={() => setShowAddProductModal(false)}
+                className="w-full py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-sm font-medium transition"
+              >
+                Cerrar <span className="text-slate-400">[ESC]</span>
+              </button>
+            </div>
+
+            {/* Elegir presentación (Configurar) */}
+            {presentacionDe && (
+              <div className="absolute inset-0 z-20 bg-black/30 flex items-center justify-center p-4" onClick={() => setPresentacionDe(null)}>
+                <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-start justify-between gap-3 mb-1">
+                    <h4 className="font-bold text-sm text-slate-900">{presentacionDe.nombre}</h4>
+                    <button type="button" onClick={() => setPresentacionDe(null)} className="text-slate-400 hover:text-slate-700" aria-label="Cerrar presentaciones">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mb-3">Elige una presentación para agregarla al detalle:</p>
+                  <div className="space-y-2">
+                    {presentacionDe.presentaciones.map(pr => (
+                      <button
+                        key={pr.id}
+                        type="button"
+                        onClick={() => handleAddProductFromCatalog(presentacionDe, pr)}
+                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-slate-200 hover:border-[#FF6B35] hover:bg-[#FF6B35]/5 text-left transition"
+                      >
+                        <span className="text-xs font-semibold text-slate-800">{pr.nombre}{Number(pr.factor) > 1 ? ` (x${pr.factor})` : ''}</span>
+                        <span className="text-xs font-black text-slate-900">{currencySymbol} {Number(pr.precio || 0).toFixed(2)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* ========================================================= */}
       {/* MODAL: PRODUCTO MANUAL */}
