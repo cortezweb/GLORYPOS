@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Plus, Search, Calendar, ChevronDown, Eye, Download, 
   Ticket, FileText, Mail, Printer, ShoppingCart, Copy, 
   Trash2, Edit, X, Check, CheckCircle2, Share2, Sparkles,
-  FileSpreadsheet
+  FileSpreadsheet, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useCart } from '../../context/CartContext';
 import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
+import { isDemoMode } from '../../lib/supabase';
 
 const SEED_COTIZACIONES = [
   {
@@ -58,14 +59,46 @@ const SEED_COTIZACIONES = [
   }
 ];
 
+const toISODate = (d) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+// 2026-10-15 -> 15/10/2026
+const formatFecha = (iso) => {
+  const [y, m, d] = String(iso || '').slice(0, 10).split('-');
+  return y && m && d ? `${d}/${m}/${y}` : (iso || '');
+};
+
+// Estado que se muestra: una cotización sin convertir pasa a "Vencida" cuando termina su validez
+function estadoVisible(cot) {
+  const crudo = String(cot.estado || 'Borrador').toLowerCase();
+  const estadoBase = crudo.charAt(0).toUpperCase() + crudo.slice(1);
+  if (estadoBase === 'Convertida') return 'Convertida';
+  const base = new Date(`${String(cot.fecha || '').slice(0, 10)}T00:00:00`);
+  if (!Number.isNaN(base.getTime())) {
+    const vence = new Date(base);
+    vence.setDate(vence.getDate() + (Number(cot.validez_dias) || 15));
+    if (vence < new Date(new Date().toDateString())) return 'Vencida';
+  }
+  return estadoBase;
+}
+
+const ESTADO_CLASES = {
+  Convertida: 'bg-[#FDFBF7] text-[#FF6B35] border border-[#FFB627]/20',
+  Vencida: 'bg-amber-50 text-amber-700 border border-amber-200',
+};
+
 export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart }) {
   const { addItem, clearCart } = useCart();
   
   const [cotizaciones, setCotizaciones] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [fechaDesde, setFechaDesde] = useState('2026-09-01');
-  const [fechaHasta, setFechaHasta] = useState('2026-09-20');
+  const [fechaDesde, setFechaDesde] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
+  });
+  const [fechaHasta, setFechaHasta] = useState(() => toISODate(new Date()));
   const [pageSize, setPageSize] = useState('10');
+  const [page, setPage] = useState(1);
   
   // Dropdown de acciones abierto
   const [openActionId, setOpenActionId] = useState(null);
@@ -92,10 +125,12 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
       const list = await db.cotizaciones.reverse().toArray();
       if (list && list.length > 0) {
         setCotizaciones(list);
-      } else {
-        // Inicializar con los registros exactos de la imagen
+      } else if (isDemoMode) {
+        // Solo en modo demo (sin Supabase) se siembran cotizaciones de ejemplo
         await db.cotizaciones.bulkAdd(SEED_COTIZACIONES);
         setCotizaciones(SEED_COTIZACIONES);
+      } else {
+        setCotizaciones([]);
       }
       const clients = await db.clientes.toArray();
       setClientList(clients);
@@ -103,7 +138,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
       setProductList(prods);
     } catch (err) {
       console.warn('Error loading cotizaciones:', err);
-      setCotizaciones(SEED_COTIZACIONES);
+      setCotizaciones(isDemoMode ? SEED_COTIZACIONES : []);
     }
   };
 
@@ -128,14 +163,29 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
     return `${simbolo()} ${val.toFixed(2)}`;
   };
 
-  // Filtrar cotizaciones
-  const filtered = cotizaciones.filter(c => {
-    const matchesSearch = 
-      c.correlativo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.cliente_nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.cliente_ci_nit?.includes(searchTerm);
-    return matchesSearch;
-  });
+  // Filtrar por texto y rango de fechas, de la más reciente a la más antigua
+  const filtered = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return cotizaciones
+      .filter(c => {
+        const matchesSearch = !term ||
+          c.correlativo?.toLowerCase().includes(term) ||
+          c.cliente_nombre?.toLowerCase().includes(term) ||
+          c.cliente_ci_nit?.includes(term);
+        const f = String(c.fecha || '').slice(0, 10);
+        const enRango = (!fechaDesde || f >= fechaDesde) && (!fechaHasta || f <= fechaHasta);
+        return matchesSearch && enRango;
+      })
+      .sort((x, y) => String(y.fecha).localeCompare(String(x.fecha)) || String(y.correlativo).localeCompare(String(x.correlativo)));
+  }, [cotizaciones, searchTerm, fechaDesde, fechaHasta]);
+
+  const perPage = Number(pageSize) || 10;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  const currentPage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+  // Al cambiar los filtros se vuelve a la primera página
+  useEffect(() => { setPage(1); }, [searchTerm, fechaDesde, fechaHasta, pageSize]);
 
   // Convertir cotización a venta POS
   const handleLoadToPos = async (cot) => {
@@ -170,7 +220,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
       id: `cot-${Date.now()}`,
       correlativo: newCorrelativo,
       fecha: new Date().toISOString().split('T')[0],
-      fechaDisplay: new Date().toLocaleDateString('es-PE'),
+      fechaDisplay: new Date().toLocaleDateString('es-BO'),
       estado: 'Borrador'
     };
     await db.cotizaciones.add(duplicate);
@@ -230,7 +280,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
     const newQuote = {
       id: `cot-${Date.now()}`,
       fecha: today.toISOString().split('T')[0],
-      fechaDisplay: today.toLocaleDateString('es-PE'),
+      fechaDisplay: today.toLocaleDateString('es-BO'),
       correlativo,
       cliente_nombre: formData.cliente_nombre.trim(),
       cliente_ci_nit: formData.cliente_ci_nit.trim() || '0',
@@ -366,8 +416,9 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
 
               {/* Cuerpo de la tabla */}
               <tbody className="divide-y divide-slate-100">
-                {filtered.map((cot) => {
-                  const fechaFormatted = cot.fechaDisplay || cot.fecha;
+                {pageRows.map((cot) => {
+                  const fechaFormatted = formatFecha(cot.fecha);
+                  const estado = estadoVisible(cot);
 
                   return (
                     <tr key={cot.id} className="hover:bg-slate-50/60 transition">
@@ -396,12 +447,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
 
                       {/* 5. ESTADO */}
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
-                          cot.estado === 'Convertida' 
-                            ? 'bg-[#FDFBF7] text-[#FF6B35] border border-[#FFB627]/20' 
-                            : 'bg-slate-100 text-slate-700'
-                        }`}>
-                          {cot.estado || 'Borrador'}
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${ESTADO_CLASES[estado] || 'bg-slate-100 text-slate-700'}`}>
+                          {estado}
                         </span>
                       </td>
 
@@ -552,9 +599,46 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                     </tr>
                   );
                 })}
+                {pageRows.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="py-10 text-center text-xs text-slate-400">
+                      No hay cotizaciones en este rango de fechas.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
+
+          {/* Pie: resumen y paginación */}
+          {filtered.length > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-t border-slate-100 text-xs text-slate-500">
+              <span>
+                Mostrando {(currentPage - 1) * perPage + 1}–{Math.min(currentPage * perPage, filtered.length)} de {filtered.length}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="px-2 font-semibold text-slate-700">{currentPage} / {totalPages}</span>
+                <button
+                  type="button"
+                  onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Página siguiente"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </main>
