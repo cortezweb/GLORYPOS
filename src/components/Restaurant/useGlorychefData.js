@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { db } from '../../db/dexie';
 import { restaurantService, onGlorychefChange } from '../../services/restaurantService';
+import { simbolo } from '../../utils/currency';
 
 // Datos en vivo de GLORYCHEF: se recargan cuando cambia una mesa, comanda o la cocina
 // (en esta pestaña o en otra del mismo navegador, ej. la pantalla de cocina).
@@ -53,4 +54,4 @@ export function formatMinutos(min) {
   return `${Math.floor(min / 60)} h ${min % 60} min`;
 }
 
-export const money = (n) => `Bs. ${(Number(n) || 0).toFixed(2)}`;
+export const money = (n) => `${simbolo()} ${(Number(n) || 0).toFixed(2)}`;

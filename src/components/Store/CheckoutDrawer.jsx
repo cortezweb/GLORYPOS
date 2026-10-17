@@ -4,6 +4,7 @@ import {
   Store, CreditCard, Banknote, QrCode, Landmark, CheckCircle2, MessageCircle, Loader2
 } from 'lucide-react';
 import { tiendaService, getCheckoutSettings, costoEnvio, METODOS_PAGO_WEB } from '../../services/tiendaService';
+import { simbolo } from '../../utils/currency';
 
 const PASOS = [
   { id: 'carrito', label: 'Carrito', icon: ShoppingCart },
@@ -16,7 +17,7 @@ const CLIENTE_KEY = 'glorypos_tienda_cliente';
 
 const input = 'w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 outline-hidden focus:border-[#FF6B35] focus:ring-2 focus:ring-[#FF6B35]/15 transition';
 const labelCls = 'text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1';
-const money = (n) => `Bs. ${(Number(n) || 0).toFixed(2)}`;
+const money = (n) => `${simbolo()} ${(Number(n) || 0).toFixed(2)}`;
 
 // Checkout de la tienda en línea en 4 pasos: carrito → datos → entrega → pago → confirmación
 export default function CheckoutDrawer({ empresa, cart, onClose, onUpdateQuantity, onRemove, onClearCart }) {

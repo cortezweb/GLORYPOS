@@ -7,6 +7,7 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import FinanceSubNav from './FinanceSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
   const [sesiones, setSesiones] = useState([]);
@@ -138,7 +139,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
     setFormMonto('');
     setFormMotivo('');
     await loadSesiones();
-    showToast(`+ S/ ${monto.toFixed(2)} ingresados a la caja.`);
+    showToast(`+ ${simbolo()} ${monto.toFixed(2)} ingresados a la caja.`);
     syncService.triggerBackgroundSync();
   };
 
@@ -175,7 +176,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
     setFormMonto('');
     setFormMotivo('');
     await loadSesiones();
-    showToast(`- S/ ${monto.toFixed(2)} retirados de la caja.`);
+    showToast(`- ${simbolo()} ${monto.toFixed(2)} retirados de la caja.`);
     syncService.triggerBackgroundSync();
   };
 
@@ -302,17 +303,17 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
                           {/* BALANCE APERTURA */}
                           <td className="py-3 px-4 font-medium text-slate-700 whitespace-nowrap">
-                            S/ {Number(s.balance_apertura ?? 0).toFixed(2)}
+                            {simbolo()} {Number(s.balance_apertura ?? 0).toFixed(2)}
                           </td>
 
                           {/* BALANCE CIERRE */}
                           <td className="py-3 px-4 font-medium text-slate-700 whitespace-nowrap">
-                            {s.balance_cierre != null ? `S/ ${Number(s.balance_cierre).toFixed(2)}` : '—'}
+                            {s.balance_cierre != null ? `${simbolo()} ${Number(s.balance_cierre).toFixed(2)}` : '—'}
                           </td>
 
                           {/* SALDO ACTUAL */}
                           <td className="py-3 px-4 font-bold text-slate-900 whitespace-nowrap">
-                            S/ {Number(s.saldo_actual ?? 0).toFixed(2)}
+                            {simbolo()} {Number(s.saldo_actual ?? 0).toFixed(2)}
                           </td>
 
                           {/* ESTADO */}
@@ -624,19 +625,19 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
                       <span className="text-[10px] text-slate-400 font-bold block">TOTAL VENTAS</span>
-                      <span className="text-base font-bold text-slate-800">S/ 18,450.00</span>
+                      <span className="text-base font-bold text-slate-800">{simbolo()} 18,450.00</span>
                     </div>
                     <div className="p-3.5 bg-[#FF6B35]/10/60 rounded-xl border border-[#FF6B35]/10">
                       <span className="text-[10px] text-[#FF6B35] font-bold block">TOTAL EN EFECTIVO</span>
-                      <span className="text-base font-black text-[#E85B28]">S/ 7,120.00</span>
+                      <span className="text-base font-black text-[#E85B28]">{simbolo()} 7,120.00</span>
                     </div>
                     <div className="p-3.5 bg-[#FF6B35]/10/60 rounded-xl border border-blue-100">
                       <span className="text-[10px] text-[#FF6B35] font-bold block">MEDIOS DIGITALES</span>
-                      <span className="text-base font-bold text-[#FF6B35]">S/ 11,330.00</span>
+                      <span className="text-base font-bold text-[#FF6B35]">{simbolo()} 11,330.00</span>
                     </div>
                     <div className="p-3.5 bg-rose-50/60 rounded-xl border border-rose-100">
                       <span className="text-[10px] text-rose-600 font-bold block">TOTAL EGRESOS</span>
-                      <span className="text-base font-bold text-rose-700">S/ 850.00</span>
+                      <span className="text-base font-bold text-rose-700">{simbolo()} 850.00</span>
                     </div>
                   </div>
 
@@ -646,7 +647,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div>
                         <div className="flex justify-between font-semibold mb-1">
                           <span className="text-slate-600">Efectivo en gaveta</span>
-                          <span className="text-slate-900">S/ 7,120.00 (38.6%)</span>
+                          <span className="text-slate-900">{simbolo()} 7,120.00 (38.6%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                           <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '38.6%' }}></div>
@@ -655,7 +656,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div>
                         <div className="flex justify-between font-semibold mb-1">
                           <span className="text-slate-600">Yape QR</span>
-                          <span className="text-slate-900">S/ 5,840.00 (31.6%)</span>
+                          <span className="text-slate-900">{simbolo()} 5,840.00 (31.6%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                           <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '31.6%' }}></div>
@@ -664,7 +665,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div>
                         <div className="flex justify-between font-semibold mb-1">
                           <span className="text-slate-600">Plin</span>
-                          <span className="text-slate-900">S/ 2,490.00 (13.5%)</span>
+                          <span className="text-slate-900">{simbolo()} 2,490.00 (13.5%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                           <div className="bg-cyan-500 h-full rounded-full" style={{ width: '13.5%' }}></div>
@@ -673,7 +674,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div>
                         <div className="flex justify-between font-semibold mb-1">
                           <span className="text-slate-600">Tarjetas POS (Niubiz/Izipay)</span>
-                          <span className="text-slate-900">S/ 3,000.00 (16.3%)</span>
+                          <span className="text-slate-900">{simbolo()} 3,000.00 (16.3%)</span>
                         </div>
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                           <div className="bg-[#FF6B35] h-full rounded-full" style={{ width: '16.3%' }}></div>
@@ -690,23 +691,23 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Saldo inicial aperturado:</span>
-                      <span className="font-bold text-slate-800">S/ 500.00</span>
+                      <span className="font-bold text-slate-800">{simbolo()} 500.00</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">(+) Ventas en efectivo:</span>
-                      <span className="font-bold text-[#FF6B35]">+ S/ 7,120.00</span>
+                      <span className="font-bold text-[#FF6B35]">+ {simbolo()} 7,120.00</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">(+) Ingresos manuales:</span>
-                      <span className="font-bold text-[#FF6B35]">+ S/ 1,500.00</span>
+                      <span className="font-bold text-[#FF6B35]">+ {simbolo()} 1,500.00</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">(-) Egresos y gastos:</span>
-                      <span className="font-bold text-rose-600">- S/ 850.00</span>
+                      <span className="font-bold text-rose-600">- {simbolo()} 850.00</span>
                     </div>
                     <div className="pt-2 border-t border-slate-200 flex justify-between text-sm">
                       <span className="font-bold text-slate-900">Efectivo Teórico en Gaveta:</span>
-                      <span className="font-black text-[#E85B28]">S/ 8,270.00</span>
+                      <span className="font-black text-[#E85B28]">{simbolo()} 8,270.00</span>
                     </div>
                   </div>
                 </div>
@@ -754,13 +755,13 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <td className="py-3 px-4 font-medium text-slate-800">{m.concepto}</td>
                           <td className="py-3 px-4 text-slate-600 whitespace-nowrap">{m.usuario}</td>
                           <td className="py-3 px-4 text-right font-bold text-[#FF6B35] whitespace-nowrap">
-                            {m.ingreso > 0 ? `S/ ${m.ingreso.toFixed(2)}` : '—'}
+                            {m.ingreso > 0 ? `${simbolo()} ${m.ingreso.toFixed(2)}` : '—'}
                           </td>
                           <td className="py-3 px-4 text-right font-bold text-rose-600 whitespace-nowrap">
-                            {m.egreso > 0 ? `S/ ${m.egreso.toFixed(2)}` : '—'}
+                            {m.egreso > 0 ? `${simbolo()} ${m.egreso.toFixed(2)}` : '—'}
                           </td>
                           <td className="py-3 px-4 text-right font-bold text-slate-900 whitespace-nowrap">
-                            S/ {m.saldo.toFixed(2)}
+                            {simbolo()} {m.saldo.toFixed(2)}
                           </td>
                         </tr>
                       ))}
@@ -799,7 +800,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
             <form onSubmit={handleSaveIngreso} className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Monto (S/)</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Monto ({simbolo()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -884,7 +885,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
             <form onSubmit={handleSaveEgreso} className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Monto a retirar (S/)</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Monto a retirar ({simbolo()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -1120,23 +1121,23 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                   <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
                     <span className="text-[10px] text-slate-400 font-bold block">BALANCE APERTURA</span>
                     <span className="text-base font-bold text-slate-800">
-                      S/ {Number(selectedArqueoSesion.balance_apertura ?? 0).toFixed(2)}
+                      {simbolo()} {Number(selectedArqueoSesion.balance_apertura ?? 0).toFixed(2)}
                     </span>
                   </div>
                   <div className="p-3.5 bg-[#FF6B35]/10/60 rounded-2xl border border-[#FF6B35]/10">
                     <span className="text-[10px] text-[#FF6B35] font-bold block">VENTAS / INGRESOS</span>
                     <span className="text-base font-bold text-[#E85B28]">
-                      S/ {Math.max(0, Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0) + 35).toFixed(2)}
+                      {simbolo()} {Math.max(0, Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0) + 35).toFixed(2)}
                     </span>
                   </div>
                   <div className="p-3.5 bg-rose-50/60 rounded-2xl border border-rose-100">
                     <span className="text-[10px] text-rose-600 font-bold block">EGRESOS / RETIROS</span>
-                    <span className="text-base font-bold text-rose-700">S/ 35.00</span>
+                    <span className="text-base font-bold text-rose-700">{simbolo()} 35.00</span>
                   </div>
                   <div className="p-3.5 bg-[#FF6B35]/10 rounded-2xl border border-[#FF6B35]/20">
                     <span className="text-[10px] text-[#E85B28] font-bold block">SALDO EN CAJA</span>
                     <span className="text-base font-black text-[#E85B28]">
-                      S/ {Number(selectedArqueoSesion.saldo_actual ?? 0).toFixed(2)}
+                      {simbolo()} {Number(selectedArqueoSesion.saldo_actual ?? 0).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -1148,7 +1149,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <span className="text-[11px] text-[#FFB627]">Diferencia cuadrada sin descuadre</span>
                     </div>
                     <span className="text-lg font-black text-[#FFB627]">
-                      S/ {Number(selectedArqueoSesion.balance_cierre).toFixed(2)}
+                      {simbolo()} {Number(selectedArqueoSesion.balance_cierre).toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -1161,7 +1162,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div className="flex justify-between text-xs font-medium mb-1">
                         <span className="text-slate-600">Efectivo en gaveta</span>
                         <span className="text-slate-900 font-bold">
-                          S/ {(Number(selectedArqueoSesion.balance_apertura ?? 0) + Math.max(0, (Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0)) * 0.45) - 35).toFixed(2)}
+                          {simbolo()} {(Number(selectedArqueoSesion.balance_apertura ?? 0) + Math.max(0, (Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0)) * 0.45) - 35).toFixed(2)}
                         </span>
                       </div>
                       <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
@@ -1173,7 +1174,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div className="flex justify-between text-xs font-medium mb-1">
                         <span className="text-slate-600">Yape QR</span>
                         <span className="text-slate-900 font-bold">
-                          S/ {Math.max(0, (Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0)) * 0.35).toFixed(2)}
+                          {simbolo()} {Math.max(0, (Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0)) * 0.35).toFixed(2)}
                         </span>
                       </div>
                       <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
@@ -1185,7 +1186,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                       <div className="flex justify-between text-xs font-medium mb-1">
                         <span className="text-slate-600">Tarjetas POS</span>
                         <span className="text-slate-900 font-bold">
-                          S/ {Math.max(0, (Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0)) * 0.20 + 35).toFixed(2)}
+                          {simbolo()} {Math.max(0, (Number(selectedArqueoSesion.saldo_actual ?? 0) - Number(selectedArqueoSesion.balance_apertura ?? 0)) * 0.20 + 35).toFixed(2)}
                         </span>
                       </div>
                       <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
@@ -1230,13 +1231,13 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
                           <td className="py-2.5 px-3 font-medium text-slate-800">{m.concepto}</td>
                           <td className="py-2.5 px-3 text-slate-600 whitespace-nowrap">{m.usuario}</td>
                           <td className="py-2.5 px-3 text-right font-bold text-[#FF6B35] whitespace-nowrap">
-                            {m.ingreso > 0 ? `S/ ${m.ingreso.toFixed(2)}` : '—'}
+                            {m.ingreso > 0 ? `${simbolo()} ${m.ingreso.toFixed(2)}` : '—'}
                           </td>
                           <td className="py-2.5 px-3 text-right font-bold text-rose-600 whitespace-nowrap">
-                            {m.egreso > 0 ? `S/ ${m.egreso.toFixed(2)}` : '—'}
+                            {m.egreso > 0 ? `${simbolo()} ${m.egreso.toFixed(2)}` : '—'}
                           </td>
                           <td className="py-2.5 px-3 text-right font-bold text-slate-900 whitespace-nowrap">
-                            S/ {m.saldo.toFixed(2)}
+                            {simbolo()} {m.saldo.toFixed(2)}
                           </td>
                         </tr>
                       ))}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Save, Truck, Store, Receipt } from 'lucide-react';
 import { getCheckoutSettings, saveCheckoutSettings } from '../../services/tiendaService';
+import { simbolo } from '../../utils/currency';
 
 const input = 'mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm';
 
@@ -33,10 +34,10 @@ export default function CheckoutSettingsPanel() {
           <label className="flex items-center gap-2 text-sm font-bold text-slate-700">
             <input type="checkbox" checked={s.recojo_activo} onChange={e => set('recojo_activo', e.target.checked)} /> Ofrecer recojo en tienda
           </label>
-          <label className="text-[11px] font-bold text-slate-600">Costo de delivery (Bs.)
+          <label className="text-[11px] font-bold text-slate-600">Costo de delivery ({simbolo()})
             <input type="number" min="0" step="0.5" value={s.costo_delivery} onChange={e => set('costo_delivery', e.target.value)} className={input} />
           </label>
-          <label className="text-[11px] font-bold text-slate-600">Envío gratis desde (Bs., 0 = nunca)
+          <label className="text-[11px] font-bold text-slate-600">Envío gratis desde ({simbolo()}, 0 = nunca)
             <input type="number" min="0" step="1" value={s.envio_gratis_desde} onChange={e => set('envio_gratis_desde', e.target.value)} className={input} />
           </label>
           <label className="text-[11px] font-bold text-slate-600 sm:col-span-2"><span className="flex items-center gap-1"><Store className="w-3.5 h-3.5" /> Dirección para recojo</span>

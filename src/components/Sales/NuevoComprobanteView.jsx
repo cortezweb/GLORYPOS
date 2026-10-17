@@ -10,6 +10,7 @@ import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
+import { CURRENCIES, getCurrency } from '../../utils/currency';
 
 export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt }) {
   const { empresa } = useAuth();
@@ -54,14 +55,15 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
   const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [showNewClientModal, setShowNewClientModal] = useState(false);
 
-  const [moneda, setMoneda] = useState('Soles (PEN)');
-  const [tipoCambio, setTipoCambio] = useState('3.411');
+  // Moneda del comprobante: por defecto la de la empresa
+  const monedaEmpresa = getCurrency();
+  const [moneda, setMoneda] = useState(`${monedaEmpresa.name} (${monedaEmpresa.code})`);
+  const [tipoCambio, setTipoCambio] = useState('1');
 
   // Símbolo de moneda dinámico
   const currencySymbol = useMemo(() => {
-    if (moneda.includes('PEN') || moneda.includes('Soles')) return 'S/';
-    if (moneda.includes('BOB') || moneda.includes('Bolivianos')) return 'Bs.';
-    return '$';
+    const found = CURRENCIES.find(c => moneda.includes(`(${c.code})`));
+    return found ? found.symbol : '$';
   }, [moneda]);
 
   // 4. Ítems de la tabla
@@ -649,8 +651,9 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt })
                 onChange={(e) => setMoneda(e.target.value)}
                 className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] outline-none cursor-pointer pr-8"
               >
-                <option value="Soles (PEN)">Soles (PEN)</option>
-                <option value="Bolivianos (BOB)">Bolivianos (BOB)</option>
+                {CURRENCIES.map(c => (
+                  <option key={c.code} value={`${c.name} (${c.code})`}>{c.name} ({c.code})</option>
+                ))}
                 <option value="Dólares (USD)">Dólares (USD)</option>
               </select>
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />

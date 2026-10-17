@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import FinanceSubNav from './FinanceSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function CuentasPorPagarView({ onSelectSubView }) {
   const [cuentas, setCuentas] = useState([]);
@@ -102,7 +103,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
     };
 
     await db.cuentas_por_pagar.add(newRecord);
-    showToast(`Cuenta por pagar registrada: S/ ${total.toFixed(2)}`);
+    showToast(`Cuenta por pagar registrada: ${simbolo()} ${total.toFixed(2)}`);
     setIsNewModalOpen(false);
     setFormProveedor('');
     setFormComprobante('');
@@ -144,7 +145,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
       });
     }
 
-    showToast(`Pago de S/ ${monto.toFixed(2)} registrado con éxito`);
+    showToast(`Pago de ${simbolo()} ${monto.toFixed(2)} registrado con éxito`);
     setSelectedPayItem(null);
     setPayMonto('');
     loadCuentas();
@@ -205,7 +206,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
             Saldo pendiente
           </span>
           <span className="text-xl font-black text-slate-900 block font-mono">
-            S/ {kpiData.saldoPendiente.toFixed(2)}
+            {simbolo()} {kpiData.saldoPendiente.toFixed(2)}
           </span>
           <span className="text-[10px] text-slate-500 font-medium">De compras a crédito</span>
         </div>
@@ -296,15 +297,15 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
                       )}
                     </td>
                     <td className="py-3 px-3 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">
-                      S/ {Number(c.total).toFixed(2)}
+                      {simbolo()} {Number(c.total).toFixed(2)}
                     </td>
                     <td className="py-3 px-3 text-right font-mono text-[#FF6B35] font-semibold whitespace-nowrap">
-                      S/ {Number(c.pagado).toFixed(2)}
+                      {simbolo()} {Number(c.pagado).toFixed(2)}
                     </td>
                     <td className={`py-3 px-3 text-right font-mono font-black whitespace-nowrap ${
                       c.saldo > 0 ? 'text-rose-600' : 'text-slate-400'
                     }`}>
-                      S/ {Number(c.saldo).toFixed(2)}
+                      {simbolo()} {Number(c.saldo).toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
                       {c.saldo > 0 && (
@@ -374,7 +375,7 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Monto Total (S/)</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Monto Total ({simbolo()})</label>
                   <input
                     type="number"
                     step="0.01"
@@ -455,19 +456,19 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Saldo Pendiente</span>
                   <span className="text-base font-black text-rose-600 font-mono">
-                    S/ {Number(selectedPayItem.saldo).toFixed(2)}
+                    {simbolo()} {Number(selectedPayItem.saldo).toFixed(2)}
                   </span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Facturado</span>
                   <span className="text-xs font-bold text-slate-800 font-mono">
-                    S/ {Number(selectedPayItem.total).toFixed(2)}
+                    {simbolo()} {Number(selectedPayItem.total).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Monto a Pagar (S/)</label>
+                <label className="block font-semibold text-slate-700 mb-1">Monto a Pagar ({simbolo()})</label>
                 <input
                   type="number"
                   step="0.01"

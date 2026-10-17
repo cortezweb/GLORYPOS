@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
+import { simbolo } from '../../utils/currency';
 
 export default function VariantModal({ product, isOpen, onClose }) {
   const { addToCart } = useCart();
@@ -94,7 +95,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
           <div className="flex flex-col">
             <span className="text-xs text-gray-500 font-medium">Precio de la presentación</span>
             <span className="text-xl font-bold text-gray-900 tracking-tight leading-none mt-1">
-              Bs. {Number(currentPrice).toFixed(2)}
+              {simbolo()} {Number(currentPrice).toFixed(2)}
             </span>
           </div>
         </div>
@@ -129,7 +130,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
                       {pres.nombre}
                     </span>
                     <span className={`text-[10px] mt-0.5 ${isChecked ? 'text-blue-100 font-normal' : 'text-gray-500 font-normal'}`}>
-                      Bs. {Number(pres.precio).toFixed(2)}
+                      {simbolo()} {Number(pres.precio).toFixed(2)}
                     </span>
                   </button>
                 );
@@ -202,13 +203,13 @@ export default function VariantModal({ product, isOpen, onClose }) {
           <div className="flex justify-between items-center text-xs text-gray-500 mb-1">
             <span>Resumen de precio</span>
             <span className="font-semibold text-[#7c3aed]">
-              Bs. {Number(currentPrice).toFixed(2)}
+              {simbolo()} {Number(currentPrice).toFixed(2)}
             </span>
           </div>
 
           <div className="flex justify-between items-center text-xs text-gray-400 mb-3">
             <span className="font-medium text-slate-700">
-              {selectedVariant ? selectedVariant.nombre : 'Unidad'} (Bs. {Number(currentPrice).toFixed(2)})
+              {selectedVariant ? selectedVariant.nombre : 'Unidad'} ({simbolo()} {Number(currentPrice).toFixed(2)})
             </span>
             <div className="flex items-center space-x-2">
               <button 
@@ -233,7 +234,7 @@ export default function VariantModal({ product, isOpen, onClose }) {
           <div className="flex justify-between items-baseline pt-1">
             <span className="text-sm font-semibold text-gray-800">Total a pagar</span>
             <span className="text-xl font-extrabold text-[#2563eb] tracking-tight">
-              Bs. {Number(currentPrice * quantity).toFixed(2)}
+              {simbolo()} {Number(currentPrice * quantity).toFixed(2)}
             </span>
           </div>
         </div>

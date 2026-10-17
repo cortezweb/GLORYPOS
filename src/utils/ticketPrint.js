@@ -1,3 +1,4 @@
+import { simbolo } from './currency';
 // Ticket para impresoras térmicas (58 / 80 mm).
 // Se imprime un documento propio del ancho exacto del rollo: así el driver no achica la página
 // (lo que dejaba el texto borroso) y todo sale en negro puro, negrita y tamaño legible.
@@ -13,7 +14,7 @@ export function setAnchoTicket(mm) {
 }
 
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const bs = (n) => `Bs. ${(Number(n) || 0).toFixed(2)}`;
+const bs = (n) => `${simbolo()} ${(Number(n) || 0).toFixed(2)}`;
 
 function tituloDocumento(tipo) {
   if (tipo === 'FACTURA') return 'FACTURA';
@@ -174,7 +175,7 @@ export function ticketHTML(venta, empresa, anchoMm = 80) {
       [`Subtotal (${nItems} ${nItems === 1 ? 'artículo' : 'artículos'})`, (Number(venta.subtotal || venta.total)).toFixed(2)],
       descuentoMonto > 0 ? [`Descuento ${venta.descuento_porcentaje}%`, `-${descuentoMonto.toFixed(2)}`] : null,
     ])}
-    <tr class="grand"><td>TOTAL Bs.</td><td class="num">${(Number(venta.total) || 0).toFixed(2)}</td></tr>
+    <tr class="grand"><td>TOTAL ${simbolo()}</td><td class="num">${(Number(venta.total) || 0).toFixed(2)}</td></tr>
     ${filas([
       ['Forma de pago', esc(venta.metodo_pago || '-')],
       venta.num_operacion ? ['N° operación', esc(venta.num_operacion)] : null,

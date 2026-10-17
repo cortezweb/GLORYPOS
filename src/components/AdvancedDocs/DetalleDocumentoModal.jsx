@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Printer, CheckCircle2, AlertCircle, FileText, QrCode } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 'retencion', onPrint }) {
   if (!isOpen || !doc) return null;
@@ -82,7 +83,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
             {doc.monto_total_comprobante && (
               <div className="flex justify-between text-slate-600">
                 <span>Importe Total Comprobante:</span>
-                <span className="font-medium">S/ {Number(doc.monto_total_comprobante).toFixed(2)}</span>
+                <span className="font-medium">{simbolo()} {Number(doc.monto_total_comprobante).toFixed(2)}</span>
               </div>
             )}
             {doc.tasa_porcentaje && (
@@ -93,7 +94,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
             )}
             <div className="flex justify-between font-bold text-sm text-slate-900 pt-2 border-t border-slate-200">
               <span>{amountLabel}:</span>
-              <span className="text-[#E85B28]">S/ {Number(amountValue).toFixed(2)}</span>
+              <span className="text-[#E85B28]">{simbolo()} {Number(amountValue).toFixed(2)}</span>
             </div>
           </div>
 

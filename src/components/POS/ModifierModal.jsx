@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, X, Check, IceCream, Plus } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { simbolo } from '../../utils/currency';
 
 export default function ModifierModal({ product, isOpen, onClose }) {
   const { addToCart } = useCart();
@@ -65,7 +66,7 @@ export default function ModifierModal({ product, isOpen, onClose }) {
                 {product.nombre}
               </h3>
               <span className="text-xs font-bold text-slate-500">
-                Bs. {Number(product.precio_venta).toFixed(2)}
+                {simbolo()} {Number(product.precio_venta).toFixed(2)}
               </span>
             </div>
           </div>
@@ -156,7 +157,7 @@ export default function ModifierModal({ product, isOpen, onClose }) {
           className="w-full h-12 bg-cyan-600 hover:bg-cyan-700 active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 transition"
         >
           <Check className="w-4 h-4" />
-          <span>Agregar al Pedido (Bs. {Number(product.precio_venta).toFixed(2)})</span>
+          <span>Agregar al Pedido ({simbolo()} {Number(product.precio_venta).toFixed(2)})</span>
         </button>
       </div>
     </div>

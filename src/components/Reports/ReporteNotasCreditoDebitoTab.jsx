@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Calendar, FileText, RotateCw } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function ReporteNotasCreditoDebitoTab() {
   const [desde, setDesde] = useState('01/09/2026');
@@ -167,7 +168,7 @@ export default function ReporteNotasCreditoDebitoTab() {
             Notas de crédito
           </span>
           <div className="text-xl font-bold text-[#ea580c] font-mono">
-            S/ {totalNC.toFixed(2)}
+            {simbolo()} {totalNC.toFixed(2)}
           </div>
         </div>
 
@@ -177,7 +178,7 @@ export default function ReporteNotasCreditoDebitoTab() {
             Notas de débito
           </span>
           <div className="text-xl font-bold text-[#FF6B35] font-mono">
-            S/ {totalND.toFixed(2)}
+            {simbolo()} {totalND.toFixed(2)}
           </div>
         </div>
 
@@ -187,7 +188,7 @@ export default function ReporteNotasCreditoDebitoTab() {
             Total del período (7 notas)
           </span>
           <div className="text-xl font-bold text-slate-900 font-mono">
-            S/ {totalPeriodo.toFixed(2)}
+            {simbolo()} {totalPeriodo.toFixed(2)}
           </div>
         </div>
       </div>
@@ -218,7 +219,7 @@ export default function ReporteNotasCreditoDebitoTab() {
                   <td className="py-2.5 px-3 font-medium text-slate-800">{row.motivo}</td>
                   <td className="py-2.5 px-3 text-right font-mono text-slate-700">{row.cant}</td>
                   <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
-                    S/ {row.monto.toFixed(2)}
+                    {simbolo()} {row.monto.toFixed(2)}
                   </td>
                 </tr>
               ))}
@@ -259,7 +260,7 @@ export default function ReporteNotasCreditoDebitoTab() {
                     </span>
                   </td>
                   <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
-                    S/ {row.monto.toFixed(2)}
+                    {simbolo()} {row.monto.toFixed(2)}
                   </td>
                 </tr>
               ))}

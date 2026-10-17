@@ -3,6 +3,7 @@
 // Todo se guarda primero en Dexie (offline) y se sincroniza a Supabase vía syncService.
 import { db } from '../db/dexie';
 import { syncService } from './syncService';
+import { simbolo } from '../utils/currency';
 
 export const RESERVA_ESTADOS = {
   RESERVADA: 'Reservada',
@@ -314,7 +315,7 @@ export const hotelService = {
         ...base,
         id: `hotel-${reserva.id}-aloj`,
         productId: null,
-        nombre: `Hospedaje Hab. ${habNumero} · ${f.noches} noche(s) x Bs. ${Number(reserva.tarifa).toFixed(2)}${pagado > 0 ? ` (saldo, adelanto Bs. ${pagado.toFixed(2)})` : ''}`,
+        nombre: `Hospedaje Hab. ${habNumero} · ${f.noches} noche(s) x ${simbolo()} ${Number(reserva.tarifa).toFixed(2)}${pagado > 0 ? ` (saldo, adelanto ${simbolo()} ${pagado.toFixed(2)})` : ''}`,
         precio: f.saldoAlojamiento,
         cantidad: 1,
         subtotal: f.saldoAlojamiento,
@@ -362,7 +363,7 @@ export const hotelService = {
     const r = await db.reservas.get(reservaId);
     if (!r) return;
     const f = folio(r);
-    if (f.saldo > 0.009) throw new Error(`El huésped tiene un saldo pendiente de Bs. ${f.saldo.toFixed(2)}.`);
+    if (f.saldo > 0.009) throw new Error(`El huésped tiene un saldo pendiente de ${simbolo()} ${f.saldo.toFixed(2)}.`);
     await db.reservas.update(reservaId, { estado: 'FINALIZADA', checkout_at: new Date().toISOString(), salida_real: hoyISO() });
     await db.habitaciones.update(r.habitacion_id, { limpieza: 'SUCIA' });
     notify({ id: reservaId });

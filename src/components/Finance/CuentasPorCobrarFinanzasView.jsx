@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import FinanceSubNav from './FinanceSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
   const [cuentas, setCuentas] = useState([]);
@@ -118,7 +119,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
       });
     }
 
-    showToast(`Cobro registrado: S/ ${monto.toFixed(2)} (${cobroMetodo})`);
+    showToast(`Cobro registrado: ${simbolo()} ${monto.toFixed(2)} (${cobroMetodo})`);
     setSelectedCobrarItem(null);
     setCobroMonto('');
     loadCuentas();
@@ -188,7 +189,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
             Saldo directo
           </span>
           <span className="text-xl font-black text-slate-900 block font-mono">
-            S/ {kpiData.saldoDirecto.toFixed(2)}
+            {simbolo()} {kpiData.saldoDirecto.toFixed(2)}
           </span>
           <span className="text-[10px] text-slate-500 font-medium">De cuotas pendientes</span>
         </div>
@@ -199,7 +200,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
             SPOT pendiente BN
           </span>
           <span className="text-xl font-black text-[#FF6B35] block font-mono">
-            S/ {kpiData.spotPendiente.toFixed(2)}
+            {simbolo()} {kpiData.spotPendiente.toFixed(2)}
           </span>
           <span className="text-[10px] text-[#FF6B35] font-medium">Detracciones en trámite</span>
         </div>
@@ -288,18 +289,18 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                       {c.cuotas}
                     </td>
                     <td className="py-3 px-3 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">
-                      S/ {Number(c.total).toFixed(2)}
+                      {simbolo()} {Number(c.total).toFixed(2)}
                     </td>
                     <td className="py-3 px-3 text-right font-mono text-[#FF6B35] font-semibold whitespace-nowrap">
-                      S/ {Number(c.cobrado).toFixed(2)}
+                      {simbolo()} {Number(c.cobrado).toFixed(2)}
                     </td>
                     <td className={`py-3 px-3 text-right font-mono font-black whitespace-nowrap ${
                       c.saldo > 0 ? 'text-rose-600' : 'text-slate-400'
                     }`}>
-                      S/ {Number(c.saldo).toFixed(2)}
+                      {simbolo()} {Number(c.saldo).toFixed(2)}
                     </td>
                     <td className="py-3 px-3 text-right font-mono font-semibold whitespace-nowrap text-[#FF6B35]">
-                      {c.spot_bn > 0 ? `S/ ${Number(c.spot_bn).toFixed(2)}` : '—'}
+                      {c.spot_bn > 0 ? `${simbolo()} ${Number(c.spot_bn).toFixed(2)}` : '—'}
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1.5">
@@ -365,19 +366,19 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Saldo Pendiente</span>
                   <span className="text-base font-black text-rose-600 font-mono">
-                    S/ {Number(selectedCobrarItem.saldo).toFixed(2)}
+                    {simbolo()} {Number(selectedCobrarItem.saldo).toFixed(2)}
                   </span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Facturado</span>
                   <span className="text-xs font-bold text-slate-800 font-mono">
-                    S/ {Number(selectedCobrarItem.total).toFixed(2)}
+                    {simbolo()} {Number(selectedCobrarItem.total).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Monto a Cobrar (S/)</label>
+                <label className="block font-semibold text-slate-700 mb-1">Monto a Cobrar ({simbolo()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -474,7 +475,7 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 </div>
                 <div className="flex justify-between border-t border-blue-100 pt-1">
                   <span className="text-slate-500">Monto SPOT BN:</span>
-                  <span className="font-black text-[#FF6B35] font-mono text-sm">S/ {Number(selectedConfirmBN.spot_bn).toFixed(2)}</span>
+                  <span className="font-black text-[#FF6B35] font-mono text-sm">{simbolo()} {Number(selectedConfirmBN.spot_bn).toFixed(2)}</span>
                 </div>
               </div>
 
@@ -538,15 +539,15 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Total Venta:</span>
-                  <span className="font-semibold text-slate-800">S/ {Number(selectedEstadoCuenta.total).toFixed(2)}</span>
+                  <span className="font-semibold text-slate-800">{simbolo()} {Number(selectedEstadoCuenta.total).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Total Cobrado:</span>
-                  <span className="font-semibold text-[#FF6B35]">S/ {Number(selectedEstadoCuenta.cobrado).toFixed(2)}</span>
+                  <span className="font-semibold text-[#FF6B35]">{simbolo()} {Number(selectedEstadoCuenta.cobrado).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-1.5 font-bold">
                   <span className="text-slate-700">Saldo Por Cobrar:</span>
-                  <span className="text-rose-600 font-mono text-sm">S/ {Number(selectedEstadoCuenta.saldo).toFixed(2)}</span>
+                  <span className="text-rose-600 font-mono text-sm">{simbolo()} {Number(selectedEstadoCuenta.saldo).toFixed(2)}</span>
                 </div>
               </div>
             </div>

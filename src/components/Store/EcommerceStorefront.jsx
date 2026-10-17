@@ -12,6 +12,7 @@ import { syncService } from '../../services/syncService';
 import GloryLogo from '../Common/GloryLogo';
 import CheckoutDrawer from './CheckoutDrawer';
 import { restaurantService } from '../../services/restaurantService';
+import { simbolo } from '../../utils/currency';
 
 const CART_STORAGE_KEY = 'glorypos_ecommerce_cart';
 const SETTINGS_STORAGE_KEY = 'glorypos_ecommerce_settings';
@@ -416,7 +417,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
                 </span>
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Precios oficiales en Bolivianos (Bs.) con entrega rápida
+                Precios oficiales en Bolivianos ({simbolo()}) con entrega rápida
               </p>
             </div>
 
@@ -432,7 +433,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
                 }`}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
-                <span>Hasta Bs. {priceRange.currentMax}</span>
+                <span>Hasta {simbolo()} {priceRange.currentMax}</span>
               </button>
             </div>
           </div>
@@ -442,7 +443,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
             <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2 animate-fadeIn max-w-sm">
               <div className="flex items-center justify-between text-xs font-bold text-slate-700">
                 <span>Filtro de Precio Máximo:</span>
-                <span className="text-[#FF6B35] font-mono">Bs. {priceRange.currentMax}</span>
+                <span className="text-[#FF6B35] font-mono">{simbolo()} {priceRange.currentMax}</span>
               </div>
               <input
                 type="range"
@@ -453,8 +454,8 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
                 className="w-full accent-[#FF6B35] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Min: Bs. {priceRange.min}</span>
-                <span>Max: Bs. {priceRange.max}</span>
+                <span>Min: {simbolo()} {priceRange.min}</span>
+                <span>Max: {simbolo()} {priceRange.max}</span>
               </div>
             </div>
           )}
@@ -544,7 +545,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block leading-none">PRECIO</span>
                           <span className="text-sm sm:text-base font-black font-mono tracking-tight text-[#FF6B35]">
-                            Bs. {price.toFixed(2)}
+                            {simbolo()} {price.toFixed(2)}
                           </span>
                         </div>
 
@@ -620,7 +621,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
                 <div>
                   <span className="text-[10px] text-slate-400 font-bold uppercase block">Precio Unitario</span>
                   <span className="text-xl font-black text-[#FF6B35] font-mono">
-                    Bs. {Number(selectedProduct.precio_venta || selectedProduct.precio || 0).toFixed(2)}
+                    {simbolo()} {Number(selectedProduct.precio_venta || selectedProduct.precio || 0).toFixed(2)}
                   </span>
                 </div>
 
@@ -660,7 +661,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
                 className="w-full py-3 rounded-2xl bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold text-sm shadow-md shadow-[#FF6B35]/30 transition cursor-pointer flex items-center justify-center gap-2"
               >
                 <ShoppingCart className="w-4 h-4" />
-                <span>Agregar al Carrito (Bs. {(Number(selectedProduct.precio_venta || selectedProduct.precio || 0) * modalQuantity).toFixed(2)})</span>
+                <span>Agregar al Carrito ({simbolo()} {(Number(selectedProduct.precio_venta || selectedProduct.precio || 0) * modalQuantity).toFixed(2)})</span>
               </button>
             </div>
 
@@ -683,7 +684,7 @@ export default function EcommerceStorefront({ isEmbedded = false, onBackToAdmin 
           </span>
           <span className="text-left">
             <span className="block text-[10px] font-bold text-white/60 uppercase">Ver carrito</span>
-            <span className="block text-sm font-black">Bs. {cartTotalPrice.toFixed(2)}</span>
+            <span className="block text-sm font-black">{simbolo()} {cartTotalPrice.toFixed(2)}</span>
           </span>
         </button>
       )}

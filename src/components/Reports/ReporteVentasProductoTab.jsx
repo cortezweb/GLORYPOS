@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, Calendar, FileText, Download } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function ReporteVentasProductoTab({ ventas = [], productos = [] }) {
   const [desde, setDesde] = useState('01/09/2026');
@@ -225,7 +226,7 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
               TOTAL VENDIDO
             </span>
             <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-              S/ 170,150.83
+              {simbolo()} 170,150.83
             </div>
           </div>
 
@@ -298,10 +299,10 @@ export default function ReporteVentasProductoTab({ ventas = [], productos = [] }
                       <td className="py-2.5 px-4 text-right font-mono text-slate-800">{row.cantidad}</td>
                       <td className="py-2.5 px-4 text-right font-mono text-slate-800">{row.cmpr}</td>
                       <td className="py-2.5 px-4 text-right font-mono font-bold text-slate-900">
-                        S/ {row.total.toFixed(2)}
+                        {simbolo()} {row.total.toFixed(2)}
                       </td>
                       <td className="py-2.5 px-4 text-right font-mono text-slate-700">
-                        S/ {row.precio_prom.toFixed(2)}
+                        {simbolo()} {row.precio_prom.toFixed(2)}
                       </td>
                     </tr>
                   ))}

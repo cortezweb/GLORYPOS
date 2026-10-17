@@ -10,6 +10,7 @@ import NuevaReversionModal from './NuevaReversionModal';
 import DetalleDocumentoModal from './DetalleDocumentoModal';
 import EstadoSunatModal from './EstadoSunatModal';
 import DocumentoPdfPreviewModal from './DocumentoPdfPreviewModal';
+import { simbolo } from '../../utils/currency';
 
 export default function DocumentosAvanzadosView({ initialTab = 'retenciones', onSelectSubView }) {
   // Pestaña activa: 'retenciones', 'percepciones', 'reversiones'
@@ -72,7 +73,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
           proveedor_nombre: 'Clientes varios',
           proveedor_doc: '000000',
           retenido: 6.45,
-          moneda: 'S/',
+          moneda: simbolo(),
           tasa_porcentaje: 3,
           monto_total_comprobante: 215.00,
           estado_sunat: 'Error envio',
@@ -545,7 +546,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
 
                       {/* RETENIDO / PERCIBIDO */}
                       <td className="py-3 px-4 font-semibold text-slate-800 whitespace-nowrap">
-                        S/ {Number(amount).toFixed(2)}
+                        {simbolo()} {Number(amount).toFixed(2)}
                       </td>
 
                       {/* ESTADO SUNAT */}

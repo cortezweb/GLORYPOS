@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import ProductsSubNav from './ProductsSubNav';
+import { simbolo } from '../../utils/currency';
 
 const DEFAULT_COMBOS = [
   {
@@ -402,7 +403,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                           <span className="text-slate-700 font-medium truncate">{prod.nombre}</span>
                         </div>
                         <span className="text-slate-500 font-semibold text-[11px] shrink-0">
-                          S/ {(prod.cantidad * prod.precio_unitario).toFixed(2)}
+                          {simbolo()} {(prod.cantidad * prod.precio_unitario).toFixed(2)}
                         </span>
                       </div>
                     ))}
@@ -414,11 +415,11 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-[10px] text-slate-400 line-through block">
-                        Normal: S/ {combo.precio_regular.toFixed(2)}
+                        Normal: {simbolo()} {combo.precio_regular.toFixed(2)}
                       </span>
                       <div className="flex items-baseline gap-1">
                         <span className="text-lg font-black text-[#E85B28]">
-                          S/ {combo.precio_combo.toFixed(2)}
+                          {simbolo()} {combo.precio_combo.toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -429,7 +430,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                         Ahorra {combo.porcentaje_ahorro}%
                       </span>
                       <span className="text-[10px] text-slate-400 block mt-0.5">
-                        (S/ {combo.ahorro.toFixed(2)} menos)
+                        ({simbolo()} {combo.ahorro.toFixed(2)} menos)
                       </span>
                     </div>
                   </div>
@@ -549,7 +550,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                     <option value="" disabled>Selecciona un producto para añadir...</option>
                     {availableProducts.map(p => (
                       <option key={p.id} value={p.id}>
-                        {p.nombre} — S/ {Number(p.precio_venta || 0).toFixed(2)}
+                        {p.nombre} — {simbolo()} {Number(p.precio_venta || 0).toFixed(2)}
                       </option>
                     ))}
                   </select>
@@ -578,7 +579,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                         </div>
 
                         <span className="font-bold text-slate-700 w-20 text-right">
-                          S/ {(p.cantidad * p.precio_unitario).toFixed(2)}
+                          {simbolo()} {(p.cantidad * p.precio_unitario).toFixed(2)}
                         </span>
 
                         <button
@@ -599,7 +600,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                 <div>
                   <span className="text-[11px] font-bold text-slate-600 block">Suma Regular:</span>
                   <span className="text-base font-black text-slate-800 block mt-0.5">
-                    S/ {formPrecioRegular.toFixed(2)}
+                    {simbolo()} {formPrecioRegular.toFixed(2)}
                   </span>
                 </div>
 
@@ -620,7 +621,7 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
                 <div>
                   <span className="text-[11px] font-bold text-slate-600 block">Ahorro del Cliente:</span>
                   <span className="text-sm font-black text-[#E85B28] block mt-1">
-                    S/ {formAhorro.toFixed(2)} ({formPorcentajeAhorro}%)
+                    {simbolo()} {formAhorro.toFixed(2)} ({formPorcentajeAhorro}%)
                   </span>
                 </div>
               </div>

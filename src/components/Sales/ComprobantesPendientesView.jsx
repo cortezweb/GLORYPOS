@@ -5,14 +5,15 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
+import { simbolo } from '../../utils/currency';
 
 export default function ComprobantesPendientesView() {
   const { empresa } = useAuth();
   const [isSending, setIsSending] = useState(false);
 
   const pendientes = [
-    { id: '1', correlativo: 'F-000105', tipo: 'Factura Electrónica SIAT', cliente: 'Comercializadora del Sur', fecha: '2026-09-19 18:40', total: 'Bs. 480.00', motivo: 'Generada sin internet en caja 2 (Offline)' },
-    { id: '2', correlativo: 'B-000425', tipo: 'Boleta de Venta', cliente: 'Cliente Mostrador', fecha: '2026-09-19 19:10', total: 'Bs. 35.50', motivo: 'En cola local de sincronización' }
+    { id: '1', correlativo: 'F-000105', tipo: 'Factura Electrónica SIAT', cliente: 'Comercializadora del Sur', fecha: '2026-09-19 18:40', total: `${simbolo()} 480.00`, motivo: 'Generada sin internet en caja 2 (Offline)' },
+    { id: '2', correlativo: 'B-000425', tipo: 'Boleta de Venta', cliente: 'Cliente Mostrador', fecha: '2026-09-19 19:10', total: `${simbolo()} 35.50`, motivo: 'En cola local de sincronización' }
   ];
 
   const handleSyncAll = async () => {

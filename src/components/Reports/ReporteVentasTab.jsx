@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, Calendar, FileText, Download } from 'lucide-react';
+import { simbolo } from '../../utils/currency';
 
 export default function ReporteVentasTab({ ventas = [] }) {
   const [desde, setDesde] = useState('01/09/2026');
@@ -405,7 +406,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               TOTAL NO ANULADAS
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 168891.69
+              {simbolo()} 168891.69
             </div>
             <p className="text-[9px] text-slate-500 leading-tight">
               Monto factura (incl. detracción)
@@ -418,7 +419,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               NETO COBRABLE
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 10416.48
+              {simbolo()} 10416.48
             </div>
             <p className="text-[9px] text-slate-500 leading-tight">
               Pagos directos (1001)
@@ -431,7 +432,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               DETRACCIÓN SPOT
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 1229.52
+              {simbolo()} 1229.52
             </div>
             <p className="text-[9px] text-slate-500 leading-tight">
               3 factura(s) 1001
@@ -444,7 +445,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               TOTAL ANULADAS
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 1139.35
+              {simbolo()} 1139.35
             </div>
           </div>
 
@@ -454,7 +455,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               VUELTO
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 83.30
+              {simbolo()} 83.30
             </div>
           </div>
 
@@ -464,7 +465,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               YAPE
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 104255.73
+              {simbolo()} 104255.73
             </div>
           </div>
 
@@ -474,7 +475,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               EFECTIVO
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 48317.20
+              {simbolo()} 48317.20
             </div>
           </div>
 
@@ -484,7 +485,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               PLIN
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 9544.92
+              {simbolo()} 9544.92
             </div>
           </div>
         </div>
@@ -497,7 +498,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               TARJETA
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 5544.32
+              {simbolo()} 5544.32
             </div>
           </div>
 
@@ -507,7 +508,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               SIN_DEFINIR
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 0.00
+              {simbolo()} 0.00
             </div>
           </div>
 
@@ -517,7 +518,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               DETRACCIÓN BN (SPOT)
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 1229.52
+              {simbolo()} 1229.52
             </div>
           </div>
 
@@ -527,7 +528,7 @@ export default function ReporteVentasTab({ ventas = [] }) {
               TOTAL GENERAL
             </span>
             <div className="text-base font-black text-slate-900 font-mono">
-              S/ 170031.04
+              {simbolo()} 170031.04
             </div>
           </div>
         </div>

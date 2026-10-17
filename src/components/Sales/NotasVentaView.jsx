@@ -7,6 +7,7 @@ import {
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import SalesSubNav from './SalesSubNav';
+import { simbolo } from '../../utils/currency';
 
 const SEED_NOTAS = [
   {
@@ -190,7 +191,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
 
   const formatSoles = (amount) => {
     const val = Number(amount) || 0;
-    return `S/ ${val.toFixed(2)}`;
+    return `${simbolo()} ${val.toFixed(2)}`;
   };
 
   // Filtrado

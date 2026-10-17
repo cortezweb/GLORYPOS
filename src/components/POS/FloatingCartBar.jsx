@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { simbolo } from '../../utils/currency';
 
 export default function FloatingCartBar({ onOpenCheckout }) {
   const { count, total, isBumping } = useCart();
@@ -17,7 +18,7 @@ export default function FloatingCartBar({ onOpenCheckout }) {
         type="button"
       >
         <ShoppingCart className="w-5 h-5 mr-2" />
-        <span className="text-sm font-bold">Bs. {Number(total).toFixed(2)}</span>
+        <span className="text-sm font-bold">{simbolo()} {Number(total).toFixed(2)}</span>
         
         {/* Cart Items Badge Indicator (Stitch exact style) with Bump Effect */}
         <span className={`absolute -top-1.5 -left-1.5 bg-amber-400 text-gray-900 border-2 border-white text-[11px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-xs transition-transform duration-200 ${

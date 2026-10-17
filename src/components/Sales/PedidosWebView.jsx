@@ -8,8 +8,9 @@ import { db } from '../../db/dexie';
 import { tiendaService, ESTADOS_PEDIDO, METODOS_PAGO_WEB } from '../../services/tiendaService';
 import { playCashChime } from '../../utils/audio';
 import SalesSubNav from './SalesSubNav';
+import { simbolo } from '../../utils/currency';
 
-const money = (n) => `Bs. ${(Number(n) || 0).toFixed(2)}`;
+const money = (n) => `${simbolo()} ${(Number(n) || 0).toFixed(2)}`;
 const FILTROS = [
   { id: 'ACTIVOS', label: 'Por atender', test: p => ['NUEVO', 'PREPARANDO', 'LISTO'].includes(p.estado) },
   { id: 'NUEVO', label: 'Nuevos', test: p => p.estado === 'NUEVO' },

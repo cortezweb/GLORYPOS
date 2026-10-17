@@ -7,6 +7,7 @@ import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import { hotelService, folio, formatFecha, RESERVA_ESTADOS, hoyISO } from '../../services/hotelService';
 import { money } from './useHotelData';
+import { simbolo } from '../../utils/currency';
 
 const ESTADO_BADGE = {
   RESERVADA: 'bg-indigo-50 text-indigo-700 border-indigo-200',
@@ -76,7 +77,7 @@ export default function EstadiaPanel({ reserva: r, data, onBack, onEditar, onCob
       <table>${filas}</table><hr/><table>${pagos}</table><hr/>
       <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>${f.total.toFixed(2)}</b></td></tr>
       <tr><td>Pagado</td><td style="text-align:right">${f.totalPagado.toFixed(2)}</td></tr>
-      <tr><td><b>SALDO</b></td><td style="text-align:right"><b>Bs. ${f.saldo.toFixed(2)}</b></td></tr></table>
+      <tr><td><b>SALDO</b></td><td style="text-align:right"><b>${simbolo()} ${f.saldo.toFixed(2)}</b></td></tr></table>
       <script>window.print()</script></body></html>`);
     w.document.close();
   };

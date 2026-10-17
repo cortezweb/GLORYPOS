@@ -5,6 +5,7 @@ import { useModules } from '../../hooks/useModules';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { restaurantService } from '../../services/restaurantService';
+import { simbolo } from '../../utils/currency';
 
 export default function DesktopCartSidebar({ onOpenCheckout }) {
   const { items, total, count, updateQuantity, removeFromCart, clearCart, isBumping, loadItems, comandaEnCobro } = useCart();
@@ -103,11 +104,11 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
                   <div className="flex flex-wrap items-center gap-1 mt-0.5">
                     {isPeso ? (
                       <span className="text-[10px] text-rose-700 font-bold bg-rose-50 px-1.5 py-0.2 rounded border border-rose-100">
-                        {item.cantidad} Kg @ Bs. {Number(item.precio).toFixed(2)}/Kg
+                        {item.cantidad} Kg @ {simbolo()} {Number(item.precio).toFixed(2)}/Kg
                       </span>
                     ) : (
                       <span className="text-[10px] text-slate-500 font-medium">
-                        {item.cantidad}x Bs. {Number(item.precio).toFixed(2)}
+                        {item.cantidad}x {simbolo()} {Number(item.precio).toFixed(2)}
                       </span>
                     )}
 
@@ -137,7 +138,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
                   </div>
 
                   <div className="text-xs font-black text-slate-900 mt-1">
-                    Bs. {Number(item.subtotal).toFixed(2)}
+                    {simbolo()} {Number(item.subtotal).toFixed(2)}
                   </div>
                 </div>
 
@@ -183,7 +184,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
         <div className="space-y-1 text-xs text-slate-600">
           <div className="flex justify-between items-center">
             <span>Subtotal:</span>
-            <span className="font-semibold text-slate-800">Bs. {Number(total).toFixed(2)}</span>
+            <span className="font-semibold text-slate-800">{simbolo()} {Number(total).toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center text-[11px] text-slate-400">
             <span>Impuestos / SIAT:</span>
@@ -194,7 +195,7 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
             <span className={`text-xl font-black text-[#FF6B35] transition-transform duration-200 ${
               isBumping ? 'scale-110 text-[#FFB627]' : 'scale-100'
             }`}>
-              Bs. {Number(total).toFixed(2)}
+              {simbolo()} {Number(total).toFixed(2)}
             </span>
           </div>
 
@@ -213,10 +214,10 @@ export default function DesktopCartSidebar({ onOpenCheckout }) {
                       key={b}
                       onClick={onOpenCheckout}
                       type="button"
-                      title={`Paga con Bs. ${b} • Vuelto: Bs. ${cambio.toFixed(2)}`}
+                      title={`Paga con ${simbolo()} ${b} • Vuelto: ${simbolo()} ${cambio.toFixed(2)}`}
                       className="py-1 px-1 bg-white hover:bg-orange-50 hover:text-[#FF6B35] hover:border-[#FF6B35]/40 border border-slate-200 rounded-lg font-bold text-slate-700 transition shadow-2xs text-center truncate"
                     >
-                      Bs. {b}
+                      {simbolo()} {b}
                     </button>
                   );
                 })}

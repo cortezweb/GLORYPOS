@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import FinanceSubNav from './FinanceSubNav';
+import { simbolo } from '../../utils/currency';
 
 export default function EgresosView({ onSelectSubView }) {
   const [egresos, setEgresos] = useState([]);
@@ -115,7 +116,7 @@ export default function EgresosView({ onSelectSubView }) {
 
     try {
       await db.egresos_caja.add(newRecord);
-      showToast(`Egreso registrado correctamente: S/ ${Number(formMonto).toFixed(2)}`);
+      showToast(`Egreso registrado correctamente: ${simbolo()} ${Number(formMonto).toFixed(2)}`);
       setIsModalOpen(false);
       setFormMonto('');
       setFormProveedor('');
@@ -146,7 +147,7 @@ export default function EgresosView({ onSelectSubView }) {
           <div className="px-3.5 py-2 bg-rose-50/60 rounded-xl border border-rose-200/60 text-right">
             <span className="text-[11px] font-semibold text-rose-600 block leading-tight">Total retirado</span>
             <span className="text-base font-black text-rose-700 tracking-tight">
-              S/ {totalMontoFiltrado.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {simbolo()} {totalMontoFiltrado.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
 
@@ -308,7 +309,7 @@ export default function EgresosView({ onSelectSubView }) {
                       {eg.metodo_pago}
                     </td>
                     <td className="py-3 px-4 text-right font-black text-rose-600 whitespace-nowrap font-mono text-xs">
-                      - S/ {Number(eg.monto).toFixed(2)}
+                      - {simbolo()} {Number(eg.monto).toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
                       <button
@@ -387,7 +388,7 @@ export default function EgresosView({ onSelectSubView }) {
 
             <form onSubmit={handleCreateEgreso} className="p-4 space-y-3.5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Monto a retirar (S/)</label>
+                <label className="block font-semibold text-slate-700 mb-1">Monto a retirar ({simbolo()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -548,7 +549,7 @@ export default function EgresosView({ onSelectSubView }) {
               </div>
               <div className="border-t border-slate-200 pt-2 flex justify-between items-center">
                 <span className="font-bold text-slate-700">Monto retirado:</span>
-                <span className="text-base font-black text-rose-600">- S/ {Number(selectedTicket.monto).toFixed(2)}</span>
+                <span className="text-base font-black text-rose-600">- {simbolo()} {Number(selectedTicket.monto).toFixed(2)}</span>
               </div>
             </div>
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X, Search, Save, LogIn } from 'lucide-react';
 import { hotelService, hoyISO, addDias, noches, CANALES, TIPOS_DOC } from '../../services/hotelService';
 import { money } from './useHotelData';
+import { simbolo } from '../../utils/currency';
 
 const input = 'mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200';
 const label = 'block text-[11px] font-bold text-slate-600';
@@ -118,7 +119,7 @@ export default function ReservaModal({ inicial, data, onClose, onSaved }) {
                   })}
                 </select>
               </label>
-              <label className={label}>Tarifa por noche (Bs.)
+              <label className={label}>Tarifa por noche ({simbolo()})
                 <input type="number" min="0" step="0.01" required value={form.tarifa} onChange={e => set('tarifa', e.target.value)} className={input} />
               </label>
             </div>
