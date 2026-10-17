@@ -78,13 +78,30 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
   doc.setDrawColor(...negro);
   doc.setLineWidth(0.25);
 
-  // Cabecera: datos de la empresa y recuadro del documento
+  // Cabecera: logo, datos de la empresa y recuadro del documento
   const cajaW = 64;
-  const textoW = W - M * 2 - cajaW - 6;
+  let logoW = 0;
+  if (empresa.logo_url && String(empresa.logo_url).startsWith('data:image')) {
+    try {
+      const props = doc.getImageProperties(empresa.logo_url);
+      const maxW = 40;
+      const maxH = 22;
+      const escala = Math.min(maxW / props.width, maxH / props.height);
+      logoW = props.width * escala;
+      const logoH = props.height * escala;
+      doc.addImage(empresa.logo_url, props.fileType, M, M, logoW, logoH);
+      logoW += 4;
+    } catch (err) {
+      console.warn('[cotizacionPdf] No se pudo insertar el logo:', err);
+      logoW = 0;
+    }
+  }
+  const xTexto = M + logoW;
+  const textoW = W - M - xTexto - cajaW - 6;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   const nombreLineas = doc.splitTextToSize(String(empresa.nombre || 'EMPRESA').toUpperCase(), textoW);
-  doc.text(nombreLineas, M, M + 5);
+  doc.text(nombreLineas, xTexto, M + 5);
   let y = M + 5 + nombreLineas.length * 5;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
@@ -96,7 +113,7 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
   ].filter(Boolean);
   datos.forEach((linea) => {
     const partes = doc.splitTextToSize(linea, textoW);
-    doc.text(partes, M, y);
+    doc.text(partes, xTexto, y);
     y += partes.length * 4;
   });
 
@@ -112,7 +129,7 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
   doc.text(String(cot.correlativo || ''), cajaX + cajaW / 2, M + 22, { align: 'center' });
 
   // Recuadros de cliente y de fechas
-  y = Math.max(y, M + cajaH) + 5;
+  y = Math.max(y, M + cajaH, logoW ? M + 24 : 0) + 5;
   const colIzqW = 112;
   const colDerW = W - M * 2 - colIzqW - 4;
   const boxH = 24;

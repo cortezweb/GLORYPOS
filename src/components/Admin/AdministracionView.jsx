@@ -14,9 +14,10 @@ import UsuariosTab from './UsuariosTab';
 import masterSql from '../../../supabase_master_all_tables.sql?raw';
 import phase2Sql from '../../../supabase_phase2_security_rls.sql?raw';
 import { CURRENCIES, DEFAULT_CURRENCY, getCurrencyCode, setCurrency } from '../../utils/currency';
+import { leerLogo } from '../../utils/logoImagen';
 
 export default function AdministracionView({ initialTab = 'roles' }) {
-  const { empresa } = useAuth();
+  const { empresa, updateEmpresa } = useAuth();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [saved, setSaved] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -100,19 +101,22 @@ export default function AdministracionView({ initialTab = 'roles' }) {
     }
   }, [initialTab]);
 
+  const [logoError, setLogoError] = useState('');
   const [formData, setFormData] = useState({
     nombre: empresa?.nombre || '',
     nit_ci: empresa?.nit_ci || '',
     propietario: empresa?.propietario || '',
     ciudad: empresa?.ciudad || '',
     moneda: empresa?.moneda || DEFAULT_CURRENCY,
+    logo_url: empresa?.logo_url || '',
     direccion: empresa?.direccion || '',
     telefono: empresa?.telefono || ''
   });
 
   const handleSave = async (e) => {
     e.preventDefault();
-    await db.config_empresa.update('empresa_activa', formData);
+    await updateEmpresa(formData);
+    syncService.triggerBackgroundSync?.();
     // Cambiar la moneda cambia todos los montos que se muestran: se sube a la nube y se recarga
     if (formData.moneda !== getCurrencyCode()) {
       setCurrency(formData.moneda);
@@ -279,6 +283,56 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                   >
                     {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
                   </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] font-bold text-slate-500 mb-1">Logo de la empresa</label>
+                  <div className="flex items-center gap-3">
+                    <div className="w-24 h-14 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+                      {formData.logo_url ? (
+                        <img src={formData.logo_url} alt="Logo" className="max-w-full max-h-full object-contain" />
+                      ) : (
+                        <span className="text-[10px] text-slate-400">Sin logo</span>
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <label className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer">
+                          {formData.logo_url ? 'Cambiar logo' : 'Subir logo'}
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const archivo = e.target.files?.[0];
+                              e.target.value = '';
+                              if (!archivo) return;
+                              try {
+                                setLogoError('');
+                                setFormData(prev => ({ ...prev, logo_url: '' }));
+                                const url = await leerLogo(archivo);
+                                setFormData(prev => ({ ...prev, logo_url: url }));
+                              } catch (err) {
+                                setLogoError(err.message);
+                                setFormData(prev => ({ ...prev, logo_url: empresa?.logo_url || '' }));
+                              }
+                            }}
+                          />
+                        </label>
+                        {formData.logo_url && (
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, logo_url: '' })}
+                            className="px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 font-semibold"
+                          >
+                            Quitar
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-400">PNG, JPG o WEBP. Aparece en los PDF de cotizaciones. Pulsa "Guardar Configuración" para aplicarlo.</p>
+                      {logoError && <p className="text-[10px] text-rose-600 font-semibold">{logoError}</p>}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
