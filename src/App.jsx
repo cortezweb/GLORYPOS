@@ -74,7 +74,7 @@ import LoginView from './components/Auth/LoginView';
 import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
-  const { isExpired, currentUser, isAuthenticated, loading, empresa, logout } = useAuth();
+  const { isExpired, currentUser, isAuthenticated, loading, empresa, logout, isDemoMode } = useAuth();
   const { canOpenView, tiendaActiva, isSuperAdmin } = useModules();
 
   // Navigation State (Por defecto inicia en la vista Inicio)
@@ -190,8 +190,12 @@ function MainShell() {
   }
 
   // Sin empresa registrada → onboarding de registro
-  if (!empresa?.nombre || showRegister) {
+  // Con Supabase, si la empresa no se encontró se muestra el login (permite escribir otro identificador)
+  if (showRegister || (!empresa?.nombre && isDemoMode)) {
     return <RegisterView onGoToLogin={() => setShowRegister(false)} />;
+  }
+  if (!empresa?.nombre) {
+    return <LoginView onGoToRegister={() => setShowRegister(true)} />;
   }
 
   // Ruta pública directa de Ecommerce para clientes externos (sin requerir login)
