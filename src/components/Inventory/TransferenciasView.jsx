@@ -6,6 +6,7 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import InventorySubNav from './InventorySubNav';
+import { toast } from 'sonner';
 
 export default function TransferenciasView({ onSelectSubView, initialProductToTransfer }) {
   const [desdeSucursal, setDesdeSucursal] = useState('Principal');
@@ -96,17 +97,17 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
   const handleSubmitTransfer = async (e) => {
     e.preventDefault();
     if (!haciaSucursal) {
-      alert('Por favor selecciona la sucursal de destino.');
+      toast.error('Por favor selecciona la sucursal de destino.');
       return;
     }
 
     if (transferItems.length === 0) {
-      alert('Debes agregar al menos un producto para transferir.');
+      toast.error('Debes agregar al menos un producto para transferir.');
       return;
     }
 
     if (desdeSucursal === haciaSucursal) {
-      alert('La sucursal de origen y destino deben ser distintas.');
+      toast.error('La sucursal de origen y destino deben ser distintas.');
       return;
     }
 

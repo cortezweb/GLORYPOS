@@ -7,6 +7,7 @@ import {
 import { db } from '../../db/dexie';
 import ProductsSubNav from './ProductsSubNav';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const DEFAULT_SERVICIOS = [
   {
@@ -188,11 +189,11 @@ export default function ServiciosView({ onSelectSubView }) {
   const handleSaveServicio = async (e) => {
     e.preventDefault();
     if (!formNombre.trim()) {
-      alert('Ingresa el nombre del servicio.');
+      toast.error('Ingresa el nombre del servicio.');
       return;
     }
     if (!formPrecio || Number(formPrecio) < 0) {
-      alert('Ingresa un precio válido para el servicio.');
+      toast.error('Ingresa un precio válido para el servicio.');
       return;
     }
 

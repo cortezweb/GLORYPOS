@@ -3,6 +3,7 @@ import { X, Search, Save, LogIn } from 'lucide-react';
 import { hotelService, hoyISO, addDias, noches, CANALES, TIPOS_DOC } from '../../services/hotelService';
 import { money } from './useHotelData';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const input = 'mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200';
 const label = 'block text-[11px] font-bold text-slate-600';
@@ -65,7 +66,7 @@ export default function ReservaModal({ inicial, data, onClose, onSaved }) {
       if (walkin) r = await hotelService.checkIn(r.id);
       onSaved(r);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setGuardando(false);
     }

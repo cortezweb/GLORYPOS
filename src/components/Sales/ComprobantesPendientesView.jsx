@@ -6,6 +6,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function ComprobantesPendientesView() {
   const { empresa } = useAuth();
@@ -20,9 +21,9 @@ export default function ComprobantesPendientesView() {
     setIsSending(true);
     try {
       await syncService.syncLocalToCloud();
-      alert('Comprobantes enviados exitosamente a la nube.');
+      toast.success('Comprobantes enviados exitosamente a la nube.');
     } catch {
-      alert('Sincronización finalizada.');
+      toast.success('Sincronización finalizada.');
     } finally {
       setIsSending(false);
     }
@@ -93,7 +94,7 @@ export default function ComprobantesPendientesView() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => alert(`Reenviando comprobante ${doc.correlativo}...`)}
+                  onClick={() => toast.info(`Reenviando comprobante ${doc.correlativo}...`)}
                   className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1"
                 >
                   <Send className="w-3.5 h-3.5" />

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { RUBROS_CONFIG, DEMO_CATALOGS } from '../../db/rubros';
+import { toast } from 'sonner';
 
 const ICONS = {
   Store: Store,
@@ -48,7 +49,7 @@ export default function RubroSelectorModal({ isOpen, onClose, currentRubro = 'AB
       onClose();
     } catch (err) {
       console.error(err);
-      alert('Error al cambiar de rubro.');
+      toast.error('Error al cambiar de rubro.');
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Save } from 'lucide-react';
 import { hotelService } from '../../services/hotelService';
 import { money } from './useHotelData';
+import { toast } from 'sonner';
 
 const input = 'border border-slate-200 rounded-xl px-2 py-1.5 text-xs';
 
@@ -12,7 +13,7 @@ export default function ConfigHotelTab({ data }) {
   const [nuevaHab, setNuevaHab] = useState({ numero: '', piso: 1, tipo_id: '' });
 
   const run = async (fn) => {
-    try { await fn(); } catch (err) { alert(err.message); }
+    try { await fn(); } catch (err) { toast.error(err.message); }
   };
 
   return (

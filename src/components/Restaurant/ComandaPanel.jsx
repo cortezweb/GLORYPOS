@@ -11,6 +11,7 @@ import {
 } from '../../services/restaurantService';
 import { money, minutosDesde, formatMinutos } from './useGlorychefData';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const ESTADO_COLOR = {
   PENDIENTE: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -46,7 +47,7 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
       await restaurantService.cargarAHabitacion(comanda.id, h.id, dividiendo && seleccion.length ? seleccion : null);
       setHuespedes(null);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -66,7 +67,7 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
   const agregar = async (prod) => {
     const disp = restaurantService.porcionesDisponibles(prod, productosById);
     if (disp === 0) {
-      alert(`"${prod.nombre}" está agotado: faltan insumos de su receta.`);
+      toast.error(`"${prod.nombre}" está agotado: faltan insumos de su receta.`);
       return;
     }
     await restaurantService.agregarItem(comanda.id, prod, 1, nota.trim());
@@ -366,7 +367,7 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
                       await restaurantService.cambiarMesa(comanda.id, m.id);
                       setCambiandoMesa(false);
                     } catch (err) {
-                      alert(err.message);
+                      toast.error(err.message);
                     }
                   }}
                   className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-orange-100 text-[11px] font-bold"

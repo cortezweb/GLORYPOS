@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, Users, Building2, Printer, Save, CheckCircle2, 
   Settings, Download, FileSpreadsheet, HardDrive, Cloud, RefreshCw,
-  Copy, ExternalLink, AlertTriangle, ChevronDown, ChevronUp, Database
+  Copy, ExternalLink, AlertTriangle, ChevronDown, ChevronUp, Database, BarChart3
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
@@ -509,8 +509,8 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                     {showTablesDetail && (
                       <div className="mt-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200 max-h-48 overflow-y-auto space-y-2 text-[11px]">
                         <div>
-                          <span className="font-bold text-[#E85B28] block mb-1">
-                            ✓ Tablas activas en Supabase ({cloudStatus.existingTables.length}):
+                          <span className="font-bold text-[#E85B28] flex items-center gap-1 mb-1">
+                            <CheckCircle2 size={12} /> Tablas activas en Supabase ({cloudStatus.existingTables.length}):
                           </span>
                           <div className="flex flex-wrap gap-1">
                             {cloudStatus.existingTables.map(t => (
@@ -523,8 +523,8 @@ export default function AdministracionView({ initialTab = 'roles' }) {
 
                         {cloudStatus.missingTables.length > 0 && (
                           <div className="pt-1.5 border-t border-slate-200">
-                            <span className="font-bold text-amber-700 block mb-1">
-                              ⚠ Tablas por crear en Supabase ({cloudStatus.missingTables.length}):
+                            <span className="font-bold text-amber-700 flex items-center gap-1 mb-1">
+                              <AlertTriangle size={12} /> Tablas por crear en Supabase ({cloudStatus.missingTables.length}):
                             </span>
                             <div className="flex flex-wrap gap-1">
                               {cloudStatus.missingTables.map(t => (
@@ -610,7 +610,7 @@ export default function AdministracionView({ initialTab = 'roles' }) {
                     onClick={exportLibroVentasRCV}
                     className="w-full py-2.5 px-3 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-between border border-slate-200 transition"
                   >
-                    <span>📊 Libro de Ventas RCV (SIAT / SIN)</span>
+                    <span className="flex items-center gap-1.5"><BarChart3 className="w-3.5 h-3.5" /> Libro de Ventas RCV (SIAT / SIN)</span>
                     <Download className="w-3.5 h-3.5 text-slate-400" />
                   </button>
                   <button

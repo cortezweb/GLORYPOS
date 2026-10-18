@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Building2, User, Lock, Mail, Phone, MapPin, ChevronRight,
-  ChevronLeft, CheckCircle2, Eye, EyeOff, Store, ArrowLeft, Sparkles, Globe
+  ChevronLeft, CheckCircle2, Eye, EyeOff, Store, ArrowLeft, Sparkles, Globe, Wrench, Pill, Shirt, Beef, IceCreamCone, PartyPopper
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { hashText } from '../../utils/crypto';
@@ -11,14 +11,15 @@ import { tenantService, slugify } from '../../services/tenantService';
 import { isDemoMode } from '../../lib/supabase';
 import GloryLogo from '../Common/GloryLogo';
 import { CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currency';
+import { registroNegocioSchema, registroAdminSchema, validar } from '../../lib/schemas';
 
 const RUBROS = [
-  { id: 'ABARROTES', label: 'Minimarket / Abarrotes', emoji: '🏪' },
-  { id: 'FERRETERIA', label: 'Ferretería / Construcción', emoji: '🔧' },
-  { id: 'FARMACIA', label: 'Farmacia / Botica', emoji: '💊' },
-  { id: 'ROPA', label: 'Ropa / Calzado', emoji: '👗' },
-  { id: 'CARNICERIA', label: 'Carnicería / Frial', emoji: '🥩' },
-  { id: 'HELADERIA', label: 'Heladería / Cafetería', emoji: '🍦' },
+  { id: 'ABARROTES', label: 'Minimarket / Abarrotes', emoji: Store },
+  { id: 'FERRETERIA', label: 'Ferretería / Construcción', emoji: Wrench },
+  { id: 'FARMACIA', label: 'Farmacia / Botica', emoji: Pill },
+  { id: 'ROPA', label: 'Ropa / Calzado', emoji: Shirt },
+  { id: 'CARNICERIA', label: 'Carnicería / Frial', emoji: Beef },
+  { id: 'HELADERIA', label: 'Heladería / Cafetería', emoji: IceCreamCone },
 ];
 
 const CIUDADES = ['Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Oruro', 'Potosí', 'Tarija', 'Beni', 'Pando'];
@@ -58,28 +59,21 @@ export default function RegisterView({ onGoToLogin }) {
 
   // ── Validaciones ────────────────────────────────────────────────────────────
   const validateStep1 = () => {
-    const e = {};
-    if (!negocio.nombre.trim()) e.nombre = 'El nombre del negocio es requerido';
-    if (!negocio.slug || negocio.slug.trim().length < 3)
-      e.slug = 'El identificador/subdominio debe tener al menos 3 caracteres';
-    if (!negocio.rubro) e.rubro = 'Selecciona el rubro';
-    if (!negocio.nit_ci.trim()) e.nit_ci = 'El NIT/CI es requerido';
-    if (!negocio.ciudad) e.ciudad = 'Selecciona la ciudad';
-    setErrors(e);
-    return Object.keys(e).length === 0;
+    const { ok, errors } = validar(registroNegocioSchema, negocio);
+    setErrors(errors);
+    return ok;
   };
 
   const validateStep2 = () => {
-    const e = {};
-    if (!admin.nombre.trim()) e.adminNombre = 'El nombre es requerido';
-    if (!admin.email.trim() || !/^[^@]+@[^@]+\.[^@]+$/.test(admin.email))
-      e.adminEmail = 'Correo electrónico inválido';
-    if (!admin.password || admin.password.length < 6)
-      e.adminPassword = 'La contraseña debe tener al menos 6 caracteres';
-    if (admin.password !== admin.confirmPassword)
-      e.adminConfirm = 'Las contraseñas no coinciden';
-    setErrors(e);
-    return Object.keys(e).length === 0;
+    const { ok, errors } = validar(registroAdminSchema, admin);
+    // Los mensajes del paso 2 usan claves con prefijo en el formulario.
+    setErrors({
+      adminNombre: errors.nombre,
+      adminEmail: errors.email,
+      adminPassword: errors.password,
+      adminConfirm: errors.confirmPassword,
+    });
+    return ok;
   };
 
   const handleNext = () => {
@@ -303,7 +297,7 @@ export default function RegisterView({ onGoToLogin }) {
                             ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-[#FF6B35]'
                             : 'border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-[#FF6B35]/10'}`}
                       >
-                        <span>{r.emoji}</span> {r.label}
+                        <r.emoji size={16} className="shrink-0" /> {r.label}
                       </button>
                     ))}
                   </div>
@@ -441,7 +435,7 @@ export default function RegisterView({ onGoToLogin }) {
                 </div>
 
                 <div className="bg-[#FF6B35]/10 border border-blue-100 rounded-xl p-3 text-xs text-[#FF6B35]">
-                  <p className="font-bold">🔒 Tu PIN táctil inicial será: <span className="font-mono text-blue-900">1234</span></p>
+                  <p className="font-bold flex items-center gap-1"><Lock size={13} /> Tu PIN táctil inicial será: <span className="font-mono text-blue-900">1234</span></p>
                   <p className="text-[#FF6B35] mt-0.5">Puedes cambiarlo después desde Administración → Usuarios.</p>
                 </div>
               </div>
@@ -465,7 +459,7 @@ export default function RegisterView({ onGoToLogin }) {
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between"><span className="text-slate-500">Nombre:</span> <span className="font-bold text-slate-800">{negocio.nombre}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-500">Rubro:</span> <span className="font-bold text-slate-800">{RUBROS.find(r => r.id === negocio.rubro)?.emoji} {RUBROS.find(r => r.id === negocio.rubro)?.label}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">Rubro:</span> <span className="font-bold text-slate-800">{RUBROS.find(r => r.id === negocio.rubro)?.label}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">NIT/CI:</span> <span className="font-bold text-slate-800">{negocio.nit_ci}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">Ciudad:</span> <span className="font-bold text-slate-800">{negocio.ciudad}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">Moneda:</span> <span className="font-bold text-slate-800">{CURRENCIES.find(c => c.code === negocio.moneda)?.label}</span></div>
@@ -477,7 +471,7 @@ export default function RegisterView({ onGoToLogin }) {
 
               {/* Trial info */}
               <div className="bg-[#FF6B35]/10 border border-[#FF6B35]/20 rounded-2xl px-4 py-3">
-                <p className="text-sm font-black text-[#E85B28]">🎉 Trial gratuito de 30 días activado</p>
+                <p className="text-sm font-black text-[#E85B28] flex items-center justify-center gap-1.5"><PartyPopper size={16} /> Trial gratuito de 30 días activado</p>
                 <p className="text-xs text-[#FF6B35] mt-0.5">Acceso completo a todos los módulos sin costo. Luego elige tu plan.</p>
               </div>
 

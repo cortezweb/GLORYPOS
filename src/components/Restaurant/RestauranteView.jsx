@@ -11,6 +11,7 @@ import CocinaKDS from './CocinaKDS';
 import CartaRecetasTab from './CartaRecetasTab';
 import ReportesChefTab from './ReportesChefTab';
 import ConfigSalonesTab from './ConfigSalonesTab';
+import { toast } from 'sonner';
 
 // GLORYCHEF · Módulo de restaurante de GLORYPOS
 export default function RestauranteView({ currentView = 'chef_mesas', onSelectSubView, onOpenCheckout }) {
@@ -25,7 +26,7 @@ export default function RestauranteView({ currentView = 'chef_mesas', onSelectSu
   const handleCobrar = (comanda, itemIds = null) => {
     const items = restaurantService.itemsParaCobro(comanda, itemIds);
     if (items.length === 0) {
-      alert('No hay platos pendientes de cobro en esta comanda.');
+      toast.error('No hay platos pendientes de cobro en esta comanda.');
       return;
     }
     loadItems(items, {

@@ -8,6 +8,7 @@ import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const SEED_NOTAS = [
   {
@@ -217,7 +218,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
         sunat_estado: 'Aceptado SUNAT',
         fecha_emision_sunat: new Date().toISOString()
       });
-      alert(`¡Comprobante emitido con éxito! ${tipoDoc} ${nuevoCorrelativo} aceptado por SUNAT.`);
+      toast.success(`¡Comprobante emitido con éxito! ${tipoDoc} ${nuevoCorrelativo} aceptado por SUNAT.`);
       setEmitirModalNota(null);
       await loadData();
     }
@@ -393,7 +394,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                           {/* 1. Ver PDF (Ojo en rojo) */}
                           <button
                             type="button"
-                            onClick={() => onOpenReceipt ? onOpenReceipt(nota) : alert(`Viendo PDF de ${nota.correlativo}`)}
+                            onClick={() => onOpenReceipt ? onOpenReceipt(nota) : toast.info(`Viendo PDF de ${nota.correlativo}`)}
                             title="Ver PDF"
                             className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition"
                           >
@@ -403,7 +404,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                           {/* 2. Descargar A4 (Descarga en rojo) */}
                           <button
                             type="button"
-                            onClick={() => alert(`Descargando PDF A4 de ${nota.correlativo}...`)}
+                            onClick={() => toast.info(`Descargando PDF A4 de ${nota.correlativo}...`)}
                             title="Descargar A4"
                             className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition"
                           >
@@ -413,7 +414,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                           {/* 3. Ticket 80mm (Ticket en naranja) */}
                           <button
                             type="button"
-                            onClick={() => onOpenReceipt ? onOpenReceipt(nota) : alert(`Imprimiendo ticket 80mm de ${nota.correlativo}...`)}
+                            onClick={() => onOpenReceipt ? onOpenReceipt(nota) : toast.info(`Imprimiendo ticket 80mm de ${nota.correlativo}...`)}
                             title="Ticket 80mm"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
                           >
@@ -423,7 +424,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                           {/* 4. Ticket 58mm / A5 (Documento en naranja) */}
                           <button
                             type="button"
-                            onClick={() => alert(`Imprimiendo ticket 58mm de ${nota.correlativo}...`)}
+                            onClick={() => toast.info(`Imprimiendo ticket 58mm de ${nota.correlativo}...`)}
                             title="Ticket 58mm / A5"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
                           >

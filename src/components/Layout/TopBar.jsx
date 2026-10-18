@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
+import { toast } from 'sonner';
 
 export default function TopBar({ 
   onOpenSidebar, 
@@ -130,7 +131,7 @@ export default function TopBar({
       {/* Caja Sucursal activa */}
       <div 
         onClick={() => {
-          alert(`Sucursal activa: ${empresa?.sucursal_activa || 'Principal'} (Casa Matriz)`);
+          toast.info(`Sucursal activa: ${empresa?.sucursal_activa || 'Principal'} (Casa Matriz)`);
         }}
         className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 transition cursor-pointer mb-2.5 shadow-2xs group"
         title="Clic para ver detalles de sucursal"

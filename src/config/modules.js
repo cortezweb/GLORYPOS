@@ -2,24 +2,29 @@
 // Única fuente de verdad para: alta de clientes (SuperAdmin), menús laterales,
 // rutas de App.jsx y funciones que cambian según los módulos contratados.
 
+import {
+  ClipboardList, ShoppingCart, ShoppingBag, Users, Tag, Package, Banknote, Truck,
+  Hourglass, FileText, Calculator, BarChart3, Globe, ChefHat, Pill, Hotel,
+} from 'lucide-react';
+
 export const ALL_CLIENT_MODULES = [
-  { id: 'preventa', label: 'Preventa & Cotizaciones', icon: '📝', desc: 'Cotizaciones, proformas y pedidos' },
-  { id: 'ventas', label: 'Ventas & Facturación (POS)', icon: '🛒', desc: 'Caja rápida, facturas SIAT / SUNAT y boletas' },
-  { id: 'compras', label: 'Compras & Proveedores', icon: '🛍️', desc: 'Facturas de compras y proveedores' },
-  { id: 'clientes', label: 'Directorio de Clientes', icon: '👥', desc: 'Directorio, cuentas y crédito' },
-  { id: 'productos', label: 'Productos / Servicios', icon: '🏷️', desc: 'Catálogo con variantes, códigos y precios' },
-  { id: 'inventario', label: 'Inventario & Kardex', icon: '📦', desc: 'Stock valorizado y ajustes de merma' },
-  { id: 'finanzas', label: 'Finanzas & Caja Chica', icon: '💵', desc: 'Arqueos, movimientos de turno e ingresos/egresos' },
-  { id: 'guias_remision', label: 'Guías de Remisión', icon: '🚚', desc: 'Guías de despacho electrónicas' },
-  { id: 'comprobantes_pendientes', label: 'Comprobantes Pendientes', icon: '⏳', desc: 'Cola offline y contingencia' },
-  { id: 'documentos_avanzados', label: 'Comprobantes Avanzados', icon: '📄', desc: 'Retenciones, percepciones y especiales' },
-  { id: 'contabilidad', label: 'Contabilidad & Libros', icon: '🧮', desc: 'Exportación PLE, SIAT y resúmenes' },
-  { id: 'reportes', label: 'Reportes & Analíticas', icon: '📊', desc: 'Métricas de ventas, utilidades y Excel' },
-  { id: 'tienda_virtual', label: 'Tienda en Línea', icon: '🌐', desc: 'Catálogo online y pedidos WhatsApp' },
+  { id: 'preventa', label: 'Preventa & Cotizaciones', icon: ClipboardList, desc: 'Cotizaciones, proformas y pedidos' },
+  { id: 'ventas', label: 'Ventas & Facturación (POS)', icon: ShoppingCart, desc: 'Caja rápida, facturas SIAT / SUNAT y boletas' },
+  { id: 'compras', label: 'Compras & Proveedores', icon: ShoppingBag, desc: 'Facturas de compras y proveedores' },
+  { id: 'clientes', label: 'Directorio de Clientes', icon: Users, desc: 'Directorio, cuentas y crédito' },
+  { id: 'productos', label: 'Productos / Servicios', icon: Tag, desc: 'Catálogo con variantes, códigos y precios' },
+  { id: 'inventario', label: 'Inventario & Kardex', icon: Package, desc: 'Stock valorizado y ajustes de merma' },
+  { id: 'finanzas', label: 'Finanzas & Caja Chica', icon: Banknote, desc: 'Arqueos, movimientos de turno e ingresos/egresos' },
+  { id: 'guias_remision', label: 'Guías de Remisión', icon: Truck, desc: 'Guías de despacho electrónicas' },
+  { id: 'comprobantes_pendientes', label: 'Comprobantes Pendientes', icon: Hourglass, desc: 'Cola offline y contingencia' },
+  { id: 'documentos_avanzados', label: 'Comprobantes Avanzados', icon: FileText, desc: 'Retenciones, percepciones y especiales' },
+  { id: 'contabilidad', label: 'Contabilidad & Libros', icon: Calculator, desc: 'Exportación PLE, SIAT y resúmenes' },
+  { id: 'reportes', label: 'Reportes & Analíticas', icon: BarChart3, desc: 'Métricas de ventas, utilidades y Excel' },
+  { id: 'tienda_virtual', label: 'Tienda en Línea', icon: Globe, desc: 'Catálogo online y pedidos WhatsApp' },
   // El id 'restaurante' se mantiene para no romper empresas ya registradas.
-  { id: 'restaurante', label: 'GLORYCHEF · Restaurante', icon: '👨‍🍳', desc: 'Mesas, comandas, cocina y recetas ligadas al inventario' },
-  { id: 'farmacia', label: 'Farmacia & Botica', icon: '💊', desc: 'Lotes, vencimientos y boticas' },
-  { id: 'hoteles', label: 'Hoteles & Hospedajes', icon: '🏨', desc: 'Recepción, reservas, calendario, limpieza y folio del huésped' },
+  { id: 'restaurante', label: 'GLORYCHEF · Restaurante', icon: ChefHat, desc: 'Mesas, comandas, cocina y recetas ligadas al inventario' },
+  { id: 'farmacia', label: 'Farmacia & Botica', icon: Pill, desc: 'Lotes, vencimientos y boticas' },
+  { id: 'hoteles', label: 'Hoteles & Hospedajes', icon: Hotel, desc: 'Recepción, reservas, calendario, limpieza y folio del huésped' },
 ];
 
 export const GLORYCHEF_MODULE_ID = 'restaurante';

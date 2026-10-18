@@ -10,6 +10,8 @@ import { syncService } from '../../services/syncService';
 import { restaurantService } from '../../services/restaurantService';
 import { hotelService } from '../../services/hotelService';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
+import { ventaSchema, validar } from '../../lib/schemas';
 
 export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   const { items, total, count, clearCart, comandaEnCobro } = useCart();
@@ -102,6 +104,8 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
   };
 
   const handleProcessPayment = async () => {
+    const check = validar(ventaSchema, { items, metodo_pago: metodoPago, total: totalFinal, monto_recibido: montoEntregado });
+    if (!check.ok) return toast.error(check.firstError);
     setIsProcessing(true);
     try {
       const correlativoNum = (await db.ventas.count()) + 1;
@@ -157,7 +161,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
         try {
           await hotelService.registrarPago(comandaEnCobro.reservaId, items, venta, { checkout: !!comandaEnCobro.checkout });
         } catch (hotelErr) {
-          alert(`Venta registrada, pero el check-out quedó pendiente: ${hotelErr.message}`);
+          toast.warning(`Venta registrada, pero el check-out quedó pendiente: ${hotelErr.message}`);
         }
       }
 
@@ -561,7 +565,7 @@ export default function CheckoutModal({ isOpen, onClose, onSaleCompleted }) {
                       className="mt-1 px-2.5 py-1 bg-gradient-to-r from-[#FF6B35] to-[#E85B28] hover:from-[#FF6B35] hover:to-[#E85B28] text-white rounded-lg text-[10px] font-bold shadow-xs transition flex items-center gap-1 active:scale-95"
                     >
                       <Sparkles className="w-3 h-3" />
-                      <span>{numOperacion ? `✓ Aprobado: ${numOperacion}` : '⚡ Simular Aprobación Bancaria'}</span>
+                      <span>{numOperacion ? `Aprobado: ${numOperacion}` : 'Simular Aprobación Bancaria'}</span>
                     </button>
                   </div>
                 </div>

@@ -7,6 +7,7 @@ import {
 import { db } from '../../db/dexie';
 import ProductsSubNav from './ProductsSubNav';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const DEFAULT_COMBOS = [
   {
@@ -197,15 +198,15 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
   const handleSaveCombo = (e) => {
     e.preventDefault();
     if (!formNombre.trim()) {
-      alert('Ingresa el nombre del combo.');
+      toast.error('Ingresa el nombre del combo.');
       return;
     }
     if (formProductos.length === 0) {
-      alert('Agrega al menos un producto al combo.');
+      toast.error('Agrega al menos un producto al combo.');
       return;
     }
     if (!formPrecioCombo || Number(formPrecioCombo) <= 0) {
-      alert('Ingresa un precio válido para el combo.');
+      toast.error('Ingresa un precio válido para el combo.');
       return;
     }
 

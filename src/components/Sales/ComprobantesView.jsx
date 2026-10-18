@@ -9,6 +9,7 @@ import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import SalesSubNav from './SalesSubNav';
 import { simbolo, nombreMoneda, getCurrencyCode } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   const { currentUser, empresa, can } = useAuth();
@@ -844,7 +845,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                                 type="button"
                                 onClick={() => {
                                   const email = prompt('Ingresa el correo del cliente:');
-                                  if (email) alert(`Comprobante ${v.correlativo} enviado a: ${email}`);
+                                  if (email) toast.success(`Comprobante ${v.correlativo} enviado a: ${email}`);
                                   setActiveActionsMenuId(null);
                                 }}
                                 className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium"

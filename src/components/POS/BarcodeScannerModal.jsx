@@ -8,6 +8,7 @@ import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useCart } from '../../context/CartContext';
 import { db } from '../../db/dexie';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout }) {
   const { items, total, count, updateQuantity, removeFromCart, clearCart, addToCart } = useCart();
@@ -235,7 +236,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         handleDecodedBarcode(decodedText);
       }
     } catch (err) {
-      alert('No se detectó un código de barras claro en la foto. Intenta con mejor iluminación.');
+      toast.error('No se detectó un código de barras claro en la foto. Intenta con mejor iluminación.');
     }
   };
 
@@ -340,7 +341,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onOpenCheckout })
         setManualCode('');
         setTimeout(() => setLastDetected(null), 2500);
       } else {
-        alert(`Código "${cleanCode}" no encontrado en inventario.`);
+        toast.error(`Código "${cleanCode}" no encontrado en inventario.`);
       }
     }
   };
