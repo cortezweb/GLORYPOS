@@ -11,6 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
 import { CURRENCIES, getCurrency } from '../../utils/currency';
+import { toast } from 'sonner';
 
 // modo 'comprobante' (por defecto) emite ventas; modo 'cotizacion' guarda una cotización
 // (pre venta: no mueve caja, stock ni saldos).
@@ -252,7 +253,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   const handleAddManualProduct = (e) => {
     e.preventDefault();
     if (!manualForm.descripcion.trim()) {
-      alert('Ingresa la descripción del producto.');
+      toast.error('Ingresa la descripción del producto.');
       return;
     }
     setItems([
@@ -292,7 +293,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
       setScanBarcodeQuery('');
       setShowScanModal(false);
     } else {
-      alert(`No se encontró ningún producto con el código: ${scanBarcodeQuery}`);
+      toast.error(`No se encontró ningún producto con el código: ${scanBarcodeQuery}`);
     }
   };
 
@@ -338,7 +339,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   const handleSaveNewClient = async (e) => {
     e.preventDefault();
     if (!newClientForm.razon_social.trim() || !newClientForm.nit_ci.trim()) {
-      alert('Razón Social y Documento (NIT/CI/DNI) son requeridos.');
+      toast.error('Razón Social y Documento (NIT/CI/DNI) son requeridos.');
       return;
     }
     const newC = {
@@ -363,7 +364,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   // Emitir comprobante final
   const handleEmitirComprobante = async () => {
     if (items.length === 0) {
-      alert('Debes agregar al menos un ítem al comprobante.');
+      toast.error('Debes agregar al menos un ítem al comprobante.');
       return;
     }
 
@@ -450,11 +451,11 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   // Guardar cotización (no descuenta stock ni registra cobros)
   const handleGuardarCotizacion = async () => {
     if (items.length === 0) {
-      alert('Agrega al menos un ítem a la cotización.');
+      toast.error('Agrega al menos un ítem a la cotización.');
       return;
     }
     if (!cliente.razon_social?.trim()) {
-      alert('Selecciona un cliente.');
+      toast.error('Selecciona un cliente.');
       return;
     }
 
@@ -1029,10 +1030,10 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
                       onChange={(e) => handleUpdatePago(idx, 'metodo', e.target.value)}
                       className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] outline-none cursor-pointer pr-8"
                     >
-                      <option value="Efectivo">💵 Efectivo</option>
-                      <option value="Tarjeta">💳 Tarjeta Débito / Crédito</option>
-                      <option value="QR">📱 QR / Transferencia</option>
-                      <option value="Depósito">🏦 Depósito en Cuenta</option>
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Tarjeta">Tarjeta Débito / Crédito</option>
+                      <option value="QR">QR / Transferencia</option>
+                      <option value="Depósito">Depósito en Cuenta</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
@@ -1104,10 +1105,10 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
                       onChange={(e) => handleUpdatePago(idx, 'metodo', e.target.value)}
                       className="w-full appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#FF6B35] outline-none cursor-pointer pr-8"
                     >
-                      <option value="Efectivo">💵 Efectivo</option>
-                      <option value="Tarjeta">💳 Tarjeta Débito / Crédito</option>
-                      <option value="QR">📱 QR (Yape / Plin / Transferencia)</option>
-                      <option value="Depósito">🏦 Depósito en Cuenta</option>
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Tarjeta">Tarjeta Débito / Crédito</option>
+                      <option value="QR">QR (Yape / Plin / Transferencia)</option>
+                      <option value="Depósito">Depósito en Cuenta</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>

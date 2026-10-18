@@ -11,6 +11,8 @@ import { syncService } from '../../services/syncService';
 import { RUBROS_CONFIG } from '../../db/rubros';
 import ProductsSubNav from './ProductsSubNav';
 import { simbolo } from '../../utils/currency';
+import { productoSchema, validar } from '../../lib/schemas';
+import { toast } from 'sonner';
 
 // ── REGISTROS SEMILLA EXACTOS AL SCREENSHOT ──
 const SEED_PRODUCTOS_LIST = [
@@ -521,7 +523,8 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
 
   const handleSaveEditProduct = async (e) => {
     e.preventDefault();
-    if (!editForm.nombre.trim() || !editForm.precio_venta) return;
+    const check = validar(productoSchema, editForm);
+    if (!check.ok) return toast.error(check.firstError);
 
     await db.productos_tienda.update(editForm.id, {
       nombre: editForm.nombre.trim(),
@@ -547,7 +550,8 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
   // ── CREACIÓN DE NUEVO PRODUCTO ──
   const handleCreateCustom = async (e) => {
     e.preventDefault();
-    if (!customForm.nombre.trim() || !customForm.precio_venta) return;
+    const check = validar(productoSchema, customForm);
+    if (!check.ok) return toast.error(check.firstError);
 
     const newProd = {
       id: `prod-${Date.now()}`,

@@ -9,6 +9,7 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 // ── REGISTROS INICIALES EXACTOS AL SCREENSHOT ──
 const SEED_COMPRAS = [
@@ -519,11 +520,11 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
   const handleSavePurchase = async (e) => {
     if (e) e.preventDefault();
     if (!selectedSupplier) {
-      alert('Por favor seleccione un proveedor.');
+      toast.error('Por favor seleccione un proveedor.');
       return;
     }
     if (purchaseItems.length === 0) {
-      alert('Debe agregar al menos un producto para armar el detalle de la compra.');
+      toast.error('Debe agregar al menos un producto para armar el detalle de la compra.');
       return;
     }
 

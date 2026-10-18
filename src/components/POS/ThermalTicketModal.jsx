@@ -6,6 +6,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { ticketHTML, imprimirTicket, getAnchoTicket } from '../../utils/ticketPrint';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }) {
   const { empresa } = useAuth();
@@ -134,7 +135,7 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               </button>
 
               <button 
-                onClick={() => alert(`Enlace enviado al cliente ${venta.cliente_nombre}`)}
+                onClick={() => toast.info(`Enlace enviado al cliente ${venta.cliente_nombre}`)}
                 className="bg-[#1E2022] hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <Mail className="w-3.5 h-3.5" />

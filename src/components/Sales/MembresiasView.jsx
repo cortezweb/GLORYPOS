@@ -6,6 +6,7 @@ import {
 import SalesSubNav from './SalesSubNav';
 import { db } from '../../db/dexie';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function MembresiasView({ onSelectSubView }) {
   const [membresias, setMembresias] = useState([]);
@@ -79,7 +80,7 @@ export default function MembresiasView({ onSelectSubView }) {
   const handleCreate = (e) => {
     e.preventDefault();
     if (!formData.cliente_nombre.trim()) {
-      alert('Por favor ingresa el nombre del cliente');
+      toast.error('Por favor ingresa el nombre del cliente');
       return;
     }
 

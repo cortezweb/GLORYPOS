@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function ContabilidadView() {
   const { empresa } = useAuth();
@@ -19,7 +20,7 @@ export default function ContabilidadView() {
   ];
 
   const handleExport = (bookName) => {
-    alert(`Generando archivo TXT / Excel para "${bookName}" del periodo ${activePeriod}...`);
+    toast.info(`Generando archivo TXT / Excel para "${bookName}" del periodo ${activePeriod}...`);
   };
 
   return (

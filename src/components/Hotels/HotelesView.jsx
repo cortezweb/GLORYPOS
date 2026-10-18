@@ -14,6 +14,7 @@ import ReportesHotelTab from './ReportesHotelTab';
 import ConfigHotelTab from './ConfigHotelTab';
 import ReservaModal from './ReservaModal';
 import EstadiaPanel from './EstadiaPanel';
+import { toast } from 'sonner';
 
 export const HOTEL_TABS = [
   { id: 'hotel_recepcion', aliases: ['hoteles', 'hotel_recepcion'], label: 'Recepción', icon: LayoutGrid },
@@ -40,7 +41,7 @@ export default function HotelesView({ currentView = 'hotel_recepcion', onSelectS
     const hab = data.habById[reserva.habitacion_id];
     const items = hotelService.itemsParaCobro(reserva, hab?.numero, opciones);
     if (items.length === 0) {
-      alert('No hay saldo pendiente para cobrar.');
+      toast.error('No hay saldo pendiente para cobrar.');
       return;
     }
     loadItems(items, {

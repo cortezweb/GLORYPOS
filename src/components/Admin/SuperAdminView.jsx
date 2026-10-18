@@ -5,7 +5,7 @@ import {
   AlertCircle, Clock, Sparkles, DollarSign, Lock, Mail, Phone, ArrowUpRight,
   LogOut, RefreshCw, X, FileText, ShoppingCart, Wallet, Send, Terminal,
   Layers, Zap, UserCheck, PhoneCall, CheckSquare, SlidersHorizontal, KeyRound,
-  Palette, Laptop, CheckCheck, LayoutDashboard
+  Palette, Laptop, CheckCheck, LayoutDashboard, Store, Wrench, Pill, Shirt, Beef, IceCreamCone, ChefHat, User
 } from 'lucide-react';
 import AdminDashboardView from './AdminDashboardView';
 import { useAuth } from '../../context/AuthContext';
@@ -17,15 +17,16 @@ import { ALL_CLIENT_MODULES, MODULE_PRESETS } from '../../config/modules';
 import { playCashChime } from '../../utils/audio';
 import GloryLogo from '../Common/GloryLogo';
 import { CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export const RUBROS = [
-  { id: 'ABARROTES', label: 'Minimarket & Abarrotes', icon: '🏪' },
-  { id: 'FERRETERIA', label: 'Ferretería & Construcción', icon: '🔧' },
-  { id: 'FARMACIA', label: 'Farmacia & Botica', icon: '💊' },
-  { id: 'ROPA', label: 'Ropa & Calzado', icon: '👗' },
-  { id: 'CARNICERIA', label: 'Carnicería & Frial', icon: '🥩' },
-  { id: 'HELADERIA', label: 'Heladería & Cafetería', icon: '🍦' },
-  { id: 'RESTAURANTE', label: 'Restaurante (GLORYCHEF)', icon: '👨‍🍳' },
+  { id: 'ABARROTES', label: 'Minimarket & Abarrotes', icon: Store },
+  { id: 'FERRETERIA', label: 'Ferretería & Construcción', icon: Wrench },
+  { id: 'FARMACIA', label: 'Farmacia & Botica', icon: Pill },
+  { id: 'ROPA', label: 'Ropa & Calzado', icon: Shirt },
+  { id: 'CARNICERIA', label: 'Carnicería & Frial', icon: Beef },
+  { id: 'HELADERIA', label: 'Heladería & Cafetería', icon: IceCreamCone },
+  { id: 'RESTAURANTE', label: 'Restaurante (GLORYCHEF)', icon: ChefHat },
 ];
 
 export const CIUDADES = ['Santa Cruz', 'La Paz', 'Cochabamba', 'Sucre', 'Tarija', 'Oruro', 'Potosí', 'Beni', 'Pando'];
@@ -375,10 +376,10 @@ export default function SuperAdminView({
         showToast(`Módulos de "${editingModulesClient.nombre}" actualizados correctamente`);
         setEditingModulesClient(null);
       } else {
-        alert('Error al actualizar módulos: ' + res.error);
+        toast.error('Error al actualizar módulos: ' + res.error);
       }
     } catch (err) {
-      alert('Error: ' + err.message);
+      toast.error('Error: ' + err.message);
     } finally {
       setIsSavingModules(false);
     }
@@ -396,12 +397,12 @@ export default function SuperAdminView({
   const handleDeployTenant = async (e) => {
     e.preventDefault();
     if (!drawerData.nombre.trim() || !drawerData.slug.trim()) {
-      alert('Por favor ingresa el nombre del negocio y su subdominio.');
+      toast.error('Por favor ingresa el nombre del negocio y su subdominio.');
       return;
     }
 
     if (!drawerData.modulos_activos || drawerData.modulos_activos.length === 0) {
-      alert('Por favor selecciona al menos un módulo para este cliente.');
+      toast.error('Por favor selecciona al menos un módulo para este cliente.');
       return;
     }
 
@@ -482,7 +483,7 @@ export default function SuperAdminView({
       showToast(`¡Tenant "${fullCreated.nombre}" desplegado con éxito!`);
     } catch (err) {
       console.error('[SuperAdmin] Error en deploy:', err);
-      alert('Ocurrió un error al desplegar el tenant: ' + err.message);
+      toast.error('Ocurrió un error al desplegar el tenant: ' + err.message);
     } finally {
       setIsDeploying(false);
     }
@@ -496,7 +497,7 @@ export default function SuperAdminView({
       showToast(`Conectado al espacio de "${res.empresa.nombre}"`);
       if (onSelectView) onSelectView('pos');
     } else {
-      alert(res.error || 'No se pudo conectar a la empresa');
+      toast.error(res.error || 'No se pudo conectar a la empresa');
     }
   };
 
@@ -858,7 +859,7 @@ export default function SuperAdminView({
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-base font-bold shrink-0 shadow-2xs">
-                              {RUBROS.find(r => r.id === client.rubro)?.icon || '🏪'}
+                              {(() => { const RubroIcon = RUBROS.find(r => r.id === client.rubro)?.icon || Store; return <RubroIcon size={18} className="text-slate-600" />; })()}
                             </div>
                             <div className="space-y-0.5">
                               <div className="flex items-center gap-2">
@@ -980,15 +981,15 @@ export default function SuperAdminView({
                 </div>
                 <div className="text-slate-600 text-xs space-y-1 pt-1.5 border-t border-slate-200/80">
                   <p className="flex items-center gap-1.5">
-                    <span className="text-slate-400">👤 Dueño:</span>
+                    <span className="text-slate-400 flex items-center gap-1"><User size={12} /> Dueño:</span>
                     <strong className="text-slate-800">{c.propietario}</strong>
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <span className="text-slate-400">✉️ Correo:</span>
+                    <span className="text-slate-400 flex items-center gap-1"><Mail size={12} /> Correo:</span>
                     <span className="font-mono text-slate-700">{c.email}</span>
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <span className="text-slate-400">🔑 PIN de Caja:</span>
+                    <span className="text-slate-400 flex items-center gap-1"><KeyRound size={12} /> PIN de Caja:</span>
                     <span className="font-mono font-bold text-[#FF6B35]">1234</span>
                   </p>
                 </div>
@@ -1174,7 +1175,7 @@ export default function SuperAdminView({
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   >
                     {RUBROS.map(r => (
-                      <option key={r.id} value={r.id}>{r.icon} {r.label}</option>
+                      <option key={r.id} value={r.id}>{r.label}</option>
                     ))}
                   </select>
                 </div>
@@ -1303,7 +1304,7 @@ export default function SuperAdminView({
                             onChange={() => {}}
                             className="rounded border-slate-300 text-[#FF6B35] focus:ring-0"
                           />
-                          <span className="text-sm">{mod.icon}</span>
+                          <mod.icon size={14} className="shrink-0 text-slate-500" />
                           <span className="truncate">{mod.label}</span>
                         </label>
                       );
@@ -1500,7 +1501,7 @@ export default function SuperAdminView({
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs flex items-center gap-1.5">
-                        <span>{mod.icon}</span>
+                        <mod.icon size={14} className="shrink-0 text-slate-500" />
                         <span className="truncate">{mod.label}</span>
                       </p>
                       <p className="text-[10px] text-slate-400 font-normal mt-0.5 leading-tight">{mod.desc}</p>

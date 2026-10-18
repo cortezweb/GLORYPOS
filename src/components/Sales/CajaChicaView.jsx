@@ -8,6 +8,7 @@ import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaultTab = 'mis_cajas' }) {
   const [activeTab, setActiveTab] = useState(defaultTab); // 'mis_cajas' | 'reporte_cajas'
@@ -71,11 +72,11 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
   const handleAddMovement = async (e) => {
     e.preventDefault();
     if (!movementForm.monto || Number(movementForm.monto) <= 0) {
-      alert('Por favor ingresa un monto válido');
+      toast.error('Por favor ingresa un monto válido');
       return;
     }
     if (!movementForm.motivo.trim()) {
-      alert('Por favor ingresa el motivo del movimiento');
+      toast.error('Por favor ingresa el motivo del movimiento');
       return;
     }
 

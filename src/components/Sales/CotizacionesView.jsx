@@ -14,6 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 import { descargarCotizacionPdf } from '../../utils/cotizacionPdf';
 import CotizacionPdfModal from './CotizacionPdfModal';
 import CotizacionEmailModal from './CotizacionEmailModal';
+import { toast } from 'sonner';
 
 const SEED_COTIZACIONES = [
   {
@@ -278,11 +279,11 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
   const handleCreateQuote = async (e) => {
     e.preventDefault();
     if (!formData.cliente_nombre.trim()) {
-      alert('Por favor ingresa el nombre del cliente');
+      toast.error('Por favor ingresa el nombre del cliente');
       return;
     }
     if (formData.items.length === 0) {
-      alert('Por favor agrega al menos un producto a la cotización');
+      toast.error('Por favor agrega al menos un producto a la cotización');
       return;
     }
 
@@ -491,7 +492,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           <button
                             type="button"
                             onClick={() => {
-                              alert(`Imprimiendo ticket 80mm para ${cot.correlativo}...`);
+                              toast.info(`Imprimiendo ticket 80mm para ${cot.correlativo}...`);
                             }}
                             title="Ticket 80mm"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
@@ -503,7 +504,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           <button
                             type="button"
                             onClick={() => {
-                              alert(`Imprimiendo ticket 58mm para ${cot.correlativo}...`);
+                              toast.info(`Imprimiendo ticket 58mm para ${cot.correlativo}...`);
                             }}
                             title="Ticket 58mm / A5"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"

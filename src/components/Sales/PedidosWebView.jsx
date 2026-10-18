@@ -9,6 +9,7 @@ import { tiendaService, ESTADOS_PEDIDO, METODOS_PAGO_WEB } from '../../services/
 import { playCashChime } from '../../utils/audio';
 import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const money = (n) => `${simbolo()} ${(Number(n) || 0).toFixed(2)}`;
 const FILTROS = [
@@ -92,7 +93,7 @@ export default function PedidosWebView({ onSelectSubView, hideSubNav = false, on
       await fn();
       await cargar(false);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -110,7 +111,7 @@ export default function PedidosWebView({ onSelectSubView, hideSubNav = false, on
   const reimprimir = async (p) => {
     const venta = p.venta_id ? await db.ventas.get(p.venta_id) : null;
     if (venta) onOpenReceipt?.(venta);
-    else alert('No se encontró la venta de este pedido en este equipo.');
+    else toast.error('No se encontró la venta de este pedido en este equipo.');
   };
 
   const whatsapp = (p) => {

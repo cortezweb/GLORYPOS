@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Save } from 'lucide-react';
 import { restaurantService } from '../../services/restaurantService';
+import { toast } from 'sonner';
 
 // Configuración de salones y mesas del restaurante
 export default function ConfigSalonesTab({ data }) {
@@ -12,7 +13,7 @@ export default function ConfigSalonesTab({ data }) {
     try {
       await fn();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 

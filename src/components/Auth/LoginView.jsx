@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Lock, KeyRound, Mail, ShieldCheck, UserCheck, Delete, 
   ArrowRight, Building2, Store, Sparkles, CheckCircle2, AlertCircle, Eye, EyeOff,
-  Clock, UserPlus, Globe, Check, RefreshCw
+  Clock, UserPlus, Globe, Check, RefreshCw, Crown, ShoppingCart
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { playCashChime, playErrorBeep } from '../../utils/audio';
 import GloryLogo from '../Common/GloryLogo';
+import { loginSchema, validar } from '../../lib/schemas';
 
 export default function LoginView({ onGoToRegister }) {
   const { 
@@ -183,6 +184,12 @@ export default function LoginView({ onGoToRegister }) {
   const handleCredentialsSubmit = async (e) => {
     e.preventDefault();
     if (isLocked) return;
+
+    const check = validar(loginSchema, { identifier, password });
+    if (!check.ok) {
+      triggerError(check.firstError);
+      return;
+    }
 
     // Si el usuario modificó el identificador de empresa pero no dio enter, aplicarlo primero
     if (!detectedSubdomain && companyIdInput.trim() !== tenantSlug) {
@@ -600,7 +607,7 @@ export default function LoginView({ onGoToRegister }) {
                       disabled={isLocked}
                       className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-[#FF6B35] font-bold border border-slate-200 flex items-center justify-center gap-1 transition"
                     >
-                      <span>{usr.rol === 'ADMIN' ? '👑' : '🛒'}</span>
+                      {usr.rol === 'ADMIN' ? <Crown size={13} /> : <ShoppingCart size={13} />}
                       <span>{usr.nombre.split(' ')[0]}</span>
                       <span className="text-[9px] text-slate-400 font-mono">[{rawPin}]</span>
                     </button>

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { LogIn, LogOut, User, Moon, BedDouble, Percent, Sparkles, Wrench } from 'lucide-react';
 import { hotelService, HAB_ESTADOS, hoyISO, addDias, formatFecha, folio } from '../../services/hotelService';
 import { money } from './useHotelData';
+import { toast } from 'sonner';
 
 export default function RecepcionTab({ data, onOpenReserva, onNuevaReserva }) {
   const { habitaciones, reservas, tiposById, habById } = data;
@@ -34,14 +35,14 @@ export default function RecepcionTab({ data, onOpenReserva, onNuevaReserva }) {
       await hotelService.checkIn(r.id);
       onOpenReserva(r.id);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
   const clickHab = (hab) => {
     const { reserva } = estados[hab.id];
     if (reserva) return onOpenReserva(reserva.id);
-    if (hab.limpieza === 'MANTENIMIENTO') return alert(`Habitación ${hab.numero} en mantenimiento: ${hab.nota || 'sin nota'}`);
+    if (hab.limpieza === 'MANTENIMIENTO') return toast.error(`Habitación ${hab.numero} en mantenimiento: ${hab.nota || 'sin nota'}`);
     onNuevaReserva({ walkin: true, habitacion_id: hab.id, llegada: hoy, salida: addDias(hoy, 1) });
   };
 

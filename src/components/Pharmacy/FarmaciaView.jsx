@@ -4,6 +4,7 @@ import {
   Plus, CheckCircle2, Clock, FileSpreadsheet, Layers
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'sonner';
 
 export default function FarmaciaView() {
   const { empresa } = useAuth();
@@ -46,7 +47,7 @@ export default function FarmaciaView() {
 
         <button
           type="button"
-          onClick={() => alert('Formulario de ingreso de nuevo lote')}
+          onClick={() => toast.info('Formulario de ingreso de nuevo lote')}
           className="px-4 py-2.5 bg-[#FF6B35] hover:bg-[#FF6B35] text-white text-xs font-black rounded-xl transition flex items-center gap-2 shadow-sm"
         >
           <Plus className="w-4 h-4" />

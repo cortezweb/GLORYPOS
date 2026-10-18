@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { hotelService, folio, formatFecha, RESERVA_ESTADOS, hoyISO } from '../../services/hotelService';
 import { money } from './useHotelData';
 import { simbolo } from '../../utils/currency';
+import { toast } from 'sonner';
 
 const ESTADO_BADGE = {
   RESERVADA: 'bg-indigo-50 text-indigo-700 border-indigo-200',
@@ -44,7 +45,7 @@ export default function EstadiaPanel({ reserva: r, data, onBack, onEditar, onCob
   );
 
   const run = async (fn) => {
-    try { await fn(); } catch (err) { alert(err.message); }
+    try { await fn(); } catch (err) { toast.error(err.message); }
   };
 
   const adelanto = () => {
