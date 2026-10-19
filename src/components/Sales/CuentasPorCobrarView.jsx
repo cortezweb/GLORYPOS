@@ -4,7 +4,6 @@ import {
   Calendar, AlertCircle, Clock, ArrowRight, Printer, X
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
 
 const DEFAULT_CUENTAS = [
@@ -111,7 +110,6 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
 
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans">
-      <SalesSubNav currentSubView="cuentas_por_cobrar" onSelectSubView={onSelectSubView} />
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         {/* Toast */}

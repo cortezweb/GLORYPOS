@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
-import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
 
@@ -99,8 +98,6 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
 
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans">
-      {/* Sales Sub-navigation Bar */}
-      <SalesSubNav currentSubView="caja_chica" onSelectSubView={onSelectSubView} />
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         

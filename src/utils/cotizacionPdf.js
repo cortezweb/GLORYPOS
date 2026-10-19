@@ -65,6 +65,27 @@ function fechaCorta(iso) {
   return y && m && d ? `${d}/${m}/${y}` : String(iso || '');
 }
 
+// Texto en diagonal, rojo y semitransparente sobre cada página (p. ej. "Previsualización")
+export function ponerMarcaAgua(doc, texto) {
+  if (!texto) return;
+  const paginas = doc.getNumberOfPages();
+  for (let i = 1; i <= paginas; i++) {
+    doc.setPage(i);
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({ opacity: 0.22 }));
+    doc.setTextColor(220, 38, 38);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(Math.max(18, Math.min(W, H) / 4.5));
+    // Centrado a mano: jsPDF no alinea al centro texto rotado
+    const mitad = doc.getTextWidth(texto) / 2;
+    const r = Math.PI / 4;
+    doc.text(texto, W / 2 - mitad * Math.cos(r), H / 2 + mitad * Math.sin(r), { angle: 45 });
+    doc.restoreGraphicsState();
+  }
+}
+
 // ── Documento ─────────────────────────────────────────────────────────────
 // cot: registro de la tabla cotizaciones; empresa: datos de la empresa; vendedor: nombre del usuario.
 // opts.titulo y opts.esVenta reutilizan el mismo formato para notas de venta, boletas y facturas.
@@ -267,6 +288,7 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '', opts = {}) 
   doc.text('Comprobante emitido a través de GLORYPOS', W / 2, alto - 14, { align: 'center' });
   if (!titulo.includes('FACTURA')) doc.text('Documento comercial — no válido como factura', W / 2, alto - 10.5, { align: 'center' });
 
+  ponerMarcaAgua(doc, opts.marcaAgua);
   return doc;
 }
 

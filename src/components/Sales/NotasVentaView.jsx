@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
-import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
 import { descargarVentaPdf, tituloVenta } from '../../utils/cotizacionPdf';
@@ -240,10 +239,6 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans pb-16">
       
-      {/* Barra de navegación de ventas */}
-      {onSelectSubView && (
-        <SalesSubNav currentSubView="notas_venta" onSelectSubView={onSelectSubView} />
-      )}
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         

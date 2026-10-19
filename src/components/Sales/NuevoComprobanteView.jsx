@@ -9,16 +9,17 @@ import {
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import { syncService } from '../../services/syncService';
-import SalesSubNav from './SalesSubNav';
 import { CURRENCIES, getCurrency } from '../../utils/currency';
 import { toast } from 'sonner';
+import { CotizacionPreviewModal, CotizacionRegistradaModal } from './CotizacionDocsModal';
 
 // modo 'comprobante' (por defecto) emite ventas; modo 'cotizacion' guarda una cotización
 // (pre venta: no mueve caja, stock ni saldos).
 // cotizacionOrigen: cotización con la que se abre el formulario (editarla en modo cotización,
 // o convertirla en nota de venta / comprobante). tipoInicial: tipo de comprobante a preseleccionar.
-export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, modo = 'comprobante', cotizacionOrigen = null, tipoInicial = null }) {
-  const { empresa } = useAuth();
+export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, modo = 'comprobante', cotizacionOrigen = null, tipoInicial = null, onNuevaCotizacion }) {
+  const { empresa, currentUser } = useAuth();
+  const vendedor = currentUser?.nombre || '';
   const esCotizacion = modo === 'cotizacion';
   const editandoCotizacion = esCotizacion && Boolean(cotizacionOrigen?.id);
 
@@ -132,6 +133,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
     try { return localStorage.getItem('glorypos_cot_terminos') === '1'; } catch { return false; }
   });
   const [showPreview, setShowPreview] = useState(false);
+  const [cotizacionGuardada, setCotizacionGuardada] = useState(null);
 
   // Selector de productos: se queda abierto para agregar varios
   const [lastAddedKey, setLastAddedKey] = useState(null);
@@ -487,12 +489,26 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
     const ultimo = existentes
       .filter(c => String(c.correlativo || '').startsWith(`${serie}-`))
       .reduce((max, c) => Math.max(max, parseInt(String(c.correlativo).split('-')[1], 10) || 0), 0);
-    const correlativo = `${serie}-${String(ultimo + 1).padStart(8, '0')}`;
+    const nueva = armarCotizacion(`${serie}-${String(ultimo + 1).padStart(8, '0')}`);
 
+    if (editandoCotizacion) {
+      // Editar: se conserva el número, la fecha de creación y el estado de la cotización original
+      const { id, correlativo: _nuevoNumero, estado, ...cambios } = nueva;
+      await db.cotizaciones.update(cotizacionOrigen.id, cambios);
+      setCotizacionGuardada({ ...cotizacionOrigen, ...cambios });
+    } else {
+      await db.cotizaciones.add(nueva);
+      setCotizacionGuardada(nueva);
+    }
+    syncService.triggerBackgroundSync();
+  };
+
+  // Arma el registro de la cotización con los datos actuales del formulario
+  const armarCotizacion = (correlativo) => {
     const msDia = 24 * 60 * 60 * 1000;
     const validez = Math.max(1, Math.round((new Date(`${fechaVencimiento}T00:00:00`) - new Date(`${fechaEmision}T00:00:00`)) / msDia));
 
-    const nueva = {
+    return {
       id: `cot-${Date.now()}`,
       fecha: fechaEmision,
       fecha_vencimiento: fechaVencimiento,
@@ -525,20 +541,18 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
       total: totalComprobante,
       estado: 'Borrador'
     };
+  };
 
+  const nuevaCotizacion = () => {
     if (editandoCotizacion) {
-      // Editar: se conserva el número, la fecha de creación y el estado de la cotización original
-      const { id, correlativo: _nuevoNumero, estado, ...cambios } = nueva;
-      await db.cotizaciones.update(cotizacionOrigen.id, cambios);
-    } else {
-      await db.cotizaciones.add(nueva);
+      // Al editar, el formulario se vuelve a montar vacío desde App
+      if (onNuevaCotizacion) onNuevaCotizacion();
+      return;
     }
-    syncService.triggerBackgroundSync();
-    setIsSuccess(true);
-    setTimeout(() => {
-      setIsSuccess(false);
-      if (onSelectSubView) onSelectSubView('ventas_cotizaciones');
-    }, 700);
+    setItems([]);
+    setNotas('');
+    setDescuentoGlobalPorcentaje(0);
+    setCotizacionGuardada(null);
   };
 
   const handleResetForm = () => {
@@ -554,10 +568,18 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
     }
   };
 
+
+  // Datos para los PDF: la empresa del sistema con los datos editados en el formulario
+  const empresaPdf = useMemo(() => ({ ...empresa, ...empresaDatos }), [empresa, empresaDatos]);
+  // Se arma solo al abrir la previsualización para no regenerar el PDF en cada render
+  const cotizacionPrevia = useMemo(
+    () => (showPreview ? armarCotizacion(editandoCotizacion ? cotizacionOrigen.correlativo : `${serie}-BORRADOR`) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [showPreview]
+  );
+
   return (
     <div className="flex-1 flex flex-col bg-[#f8fafc] min-h-screen font-sans relative pb-16">
-      {/* Subnavegación Superior para Ventas */}
-      <SalesSubNav currentSubView={esCotizacion ? 'cotizaciones' : 'nuevo_comprobante'} onSelectSubView={onSelectSubView} />
 
       {/* Botón Flotante Lateral Derecho: "Abrir información adicional >" */}
       {!esCotizacion && (
@@ -1356,66 +1378,23 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
       </main>
 
       {esCotizacion && showPreview && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <h3 className="font-bold text-sm text-slate-800">Vista previa de la cotización</h3>
-              <button type="button" onClick={() => setShowPreview(false)} className="text-slate-400 hover:text-slate-600 p-1" aria-label="Cerrar">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="p-5 space-y-4 text-xs text-slate-700">
-              <div className="flex flex-wrap justify-between gap-2">
-                <div>
-                  <p className="font-black text-slate-900 uppercase">{empresaDatos.nombre}</p>
-                  <p className="text-slate-500">{empresaDatos.direccion}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-slate-900">COTIZACIÓN {serie}</p>
-                  <p>Emisión: {fechaEmision}</p>
-                  <p>Vigencia hasta: {fechaVencimiento}</p>
-                </div>
-              </div>
-              <p><span className="font-semibold">Cliente:</span> {cliente.razon_social} — {cliente.nit_ci}</p>
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-slate-200 text-[10px] uppercase text-slate-500">
-                    <th className="py-1.5">Descripción</th>
-                    <th className="py-1.5 text-right">Cant.</th>
-                    <th className="py-1.5 text-right">P. unit.</th>
-                    <th className="py-1.5 text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {items.map(it => {
-                    const t = Math.max(0, (Number(it.cantidad) || 0) * (Number(it.precio_unitario) || 0) - (Number(it.descuento) || 0));
-                    return (
-                      <tr key={it.id}>
-                        <td className="py-1.5">{it.descripcion}</td>
-                        <td className="py-1.5 text-right">{it.cantidad}</td>
-                        <td className="py-1.5 text-right">{currencySymbol} {(Number(it.precio_unitario) || 0).toFixed(2)}</td>
-                        <td className="py-1.5 text-right font-semibold">{currencySymbol} {t.toFixed(2)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              <div className="flex justify-between border-t border-slate-200 pt-3 text-sm">
-                <span className="font-black uppercase">Total</span>
-                <span className="font-black">{currencySymbol} {totalComprobante.toFixed(2)}</span>
-              </div>
-              {notas && <p><span className="font-semibold">Notas:</span> {notas}</p>}
-              {mostrarTerminos && (
-                <p className="text-[11px] text-slate-500">Términos y condiciones: precios válidos hasta la fecha de vigencia. Sujeto a disponibilidad de stock.</p>
-              )}
-            </div>
-            <div className="p-4 border-t border-slate-200 flex justify-end">
-              <button type="button" onClick={() => setShowPreview(false)} className="px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-semibold text-xs">
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
+        <CotizacionPreviewModal
+          cot={cotizacionPrevia}
+          empresa={empresaPdf}
+          vendedor={vendedor}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
+
+      {cotizacionGuardada && (
+        <CotizacionRegistradaModal
+          cot={cotizacionGuardada}
+          empresa={empresaPdf}
+          vendedor={vendedor}
+          onIrLista={() => onSelectSubView && onSelectSubView('ventas_cotizaciones')}
+          onNueva={nuevaCotizacion}
+          onClose={() => onSelectSubView && onSelectSubView('ventas_cotizaciones')}
+        />
       )}
 
       {/* ========================================================= */}

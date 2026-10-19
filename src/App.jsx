@@ -7,7 +7,6 @@ import TopBar from './components/Layout/TopBar';
 import Sidebar from './components/Layout/Sidebar';
 import DesktopSidebar from './components/Layout/DesktopSidebar';
 import BottomNav from './components/Layout/BottomNav';
-import TrialBanner from './components/Subscription/TrialBanner';
 
 import PosView from './components/POS/PosView';
 import VariantModal from './components/POS/VariantModal';
@@ -257,11 +256,6 @@ function MainShell() {
           />
         </div>
 
-        {/* Trial Countdown Banner (Solo Desktop; en móvil se muestra en la cabecera) */}
-        <div className="hidden lg:block shrink-0">
-          <TrialBanner onOpenSubscription={() => setCurrentView('subscription')} />
-        </div>
-
         {/* Active Main View Container */}
         {!canAccessView(currentView) ? (
           <div className="flex-1 overflow-y-auto pb-20 lg:pb-8 w-full">
@@ -356,6 +350,7 @@ function MainShell() {
                   modo="cotizacion"
                   cotizacionOrigen={cotizacionForm?.accion === 'editar' ? cotizacionForm.cot : null}
                   onSelectSubView={(sub) => setCurrentView(sub)}
+                  onNuevaCotizacion={() => setCotizacionForm(null)}
                 />
               )}
               {['nuevo_comprobante', 'ventas_nuevo'].includes(currentView) && (

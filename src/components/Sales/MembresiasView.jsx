@@ -3,7 +3,6 @@ import {
   CreditCard, RotateCw, Plus, ChevronDown, Search, X, 
   CheckCircle2, Clock, Trash2, Edit, AlertCircle, Calendar
 } from 'lucide-react';
-import SalesSubNav from './SalesSubNav';
 import { db } from '../../db/dexie';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
@@ -125,10 +124,6 @@ export default function MembresiasView({ onSelectSubView }) {
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans pb-16">
       
-      {/* Sub-navegación si se navega desde Ventas */}
-      {onSelectSubView && (
-        <SalesSubNav currentSubView="membresias" onSelectSubView={onSelectSubView} />
-      )}
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         

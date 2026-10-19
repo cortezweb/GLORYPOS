@@ -516,7 +516,6 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
       {/* PESTAÑA 3: PEDIDOS WEB INTEGRADOS */}
       {activeTab === 'pedidos' && (
         <PedidosWebView 
-          hideSubNav={true} 
           onOpenPosWithCart={onOpenPosWithCart}
           onSelectSubView={onSelectView}
           onOpenReceipt={onOpenReceipt}

@@ -1,7 +1,7 @@
 // Ticket 58 / 80 mm en PDF (jsPDF): página del ancho exacto del rollo y alto según el contenido.
 import { jsPDF } from 'jspdf';
 import { simbolo, getCurrency } from './currency';
-import { montoEnLetras } from './cotizacionPdf';
+import { montoEnLetras, ponerMarcaAgua } from './cotizacionPdf';
 
 const fmt = (n) => (Number(n) || 0).toFixed(2);
 
@@ -105,12 +105,13 @@ function dibujar(doc, datos, empresa, ancho, titulo) {
   return y + M;
 }
 
-// datos: venta o cotización (correlativo, fecha, cliente, items, total)
-export function crearTicketPdf(datos, empresa, anchoMm = 80, titulo = 'NOTA DE VENTA') {
+// datos: venta o cotización (correlativo, fecha, cliente, items, total). opts.marcaAgua: texto en diagonal
+export function crearTicketPdf(datos, empresa, anchoMm = 80, titulo = 'NOTA DE VENTA', opts = {}) {
   const ancho = Number(anchoMm) === 58 ? 58 : 80;
   const alto = dibujar(new jsPDF({ unit: 'mm', format: [ancho, 2000] }), datos, empresa, ancho, titulo);
   const doc = new jsPDF({ unit: 'mm', format: [ancho, Math.max(alto, 60)] });
   dibujar(doc, datos, empresa, ancho, titulo);
+  ponerMarcaAgua(doc, opts.marcaAgua);
   return doc;
 }
 

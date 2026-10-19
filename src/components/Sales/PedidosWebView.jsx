@@ -7,7 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
 import { tiendaService, ESTADOS_PEDIDO, METODOS_PAGO_WEB } from '../../services/tiendaService';
 import { playCashChime } from '../../utils/audio';
-import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
 
@@ -25,7 +24,7 @@ const metodoLabel = (id) => METODOS_PAGO_WEB.find(m => m.id === id)?.label || id
 
 // Ventana del sistema donde llegan los pedidos de la tienda en línea.
 // Cada pedido trae su comprobante generado; el administrador confirma el cierre e imprime.
-export default function PedidosWebView({ onSelectSubView, hideSubNav = false, onOpenReceipt }) {
+export default function PedidosWebView({ onSelectSubView, onOpenReceipt }) {
   const { empresa, currentUser } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [filtro, setFiltro] = useState('ACTIVOS');
@@ -123,7 +122,6 @@ export default function PedidosWebView({ onSelectSubView, hideSubNav = false, on
 
   return (
     <div className="flex-1 flex flex-col font-sans">
-      {!hideSubNav && onSelectSubView && <SalesSubNav currentSubView="pedidos_web" onSelectSubView={onSelectSubView} />}
 
       <main className="w-full p-4 sm:p-6 space-y-4">
         {aviso && (
