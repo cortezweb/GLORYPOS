@@ -167,7 +167,7 @@ export default function CuentasBancariasView({ onSelectSubView }) {
   }, [movimientos, searchMov, selectedCuentaFilter]);
 
   return (
-    <div className="space-y-4 animate-fadeIn pb-16">
+    <div className="space-y-4 animate-fadeIn">
       {/* Subnavegación Superior de Finanzas */}
       <FinanceSubNav activeTab="cuentas_bancarias" onSelectTab={onSelectSubView} />
 

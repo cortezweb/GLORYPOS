@@ -80,7 +80,7 @@ export default function ReportesCajaView({ onSelectSubView }) {
   };
 
   return (
-    <div className="space-y-4 animate-fadeIn pb-16">
+    <div className="space-y-4 animate-fadeIn">
       {/* Subnavegación Superior de Finanzas */}
       <FinanceSubNav activeTab="reportes_caja" onSelectTab={onSelectSubView} />
 

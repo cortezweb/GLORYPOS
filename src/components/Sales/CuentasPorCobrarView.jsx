@@ -109,7 +109,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans">
+    <div className="flex-1 flex flex-col font-sans">
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         {/* Toast */}

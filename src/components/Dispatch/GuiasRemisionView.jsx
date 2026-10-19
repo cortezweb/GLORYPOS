@@ -23,7 +23,7 @@ export default function GuiasRemisionView({ initialTab = 'guias_remitente', onSe
   };
 
   return (
-    <div className="space-y-4 animate-fadeIn pb-16">
+    <div className="space-y-4 animate-fadeIn">
       {/* Subnavegación Superior del módulo Guías de Remisión */}
       <DispatchSubNav activeTab={activeTab} onSelectTab={handleTabChange} />
 

@@ -743,7 +743,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
   }, [products, productSearchTerm]);
 
   return (
-    <div className="flex-1 flex flex-col font-sans animate-fadeIn pb-14">
+    <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
       {/* Toast Notification */}
       {toastMsg && (

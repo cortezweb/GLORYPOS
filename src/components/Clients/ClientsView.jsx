@@ -80,7 +80,7 @@ export default function ClientsView() {
   });
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 min-h-screen pb-24 font-sans text-slate-800">
+    <div className="flex-1 flex flex-col font-sans text-slate-800">
       
       {/* Toast Notification */}
       {toastMsg && (

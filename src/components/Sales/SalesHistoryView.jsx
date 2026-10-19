@@ -25,7 +25,7 @@ export default function SalesHistoryView({ onOpenReceipt }) {
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 overflow-y-auto pb-24">
+    <div className="flex-1 flex flex-col overflow-y-auto">
       {/* Metrics Banner */}
       <div className="bg-white p-4 border-b border-slate-200 space-y-3">
         <div>

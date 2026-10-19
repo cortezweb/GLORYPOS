@@ -245,7 +245,7 @@ export default function ServiciosView({ onSelectSubView }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f8fafc] min-h-screen font-sans">
+    <div className="flex-1 flex flex-col font-sans">
       {/* Subnavegación de Productos */}
       <ProductsSubNav currentSubView="servicios" onSelectSubView={onSelectSubView} />
 
