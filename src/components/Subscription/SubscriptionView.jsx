@@ -16,7 +16,7 @@ export default function SubscriptionView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 overflow-y-auto pb-24">
+    <div className="flex-1 flex flex-col overflow-y-auto">
       {/* Current Subscription Status Header */}
       <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-5">
         <div className="flex items-center justify-between mb-3">

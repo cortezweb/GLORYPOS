@@ -247,7 +247,7 @@ export default function AdminDashboardView({ onSelectView, onOpenCloseCash }) {
   ];
 
   return (
-    <div className="space-y-4 pb-16 font-sans text-slate-800 animate-fadeIn">
+    <div className="space-y-4 font-sans text-slate-800 animate-fadeIn">
       
       {/* ══════════════════════════════════════════════════════════════════════ */}
       {/* 1. CABECERA & BOTÓN ACTUALIZAR                                         */}

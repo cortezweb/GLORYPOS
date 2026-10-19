@@ -165,7 +165,7 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
   };
 
   return (
-    <div className="flex-1 flex flex-col font-sans animate-fadeIn pb-14">
+    <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
       {/* ══════════════════════════════════════════════════════════════════ */}
       {/* BARRA SUPERIOR DE PESTAÑAS (Tienda en Vivo / Banners / Pedidos)    */}

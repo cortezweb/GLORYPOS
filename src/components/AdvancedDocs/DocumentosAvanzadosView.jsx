@@ -254,7 +254,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
   };
 
   return (
-    <div className="space-y-4 animate-fadeIn pb-16">
+    <div className="space-y-4 animate-fadeIn">
       {/* Título de la vista */}
       <div>
         <h1 className="text-xl font-bold text-slate-800 tracking-tight">

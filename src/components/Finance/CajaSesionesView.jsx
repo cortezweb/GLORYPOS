@@ -181,7 +181,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col font-sans animate-fadeIn pb-14 bg-slate-50 min-h-screen">
+    <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
       {/* Sub-navegación superior de Finanzas */}
       {onSelectSubView && (

@@ -579,7 +579,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f8fafc] min-h-screen font-sans relative pb-16">
+    <div className="flex-1 flex flex-col font-sans relative">
 
       {/* Botón Flotante Lateral Derecho: "Abrir información adicional >" */}
       {!esCotizacion && (

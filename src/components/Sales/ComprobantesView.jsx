@@ -410,7 +410,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f8fafc] min-h-screen font-sans relative pb-16">
+    <div className="flex-1 flex flex-col font-sans relative">
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         

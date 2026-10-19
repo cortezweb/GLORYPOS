@@ -137,7 +137,7 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 min-h-screen">
+    <div className="flex-1 flex flex-col">
       {/* Sub-navegación de Productos */}
       <ProductsSubNav currentSubView={activeTab} onSelectSubView={onSelectSubView} />
 

@@ -545,7 +545,7 @@ export default function SuperAdminView({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-800 p-3 sm:p-5 space-y-4 font-sans antialiased select-none pb-24">
+    <div className="text-slate-800 p-3 sm:p-5 space-y-4 font-sans antialiased select-none">
       
       {/* ── 0. BARRA SUPERIOR DE CONSOLA / SELECCIÓN DE VISTA ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-2xs">
