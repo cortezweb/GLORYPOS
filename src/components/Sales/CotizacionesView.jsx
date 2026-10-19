@@ -12,6 +12,7 @@ import { simbolo } from '../../utils/currency';
 import { isDemoMode } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { descargarCotizacionPdf } from '../../utils/cotizacionPdf';
+import { imprimirTicketPdf } from '../../utils/ticketPdf';
 import CotizacionPdfModal from './CotizacionPdfModal';
 import CotizacionEmailModal from './CotizacionEmailModal';
 import { toast } from 'sonner';
@@ -491,9 +492,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 3. Ticket 80mm (Ticket en naranja) */}
                           <button
                             type="button"
-                            onClick={() => {
-                              toast.info(`Imprimiendo ticket 80mm para ${cot.correlativo}...`);
-                            }}
+                            onClick={() => imprimirTicketPdf(cot, empresa, 80, 'COTIZACIÓN')}
                             title="Ticket 80mm"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
                           >
@@ -503,9 +502,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 4. Ticket 58mm / A5 (Documento en naranja) */}
                           <button
                             type="button"
-                            onClick={() => {
-                              toast.info(`Imprimiendo ticket 58mm para ${cot.correlativo}...`);
-                            }}
+                            onClick={() => imprimirTicketPdf(cot, empresa, 58, 'COTIZACIÓN')}
                             title="Ticket 58mm / A5"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
                           >

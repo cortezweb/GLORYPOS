@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { 
   Calculator, FileSpreadsheet, Download, Calendar, Filter, 
-  CheckCircle2, ArrowUpDown, BookOpen, AlertCircle, TrendingUp, DollarSign
+  CheckCircle2, ArrowUpDown, BookOpen, AlertCircle, TrendingUp, DollarSign, FileDown
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
+import { descargarLibroPdf, librosConPdf } from '../../utils/libroPdf';
 
 export default function ContabilidadView() {
   const { empresa } = useAuth();
@@ -18,6 +19,16 @@ export default function ContabilidadView() {
     { id: '6.1', code: 'LM-6.1', name: 'Libro Mayor Acumulado', count: 18, total: `${simbolo()} 64,250.00`, status: 'GENERADO' },
     { id: '3.7', code: 'INV-3.7', name: 'Kardex / Registro de Inventario Permanente Valorizado', count: 450, total: `${simbolo()} 89,120.00`, status: 'ACTIVO' }
   ];
+
+  const handleExportPdf = async (book) => {
+    try {
+      const filas = await descargarLibroPdf(book, activePeriod, empresa || {});
+      if (filas === 0) toast.info(`"${book.name}" no tiene movimientos en ${activePeriod}; el PDF salió vacío.`);
+      else toast.success(`PDF de "${book.name}" descargado (${filas} registros).`);
+    } catch (err) {
+      toast.error(err.message || 'No se pudo generar el PDF.');
+    }
+  };
 
   const handleExport = (bookName) => {
     toast.info(`Generando archivo TXT / Excel para "${bookName}" del periodo ${activePeriod}...`);
@@ -108,6 +119,16 @@ export default function ContabilidadView() {
               </div>
 
               <div className="flex items-center gap-2">
+                {librosConPdf.includes(book.id) && (
+                  <button
+                    type="button"
+                    onClick={() => handleExportPdf(book)}
+                    className="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-bold border border-rose-200 transition flex items-center gap-1.5"
+                  >
+                    <FileDown className="w-3.5 h-3.5" />
+                    <span>PDF</span>
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => handleExport(book.name)}
