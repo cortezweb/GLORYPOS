@@ -4,7 +4,6 @@ import {
   Package, Calendar, Building2, FileText
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import InventorySubNav from './InventorySubNav';
 
 const SEED_TRANSFERENCIAS = [
   {
@@ -99,12 +98,8 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
-      {/* Sub-navegación superior de Inventario */}
-      {onSelectSubView && (
-        <InventorySubNav currentSubView="historial_transferencias" onSelectSubView={onSelectSubView} />
-      )}
 
-      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+      <main className="px-4 py-5 w-full space-y-4">
 
         {/* ── CABECERA EXACTA A LA IMAGEN ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

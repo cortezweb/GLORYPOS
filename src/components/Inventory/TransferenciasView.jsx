@@ -5,7 +5,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
-import InventorySubNav from './InventorySubNav';
 import { toast } from 'sonner';
 
 export default function TransferenciasView({ onSelectSubView, initialProductToTransfer }) {
@@ -170,10 +169,6 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
-      {/* Sub-navegación superior de Inventario */}
-      {onSelectSubView && (
-        <InventorySubNav currentSubView="transferencias" onSelectSubView={onSelectSubView} />
-      )}
 
       {/* Toast Notification */}
       {toastMsg && (
@@ -183,7 +178,7 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+      <main className="px-4 py-5 w-full space-y-4">
 
         {/* ── CABECERA EXACTA A LA IMAGEN ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

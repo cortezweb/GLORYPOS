@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import DispatchSubNav from './DispatchSubNav';
 import GuiasRemitenteView from './GuiasRemitenteView';
 import GuiasTransportistaView from './GuiasTransportistaView';
 import TransportistasGREView from './TransportistasGREView';
@@ -24,8 +23,6 @@ export default function GuiasRemisionView({ initialTab = 'guias_remitente', onSe
 
   return (
     <div className="space-y-4 animate-fadeIn">
-      {/* Subnavegación Superior del módulo Guías de Remisión */}
-      <DispatchSubNav activeTab={activeTab} onSelectTab={handleTabChange} />
 
       {/* Vistas según pestaña activa */}
       {['guias_remitente', 'remitente', 'gre_09', 'guias_remision', 'guias'].includes(activeTab) && (

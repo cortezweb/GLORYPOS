@@ -5,7 +5,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { RUBROS_CONFIG } from '../../db/rubros';
-import ProductsSubNav from './ProductsSubNav';
 
 const DEFAULT_MARCAS = [
   'Coca-Cola', 'Nestlé', 'Pil Andina', 'Arcor', 'Fagal', 
@@ -138,10 +137,8 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Sub-navegación de Productos */}
-      <ProductsSubNav currentSubView={activeTab} onSelectSubView={onSelectSubView} />
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-3 sm:p-5 space-y-4">
         
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">

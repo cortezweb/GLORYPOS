@@ -4,7 +4,6 @@ import {
   ArrowUpRight, Download, Printer, CheckCircle2, X, RefreshCw
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import InventorySubNav from './InventorySubNav';
 import { simbolo } from '../../utils/currency';
 
 export default function KardexView({ onSelectSubView, initialProduct }) {
@@ -139,12 +138,8 @@ export default function KardexView({ onSelectSubView, initialProduct }) {
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
-      {/* Sub-navegación superior de Inventario */}
-      {onSelectSubView && (
-        <InventorySubNav currentSubView="kardex" onSelectSubView={onSelectSubView} />
-      )}
 
-      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+      <main className="px-4 py-5 w-full space-y-4">
 
         {/* ── CABECERA EXACTA A LA IMAGEN ── */}
         <div className="space-y-0.5">

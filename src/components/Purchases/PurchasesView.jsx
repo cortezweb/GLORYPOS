@@ -754,7 +754,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
       )}
 
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-3 sm:p-5 space-y-4">
         
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* PESTAÑA 1: NUEVA COMPRA (ESTRUCTURA IDÉNTICA A LA IMAGEN)          */}
