@@ -224,7 +224,7 @@ function MainShell() {
   }
 
   return (
-    <div className={`min-h-screen ${currentView === 'pos' ? 'lg:h-screen lg:overflow-hidden' : ''} w-full bg-slate-100 lg:bg-[linear-gradient(to_bottom,#FF6B35_0,#FF8A5C_96px,#eef0f3_96px)] lg:p-3 lg:gap-3 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-clip`}>
+    <div className={`min-h-screen lg:h-screen lg:overflow-hidden w-full bg-slate-100 lg:bg-[linear-gradient(to_bottom,#FF6B35_0,#FF8A5C_96px,#eef0f3_96px)] lg:p-3 lg:gap-3 flex flex-col lg:flex-row text-slate-800 antialiased overflow-x-clip`}>
       {/* BEGIN: Persistent Desktop Navigation Sidebar (>= 1024px) */}
       <DesktopSidebar
         currentView={currentView}
@@ -240,7 +240,7 @@ function MainShell() {
       {/* END: Persistent Desktop Navigation Sidebar */}
 
       {/* BEGIN: Main Content Area */}
-      <div className={`flex-1 flex flex-col min-w-0 bg-slate-50 lg:bg-transparent lg:gap-3 ${currentView === 'pos' ? 'lg:h-[calc(100vh-1.5rem)] lg:overflow-hidden min-h-screen lg:min-h-0' : 'min-h-screen lg:min-h-[calc(100vh-1.5rem)]'} relative`}>
+      <div className={`flex-1 flex flex-col min-w-0 bg-slate-50 lg:bg-transparent lg:gap-3 min-h-screen lg:min-h-0 lg:h-[calc(100vh-1.5rem)] lg:overflow-hidden relative`}>
         {/* Top Header Bar */}
         <div className="shrink-0">
           <TopBar
@@ -299,8 +299,8 @@ function MainShell() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto pb-20 lg:pb-0 w-full lg:bg-white lg:rounded-2xl lg:border lg:border-slate-200 lg:shadow-sm">
-            <div className="w-full min-h-full lg:rounded-2xl lg:overflow-hidden">
+          <main key={currentView} className="page-enter min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-white p-2 shadow-md sm:p-3 md:p-4 rounded-2xl pb-20 md:pb-20 lg:pb-4">
+            <div className="w-full">
               {!canOpenView(currentView) ? (
                 <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center max-w-md mx-auto my-12 space-y-4 shadow-sm">
                   <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
@@ -620,7 +620,7 @@ function MainShell() {
               </>
               )}
             </div>
-          </div>
+          </main>
         )}
 
         {/* Mobile Floating Cart Button (Hidden on Desktop) */}
