@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
-import FinanceSubNav from './FinanceSubNav';
 import { simbolo } from '../../utils/currency';
 
 export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
@@ -183,10 +182,6 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
-      {/* Sub-navegación superior de Finanzas */}
-      {onSelectSubView && (
-        <FinanceSubNav currentSubView="caja" onSelectSubView={onSelectSubView} />
-      )}
 
       {/* Toast Notification */}
       {toastMsg && (
@@ -196,7 +191,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+      <main className="px-4 py-5 w-full space-y-4">
 
         {/* ── CABECERA CON TOGGLE DE VISTA (HISTORIAL VS REPORTES Y DETALLE) ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">

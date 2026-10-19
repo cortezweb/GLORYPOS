@@ -4,7 +4,6 @@ import {
   ArrowDownRight, Wallet, CheckCircle2, ChevronRight, BarChart3, ListFilter 
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import FinanceSubNav from './FinanceSubNav';
 import { simbolo } from '../../utils/currency';
 
 export default function ReportesCajaView({ onSelectSubView }) {
@@ -81,8 +80,6 @@ export default function ReportesCajaView({ onSelectSubView }) {
 
   return (
     <div className="space-y-4 animate-fadeIn">
-      {/* Subnavegación Superior de Finanzas */}
-      <FinanceSubNav activeTab="reportes_caja" onSelectTab={onSelectSubView} />
 
       {/* Header Principal exacto a media_1789932485053.png */}
       <div className="space-y-0.5">

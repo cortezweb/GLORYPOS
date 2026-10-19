@@ -3,7 +3,6 @@ import {
   CreditCard, Plus, Edit2, Trash2, Check, X, Shield, Wallet, Building2, AlertCircle 
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import FinanceSubNav from './FinanceSubNav';
 
 export default function MetodosPagoView({ onSelectSubView }) {
   const [metodos, setMetodos] = useState([]);
@@ -105,8 +104,6 @@ export default function MetodosPagoView({ onSelectSubView }) {
 
   return (
     <div className="space-y-4 animate-fadeIn">
-      {/* Subnavegación Superior de Finanzas */}
-      <FinanceSubNav activeTab="metodos_pago" onSelectTab={onSelectSubView} />
 
       {/* Header Principal */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">

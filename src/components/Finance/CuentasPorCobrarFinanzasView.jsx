@@ -4,7 +4,6 @@ import {
   FileText, ArrowUpRight, Check, X, ShieldAlert, CreditCard 
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import FinanceSubNav from './FinanceSubNav';
 import { simbolo } from '../../utils/currency';
 
 export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
@@ -143,8 +142,6 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
 
   return (
     <div className="space-y-4 animate-fadeIn">
-      {/* Subnavegación Superior de Finanzas */}
-      <FinanceSubNav activeTab="cuentas_por_cobrar" onSelectTab={onSelectSubView} />
 
       {/* Header Principal */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">

@@ -85,33 +85,8 @@ export default function ReportsView({ onOpenReceipt, initialTab = 'ventas' }) {
 
   return (
     <div className="flex-1 flex flex-col font-sans">
-      {/* Barra de Navegación Superior con las 7 Pestañas */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-xs select-none">
-        <div className="max-w-7xl mx-auto px-3 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-                  isActive
-                    ? 'bg-[#FF6B35] text-white shadow-xs font-bold'
-                    : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/80'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Contenedor Principal de la Pestaña Activa */}
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-4">
+      <main className="w-full p-3 sm:p-5 space-y-4">
         {/* 1. Reporte de ventas */}
         {activeTab === 'ventas' && (
           <ReporteVentasTab ventas={ventas} />

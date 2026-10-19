@@ -5,7 +5,6 @@ import {
   Layers, ChevronRight, ShieldCheck, Zap
 } from 'lucide-react';
 import { db } from '../../db/dexie';
-import ProductsSubNav from './ProductsSubNav';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
 
@@ -246,10 +245,8 @@ export default function ServiciosView({ onSelectSubView }) {
 
   return (
     <div className="flex-1 flex flex-col font-sans">
-      {/* Subnavegación de Productos */}
-      <ProductsSubNav currentSubView="servicios" onSelectSubView={onSelectSubView} />
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 space-y-5">
+      <main className="w-full p-3 sm:p-5 space-y-5">
         
         {/* Encabezado */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">

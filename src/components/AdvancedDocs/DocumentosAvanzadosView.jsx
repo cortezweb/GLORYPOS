@@ -258,55 +258,8 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
       {/* Título de la vista */}
       <div>
         <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-          Retención, Percepción y Reversión
+          {{ retenciones: 'Retenciones', percepciones: 'Percepciones', reversiones: 'Reversiones' }[activeTab] || 'Retención, Percepción y Reversión'}
         </h1>
-      </div>
-
-      {/* Tabs / Pills Superiores idénticos a los screenshots */}
-      <div className="flex items-center gap-2 pt-1">
-        {/* Pestaña Retenciones */}
-        <button
-          type="button"
-          onClick={() => handleTabChange('retenciones')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
-            activeTab === 'retenciones'
-              ? 'bg-[#FF6B35] text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          <span className="font-black text-sm leading-none">%</span>
-          <span>Retenciones</span>
-        </button>
-
-        {/* Pestaña Percepciones */}
-        <button
-          type="button"
-          onClick={() => handleTabChange('percepciones')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
-            activeTab === 'percepciones'
-              ? 'bg-[#FF6B35] text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          <span className="w-4 h-4 rounded-full border border-current flex items-center justify-center text-[10px] font-black leading-none">
-            $
-          </span>
-          <span>Percepciones</span>
-        </button>
-
-        {/* Pestaña Reversiones */}
-        <button
-          type="button"
-          onClick={() => handleTabChange('reversiones')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
-            activeTab === 'reversiones'
-              ? 'bg-[#FF6B35] text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          <RotateCcw className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>Reversiones</span>
-        </button>
       </div>
 
       {/* Barra de Filtros */}

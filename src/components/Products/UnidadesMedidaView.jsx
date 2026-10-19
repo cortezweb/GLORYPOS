@@ -4,7 +4,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
-import ProductsSubNav from './ProductsSubNav';
 
 // ── CATÁLOGO SIAT N°03 DE UNIDADES DE MEDIDA ──
 const SEED_UNIDADES_MEDIDA = [
@@ -175,10 +174,6 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
-      {/* Sub-navegación superior de Productos */}
-      {onSelectSubView && (
-        <ProductsSubNav currentSubView="unidades_medida" onSelectSubView={onSelectSubView} />
-      )}
 
       {/* Toast Notification */}
       {toastMsg && (
@@ -188,7 +183,7 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+      <main className="px-4 py-5 w-full space-y-4">
         
         {/* ── CABECERA EXACTA A LA IMAGEN (CON SIAT) ── */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">

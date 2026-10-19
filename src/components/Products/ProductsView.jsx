@@ -9,7 +9,6 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { RUBROS_CONFIG } from '../../db/rubros';
-import ProductsSubNav from './ProductsSubNav';
 import { simbolo } from '../../utils/currency';
 import { productoSchema, validar } from '../../lib/schemas';
 import { toast } from 'sonner';
@@ -691,10 +690,6 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
   return (
     <div className="flex-1 flex flex-col font-sans animate-fadeIn">
       
-      {/* Sub-navegación superior */}
-      {onSelectSubView && (
-        <ProductsSubNav currentSubView="productos" onSelectSubView={onSelectSubView} />
-      )}
 
       {/* Toast Notification */}
       {toastMsg && (
@@ -704,7 +699,7 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto px-4 py-5 w-full space-y-4">
+      <main className="px-4 py-5 w-full space-y-4">
         
         {/* ── CABECERA Y BOTONES SUPERIORES (IDÉNTICOS AL SCREENSHOT) ── */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-transparent">

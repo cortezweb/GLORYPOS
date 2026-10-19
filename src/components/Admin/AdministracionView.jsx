@@ -164,48 +164,6 @@ export default function AdministracionView({ initialTab = 'roles' }) {
   return (
     <div className="space-y-5 animate-fadeIn pb-12">
       
-      {/* ── BARRA DE PESTAÑAS DE ADMINISTRACIÓN ── */}
-      <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab('roles')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
-            activeTab === 'roles'
-              ? 'bg-[#FF6B35] text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4" />
-          <span>Roles y permisos</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('usuarios')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
-            activeTab === 'usuarios'
-              ? 'bg-[#FF6B35] text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>Usuarios</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('empresa')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
-            activeTab === 'empresa'
-              ? 'bg-[#FF6B35] text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          <Building2 className="w-4 h-4" />
-          <span>Datos de la Empresa & Respaldos</span>
-        </button>
-      </div>
-
       {/* ── CONTENIDO SEGÚN LA PESTAÑA ACTIVA ── */}
       {activeTab === 'roles' && <RolesPermisosTab />}
 
