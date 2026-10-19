@@ -3,12 +3,16 @@ import {
   FileText, Search, Printer, Share2, Copy, Check, Ban, 
   RefreshCw, Download, Calendar, ChevronDown, MoreVertical, 
   Eye, FileCode, CheckCircle2, X, MessageCircle, File, 
-  ChevronLeft, ChevronRight, Send, AlertTriangle
+  ChevronLeft, ChevronRight, Send, AlertTriangle, Ticket, FileDown
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
 import { simbolo, nombreMoneda, getCurrencyCode } from '../../utils/currency';
 import { toast } from 'sonner';
+import { descargarVentaPdf, tituloVenta } from '../../utils/cotizacionPdf';
+import { descargarTicketPdf, imprimirTicketPdf } from '../../utils/ticketPdf';
+import ComprobantePdfModal from './ComprobantePdfModal';
+import ResumenesBajasPanel from './ResumenesBajasPanel';
 
 export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   const { currentUser, empresa, can } = useAuth();
@@ -29,9 +33,9 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   const [loading, setLoading] = useState(false);
 
   // Estados de popovers y modales
-  const [activePdfMenuId, setActivePdfMenuId] = useState(null);
+  const [pdfMenu, setPdfMenu] = useState(null); // { venta, x, y } — menú fijo para que la tabla no lo recorte
+  const [pdfVisor, setPdfVisor] = useState(null); // { venta, formato }
   const [activeActionsMenuId, setActiveActionsMenuId] = useState(null);
-  const [previewA4Sale, setPreviewA4Sale] = useState(null);
   const [detailSale, setDetailSale] = useState(null);
 
   // Cargar ventas desde Dexie
@@ -282,11 +286,18 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
   // Cerrar popovers al hacer click fuera
   useEffect(() => {
     const handleClickOutside = () => {
-      setActivePdfMenuId(null);
+      setPdfMenu(null);
       setActiveActionsMenuId(null);
     };
+    const cerrarMenuPdf = () => setPdfMenu(null);
     window.addEventListener('click', handleClickOutside);
-    return () => window.removeEventListener('click', handleClickOutside);
+    window.addEventListener('scroll', cerrarMenuPdf, true);
+    window.addEventListener('resize', cerrarMenuPdf);
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+      window.removeEventListener('scroll', cerrarMenuPdf, true);
+      window.removeEventListener('resize', cerrarMenuPdf);
+    };
   }, []);
 
   // Filtrado de comprobantes
@@ -420,11 +431,13 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Comprobantes electrónicos
+              {activeTab === 'resumenes_bajas' ? 'Resúmenes y comunicaciones de baja' : 'Comprobantes electrónicos'}
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Facturas y boletas de venta.
-            </p>
+            {activeTab !== 'resumenes_bajas' && (
+              <p className="text-xs text-slate-500 mt-0.5">
+                {activeTab === 'notas_credito' ? 'Notas de crédito y débito emitidas.' : 'Facturas y boletas de venta.'}
+              </p>
+            )}
           </div>
 
           {/* Pestañas superiores / Toolbar estilo imagen */}
@@ -459,7 +472,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
               }`}
             >
               <FileText className="w-3.5 h-3.5 text-slate-500" />
-              Notas de crédito
+              Notas de crédito/débito
             </button>
 
             {/* Pestaña: Resúmenes y bajas */}
@@ -480,6 +493,7 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
             </button>
 
             {/* Botón: Actualizar */}
+            {activeTab !== 'resumenes_bajas' && (
             <button
               type="button"
               onClick={loadVentas}
@@ -490,9 +504,20 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
               <RefreshCw className={`w-3.5 h-3.5 text-slate-600 ${loading ? 'animate-spin' : ''}`} />
               Actualizar
             </button>
+            )}
           </div>
         </div>
 
+        {activeTab === 'resumenes_bajas' ? (
+          <ResumenesBajasPanel
+            ventas={ventas}
+            empresaId={empresa?.id}
+            puedeAnular={can('anular_ventas')}
+            onActualizar={loadVentas}
+            onVolver={() => { setActiveTab('facturas_boletas'); setCurrentPage(1); }}
+          />
+        ) : (
+        <>
         {/* ========================================================= */}
         {/* BARRA DE FILTROS: ESTADO, BÚSQUEDA, FECHAS, PAGINACIÓN */}
         {/* ========================================================= */}
@@ -672,88 +697,32 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                           —
                         </td>
 
-                        {/* PDF: Icono PDF Rojo + Botón Impresión Azul */}
-                        <td className="py-3 px-3 text-center whitespace-nowrap relative">
+                        {/* PDF: menú (A4 / ticket) + impresión del ticket */}
+                        <td className="py-3 px-3 text-center whitespace-nowrap">
                           <div className="inline-flex items-center gap-1.5">
-                            {/* Botón Menú PDF Rojo */}
                             <button
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setActivePdfMenuId(activePdfMenuId === v.id ? null : v.id);
+                                const r = e.currentTarget.getBoundingClientRect();
+                                setPdfMenu(pdfMenu?.venta.id === v.id ? null : { venta: v, x: Math.min(r.left, window.innerWidth - 220), y: r.bottom + 6 });
                                 setActiveActionsMenuId(null);
                               }}
-                              className="p-1 border border-slate-200 rounded-md hover:bg-slate-100 transition text-red-500 shadow-2xs"
+                              className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-red-200 rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition"
                               title="Opciones PDF"
                             >
-                              <FileText className="w-3.5 h-3.5 text-red-500" />
+                              <FileText className="w-3.5 h-3.5" />
+                              <ChevronDown className="w-3 h-3" />
                             </button>
-
-                            {/* Botón Imprimir Azul */}
                             <button
                               type="button"
-                              onClick={() => {
-                                if (onOpenReceipt) onOpenReceipt(v);
-                              }}
-                              className="p-1 bg-[#0066cc] hover:bg-[#FF6B35]/90 text-white rounded-md transition shadow-2xs"
-                              title="Imprimir Ticket"
+                              onClick={() => imprimirTicketPdf(v, empresa, 80, tituloVenta(v.tipo_documento))}
+                              className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
+                              title="Imprimir ticket"
                             >
                               <Printer className="w-3.5 h-3.5" />
                             </button>
                           </div>
-
-                          {/* Popover Menú PDF desplegable (como en la imagen) */}
-                          {activePdfMenuId === v.id && (
-                            <div 
-                              onClick={(e) => e.stopPropagation()}
-                              className="absolute left-1/2 -translate-x-1/2 top-full mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-30 py-1.5 text-left text-xs animate-in fade-in zoom-in-95 duration-100"
-                            >
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setPreviewA4Sale(v);
-                                  setActivePdfMenuId(null);
-                                }}
-                                className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium"
-                              >
-                                <Eye className="w-3.5 h-3.5 text-red-500" />
-                                Ver PDF A4
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setPreviewA4Sale(v);
-                                  setActivePdfMenuId(null);
-                                }}
-                                className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium"
-                              >
-                                <Download className="w-3.5 h-3.5 text-red-500" />
-                                Descargar PDF A4
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (onOpenReceipt) onOpenReceipt(v);
-                                  setActivePdfMenuId(null);
-                                }}
-                                className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium border-t border-slate-100"
-                              >
-                                <File className="w-3.5 h-3.5 text-slate-500" />
-                                Ver PDF ticket
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (onOpenReceipt) onOpenReceipt(v);
-                                  setActivePdfMenuId(null);
-                                }}
-                                className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium"
-                              >
-                                <Download className="w-3.5 h-3.5 text-slate-500" />
-                                Descargar PDF ticket
-                              </button>
-                            </div>
-                          )}
                         </td>
 
                         {/* XML */}
@@ -761,10 +730,10 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                           <button
                             type="button"
                             onClick={() => handleDownloadXML(v)}
-                            className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-amber-300 rounded-md bg-amber-50/70 hover:bg-amber-100 text-amber-800 transition text-[10px] font-bold"
+                            className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-amber-200 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 transition"
                             title="Descargar XML firmado"
                           >
-                            <FileCode className="w-3 h-3 text-amber-600" />
+                            <FileCode className="w-3.5 h-3.5 text-amber-600" />
                             <ChevronDown className="w-2.5 h-2.5" />
                           </button>
                         </td>
@@ -774,10 +743,10 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                           <button
                             type="button"
                             onClick={() => handleDownloadCDR(v)}
-                            className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-blue-200 rounded-md bg-[#FF6B35]/10/70 hover:bg-[#FF6B35]/20 text-blue-800 transition text-[10px] font-bold"
+                            className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-blue-200 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 transition"
                             title="Descargar CDR (Constancia de Recepción SUNAT)"
                           >
-                            <FileText className="w-3 h-3 text-[#FF6B35]" />
+                            <FileText className="w-3.5 h-3.5 text-blue-600" />
                             <ChevronDown className="w-2.5 h-2.5" />
                           </button>
                         </td>
@@ -789,10 +758,10 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                             <button
                               type="button"
                               onClick={() => handleSendWhatsApp(v)}
-                              className="w-7 h-7 rounded-full border border-[#FF6B35]/30 text-[#FF6B35] hover:bg-[#FF6B35]/10 flex items-center justify-center transition shadow-2xs"
+                              className="inline-flex items-center gap-0.5 px-1.5 py-1 rounded-md border border-green-200 bg-green-50 hover:bg-green-100 text-green-600 transition"
                               title="Enviar por WhatsApp"
                             >
-                              <MessageCircle className="w-3.5 h-3.5 text-[#FF6B35]" />
+                              <MessageCircle className="w-4 h-4 text-green-600" />
                             </button>
 
                             {/* Botón Menú Tres Puntos */}
@@ -801,12 +770,13 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActiveActionsMenuId(activeActionsMenuId === v.id ? null : v.id);
-                                setActivePdfMenuId(null);
+                                setPdfMenu(null);
                               }}
-                              className="p-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-100 transition shadow-2xs"
+                              className="inline-flex items-center gap-0.5 px-1.5 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-100 transition"
                               title="Más acciones"
                             >
                               <MoreVertical className="w-3.5 h-3.5" />
+                              <ChevronDown className="w-3 h-3" />
                             </button>
                           </div>
 
@@ -910,138 +880,44 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
             </button>
           </div>
         </div>
+        </>
+        )}
 
       </main>
 
-      {/* ========================================================= */}
-      {/* MODAL: VISTA PREVIA PDF FORMATO A4 */}
-      {/* ========================================================= */}
-      {previewA4Sale && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto [&>*]:my-auto">
-          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto flex flex-col max-h-[90dvh]">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-red-500" />
-                <h3 className="font-bold text-sm text-slate-800">
-                  Vista Previa PDF A4 — {previewA4Sale.correlativo}
-                </h3>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="px-3 py-1 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  Imprimir
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewA4Sale(null)}
-                  className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-100 flex justify-center">
-              {/* Hoja A4 simulada */}
-              <div className="bg-white w-full max-w-2xl p-8 rounded-lg shadow-md border border-slate-200 text-slate-800 text-xs space-y-6">
-                
-                {/* Cabecera A4 */}
-                <div className="flex justify-between items-start border-b border-slate-200 pb-5">
-                  <div>
-                    <h2 className="text-base font-black text-slate-900 uppercase">
-                      {empresa?.nombre || 'GLORYPOS SISTEMAS S.A.C.'}
-                    </h2>
-                    <p className="text-[11px] text-slate-500 uppercase mt-0.5">
-                      {empresa?.direccion || 'CAL. PALACIO VIEJO NRO. 210 URB. CERCADO - AREQUIPA'}
-                    </p>
-                    <p className="text-[11px] text-slate-500">
-                      RUC: {empresa?.nit || '20601234567'} • Tel: {empresa?.telefono || '935006519'}
-                    </p>
-                  </div>
-
-                  <div className="border-2 border-slate-800 rounded-lg p-3 text-center min-w-[200px] bg-slate-50">
-                    <div className="font-bold text-xs">R.U.C. N° {empresa?.nit || '20601234567'}</div>
-                    <div className="font-black text-sm my-1 text-slate-900 uppercase tracking-wide">
-                      {previewA4Sale.tipo_documento === 'FACTURA' ? 'FACTURA ELECTRÓNICA' : 'BOLETA DE VENTA ELECTRÓNICA'}
-                    </div>
-                    <div className="font-mono font-bold text-xs text-slate-800">
-                      N° {previewA4Sale.correlativo}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Datos del Cliente y Emisión */}
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px]">
-                  <div>
-                    <span className="font-bold text-slate-500 block">SEÑOR(ES):</span>
-                    <span className="font-bold text-slate-800 text-xs">{previewA4Sale.cliente_nombre}</span>
-                    <span className="text-slate-500 block mt-1">DOC / RUC: {previewA4Sale.cliente_ci_nit}</span>
-                  </div>
-                  <div>
-                    <span className="font-bold text-slate-500 block">FECHA DE EMISIÓN:</span>
-                    <span className="font-bold text-slate-800">{formatDateDisplay(previewA4Sale.fecha)}</span>
-                    <span className="text-slate-500 block mt-1">MONEDA: {nombreMoneda().toUpperCase()} ({getCurrencyCode()})</span>
-                  </div>
-                </div>
-
-                {/* Tabla de Productos */}
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-100 border-b border-slate-300 font-bold text-[10px] text-slate-600 uppercase">
-                      <th className="py-2 px-2">CANT.</th>
-                      <th className="py-2 px-2">DESCRIPCIÓN</th>
-                      <th className="py-2 px-2 text-right">P. UNIT.</th>
-                      <th className="py-2 px-2 text-right">TOTAL</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 text-xs">
-                    {(previewA4Sale.items || []).map((it, idx) => (
-                      <tr key={idx}>
-                        <td className="py-2 px-2 font-bold">{it.cantidad}</td>
-                        <td className="py-2 px-2 font-medium">{it.nombre || it.descripcion}</td>
-                        <td className="py-2 px-2 text-right">{simbolo()} {Number(it.precio || it.precio_unitario || 0).toFixed(2)}</td>
-                        <td className="py-2 px-2 text-right font-bold">{simbolo()} {Number(it.subtotal || ((it.cantidad || 1) * (it.precio || 0))).toFixed(2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Totales */}
-                <div className="flex justify-end pt-3 border-t border-slate-200">
-                  <div className="w-56 space-y-1.5 text-xs">
-                    <div className="flex justify-between text-slate-500">
-                      <span>Op. Gravada:</span>
-                      <span className="font-semibold text-slate-700">
-                        {simbolo()} {((Number(previewA4Sale.total) || 0) / 1.18).toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-slate-500">
-                      <span>I.G.V. (18%):</span>
-                      <span className="font-semibold text-slate-700">
-                        {simbolo()} {((Number(previewA4Sale.total) || 0) - ((Number(previewA4Sale.total) || 0) / 1.18)).toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm font-black text-slate-900 pt-1 border-t border-slate-300">
-                      <span>IMPORTE TOTAL:</span>
-                      <span>{simbolo()} {(Number(previewA4Sale.total) || 0).toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pie Fiscal */}
-                <div className="pt-4 border-t border-slate-200 text-center text-[10px] text-slate-400">
-                  Representación impresa de la Factura / Boleta Electrónica generada por GLORYPOS.
-                  Consulte su validez en el portal oficial de SUNAT.
-                </div>
-
-              </div>
-            </div>
-          </div>
+      {/* Menú PDF (posición fija para que la tabla no lo recorte) */}
+      {pdfMenu && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{ left: pdfMenu.x, top: pdfMenu.y }}
+          className="fixed w-52 bg-white border border-slate-200 rounded-xl shadow-xl z-40 py-1.5 text-left text-sm"
+        >
+          {[
+            { icono: Eye, texto: 'Ver PDF A4', accion: () => setPdfVisor({ venta: pdfMenu.venta, formato: 'A4' }) },
+            { icono: Download, texto: 'Descargar PDF A4', accion: () => descargarVentaPdf(pdfMenu.venta, empresa, pdfMenu.venta.cajero || pdfMenu.venta.registrado_por) },
+            { icono: Ticket, texto: 'Ver PDF ticket', accion: () => setPdfVisor({ venta: pdfMenu.venta, formato: 'TICKET' }) },
+            { icono: FileDown, texto: 'Descargar PDF ticket', accion: () => descargarTicketPdf(pdfMenu.venta, empresa, 80, tituloVenta(pdfMenu.venta.tipo_documento)) },
+          ].map(({ icono: Icono, texto, accion }) => (
+            <button
+              key={texto}
+              type="button"
+              onClick={() => { accion(); setPdfMenu(null); }}
+              className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-2.5 text-slate-700"
+            >
+              <Icono className="w-4 h-4 text-red-500" />
+              {texto}
+            </button>
+          ))}
         </div>
+      )}
+
+      {pdfVisor && (
+        <ComprobantePdfModal
+          venta={pdfVisor.venta}
+          empresa={empresa}
+          formato={pdfVisor.formato}
+          onClose={() => setPdfVisor(null)}
+        />
       )}
 
       {/* ========================================================= */}
