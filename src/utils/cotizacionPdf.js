@@ -66,8 +66,11 @@ function fechaCorta(iso) {
 }
 
 // ── Documento ─────────────────────────────────────────────────────────────
-// cot: registro de la tabla cotizaciones; empresa: datos de la empresa; vendedor: nombre del usuario
-export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
+// cot: registro de la tabla cotizaciones; empresa: datos de la empresa; vendedor: nombre del usuario.
+// opts.titulo y opts.esVenta reutilizan el mismo formato para notas de venta, boletas y facturas.
+export function crearCotizacionPdf(cot, empresa = {}, vendedor = '', opts = {}) {
+  const titulo = opts.titulo || 'COTIZACIÓN';
+  const esVenta = !!opts.esVenta;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const M = 12;
@@ -122,9 +125,9 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
   doc.roundedRect(cajaX, M, cajaW, cajaH, 2, 2);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.text(empresa.nit_ci ? `N.I.T. ${empresa.nit_ci}` : 'COTIZACIÓN', cajaX + cajaW / 2, M + 8, { align: 'center' });
+  doc.text(empresa.nit_ci ? `N.I.T. ${empresa.nit_ci}` : titulo, cajaX + cajaW / 2, M + 8, { align: 'center' });
   doc.setFontSize(12);
-  doc.text('COTIZACIÓN', cajaX + cajaW / 2, M + 15, { align: 'center' });
+  doc.text(titulo, cajaX + cajaW / 2, M + 15, { align: 'center' });
   doc.setFontSize(10);
   doc.text(String(cot.correlativo || ''), cajaX + cajaW / 2, M + 22, { align: 'center' });
 
@@ -160,7 +163,8 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
         return Number.isNaN(base.getTime()) ? '' : fechaCorta(base.toISOString().slice(0, 10));
       })();
   fila(xd, y + 6, 'Fecha emisión', `: ${emision}`, 27, colDerW - 32);
-  fila(xd, y + 12, 'Vigencia hasta', `: ${vigencia}`, 27, colDerW - 32);
+  if (esVenta) fila(xd, y + 12, 'Método pago', `: ${cot.metodo_pago || '-'}`, 27, colDerW - 32);
+  else fila(xd, y + 12, 'Vigencia hasta', `: ${vigencia}`, 27, colDerW - 32);
   fila(xd, y + 18, 'Moneda', `: ${nombreMoneda}`, 27, colDerW - 32);
 
   // Tabla de ítems
@@ -170,7 +174,7 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
     const precio = Number(it.precio ?? it.precio_unitario) || 0;
     const total = it.subtotal != null ? Number(it.subtotal) : Math.max(0, cant * precio - (Number(it.descuento) || 0));
     return [
-      String(it.codigo || '-'),
+      String(it.codigo || it.codigo_barras || '-'),
       String(cant),
       String(it.unidad || 'UND'),
       String(it.nombre || it.descripcion || ''),
@@ -199,7 +203,8 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
 
   // Totales
   const subtotal = cot.subtotal != null ? Number(cot.subtotal) : items.reduce((a, it) => a + (Number(it.subtotal) || 0), 0);
-  const descuento = Number(cot.descuento) || 0;
+  // Las ventas guardan el descuento como porcentaje: se deduce de subtotal − total
+  const descuento = Number(cot.descuento) || (esVenta && cot.total != null ? Math.max(0, Math.round((subtotal - Number(cot.total)) * 100) / 100) : 0);
   const total = Number(cot.total) || Math.max(0, subtotal - descuento);
 
   let yy = doc.lastAutoTable.finalY + 4;
@@ -248,7 +253,7 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
   if (pagos.length > 0) {
     bloque('MÉTODO DE PAGO (REFERENCIA):', pagos.map(p => `• ${p.metodo}${p.referencia ? ` — ${p.referencia}` : ''}`).join('\n'));
   }
-  if (cot.mostrar_terminos) {
+  if (!esVenta && cot.mostrar_terminos) {
     bloque('TÉRMINOS Y CONDICIONES:', `Precios válidos hasta ${vigencia || 'la fecha de vigencia'}. Sujeto a disponibilidad de stock. ${cot.condiciones || ''}`.trim());
   }
 
@@ -260,7 +265,7 @@ export function crearCotizacionPdf(cot, empresa = {}, vendedor = '') {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
   doc.text('Comprobante emitido a través de GLORYPOS', W / 2, alto - 14, { align: 'center' });
-  doc.text('Documento comercial — no válido como factura', W / 2, alto - 10.5, { align: 'center' });
+  if (!titulo.includes('FACTURA')) doc.text('Documento comercial — no válido como factura', W / 2, alto - 10.5, { align: 'center' });
 
   return doc;
 }
@@ -279,4 +284,16 @@ export function descargarCotizacionPdf(cot, empresa, vendedor) {
 export function cotizacionPdfBase64(cot, empresa, vendedor) {
   const uri = crearCotizacionPdf(cot, empresa, vendedor).output('datauristring');
   return uri.split(',')[1] || '';
+}
+
+// ── Ventas (notas de venta, boletas y facturas) en el mismo formato A4 ────
+export function tituloVenta(tipo) {
+  if (tipo === 'FACTURA' || tipo === 'FACTURA_SIAT') return 'FACTURA';
+  if (tipo === 'BOLETA') return 'BOLETA DE VENTA';
+  return 'NOTA DE VENTA';
+}
+
+export function descargarVentaPdf(venta, empresa, vendedor) {
+  crearCotizacionPdf(venta, empresa, vendedor || venta?.cajero || '', { titulo: tituloVenta(venta?.tipo_documento), esVenta: true })
+    .save(`${tituloVenta(venta?.tipo_documento).toLowerCase().replace(/\s+/g, '-')}-${venta?.correlativo || 'sin-numero'}.pdf`);
 }
