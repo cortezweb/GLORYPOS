@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useCart } from '../../context/CartContext';
-import SalesSubNav from './SalesSubNav';
 import { simbolo } from '../../utils/currency';
 import { isDemoMode } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -345,10 +344,6 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart, o
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-screen font-sans pb-16">
       
-      {/* Barra de navegación de ventas */}
-      {onSelectSubView && (
-        <SalesSubNav currentSubView="cotizaciones" onSelectSubView={onSelectSubView} />
-      )}
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         

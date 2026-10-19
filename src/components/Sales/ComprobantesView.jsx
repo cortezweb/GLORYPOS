@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useAuth } from '../../context/AuthContext';
-import SalesSubNav from './SalesSubNav';
 import { simbolo, nombreMoneda, getCurrencyCode } from '../../utils/currency';
 import { toast } from 'sonner';
 
@@ -412,8 +411,6 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
 
   return (
     <div className="flex-1 flex flex-col bg-[#f8fafc] min-h-screen font-sans relative pb-16">
-      {/* Subnavegación de Ventas */}
-      <SalesSubNav currentSubView="ventas_comprobantes" onSelectSubView={onSelectSubView} />
 
       <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         

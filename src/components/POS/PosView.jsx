@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../db/dexie';
 import ProductCard from './ProductCard';
 import { Search, ScanBarcode, LayoutGrid, List, Package, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import SalesSubNav from '../Sales/SalesSubNav';
 
 export default function PosView({ 
   searchTerm, 
@@ -156,10 +155,6 @@ export default function PosView({
     <main className="flex-1 flex flex-col h-full min-h-0 bg-slate-50 overflow-hidden">
       {/* ── BARRA SUPERIOR FIJA: SubNav, Buscador y Categorías ── */}
       <div className="shrink-0 bg-white border-b border-gray-100 z-10 shadow-xs">
-        {/* Sales Sub-navigation Bar */}
-        {onSelectSubView && (
-          <SalesSubNav currentSubView="pos" onSelectSubView={onSelectSubView} />
-        )}
 
         {/* Search and Toolbar (Exact Stitch Design) */}
         <section className="p-2.5 sm:p-3" data-purpose="search-bar-section">
