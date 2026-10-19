@@ -208,7 +208,7 @@ export default function TopBar({
   );
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 font-sans select-none shadow-xs">
+    <header className="bg-white border-b border-slate-200 lg:border lg:rounded-2xl sticky top-0 lg:top-3 z-30 font-sans select-none shadow-xs lg:shadow-sm">
       
       {/* ── MOBILE HEADER (IDÉNTICO A LAS 5 CAPTURAS DE LA IMAGEN) ── */}
       <div className="lg:hidden px-3 py-2.5 flex items-center justify-between gap-2 bg-white border-b border-slate-100 shadow-2xs">
@@ -288,16 +288,8 @@ export default function TopBar({
         </div>
       </div>
 
-      {/* ── DESKTOP TOP BANNER SUPERIOR ── */}
-      <div className="hidden lg:flex bg-[#1E2022] text-[#FDFBF7] text-[10px] font-bold py-1 px-4 items-center justify-center tracking-wider uppercase font-mono border-b border-gray-800 shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00B574] animate-pulse"></span>
-          <span>WWW.GLORYPOS.COM — PLATAFORMA CLOUD DE FACTURACIÓN & PUNTO DE VENTA</span>
-        </div>
-      </div>
-
       {/* ── DESKTOP MAIN TOPBAR BARRA PRINCIPAL ── */}
-      <div className="hidden lg:flex px-5 py-2 items-center justify-between gap-3">
+      <div className="hidden lg:flex px-5 py-3 items-center justify-between gap-3">
         
         {/* Left Section: Toggle, Shortcuts NC/NV/POS & Subscription Status */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">

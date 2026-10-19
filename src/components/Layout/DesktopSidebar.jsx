@@ -71,7 +71,7 @@ export default function DesktopSidebar({
   }, [currentView]);
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 hidden lg:flex select-none z-30 font-sans shadow-xs">
+    <aside className="w-64 bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col justify-between shrink-0 h-[calc(100vh-1.5rem)] sticky top-3 hidden lg:flex select-none z-30 font-sans shadow-sm">
       
       {/* ── 1. HEADER: BRAND LOGO & NOMBRE DE EMPRESA (GLORYPOS SAAS) ── */}
       <div className="p-4 pb-3 border-b border-slate-100">
