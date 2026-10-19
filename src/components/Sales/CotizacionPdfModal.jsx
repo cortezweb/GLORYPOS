@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Download, X, Printer, Loader2 } from 'lucide-react';
 import { cotizacionPdfBlob, descargarCotizacionPdf } from '../../utils/cotizacionPdf';
+import { ticketPdfBlob, descargarTicketPdf } from '../../utils/ticketPdf';
 
-// Vista previa del PDF A4 de una cotización (se genera en el navegador)
-export default function CotizacionPdfModal({ cot, empresa, vendedor, autoPrint = false, onClose }) {
+// Vista previa del PDF de una cotización (se genera en el navegador).
+// formato: 'A4' o el ancho del ticket en mm (80 / 58).
+export default function CotizacionPdfModal({ cot, empresa, vendedor, autoPrint = false, formato = 'A4', onClose }) {
+  const esTicket = formato !== 'A4';
   const [url, setUrl] = useState(null);
   const [error, setError] = useState(null);
   const frameRef = useRef(null);
@@ -11,14 +14,15 @@ export default function CotizacionPdfModal({ cot, empresa, vendedor, autoPrint =
   useEffect(() => {
     let objectUrl = null;
     try {
-      objectUrl = URL.createObjectURL(cotizacionPdfBlob(cot, empresa, vendedor));
+      const blob = esTicket ? ticketPdfBlob(cot, empresa, formato, 'COTIZACIÓN') : cotizacionPdfBlob(cot, empresa, vendedor);
+      objectUrl = URL.createObjectURL(blob);
       setUrl(objectUrl);
     } catch (err) {
       console.error('[CotizacionPdfModal] No se pudo generar el PDF:', err);
       setError('No se pudo generar el PDF de esta cotización.');
     }
     return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [cot, empresa, vendedor]);
+  }, [cot, empresa, vendedor, esTicket, formato]);
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -37,9 +41,9 @@ export default function CotizacionPdfModal({ cot, empresa, vendedor, autoPrint =
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
-      <div className="bg-white w-full max-w-4xl h-[92dvh] rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+      <div className={`bg-white w-full ${esTicket ? 'max-w-md' : 'max-w-4xl'} h-[92dvh] rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col`} onClick={(e) => e.stopPropagation()}>
         <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-3">
-          <h3 className="font-bold text-sm sm:text-base text-slate-900 truncate">Comprobante {cot.correlativo}</h3>
+          <h3 className="font-bold text-sm sm:text-base text-slate-900 truncate">{esTicket ? `Ticket ${formato} mm` : 'Comprobante'} {cot.correlativo}</h3>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -51,7 +55,7 @@ export default function CotizacionPdfModal({ cot, empresa, vendedor, autoPrint =
             </button>
             <button
               type="button"
-              onClick={() => descargarCotizacionPdf(cot, empresa, vendedor)}
+              onClick={() => (esTicket ? descargarTicketPdf(cot, empresa, formato, 'COTIZACIÓN') : descargarCotizacionPdf(cot, empresa, vendedor))}
               className="px-3 py-2 rounded-lg bg-[#FF6B35] hover:bg-[#E85B28] text-white text-xs font-bold flex items-center gap-1.5 transition"
             >
               <Download className="w-4 h-4" /> Descargar

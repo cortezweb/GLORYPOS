@@ -80,6 +80,11 @@ function MainShell() {
   // Navigation State (Por defecto inicia en la vista Inicio)
   const [currentView, setCurrentView] = useState('inicio');
   const [searchTerm, setSearchTerm] = useState('');
+  // Cotización abierta en un formulario (editar o convertir en nota de venta / comprobante)
+  const [cotizacionForm, setCotizacionForm] = useState(null);
+  React.useEffect(() => {
+    if (!['nueva_cotizacion', 'nuevo_comprobante', 'ventas_nuevo'].includes(currentView)) setCotizacionForm(null);
+  }, [currentView]);
   const [showRegister, setShowRegister] = useState(false);
 
   // Modals State
@@ -339,16 +344,25 @@ function MainShell() {
                 <CotizacionesView 
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenPosWithCart={() => setCurrentView('pos')} 
+                  onAbrirFormulario={(cot, accion) => {
+                    setCotizacionForm({ cot, accion });
+                    setCurrentView(accion === 'editar' ? 'nueva_cotizacion' : 'nuevo_comprobante');
+                  }}
                 />
               )}
               {currentView === 'nueva_cotizacion' && (
                 <NuevoComprobanteView
+                  key={cotizacionForm?.cot?.id || 'nueva'}
                   modo="cotizacion"
+                  cotizacionOrigen={cotizacionForm?.accion === 'editar' ? cotizacionForm.cot : null}
                   onSelectSubView={(sub) => setCurrentView(sub)}
                 />
               )}
               {['nuevo_comprobante', 'ventas_nuevo'].includes(currentView) && (
                 <NuevoComprobanteView 
+                  key={cotizacionForm?.cot?.id || 'nuevo'}
+                  cotizacionOrigen={cotizacionForm && cotizacionForm.accion !== 'editar' ? cotizacionForm.cot : null}
+                  tipoInicial={cotizacionForm && cotizacionForm.accion !== 'editar' ? cotizacionForm.accion : null}
                   onSelectSubView={(sub) => setCurrentView(sub)}
                   onOpenReceipt={(venta) => setActiveTicketSale(venta)} 
                 />

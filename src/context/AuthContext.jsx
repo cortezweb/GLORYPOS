@@ -70,12 +70,15 @@ export function AuthProvider({ children }) {
   // ¿La sesión de Supabase de este dispositivo pertenece a esta empresa?
   const resolveCloudAccess = useCallback(async (slug) => {
     if (isDemoMode) return DEMO_ACCESS;
+    // Sin conexión se usa el último acceso verificado. Va antes de mirar la sesión porque,
+    // pasada una hora, Supabase no puede renovar el token sin red y la daría por cerrada.
+    // Cerrar sesión (SIGNED_OUT) borra esta copia, así que no deja entrar a nadie de más.
+    if (!navigator.onLine) {
+      return (readJson(ACCESS_CACHE_KEY) || {})[slug] || NO_ACCESS;
+    }
     if (!(await tenantService.hasCloudSession())) {
       cacheAccess(slug, null);
       return NO_ACCESS;
-    }
-    if (!navigator.onLine) {
-      return (readJson(ACCESS_CACHE_KEY) || {})[slug] || NO_ACCESS;
     }
     try {
       const m = await tenantService.getMembership(slug);

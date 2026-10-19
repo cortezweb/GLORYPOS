@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Plus, Search, Calendar, ChevronDown, Eye, Download, 
-  Ticket, FileText, Mail, Printer, ShoppingCart, Copy, 
+  Ticket, FileText, Mail, Printer, ShoppingCart, 
   Trash2, Edit, X, Check, CheckCircle2, Share2, Sparkles,
-  FileSpreadsheet, ChevronLeft, ChevronRight
+  FileSpreadsheet, ChevronLeft, ChevronRight, Pencil, Zap, Receipt
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { useCart } from '../../context/CartContext';
@@ -12,7 +12,8 @@ import { simbolo } from '../../utils/currency';
 import { isDemoMode } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { descargarCotizacionPdf } from '../../utils/cotizacionPdf';
-import { imprimirTicketPdf } from '../../utils/ticketPdf';
+import { descargarTicketPdf } from '../../utils/ticketPdf';
+import { convertirCotizacionEnVenta, TIPOS_CONVERSION, METODOS_CONVERSION } from '../../services/cotizacionService';
 import CotizacionPdfModal from './CotizacionPdfModal';
 import CotizacionEmailModal from './CotizacionEmailModal';
 import { toast } from 'sonner';
@@ -93,7 +94,7 @@ const ESTADO_CLASES = {
   Vencida: 'bg-amber-50 text-amber-700 border border-amber-200',
 };
 
-export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart }) {
+export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart, onAbrirFormulario }) {
   const { addItem, clearCart } = useCart();
   const { empresa, currentUser } = useAuth();
   const vendedor = currentUser?.nombre || '';
@@ -101,6 +102,14 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
   // PDF A4: ver/imprimir y enviar por correo
   const [pdfCot, setPdfCot] = useState(null);
   const [pdfAutoPrint, setPdfAutoPrint] = useState(false);
+  const [pdfFormato, setPdfFormato] = useState('A4'); // 'A4' o 80 (ticket)
+  const abrirPdf = (cot, formato, autoPrint = false) => { setPdfFormato(formato); setPdfAutoPrint(autoPrint); setPdfCot(cot); };
+
+  // Conversión directa de la cotización en venta
+  const [convirtiendo, setConvirtiendo] = useState(null); // cotización
+  const [convTipo, setConvTipo] = useState('Nota de Venta');
+  const [convMetodo, setConvMetodo] = useState('Efectivo');
+  const [convGuardando, setConvGuardando] = useState(false);
   const [emailCot, setEmailCot] = useState(null);
   
   const [cotizaciones, setCotizaciones] = useState([]);
@@ -115,6 +124,15 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
   
   // Dropdown de acciones abierto
   const [openActionId, setOpenActionId] = useState(null);
+  // El menú se dibuja con posición fija para que la tabla (con scroll) no lo recorte
+  const [menuPos, setMenuPos] = useState(null);
+  useEffect(() => {
+    if (!openActionId) return;
+    const cerrar = () => setOpenActionId(null);
+    window.addEventListener('scroll', cerrar, true);
+    window.addEventListener('resize', cerrar);
+    return () => { window.removeEventListener('scroll', cerrar, true); window.removeEventListener('resize', cerrar); };
+  }, [openActionId]);
 
   // Modales
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
@@ -226,22 +244,28 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
   };
 
   // Duplicar cotización
-  const handleDuplicate = async (cot) => {
-    const newCorrelativo = `CT01-${String(Math.floor(10000000 + Math.random() * 90000000))}`;
-    const duplicate = {
-      ...cot,
-      id: `cot-${Date.now()}`,
-      correlativo: newCorrelativo,
-      fecha: new Date().toISOString().split('T')[0],
-      fechaDisplay: new Date().toLocaleDateString('es-BO'),
-      estado: 'Borrador'
-    };
-    await db.cotizaciones.add(duplicate);
-    await loadData();
-    setOpenActionId(null);
+  // Eliminar cotización
+  // Abre el formulario completo con los datos de la cotización ('editar' o el tipo de comprobante)
+  const abrirFormulario = (cot, accion) => {
+    if (onAbrirFormulario) onAbrirFormulario(cot, accion);
+    else if (accion === 'editar') setPreviewCotizacion(cot);
   };
 
-  // Eliminar cotización
+  const handleConvertir = async () => {
+    if (!convirtiendo) return;
+    setConvGuardando(true);
+    try {
+      const venta = await convertirCotizacionEnVenta(convirtiendo, { tipo: convTipo, metodo: convMetodo, cajero: vendedor });
+      toast.success(`Cotización ${convirtiendo.correlativo} convertida en ${convTipo} ${venta.correlativo}.`);
+      setConvirtiendo(null);
+      await loadData();
+    } catch (err) {
+      toast.error(err.message || 'No se pudo convertir la cotización.');
+    } finally {
+      setConvGuardando(false);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm('¿Deseas eliminar esta cotización?')) {
       await db.cotizaciones.delete(id);
@@ -472,7 +496,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 1. Ver / Vista previa (Ojo en rojo) */}
                           <button
                             type="button"
-                            onClick={() => { setPdfAutoPrint(false); setPdfCot(cot); }}
+                            onClick={() => abrirPdf(cot, 'A4')}
                             title="Ver comprobante A4"
                             className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition"
                           >
@@ -492,8 +516,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 3. Ticket 80mm (Ticket en naranja) */}
                           <button
                             type="button"
-                            onClick={() => imprimirTicketPdf(cot, empresa, 80, 'COTIZACIÓN')}
-                            title="Ticket 80mm"
+                            onClick={() => abrirPdf(cot, 80)}
+                            title="Ver ticket 80mm"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
                           >
                             <Ticket className="w-3.5 h-3.5" />
@@ -502,8 +526,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 4. Ticket 58mm / A5 (Documento en naranja) */}
                           <button
                             type="button"
-                            onClick={() => imprimirTicketPdf(cot, empresa, 58, 'COTIZACIÓN')}
-                            title="Ticket 58mm / A5"
+                            onClick={() => descargarTicketPdf(cot, empresa, 80, 'COTIZACIÓN')}
+                            title="Descargar ticket 80mm"
                             className="p-1 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded transition"
                           >
                             <FileText className="w-3.5 h-3.5" />
@@ -522,8 +546,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                           {/* 6. Imprimir directo (Impresora en verde) */}
                           <button
                             type="button"
-                            onClick={() => { setPdfAutoPrint(true); setPdfCot(cot); }}
-                            title="Imprimir"
+                            onClick={() => abrirPdf(cot, 80, true)}
+                            title="Imprimir ticket 80mm"
                             className="p-1 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 rounded transition"
                           >
                             <Printer className="w-3.5 h-3.5" />
@@ -539,6 +563,13 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
+                              const r = e.currentTarget.getBoundingClientRect();
+                              const altoMenu = 270;
+                              const haciaArriba = r.bottom + altoMenu + 8 > window.innerHeight && r.top > altoMenu;
+                              setMenuPos({
+                                top: haciaArriba ? r.top - altoMenu - 4 : r.bottom + 4,
+                                right: Math.max(8, window.innerWidth - r.right),
+                              });
                               setOpenActionId(openActionId === cot.id ? null : cot.id);
                             }}
                             className="px-3 py-1 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-medium text-xs rounded-xl shadow-2xs transition inline-flex items-center gap-1 cursor-pointer"
@@ -549,46 +580,52 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
 
                           {/* Menú flotante de acciones */}
                           {openActionId === cot.id && (
-                            <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-30 animate-fadeIn text-left">
+                            <div style={menuPos ? { top: menuPos.top, right: menuPos.right } : undefined} className="fixed w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 animate-fadeIn text-left text-sm">
                               <button
                                 type="button"
-                                onClick={() => handleLoadToPos(cot)}
-                                className="w-full px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-[#FF6B35]/10 hover:text-[#E85B28] flex items-center gap-2 transition"
+                                onClick={() => { setOpenActionId(null); abrirFormulario(cot, 'editar'); }}
+                                className="w-full px-3.5 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition"
                               >
-                                <ShoppingCart className="w-3.5 h-3.5 text-[#FF6B35]" />
-                                <span>Cargar al POS (Venta)</span>
+                                <Pencil className="w-4 h-4 text-slate-600" />
+                                <span>Editar</span>
                               </button>
-
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setPreviewCotizacion(cot);
-                                  setOpenActionId(null);
-                                }}
-                                className="w-full px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition"
-                              >
-                                <Edit className="w-3.5 h-3.5 text-slate-500" />
-                                <span>Editar cotización</span>
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={() => handleDuplicate(cot)}
-                                className="w-full px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition"
-                              >
-                                <Copy className="w-3.5 h-3.5 text-slate-500" />
-                                <span>Duplicar cotización</span>
-                              </button>
-
-                              <div className="border-t border-slate-100 my-1"></div>
-
                               <button
                                 type="button"
                                 onClick={() => handleDelete(cot.id)}
-                                className="w-full px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition"
+                                className="w-full px-3.5 py-2 text-rose-600 hover:bg-rose-50 flex items-center gap-2.5 transition"
                               >
-                                <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                                <Trash2 className="w-4 h-4 text-rose-500" />
                                 <span>Eliminar</span>
+                              </button>
+
+                              <div className="border-t border-slate-100 my-1.5"></div>
+                              <p className="px-3.5 pt-0.5 pb-1 text-[10px] font-semibold tracking-wide uppercase text-slate-400">Convertir directo</p>
+                              <button
+                                type="button"
+                                onClick={() => { setOpenActionId(null); setConvirtiendo(cot); }}
+                                className="w-full px-3.5 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition"
+                              >
+                                <Zap className="w-4 h-4 text-slate-600" />
+                                <span>Conversión directa...</span>
+                              </button>
+
+                              <div className="border-t border-slate-100 my-1.5"></div>
+                              <p className="px-3.5 pt-0.5 pb-1 text-[10px] font-semibold tracking-wide uppercase text-slate-400">Abrir formulario</p>
+                              <button
+                                type="button"
+                                onClick={() => { setOpenActionId(null); abrirFormulario(cot, 'Nota de Venta'); }}
+                                className="w-full px-3.5 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition"
+                              >
+                                <Receipt className="w-4 h-4 text-slate-600" />
+                                <span>Nota de venta</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => { setOpenActionId(null); abrirFormulario(cot, 'Boleta'); }}
+                                className="w-full px-3.5 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition"
+                              >
+                                <FileText className="w-4 h-4 text-slate-600" />
+                                <span>Comprobante</span>
                               </button>
                             </div>
                           )}
@@ -834,6 +871,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
           empresa={empresa}
           vendedor={vendedor}
           autoPrint={pdfAutoPrint}
+          formato={pdfFormato}
           onClose={() => setPdfCot(null)}
         />
       )}
@@ -846,6 +884,56 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart })
           correoInicial={clientList.find(c => (c.nit_ci && c.nit_ci === emailCot.cliente_ci_nit) || c.razon_social === emailCot.cliente_nombre)?.email || ''}
           onClose={() => setEmailCot(null)}
         />
+      )}
+
+      {convirtiendo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/50 backdrop-blur-xs" onClick={() => !convGuardando && setConvirtiendo(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl border border-slate-200 overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-[#FF6B35]" />
+                <h3 className="font-bold text-sm text-slate-900">Convertir {convirtiendo.correlativo}</h3>
+              </div>
+              <button type="button" onClick={() => setConvirtiendo(null)} disabled={convGuardando} className="p-1 text-slate-400 hover:text-slate-700" aria-label="Cerrar">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4 text-xs">
+              <p className="text-slate-500">
+                Se emite la venta por {formatSoles(convirtiendo.total)} a {convirtiendo.cliente_nombre || 'Clientes varios'}, se descuenta el stock y la cotización queda como Convertida.
+              </p>
+              <div>
+                <span className="block font-bold text-slate-600 mb-1.5">Tipo de documento</span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {TIPOS_CONVERSION.map(({ tipo }) => (
+                    <button
+                      key={tipo}
+                      type="button"
+                      onClick={() => setConvTipo(tipo)}
+                      className={`py-2 rounded-lg border font-semibold transition ${convTipo === tipo ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-[#E85B28]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                    >
+                      {tipo}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <label className="block">
+                <span className="block font-bold text-slate-600 mb-1.5">Método de pago</span>
+                <select value={convMetodo} onChange={(e) => setConvMetodo(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-800">
+                  {METODOS_CONVERSION.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </label>
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setConvirtiendo(null)} disabled={convGuardando} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50">
+                  Cancelar
+                </button>
+                <button type="button" onClick={handleConvertir} disabled={convGuardando} className="flex-1 py-2.5 rounded-xl bg-[#FF6B35] hover:bg-[#E85B28] text-white font-bold disabled:opacity-60">
+                  {convGuardando ? 'Convirtiendo...' : 'Convertir'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {previewCotizacion && (
