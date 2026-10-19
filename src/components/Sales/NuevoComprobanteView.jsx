@@ -15,9 +15,12 @@ import { toast } from 'sonner';
 
 // modo 'comprobante' (por defecto) emite ventas; modo 'cotizacion' guarda una cotización
 // (pre venta: no mueve caja, stock ni saldos).
-export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, modo = 'comprobante' }) {
+// cotizacionOrigen: cotización con la que se abre el formulario (editarla en modo cotización,
+// o convertirla en nota de venta / comprobante). tipoInicial: tipo de comprobante a preseleccionar.
+export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, modo = 'comprobante', cotizacionOrigen = null, tipoInicial = null }) {
   const { empresa } = useAuth();
   const esCotizacion = modo === 'cotizacion';
+  const editandoCotizacion = esCotizacion && Boolean(cotizacionOrigen?.id);
 
   // Fecha actual formateada para inputs YYYY-MM-DD
   const todayStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
@@ -32,16 +35,17 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   const [showEditEmpresaModal, setShowEditEmpresaModal] = useState(false);
 
   // Fechas
-  const [fechaEmision, setFechaEmision] = useState(todayStr);
+  const [fechaEmision, setFechaEmision] = useState(() => (editandoCotizacion && cotizacionOrigen.fecha ? String(cotizacionOrigen.fecha).slice(0, 10) : todayStr));
   // Vigencia de la cotización: 15 días por defecto
   const [fechaVencimiento, setFechaVencimiento] = useState(() => {
+    if (editandoCotizacion && cotizacionOrigen.fecha_vencimiento) return cotizacionOrigen.fecha_vencimiento;
     const d = new Date();
     if (esCotizacion) d.setDate(d.getDate() + 15);
     return d.toISOString().slice(0, 10);
   });
 
   // 2. Parámetros del Comprobante
-  const [tipoComprobante, setTipoComprobante] = useState(esCotizacion ? 'Cotización' : 'Boleta'); // Boleta, Factura, Nota de Venta, Nota de Crédito, Cotización
+  const [tipoComprobante, setTipoComprobante] = useState(esCotizacion ? 'Cotización' : (tipoInicial || 'Boleta')); // Boleta, Factura, Nota de Venta, Nota de Crédito, Cotización
   const [serie, setSerie] = useState(esCotizacion ? 'CT01' : 'B001');
   const [tipoOperacion, setTipoOperacion] = useState('Venta interna');
 
@@ -55,11 +59,15 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   }, [tipoComprobante]);
 
   // 3. Cliente y Moneda
-  const [cliente, setCliente] = useState({
+  const [cliente, setCliente] = useState(() => (cotizacionOrigen ? {
+    razon_social: cotizacionOrigen.cliente_nombre || 'Clientes Varios (por defecto)',
+    nit_ci: cotizacionOrigen.cliente_ci_nit || '99999999',
+    direccion: cotizacionOrigen.cliente_direccion || ''
+  } : {
     razon_social: 'Clientes Varios (por defecto)',
     nit_ci: '99999999',
     direccion: ''
-  });
+  }));
   const [searchClientQuery, setSearchClientQuery] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [showNewClientModal, setShowNewClientModal] = useState(false);
@@ -76,7 +84,20 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   }, [moneda]);
 
   // 4. Ítems de la tabla
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => (Array.isArray(cotizacionOrigen?.items) ? cotizacionOrigen.items.map((it, idx) => ({
+    id: `item-${Date.now()}-${idx}`,
+    producto_id: it.id || it.producto_id || `manual-${Date.now()}-${idx}`,
+    presentacion_id: null,
+    factor: 1,
+    descripcion: it.nombre || it.descripcion || '',
+    codigo: it.codigo || '',
+    unidad: it.unidad || 'NIU',
+    cantidad: Number(it.cantidad) || 1,
+    precio_unitario: Number(it.precio ?? it.precio_unitario) || 0,
+    afectacion: it.afectacion || 'Gravado - Operación Onerosa',
+    igv_incluido: it.igv_incluido ?? true,
+    descuento: Number(it.descuento) || 0
+  })) : []));
   const [productsCatalog, setProductsCatalog] = useState([]);
   const [clientesCatalog, setClientesCatalog] = useState([]);
 
@@ -106,7 +127,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Solo cotización: notas, términos y condiciones y vista previa
-  const [notas, setNotas] = useState('');
+  const [notas, setNotas] = useState(editandoCotizacion ? (cotizacionOrigen.notas || '') : '');
   const [mostrarTerminos, setMostrarTerminos] = useState(() => {
     try { return localStorage.getItem('glorypos_cot_terminos') === '1'; } catch { return false; }
   });
@@ -410,6 +431,9 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
 
     // Guardar en Dexie
     await db.ventas.add(nuevaVenta);
+    if (cotizacionOrigen?.id) {
+      await db.cotizaciones.update(cotizacionOrigen.id, { estado: 'Convertida', venta_id: nuevaVenta.id });
+    }
     syncService.triggerBackgroundSync();
 
     // Descontar stock y registrar en Kardex si es producto físico
@@ -502,7 +526,13 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
       estado: 'Borrador'
     };
 
-    await db.cotizaciones.add(nueva);
+    if (editandoCotizacion) {
+      // Editar: se conserva el número, la fecha de creación y el estado de la cotización original
+      const { id, correlativo: _nuevoNumero, estado, ...cambios } = nueva;
+      await db.cotizaciones.update(cotizacionOrigen.id, cambios);
+    } else {
+      await db.cotizaciones.add(nueva);
+    }
     syncService.triggerBackgroundSync();
     setIsSuccess(true);
     setTimeout(() => {

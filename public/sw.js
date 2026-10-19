@@ -1,16 +1,27 @@
-const CACHE_NAME = 'glorypos-v4';
+const CACHE_NAME = 'glorypos-v5';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/logo.png'
 ];
 
+// Guarda también el JS y CSS que pide index.html (nombres con hash de cada despliegue).
+// Así la app abre sin conexión desde la primera visita, no recién desde la segunda.
+async function precache() {
+  const cache = await caches.open(CACHE_NAME);
+  await cache.addAll(ASSETS_TO_CACHE);
+  try {
+    const html = await (await fetch('/index.html', { cache: 'no-store' })).text();
+    const assets = [...new Set(html.match(/\/assets\/[\w.-]+\.(?:js|css)/g) || [])];
+    await cache.addAll(assets);
+  } catch {
+    // Sin red durante la instalación: se completará en la próxima visita
+  }
+}
+
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
+  event.waitUntil(precache());
   self.skipWaiting();
 });
 
@@ -40,7 +51,8 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         })
-        .catch(() => caches.match('/index.html'))
+        // Sin red: la última versión guardada de la página (no la de la instalación)
+        .catch(async () => (await caches.match(event.request)) || (await caches.match('/')) || caches.match('/index.html'))
     );
     return;
   }

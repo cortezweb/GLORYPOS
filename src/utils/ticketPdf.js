@@ -40,6 +40,19 @@ function dibujar(doc, datos, empresa, ancho, titulo) {
     y += 1.5;
   };
 
+  // Logo de la empresa (data URL guardada en Administración), centrado sobre el nombre
+  if (empresa?.logo_url && String(empresa.logo_url).startsWith('data:image')) {
+    try {
+      const props = doc.getImageProperties(empresa.logo_url);
+      const escala = Math.min((W * 0.6) / props.width, 20 / props.height);
+      const lw = props.width * escala;
+      const lh = props.height * escala;
+      doc.addImage(empresa.logo_url, props.fileType, (ancho - lw) / 2, y - 2, lw, lh);
+      y += lh + 3;
+    } catch (err) {
+      console.warn('[ticketPdf] No se pudo insertar el logo:', err);
+    }
+  }
   centro(String(empresa?.nombre || 'EMPRESA').toUpperCase(), base + 2, true);
   if (empresa?.nit_ci) centro(`NIT: ${empresa.nit_ci}`);
   const dir = [empresa?.direccion, empresa?.ciudad].filter(Boolean).join(' - ');
@@ -106,5 +119,15 @@ export function imprimirTicketPdf(datos, empresa, anchoMm = 80, titulo) {
   const doc = crearTicketPdf(datos, empresa, anchoMm, titulo);
   doc.autoPrint();
   const win = window.open(doc.output('bloburl'), '_blank');
-  if (!win) doc.save(`ticket-${anchoMm}mm-${datos?.correlativo || 'sin-numero'}.pdf`);
+  if (!win) doc.save(nombreArchivoTicket(datos, anchoMm));
+}
+
+export const nombreArchivoTicket = (datos, anchoMm = 80) => `ticket-${anchoMm}mm-${datos?.correlativo || 'sin-numero'}.pdf`;
+
+export function ticketPdfBlob(datos, empresa, anchoMm = 80, titulo) {
+  return crearTicketPdf(datos, empresa, anchoMm, titulo).output('blob');
+}
+
+export function descargarTicketPdf(datos, empresa, anchoMm = 80, titulo) {
+  crearTicketPdf(datos, empresa, anchoMm, titulo).save(nombreArchivoTicket(datos, anchoMm));
 }
