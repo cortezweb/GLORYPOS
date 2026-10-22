@@ -9,6 +9,7 @@ import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
+import { imprimirElemento } from '../../utils/exportar';
 
 export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaultTab = 'mis_cajas' }) {
   const [activeTab, setActiveTab] = useState(defaultTab); // 'mis_cajas' | 'reporte_cajas'
@@ -318,7 +319,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
         {/* VISTA 2: REPORTE DE CAJAS (PANTALLA 1 DEL MOCKUP MÓVIL)         */}
         {/* ════════════════════════════════════════════════════════════════ */}
         {activeTab === 'reporte_cajas' && (
-          <div className="space-y-4 animate-fadeIn">
+          <div id="reporte-cajas-imprimir" className="space-y-4 animate-fadeIn">
             {/* Header Screen 1 */}
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
@@ -332,7 +333,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                 </div>
 
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => imprimirElemento('reporte-cajas-imprimir', 'Reporte de cajas')}
                   className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition"
                 >
                   <Printer className="w-3.5 h-3.5 text-slate-500" />

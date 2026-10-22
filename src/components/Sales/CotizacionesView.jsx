@@ -989,7 +989,7 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart, o
                 </button>
                 <button
                   type="button"
-                  onClick={() => window.print()}
+                  onClick={() => { const cot = previewCotizacion; setPreviewCotizacion(null); abrirPdf(cot, 'A4', true); }}
                   className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition"
                 >
                   Imprimir

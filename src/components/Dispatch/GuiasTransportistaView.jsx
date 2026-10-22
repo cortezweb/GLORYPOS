@@ -5,6 +5,7 @@ import {
   Search, X, CheckCircle2, AlertCircle, Printer, Truck, MapPin, User, Building2
 } from 'lucide-react';
 import { db } from '../../db/dexie';
+import { imprimirElemento } from '../../utils/exportar';
 
 export default function GuiasTransportistaView() {
   const [guias, setGuias] = useState([]);
@@ -283,7 +284,7 @@ export default function GuiasTransportistaView() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => window.print()}
+                          onClick={() => { setSelectedGuia(g); setTimeout(() => imprimirElemento('guia-imprimir', 'Guía de remisión transportista'), 150); }}
                           title="Descargar PDF"
                           className="p-1 text-rose-500 hover:text-rose-700 rounded transition cursor-pointer"
                         >
@@ -523,7 +524,7 @@ export default function GuiasTransportistaView() {
       {/* ── MODAL: DETALLE DE GUÍA ── */}
       {selectedGuia && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
-          <div className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
+          <div id="guia-imprimir" className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl z-10 space-y-4 border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center font-bold">
@@ -596,7 +597,7 @@ export default function GuiasTransportistaView() {
             <div className="pt-2 border-t border-slate-100 flex gap-2 justify-end">
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => imprimirElemento('guia-imprimir', 'Guía de remisión transportista')}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />

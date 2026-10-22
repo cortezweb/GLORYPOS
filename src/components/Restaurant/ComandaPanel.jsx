@@ -12,6 +12,7 @@ import {
 import { money, minutosDesde, formatMinutos } from './useGlorychefData';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
+import { imprimirHtml } from '../../utils/exportar';
 
 const ESTADO_COLOR = {
   PENDIENTE: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -102,18 +103,14 @@ export default function ComandaPanel({ comanda, data, onBack, onCobrar }) {
     const filas = cobrables
       .map(it => `<tr><td>${it.cantidad} x ${it.nombre}</td><td style="text-align:right">${(it.precio * it.cantidad).toFixed(2)}</td></tr>`)
       .join('');
-    const w = window.open('', '_blank', 'width=360,height=640');
-    if (!w) return;
-    w.document.write(`<html><head><title>Pre-cuenta #${comanda.numero}</title>
+    imprimirHtml(`<html><head><title>Pre-cuenta #${comanda.numero}</title>
       <style>body{font-family:monospace;font-size:12px;padding:8px}table{width:100%}h3,p{text-align:center;margin:4px 0}</style></head>
       <body><h3>${empresa?.nombre || 'GLORYCHEF'}</h3><p>PRE-CUENTA (no válida como factura)</p>
       <p>Comanda #${comanda.numero} ${comanda.mesa_numero ? '· Mesa ' + comanda.mesa_numero : '· ' + TIPOS_PEDIDO[comanda.tipo]}</p>
       <p>Mozo: ${comanda.mozo || '-'} · Comensales: ${comanda.comensales || 1}</p><hr/>
       <table>${filas}</table><hr/>
       <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>${simbolo()} ${totalPendienteCobro(comanda).toFixed(2)}</b></td></tr>
-      <tr><td>Por persona (${comanda.comensales || 1})</td><td style="text-align:right">${simbolo()} ${(totalPendienteCobro(comanda) / (comanda.comensales || 1)).toFixed(2)}</td></tr></table>
-      <script>window.print()</script></body></html>`);
-    w.document.close();
+      <tr><td>Por persona (${comanda.comensales || 1})</td><td style="text-align:right">${simbolo()} ${(totalPendienteCobro(comanda) / (comanda.comensales || 1)).toFixed(2)}</td></tr></table></body></html>`);
   };
 
   const toggleSeleccion = (id) =>

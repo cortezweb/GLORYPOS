@@ -1,8 +1,9 @@
-// Libros contables en PDF (A4 horizontal) con los datos reales del periodo guardados en este equipo.
+// Libros contables (PDF A4 horizontal, Excel y TXT) con los datos reales del periodo guardados en este equipo.
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { db } from '../db/dexie';
 import { simbolo } from './currency';
+import { descargarBlob, descargarExcel } from './exportar';
 
 const fmt = (n) => (Number(n) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fecha = (iso) => {
@@ -93,5 +94,27 @@ export async function descargarLibroPdf(libro, periodo, empresa = {}) {
   }
 
   doc.save(`${libro.code}-${periodo}.pdf`);
+  return datos.body.length;
+}
+
+const aNumero = (v) => Number(String(v).replace(/,/g, '')) || 0;
+
+// Excel del libro: mismas columnas que el PDF, importes como número
+export async function descargarLibroExcel(libro, periodo) {
+  const datos = await LIBROS[libro.id]?.(periodo);
+  if (!datos) throw new Error('Este libro todavía no tiene exportación a Excel.');
+  const conNumeros = (fila) => fila.map((v, i) => (datos.numericas.includes(i) && v !== '-' ? aNumero(v) : v));
+  const filas = datos.body.map(conNumeros);
+  if (datos.foot && filas.length) filas.push(conNumeros(datos.foot));
+  descargarExcel(`${libro.code}-${periodo}`, datos.head, filas, libro.code);
+  return datos.body.length;
+}
+
+// TXT del libro separado por "|" (formato de carga de libros electrónicos), sin totales
+export async function descargarLibroTxt(libro, periodo) {
+  const datos = await LIBROS[libro.id]?.(periodo);
+  if (!datos) throw new Error('Este libro todavía no tiene exportación a TXT.');
+  const lineas = datos.body.map(fila => fila.map((v, i) => (datos.numericas.includes(i) ? String(v).replace(/,/g, '') : String(v).replace(/\|/g, ' '))).join('|') + '|');
+  descargarBlob(new Blob([lineas.join('\r\n')], { type: 'text/plain;charset=utf-8' }), `${libro.code}-${periodo}.txt`);
   return datos.body.length;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer, CheckCircle2, AlertCircle, FileText, QrCode } from 'lucide-react';
 import { simbolo } from '../../utils/currency';
+import { imprimirElemento } from '../../utils/exportar';
 
 export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 'retencion', onPrint }) {
   if (!isOpen || !doc) return null;
@@ -25,7 +26,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto animate-fadeIn [&>*]:my-auto">
-      <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
+      <div id="detalle-documento-imprimir" className="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div>
@@ -118,7 +119,7 @@ export default function DetalleDocumentoModal({ isOpen, onClose, doc, type = 're
         {/* Footer Actions */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50/60">
           <button
-            onClick={() => onPrint ? onPrint(doc) : window.print()}
+            onClick={() => onPrint ? onPrint(doc) : imprimirElemento('detalle-documento-imprimir', 'Documento')}
             className="px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs"
           >
             <Printer className="w-4 h-4" />

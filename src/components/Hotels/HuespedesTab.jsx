@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Search, Download } from 'lucide-react';
 import { formatFecha, folio } from '../../services/hotelService';
 import { money } from './useHotelData';
+import { descargarExcel } from '../../utils/exportar';
 
 // Libro de huéspedes / registro de pasajeros (exportable a CSV)
 export default function HuespedesTab({ data, onOpenReserva }) {
@@ -23,15 +24,9 @@ export default function HuespedesTab({ data, onOpenReserva }) {
     const filas = registro.map(r => [
       r.codigo, r.huesped?.nombre, r.huesped?.tipo_doc, r.huesped?.documento, r.huesped?.nacionalidad, r.huesped?.telefono,
       habById[r.habitacion_id]?.numero, r.checkin_at?.slice(0, 16).replace('T', ' '), r.checkout_at?.slice(0, 16).replace('T', ' ') || '',
-      folio(r).noches, (Number(r.adultos) || 0) + (Number(r.ninos) || 0), folio(r).total.toFixed(2),
+      folio(r).noches, (Number(r.adultos) || 0) + (Number(r.ninos) || 0), folio(r).total,
     ]);
-    const csv = [cab, ...filas].map(f => f.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
-    const url = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `libro-huespedes-${mes || 'todo'}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    descargarExcel(`libro-huespedes-${mes || 'todo'}`, cab, filas, 'Libro de huéspedes');
   };
 
   return (
@@ -44,7 +39,7 @@ export default function HuespedesTab({ data, onOpenReserva }) {
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Nombre o documento" className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs" />
         </div>
         <button type="button" onClick={exportar} disabled={registro.length === 0} className="ml-auto px-3 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 disabled:opacity-40">
-          <Download className="w-4 h-4" /> Exportar CSV
+          <Download className="w-4 h-4" /> Exportar Excel
         </button>
       </div>
       <div className="overflow-x-auto">

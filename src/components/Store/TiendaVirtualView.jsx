@@ -14,6 +14,7 @@ import PedidosWebView from '../Sales/PedidosWebView';
 import EcommerceStorefront from './EcommerceStorefront';
 import CheckoutSettingsPanel from './CheckoutSettingsPanel';
 import { simbolo } from '../../utils/currency';
+import { imprimirElemento } from '../../utils/exportar';
 
 const SLIDERS_STORAGE_KEY = 'glorypos_ecommerce_sliders';
 
@@ -525,7 +526,7 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
       {/* ── MODAL: CÓDIGO QR DE LA TIENDA ── */}
       {isQrModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto [&>*]:my-auto">
-          <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-sm overflow-hidden p-6 text-center space-y-4 animate-scaleUp">
+          <div id="qr-tienda" className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-sm overflow-hidden p-6 text-center space-y-4 animate-scaleUp">
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
               <h3 className="text-sm font-black text-slate-900">Código QR de tu Tienda</h3>
               <button
@@ -561,7 +562,7 @@ export default function TiendaVirtualView({ initialTab = 'tienda', onSelectView,
               </button>
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => imprimirElemento('qr-tienda', 'Código QR de la tienda')}
                 className="py-2.5 px-4 rounded-xl bg-[#FF6B35] hover:bg-[#E85B28] text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />

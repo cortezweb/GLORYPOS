@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { simbolo } from '../../utils/currency';
+import { imprimirElemento } from '../../utils/exportar';
 
 const DEFAULT_CUENTAS = [
   {
@@ -111,7 +112,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
   return (
     <div className="flex-1 flex flex-col font-sans">
 
-      <main className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
+      <main id="cxc-imprimir" className="w-full p-4 sm:p-6 lg:p-7 space-y-4">
         {/* Toast */}
         {toastMsg && (
           <div className="fixed top-20 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 border border-slate-700 animate-fadeIn">
@@ -139,7 +140,7 @@ export default function CuentasPorCobrarView({ onSelectSubView }) {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => window.print()}
+              onClick={() => imprimirElemento('cxc-imprimir', 'Cuentas por cobrar')}
               className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 transition"
             >
               <Printer className="w-3.5 h-3.5 text-slate-500" />

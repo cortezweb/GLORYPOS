@@ -5,8 +5,11 @@ import {
 } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { simbolo } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
 
 export default function ReportesCajaView({ onSelectSubView }) {
+  const { empresa } = useAuth();
   const [activeTab, setActiveTab] = useState('resumen'); // 'resumen' | 'movimientos'
   const [sucursal, setSucursal] = useState('Principal');
   const [usuario, setUsuario] = useState('Todos');
@@ -60,22 +63,19 @@ export default function ReportesCajaView({ onSelectSubView }) {
     });
   }, [sesion, tipoMov]);
 
+  const COLUMNAS_MOV = ['Fecha', 'Sesión', 'Tipo', 'Método', 'Concepto', 'Usuario', 'Ingreso', 'Egreso', 'Saldo'];
+  const filasMov = () => consolidatedMovimientos.map(m => [m.fecha, m.sesion, m.tipo, m.metodo, m.concepto, m.usuario, m.ingreso, m.egreso, m.saldo]);
+
   const handleExportCSV = () => {
-    let csvContent = 'data:text/csv;charset=utf-8,Fecha,Sesion,Tipo,Metodo,Concepto,Usuario,Ingreso,Egreso,Saldo\n';
-    consolidatedMovimientos.forEach(m => {
-      csvContent += `${m.fecha},${m.sesion},${m.tipo},${m.metodo},"${m.concepto}",${m.usuario},${m.ingreso},${m.egreso},${m.saldo}\n`;
-    });
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `reporte_caja_${desde}_${hasta}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    descargarExcel(`reporte_caja_${desde}_${hasta}`, COLUMNAS_MOV, filasMov(), 'Movimientos de caja');
   };
 
   const handleExportPDF = () => {
-    window.print();
+    const filas = filasMov();
+    descargarPdfTabla(`reporte_caja_${desde}_${hasta}`, {
+      titulo: 'Reporte de caja', subtitulo: `Del ${desde} al ${hasta} · ${filas.length} movimientos`,
+      empresa: empresa || {}, columnas: COLUMNAS_MOV, filas,
+    });
   };
 
   return (

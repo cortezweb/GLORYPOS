@@ -7,6 +7,7 @@ import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { useAuth } from '../../context/AuthContext';
 import { simbolo } from '../../utils/currency';
+import { imprimirElemento } from '../../utils/exportar';
 
 export default function CloseCashModal({ isOpen, onClose }) {
   const { empresa } = useAuth();
@@ -323,7 +324,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
               <p className="text-xs text-slate-500 mt-1">Turno Mañana concluido con respaldo en base de datos.</p>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left text-xs font-mono space-y-1.5">
+            <div id="acta-arqueo" className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left text-xs font-mono space-y-1.5 max-w-[80mm] mx-auto">
               <div className="text-center font-bold pb-2 border-b border-slate-200">
                 <p className="text-xs font-black">GLORYPOS BOLIVIA</p>
                 <p className="text-[10px] text-slate-500">ACTA DE ARQUEO DE CAJA</p>
@@ -348,7 +349,7 @@ export default function CloseCashModal({ isOpen, onClose }) {
 
             <div className="flex gap-2">
               <button
-                onClick={() => window.print()}
+                onClick={() => imprimirElemento('acta-arqueo', 'Acta de arqueo de caja', { margen: '2mm' })}
                 className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition"
               >
                 <Printer className="w-4 h-4" />

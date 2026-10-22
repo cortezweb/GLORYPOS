@@ -1,8 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Calendar, FileText, Download } from 'lucide-react';
 import { simbolo } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
+
+const hoy = () => new Date().toISOString().slice(0, 10);
 
 export default function ReporteCajaTab({ movimientosCaja = [] }) {
+  const { empresa } = useAuth();
   const [sucursal, setSucursal] = useState('Todas');
   const [usuario, setUsuario] = useState('Todos');
   const [desde, setDesde] = useState('01/09/2026');
@@ -59,22 +64,22 @@ export default function ReporteCajaTab({ movimientosCaja = [] }) {
     });
   }, [baseMovimientos, tipoMovimiento, usuario]);
 
+  // Mismas columnas para PDF y Excel (los números quedan como número en Excel)
+  const tablaExportar = () => ({
+    columnas: ['Fecha', 'Tipo', 'Categoría', 'Documento', 'Cliente / detalle', 'Usuario', 'Sucursal', 'Sesión', 'Método pago', 'Monto'],
+    filas: filteredData.map(r => [r.fecha, r.tipo, r.categoria, r.documento, r.cliente, r.usuario, r.sucursal, r.sesion, r.metodo, r.monto]),
+  });
+
   const handleExportPDF = () => {
-    window.print();
+    const { columnas, filas } = tablaExportar();
+    descargarPdfTabla(`reporte_caja_${hoy()}`, {
+      titulo: 'Reporte de caja', subtitulo: `${filas.length} registros`, empresa: empresa || {}, columnas, filas,
+    });
   };
 
   const handleExportExcel = () => {
-    let csv = "Fecha,Tipo,Categoria,Documento,ClienteDetalle,Usuario,Sucursal,Sesion,MetodoPago,Monto\n";
-    filteredData.forEach(r => {
-      csv += `"${r.fecha}","${r.tipo}","${r.categoria}","${r.documento}","${r.cliente}","${r.usuario}","${r.sucursal}","${r.sesion}","${r.metodo}",${r.monto.toFixed(2)}\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `reporte_caja_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { columnas, filas } = tablaExportar();
+    descargarExcel(`reporte_caja_${hoy()}`, columnas, filas, 'Reporte de caja');
   };
 
   return (

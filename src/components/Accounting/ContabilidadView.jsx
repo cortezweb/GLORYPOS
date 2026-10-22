@@ -6,7 +6,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
-import { descargarLibroPdf, librosConPdf } from '../../utils/libroPdf';
+import { descargarLibroExcel, descargarLibroPdf, descargarLibroTxt, librosConPdf } from '../../utils/libroPdf';
 
 export default function ContabilidadView() {
   const { empresa } = useAuth();
@@ -30,8 +30,21 @@ export default function ContabilidadView() {
     }
   };
 
-  const handleExport = (bookName) => {
-    toast.info(`Generando archivo TXT / Excel para "${bookName}" del periodo ${activePeriod}...`);
+  const handleExport = async (book, formato) => {
+    if (!librosConPdf.includes(book.id)) {
+      toast.info(`"${book.name}" todavía no guarda asientos en el sistema; no hay datos para exportar.`);
+      return;
+    }
+    try {
+      const filas = formato === 'excel'
+        ? await descargarLibroExcel(book, activePeriod)
+        : await descargarLibroTxt(book, activePeriod);
+      const archivo = formato === 'excel' ? 'Excel' : 'TXT';
+      if (filas === 0) toast.info(`"${book.name}" no tiene movimientos en ${activePeriod}; el ${archivo} salió vacío.`);
+      else toast.success(`${archivo} de "${book.name}" descargado (${filas} registros).`);
+    } catch (err) {
+      toast.error(err.message || 'No se pudo generar el archivo.');
+    }
   };
 
   return (
@@ -131,7 +144,7 @@ export default function ContabilidadView() {
                 )}
                 <button
                   type="button"
-                  onClick={() => handleExport(book.name)}
+                  onClick={() => handleExport(book, 'txt')}
                   className="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold border border-indigo-200 transition flex items-center gap-1.5"
                 >
                   <Download className="w-3.5 h-3.5" />
@@ -139,7 +152,7 @@ export default function ContabilidadView() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleExport(book.name + ' (Excel)')}
+                  onClick={() => handleExport(book, 'excel')}
                   className="px-3 py-2 bg-[#FF6B35]/10 hover:bg-[#FF6B35]/20 text-[#E85B28] rounded-xl text-xs font-bold border border-[#FF6B35]/20 transition flex items-center gap-1.5"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />

@@ -1,8 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, FileText, Download } from 'lucide-react';
 import { simbolo } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
+
+const hoy = () => new Date().toISOString().slice(0, 10);
 
 export default function ReporteProductosTab({ productos = [] }) {
+  const { empresa } = useAuth();
   const [categoria, setCategoria] = useState('Todas');
   const [sucursal, setSucursal] = useState('Todas');
   const [stockMenorA, setStockMenorA] = useState('');
@@ -74,22 +79,22 @@ export default function ReporteProductosTab({ productos = [] }) {
     });
   }, [baseCatalog, categoria, stockMenorA, search]);
 
+  // Mismas columnas para PDF y Excel (los números quedan como número en Excel)
+  const tablaExportar = () => ({
+    columnas: ['Código', 'Nombre', 'Categoría', 'Unidad', 'Precio venta', 'Precio compra', 'Stock total', 'Series', 'Activo'],
+    filas: filteredCatalog.map(p => [p.codigo, p.nombre, p.categoria, p.unidad, p.p_venta, p.p_compra, p.stock_total ?? '', p.series ?? '', p.activo]),
+  });
+
   const handleExportPDF = () => {
-    window.print();
+    const { columnas, filas } = tablaExportar();
+    descargarPdfTabla(`reporte_productos_${hoy()}`, {
+      titulo: 'Reporte de productos', subtitulo: `${filas.length} registros`, empresa: empresa || {}, columnas, filas,
+    });
   };
 
   const handleExportExcel = () => {
-    let csv = "Codigo,Nombre,Categoria,Unidad,PrecioVenta,PrecioCompra,StockTotal,Series,Activo\n";
-    filteredCatalog.forEach(p => {
-      csv += `"${p.codigo}","${p.nombre}","${p.categoria}","${p.unidad}",${p.p_venta.toFixed(2)},${p.p_compra.toFixed(2)},${p.stock_total ?? ''},"${p.series ?? ''}","${p.activo}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `reporte_productos_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { columnas, filas } = tablaExportar();
+    descargarExcel(`reporte_productos_${hoy()}`, columnas, filas, 'Reporte de productos');
   };
 
   return (

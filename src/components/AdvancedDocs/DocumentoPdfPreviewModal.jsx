@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Printer, Download, QrCode } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { simbolo, nombreMoneda } from '../../utils/currency';
+import { imprimirElemento } from '../../utils/exportar';
 
 export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 'retencion' }) {
   const { empresa } = useAuth();
@@ -24,7 +25,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
   const totalBase = doc.monto_total_comprobante || (Number(amountVal) / 0.03);
 
   const handlePrint = () => {
-    window.print();
+    imprimirElemento('documento-imprimir', 'Comprobante');
   };
 
   return (
@@ -51,7 +52,7 @@ export default function DocumentoPdfPreviewModal({ isOpen, onClose, doc, type = 
         </div>
 
         {/* Printable Paper Canvas */}
-        <div className="p-8 bg-white text-slate-900 font-sans space-y-6 max-h-[80dvh] overflow-y-auto print:p-0 print:max-h-none">
+        <div id="documento-imprimir" className="p-8 bg-white text-slate-900 font-sans space-y-6 max-h-[80dvh] overflow-y-auto print:p-0 print:max-h-none">
           {/* Header row: Company logo / info on left, SUNAT RUC box on right */}
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-1">

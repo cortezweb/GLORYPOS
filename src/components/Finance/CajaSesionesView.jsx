@@ -7,8 +7,11 @@ import {
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { simbolo } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
 
 export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
+  const { empresa } = useAuth();
   const [sesiones, setSesiones] = useState([]);
   const [pageSize, setPageSize] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,27 +50,25 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
     setReportTab('resumen');
   };
 
-  const handleExportPDF = () => {
-    window.print();
+  const movimientosExportar = (sessionObj = null) => (sessionObj ? sessionMovimientos : [
+    { fecha: '20/09/2026, 12:45', sesion: '#18', tipo: 'Venta', metodo: 'Efectivo', concepto: 'Venta NV001-00000457', ingreso: 210.00, egreso: 0, saldo: 7770.00 },
+    { fecha: '20/09/2026, 11:20', sesion: '#18', tipo: 'Venta', metodo: 'Yape', concepto: 'Venta B001-00000790', ingreso: 145.05, egreso: 0, saldo: 7560.00 },
+    { fecha: '20/09/2026, 10:15', sesion: '#18', tipo: 'Egreso', metodo: 'Efectivo', concepto: 'Gasto compra bolsas', ingreso: 0, egreso: 45.00, saldo: 7414.95 }
+  ]);
+  const COLUMNAS_MOV = ['Fecha', 'Tipo', 'Método', 'Concepto', 'Ingreso', 'Egreso', 'Saldo'];
+  const filasMov = (list) => list.map(m => [m.fecha, m.tipo, m.metodo, m.concepto, Number(m.ingreso) || 0, Number(m.egreso) || 0, Number(m.saldo) || 0]);
+
+  const handleExportPDF = (sessionObj = null) => {
+    const filas = filasMov(movimientosExportar(sessionObj));
+    descargarPdfTabla(`reporte_caja_${new Date().toISOString().slice(0, 10)}`, {
+      titulo: 'Reporte de caja',
+      subtitulo: sessionObj ? `Sesión ${sessionObj.id} · ${sessionObj.usuario || ''}` : `${filas.length} movimientos`,
+      empresa: empresa || {}, columnas: COLUMNAS_MOV, filas,
+    });
   };
 
   const handleExportCSV = (sessionObj = null) => {
-    const list = sessionObj ? sessionMovimientos : [
-      { fecha: '20/09/2026, 12:45', sesion: '#18', tipo: 'Venta', metodo: 'Efectivo', concepto: 'Venta NV001-00000457', ingreso: 210.00, egreso: 0, saldo: 7770.00 },
-      { fecha: '20/09/2026, 11:20', sesion: '#18', tipo: 'Venta', metodo: 'Yape', concepto: 'Venta B001-00000790', ingreso: 145.05, egreso: 0, saldo: 7560.00 },
-      { fecha: '20/09/2026, 10:15', sesion: '#18', tipo: 'Egreso', metodo: 'Efectivo', concepto: 'Gasto compra bolsas', ingreso: 0, egreso: 45.00, saldo: 7414.95 }
-    ];
-    let csvContent = 'data:text/csv;charset=utf-8,Fecha,Tipo,Metodo,Concepto,Ingreso,Egreso,Saldo\n';
-    list.forEach(m => {
-      csvContent += `${m.fecha},${m.tipo},${m.metodo},"${m.concepto}",${m.ingreso},${m.egreso},${m.saldo}\n`;
-    });
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `reporte_caja_${Date.now()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    descargarExcel(`reporte_caja_${new Date().toISOString().slice(0, 10)}`, COLUMNAS_MOV, filasMov(movimientosExportar(sessionObj)), 'Movimientos de caja');
   };
 
   const loadSesiones = async () => {
@@ -592,7 +593,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
                 <button
                   type="button"
-                  onClick={handleExportPDF}
+                  onClick={() => handleExportPDF()}
                   className="px-4 py-2 bg-[#f87171] hover:bg-[#ef4444] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
@@ -1068,7 +1069,7 @@ export default function CajaSesionesView({ onSelectSubView, onOpenCloseCash }) {
 
                 <button
                   type="button"
-                  onClick={handleExportPDF}
+                  onClick={() => handleExportPDF(selectedArqueoSesion)}
                   className="px-3.5 py-2 bg-[#f87171] hover:bg-[#ef4444] text-white rounded-xl font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
