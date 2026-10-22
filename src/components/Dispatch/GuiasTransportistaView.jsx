@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   RotateCw, Plus, Eye, Download, FileText, Inbox, 
   Search, X, CheckCircle2, AlertCircle, Printer, Truck, MapPin, User, Building2
@@ -218,8 +219,8 @@ export default function GuiasTransportistaView() {
             <tbody className="divide-y divide-slate-100">
               {guias.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-8 text-center text-xs text-slate-400 font-medium">
-                    No hay guías de remisión transportista registradas
+                  <td colSpan={9}>
+                    <EstadoVacio titulo="No hay guías de remisión" descripcion="Aún no registras guías como transportista." />
                   </td>
                 </tr>
               ) : (

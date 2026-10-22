@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { LogIn, LogOut, User, Moon, BedDouble, Percent, Sparkles, Wrench } from 'lucide-react';
 import { hotelService, HAB_ESTADOS, hoyISO, addDias, formatFecha, folio } from '../../services/hotelService';
 import { money } from './useHotelData';
@@ -124,9 +125,7 @@ export default function RecepcionTab({ data, onOpenReserva, onNuevaReserva }) {
             </div>
           ))}
           {habitaciones.length === 0 && (
-            <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">
-              Aún no hay habitaciones. Créalas en la pestaña Configuración.
-            </div>
+              <EstadoVacio className="bg-white rounded-3xl border border-dashed border-slate-300" titulo="Aún no hay habitaciones" descripcion="Créalas en la pestaña Configuración." />
           )}
         </div>
 

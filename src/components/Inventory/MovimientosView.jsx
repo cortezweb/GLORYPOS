@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Activity, Plus, Minus, FileText, Search, X, SlidersHorizontal,
   ArrowRightLeft, History, CheckCircle2, AlertTriangle, AlertCircle
@@ -559,8 +560,8 @@ export default function MovimientosView({ onSelectSubView, onSelectProductForKar
 
                 {filteredProducts.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="py-12 text-center text-slate-400 italic">
-                      No se encontraron productos que coincidan con los filtros.
+                    <td colSpan={8}>
+                      <EstadoVacio titulo="No se encontraron productos" descripcion="Prueba con otros filtros." />
                     </td>
                   </tr>
                 )}

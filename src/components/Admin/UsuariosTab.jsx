@@ -1,5 +1,6 @@
 import { useAuth } from '../../context/AuthContext';
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { Plus, Search, Edit2, Trash2, CheckCircle2, XCircle, Shield, Key, AlertTriangle } from 'lucide-react';
 import { db } from '../../db/dexie';
 import ModalUsuario from './ModalUsuario';
@@ -158,8 +159,8 @@ export default function UsuariosTab() {
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-10 text-slate-400">
-                    No se encontraron usuarios registrados.
+                  <td colSpan="6">
+                    <EstadoVacio titulo="No se encontraron usuarios" />
                   </td>
                 </tr>
               ) : (

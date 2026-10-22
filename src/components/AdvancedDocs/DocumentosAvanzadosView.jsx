@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Search, RotateCw, Plus, Eye, Download, Calendar, 
   Percent, DollarSign, RotateCcw, AlertCircle, CheckCircle2 
@@ -459,8 +460,8 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
             <tbody className="divide-y divide-slate-100">
               {currentList.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="py-14 text-center text-slate-400 text-xs">
-                    Sin registros.
+                  <td colSpan={11}>
+                    <EstadoVacio titulo="Sin registros" descripcion="Cuando registres documentos aparecerán aquí." />
                   </td>
                 </tr>
               ) : (

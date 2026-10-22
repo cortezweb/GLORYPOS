@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Truck, Plus, Search, Building2, Phone, PackagePlus, 
   CheckCircle2, X, ArrowUpRight, DollarSign, Store,
@@ -1236,8 +1237,8 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
 
                     {filteredCompras.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="py-12 text-center text-slate-400 italic">
-                          No se encontraron compras registradas con los filtros aplicados.
+                        <td colSpan={7}>
+                          <EstadoVacio titulo="No se encontraron compras" descripcion="Prueba con otros filtros o registra una compra." />
                         </td>
                       </tr>
                     )}
@@ -1441,8 +1442,8 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
 
                     {filteredProveedores.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="py-12 text-center text-slate-400 italic">
-                          No se encontraron proveedores registrados con los filtros aplicados.
+                        <td colSpan={7}>
+                          <EstadoVacio titulo="No se encontraron proveedores" descripcion="Prueba con otros filtros o registra un proveedor." />
                         </td>
                       </tr>
                     )}
@@ -1626,9 +1627,7 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
                 </div>
               ))}
               {filteredModalProducts.length === 0 && (
-                <div className="p-8 text-center text-slate-400 text-xs">
-                  No se encontraron productos. Puedes crear uno nuevo usando "Nuevo producto".
-                </div>
+                  <EstadoVacio titulo="No se encontraron productos" descripcion={'Puedes crear uno nuevo usando "Nuevo producto".'} />
               )}
             </div>
 
@@ -2143,8 +2142,8 @@ export default function PurchasesView({ initialTab = 'compras', onSelectView }) 
 
                     {provPurchases.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="py-8 text-center text-slate-400 italic">
-                          No hay compras registradas para este proveedor todavía.
+                        <td colSpan={5}>
+                          <EstadoVacio titulo="Sin compras todavía" descripcion="Este proveedor aún no tiene compras registradas." />
                         </td>
                       </tr>
                     )}

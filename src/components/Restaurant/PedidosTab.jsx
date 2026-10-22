@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { Plus, ShoppingBag, Bike, Globe, Clock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { restaurantService, TIPOS_PEDIDO, totalComanda } from '../../services/restaurantService';
@@ -63,9 +64,7 @@ export default function PedidosTab({ data, onOpenComanda }) {
 
       <div className="lg:col-span-2 space-y-2">
         {pedidos.length === 0 && (
-          <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">
-            No hay pedidos para llevar o delivery abiertos.
-          </div>
+            <EstadoVacio className="bg-white rounded-3xl border border-dashed border-slate-300" titulo="Sin pedidos abiertos" descripcion="No hay pedidos para llevar o delivery en este momento." />
         )}
         {pedidos.map(c => {
           const Icon = c.origen === 'TIENDA' ? Globe : c.tipo === 'DELIVERY' ? Bike : ShoppingBag;

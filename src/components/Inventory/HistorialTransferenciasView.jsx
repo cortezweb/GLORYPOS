@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   History, Plus, RefreshCw, Eye, CheckCircle2, X, ArrowRightLeft,
   Package, Calendar, Building2, FileText
@@ -205,8 +206,8 @@ export default function HistorialTransferenciasView({ onSelectSubView }) {
 
                 {filteredTransferencias.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-slate-400 italic">
-                      No hay registros de transferencias para el estado seleccionado.
+                    <td colSpan={5}>
+                      <EstadoVacio titulo="No hay transferencias" descripcion="No hay registros para el estado seleccionado." />
                     </td>
                   </tr>
                 )}
