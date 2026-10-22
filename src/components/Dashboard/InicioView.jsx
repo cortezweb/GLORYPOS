@@ -5,6 +5,20 @@ import {
   Store, ChevronRight, ShieldCheck, Clock
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import GloryMascota from '../Common/GloryMascota';
+
+// Mascota con un ícono de la herramienta flotando a su lado
+function MascotaHerramienta({ mood, Icon, color, fondo, size = 120 }) {
+  return (
+    <div className="relative">
+      <div className={`absolute inset-x-2 bottom-1 top-4 rounded-full ${fondo}`} />
+      <GloryMascota mood={mood} size={size} animated={false} className="relative" />
+      <div className={`absolute -top-1 -right-2 w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-md flex items-center justify-center ${color} rotate-6`}>
+        <Icon className="w-5 h-5" />
+      </div>
+    </div>
+  );
+}
 
 export default function InicioView({
   onSelectView,
@@ -87,7 +101,7 @@ export default function InicioView({
               <Sparkles className="w-3 h-3 text-[#FFB627]" />
               <span>Centro de Capacitación GLORYPOS</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white tracking-tight leading-tight drop-shadow-md">
               Aprende a utilizar {empresa?.nombre ? 'tu sistema' : 'GLORYPOS'} <br />
               <span className="text-[#FF6B35]">con nuestros tutoriales</span>
             </h1>
@@ -97,7 +111,10 @@ export default function InicioView({
           </div>
 
           {/* Botón Central Play (Estilo exacto de la imagen: círculo translúcido con triángulo blanco) */}
-          <div className="shrink-0 pl-4">
+          <div className="shrink-0 pl-4 flex items-center gap-4">
+            <div className="hidden md:block relative -mb-8 self-end">
+              <GloryMascota mood="saludo" size={150} />
+            </div>
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-[#FF6B35] group-hover:border-[#FF6B35]">
               <Play className="w-7 h-7 sm:w-9 sm:h-9 text-white fill-white ml-1 transition-transform group-hover:scale-110" />
             </div>
@@ -130,14 +147,14 @@ export default function InicioView({
             {/* TARJETA 1: REALIZA UNA VENTA RÁPIDA (Verde menta suave) */}
             <div
               onClick={() => onSelectView('pos')}
-              className="group relative rounded-3xl p-6 sm:p-7 bg-[#eaf8ef] border border-[#FF6B35]/10 hover:border-[#FF6B35]/30 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden min-h-[175px] flex justify-between items-center"
+              className="group relative rounded-3xl p-6 sm:p-7 bg-[#E6F6F3] border border-[#2BB3A3]/15 hover:border-[#FF6B35]/30 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden min-h-[175px] flex justify-between items-center"
             >
               <div className="relative z-10 max-w-[240px]">
                 <span className="inline-block px-3 py-0.5 rounded-full bg-white text-[#E85B28] text-[11px] font-bold border border-[#FF6B35]/20 shadow-xs mb-3">
                   Herramienta
                 </span>
-                <h2 className="text-2xl sm:text-[26px] font-black text-slate-800 leading-tight tracking-tight">
-                  <span className="text-[#0284c7]">Realiza una</span> <br />
+                <h2 className="text-2xl sm:text-[26px] font-display font-bold text-slate-800 leading-tight tracking-tight">
+                  <span className="text-[#1F2128]">Realiza una</span> <br />
                   <span className="text-[#E85B28]">Venta rápida</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-2 font-medium">
@@ -145,36 +162,9 @@ export default function InicioView({
                 </p>
               </div>
 
-              {/* Ilustración 3D de Mascota POS / Carrito / Dinero */}
+              {/* Mascota celebrando la venta */}
               <div className="relative shrink-0 w-32 sm:w-40 h-32 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-md">
-                  {/* Smartphone / Terminal POS */}
-                  <rect x="70" y="25" width="80" height="135" rx="16" fill="#0284c7" />
-                  <rect x="76" y="38" width="68" height="100" rx="8" fill="#ffffff" />
-                  {/* Pantalla del POS */}
-                  <rect x="82" y="46" width="56" height="30" rx="4" fill="#e0f2fe" />
-                  <rect x="86" y="52" width="28" height="4" rx="2" fill="#0284c7" />
-                  <rect x="86" y="60" width="44" height="3" rx="1.5" fill="#94a3b8" />
-                  {/* Mascota Boleta / Factura Sonriente */}
-                  <rect x="92" y="70" width="46" height="52" rx="6" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2" />
-                  {/* Ojos y sonrisa de la mascota */}
-                  <circle cx="106" cy="88" r="3" fill="#1e293b" />
-                  <circle cx="124" cy="88" r="3" fill="#1e293b" />
-                  <path d="M107 98 Q115 106 123 98" stroke="#1e293b" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                  {/* Brazos cruzados saludando */}
-                  <path d="M92 95 Q82 92 88 105" stroke="#0284c7" strokeWidth="3" fill="none" strokeLinecap="round" />
-                  <path d="M138 95 Q148 92 142 105" stroke="#0284c7" strokeWidth="3" fill="none" strokeLinecap="round" />
-                  {/* Cestita de compras rosada / morada al frente */}
-                  <rect x="110" y="125" width="48" height="32" rx="6" fill="#ec4899" />
-                  <line x1="114" y1="133" x2="154" y2="133" stroke="#fbcfe8" strokeWidth="2" />
-                  <line x1="114" y1="143" x2="154" y2="143" stroke="#fbcfe8" strokeWidth="2" />
-                  <line x1="124" y1="125" x2="124" y2="157" stroke="#fbcfe8" strokeWidth="2" />
-                  <line x1="144" y1="125" x2="144" y2="157" stroke="#fbcfe8" strokeWidth="2" />
-                  {/* Billetes de dinero verde flotando */}
-                  <rect x="35" y="105" width="34" height="20" rx="3" fill="#FF6B35" transform="rotate(-25 35 105)" />
-                  <circle cx="48" cy="112" r="3.5" fill="#a7f3d0" />
-                  <rect x="42" y="70" width="30" height="18" rx="3" fill="#FFB627" transform="rotate(15 42 70)" />
-                </svg>
+                <MascotaHerramienta mood="celebra" Icon={ShoppingCart} color="text-[#2BB3A3]" fondo="bg-[#2BB3A3]/15" />
               </div>
             </div>
 
@@ -183,39 +173,16 @@ export default function InicioView({
               onClick={() => onSelectView('productos')}
               className="group relative rounded-3xl p-6 sm:p-7 bg-[#fff8e7] border border-amber-100 hover:border-amber-300 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden min-h-[175px] flex justify-between items-center"
             >
-              {/* Ilustración 3D de Caja de cartón y Mascota sonriente */}
+              {/* Mascota con etiqueta de producto */}
               <div className="relative shrink-0 w-32 sm:w-40 h-32 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 order-2 sm:order-1">
-                <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-md">
-                  {/* Comprobante azul flotante arriba a la izquierda */}
-                  <rect x="25" y="40" width="42" height="60" rx="5" fill="#60a5fa" />
-                  <rect x="32" y="48" width="16" height="4" rx="2" fill="#ffffff" />
-                  <rect x="32" y="56" width="28" height="3" rx="1.5" fill="#dbeafe" />
-                  <rect x="32" y="63" width="24" height="3" rx="1.5" fill="#dbeafe" />
-                  <rect x="32" y="70" width="20" height="3" rx="1.5" fill="#dbeafe" />
-                  {/* Caja de cartón marrón */}
-                  <rect x="55" y="85" width="75" height="75" rx="8" fill="#f59e0b" />
-                  <rect x="55" y="85" width="75" height="12" fill="#d97706" />
-                  <line x1="92" y1="85" x2="92" y2="160" stroke="#b45309" strokeWidth="2" strokeDasharray="3,3" />
-                  <rect x="68" y="125" width="20" height="12" rx="2" fill="#d97706" opacity="0.6" />
-                  {/* Mascota Boleta Blanca Sonriente apoyada en la caja */}
-                  <rect x="110" y="65" width="55" height="75" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2.5" />
-                  {/* Ojos y sonrisa */}
-                  <circle cx="126" cy="85" r="4" fill="#0284c7" />
-                  <circle cx="148" cy="85" r="4" fill="#0284c7" />
-                  <path d="M127 97 Q137 110 148 97" stroke="#1e293b" strokeWidth="3" fill="#1e293b" strokeLinecap="round" />
-                  {/* Brazos y patitas */}
-                  <path d="M110 95 Q98 100 105 110" stroke="#0284c7" strokeWidth="3.5" fill="none" strokeLinecap="round" />
-                  <path d="M165 95 Q175 105 168 115" stroke="#0284c7" strokeWidth="3.5" fill="none" strokeLinecap="round" />
-                  <line x1="126" y1="140" x2="126" y2="156" stroke="#0284c7" strokeWidth="4" strokeLinecap="round" />
-                  <line x1="148" y1="140" x2="148" y2="156" stroke="#0284c7" strokeWidth="4" strokeLinecap="round" />
-                </svg>
+                <MascotaHerramienta mood="feliz" Icon={Tag} color="text-[#E8A317]" fondo="bg-[#FFC94D]/25" />
               </div>
 
               <div className="relative z-10 max-w-[240px] text-right order-1 sm:order-2">
                 <span className="inline-block px-3 py-0.5 rounded-full bg-white text-amber-700 text-[11px] font-bold border border-amber-200 shadow-xs mb-3">
                   Herramienta
                 </span>
-                <h2 className="text-2xl sm:text-[26px] font-black text-slate-800 leading-tight tracking-tight">
+                <h2 className="text-2xl sm:text-[26px] font-display font-bold text-slate-800 leading-tight tracking-tight">
                   <span className="text-amber-600">Ver o agregar</span> <br />
                   <span className="text-slate-900">Productos</span>
                 </h2>
@@ -252,33 +219,15 @@ export default function InicioView({
                 </div>
 
                 <div className="my-1">
-                  <h3 className="text-xl font-black text-slate-800 leading-tight">
+                  <h3 className="text-xl font-display font-bold text-slate-800 leading-tight">
                     Buscar <br />
                     <span className="text-[#FF6B35]">Documentos</span>
                   </h3>
                 </div>
 
-                {/* Ilustración 3D de Clipboard con lupa y personaje */}
+                {/* Mascota buscando documentos */}
                 <div className="w-full h-28 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                  <svg viewBox="0 0 160 140" className="w-32 h-28 drop-shadow-sm">
-                    {/* Portapapeles azul */}
-                    <rect x="35" y="20" width="80" height="95" rx="8" fill="#3b82f6" />
-                    {/* Gancho dorado */}
-                    <rect x="62" y="12" width="26" height="14" rx="4" fill="#fbbf24" />
-                    <circle cx="75" cy="18" r="3" fill="#ffffff" />
-                    {/* Hoja blanca con rostro sonriente */}
-                    <rect x="42" y="28" width="66" height="80" rx="4" fill="#ffffff" />
-                    <circle cx="64" cy="52" r="3" fill="#1e293b" />
-                    <circle cx="86" cy="52" r="3" fill="#1e293b" />
-                    <path d="M68 62 Q75 70 82 62" stroke="#1e293b" strokeWidth="2" fill="none" strokeLinecap="round" />
-                    {/* Líneas de texto */}
-                    <line x1="52" y1="76" x2="98" y2="76" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
-                    <line x1="52" y1="84" x2="98" y2="84" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
-                    <line x1="52" y1="92" x2="80" y2="92" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
-                    {/* Lupa grande en 3D */}
-                    <circle cx="105" cy="80" r="18" fill="#e0f2fe" stroke="#0284c7" strokeWidth="4" />
-                    <line x1="118" y1="93" x2="132" y2="108" stroke="#0284c7" strokeWidth="6" strokeLinecap="round" />
-                  </svg>
+                  <MascotaHerramienta mood="pensando" Icon={FileText} color="text-[#FF6B35]" fondo="bg-[#FF6B35]/10" size={104} />
                 </div>
               </div>
 
@@ -295,29 +244,15 @@ export default function InicioView({
                 </div>
 
                 <div className="my-1">
-                  <h3 className="text-xl font-black text-slate-800 leading-tight">
+                  <h3 className="text-xl font-display font-bold text-slate-800 leading-tight">
                     Consultar <br />
                     <span className="text-[#FF6B35]">Reportes</span>
                   </h3>
                 </div>
 
-                {/* Ilustración 3D de Gráficos de barras y tarta con lupa */}
+                {/* Mascota con reportes */}
                 <div className="w-full h-28 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                  <svg viewBox="0 0 160 140" className="w-32 h-28 drop-shadow-sm">
-                    {/* Hoja de reporte */}
-                    <rect x="35" y="25" width="85" height="95" rx="6" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" />
-                    {/* Barras moradas / fucsia */}
-                    <rect x="48" y="75" width="10" height="35" rx="2" fill="#c084fc" />
-                    <rect x="63" y="60" width="10" height="50" rx="2" fill="#a855f7" />
-                    <rect x="78" y="45" width="10" height="65" rx="2" fill="#7e22ce" />
-                    <rect x="93" y="68" width="10" height="42" rx="2" fill="#c084fc" />
-                    {/* Tarta / Pie chart flotante */}
-                    <circle cx="108" cy="48" r="16" fill="#f43f5e" />
-                    <path d="M108 48 L108 32 A16 16 0 0 1 124 48 Z" fill="#fbbf24" />
-                    {/* Lupa morada */}
-                    <circle cx="45" cy="50" r="16" fill="#ede9fe" stroke="#8b5cf6" strokeWidth="3.5" />
-                    <line x1="34" y1="62" x2="24" y2="72" stroke="#8b5cf6" strokeWidth="5" strokeLinecap="round" />
-                  </svg>
+                  <MascotaHerramienta mood="feliz" Icon={BarChart3} color="text-[#F2668B]" fondo="bg-[#F2668B]/15" size={104} />
                 </div>
               </div>
 
@@ -332,12 +267,13 @@ export default function InicioView({
                 <span className="inline-block px-2.5 py-0.5 rounded-full bg-white text-sky-700 text-[10px] font-bold border border-sky-200 shadow-xs mb-1.5">
                   Herramienta
                 </span>
-                <h3 className="text-lg sm:text-xl font-black text-slate-800 tracking-tight">
+                <h3 className="text-lg sm:text-xl font-display font-bold text-slate-800 tracking-tight">
                   Apertura o cierre de cajas
                 </h3>
               </div>
 
-              <div className="flex items-center gap-2 pr-2">
+              <div className="flex items-center gap-3 pr-2">
+                <GloryMascota mood="saludo" size={64} animated={false} className="hidden sm:block -my-2" />
                 <div className="w-11 h-11 rounded-2xl bg-white text-sky-600 border border-sky-200 flex items-center justify-center shadow-xs transition-transform duration-300 group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white">
                   <Wallet className="w-5 h-5 stroke-current" />
                 </div>
