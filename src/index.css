@@ -68,3 +68,28 @@
 }
 .page-enter { animation: page-enter 0.2s ease-out; }
 @media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
+
+/* ── Mascota GloryPOS (components/Common/GloryMascota.jsx) ── */
+.glory-mascota { overflow: visible; }
+.glory-mascota .gm-cuerpo,
+.glory-mascota .gm-ojos,
+.glory-mascota .gm-brazo-saludo,
+.glory-mascota .gm-ondas,
+.glory-mascota .gm-sombra { transform-box: fill-box; }
+.gm-animada .gm-cuerpo { animation: gm-flotar 3.2s ease-in-out infinite; }
+.gm-animada .gm-sombra { transform-origin: center; animation: gm-sombra 3.2s ease-in-out infinite; }
+.gm-animada .gm-ojos { transform-origin: center; animation: gm-parpadeo 4.5s infinite; }
+.gm-animada .gm-brazo-saludo { transform-origin: 0% 100%; animation: gm-saludar 1.6s ease-in-out infinite; }
+.gm-animada .gm-ondas { animation: gm-ondas 1.6s ease-in-out infinite; }
+@keyframes gm-flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes gm-sombra { 0%, 100% { transform: scaleX(1); opacity: .12; } 50% { transform: scaleX(.85); opacity: .07; } }
+@keyframes gm-parpadeo { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes gm-saludar { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-14deg); } }
+@keyframes gm-ondas { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) {
+  .gm-animada .gm-cuerpo, .gm-animada .gm-sombra, .gm-animada .gm-ojos,
+  .gm-animada .gm-brazo-saludo, .gm-animada .gm-ondas { animation: none; }
+}
+.gm-burbuja { animation: gm-burbuja .25s ease-out; }
+@keyframes gm-burbuja { from { opacity: 0; transform: translateY(4px) scale(.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gm-burbuja { animation: none; } }

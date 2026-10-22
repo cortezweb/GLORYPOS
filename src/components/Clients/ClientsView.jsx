@@ -4,6 +4,7 @@ import {
   CreditCard, MapPin, X, CheckCircle2, ShieldCheck, ChevronRight,
   Building2, UserCheck, AlertTriangle, ArrowUpRight, DollarSign
 } from 'lucide-react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { db } from '../../db/dexie';
 import { syncService } from '../../services/syncService';
 import { simbolo } from '../../utils/currency';
@@ -291,11 +292,11 @@ export default function ClientsView() {
         })}
 
         {filtered.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
-            <Users className="w-12 h-12 mx-auto text-slate-300" />
-            <p className="text-sm font-bold text-slate-800">No se encontraron clientes</p>
-            <p className="text-xs text-slate-400">Intenta buscar con otro término o registra un nuevo cliente.</p>
-          </div>
+          <EstadoVacio
+            className="bg-white rounded-3xl border border-slate-200"
+            titulo="No se encontraron clientes"
+            descripcion="Intenta buscar con otro término o registra un nuevo cliente."
+          />
         )}
       </div>
 

@@ -7,6 +7,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { playCashChime, playErrorBeep } from '../../utils/audio';
 import GloryLogo from '../Common/GloryLogo';
+import GloryMascota from '../Common/GloryMascota';
 import { loginSchema, validar } from '../../lib/schemas';
 
 export default function LoginView({ onGoToRegister }) {
@@ -48,6 +49,7 @@ export default function LoginView({ onGoToRegister }) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   // Persona invitada a la empresa que aún no tiene su acceso creado
   const [inviteMode, setInviteMode] = useState(false);
   const [infoMsg, setInfoMsg] = useState(null);
@@ -236,14 +238,79 @@ export default function LoginView({ onGoToRegister }) {
     }, 200);
   };
 
+  // La mascota reacciona a lo que pasa en el formulario
+  const mascotaMood = (isLocked || errorMsg)
+    ? 'preocupado'
+    : isLoggingIn
+      ? 'pensando'
+      : ((passwordFocused && !showPassword) || (mode === 'pin' && pin.length > 0))
+        ? 'timido'
+        : 'saludo';
+  const mascotaMensaje = {
+    preocupado: 'Ups, revisemos los datos.',
+    pensando: 'Abriendo tu caja...',
+    timido: 'Tranquilo, no miro tu clave.',
+    saludo: '¡Hola! Qué bueno verte de nuevo.',
+  }[mascotaMood];
+
   return (
-    <div className="min-h-screen w-full bg-[#FDFBF7] flex flex-col justify-between p-4 sm:p-6 text-[#1E2022] antialiased select-none font-sans">
+    <div className="min-h-screen w-full bg-[#FAF8F2] lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] text-[#1F2128] antialiased select-none font-brand">
+
+      {/* Panel de marca con la mascota (solo escritorio) */}
+      <aside className="hidden lg:flex relative overflow-hidden flex-col justify-between bg-[#FFF1E8] p-10 xl:p-14">
+        <div className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#FFC94D]/25" />
+        <div className="pointer-events-none absolute -bottom-28 -left-20 w-80 h-80 rounded-full bg-[#FF6B35]/10" />
+        <div className="pointer-events-none absolute top-1/3 left-10 w-3 h-3 rounded-full bg-[#2BB3A3]" />
+        <div className="pointer-events-none absolute top-24 right-1/3 w-2.5 h-2.5 rounded-full bg-[#F2668B]" />
+        <div className="pointer-events-none absolute bottom-1/3 right-14 w-4 h-4 rounded-full bg-[#FFC94D]" />
+
+        <GloryLogo size="lg" showSubtitle={false} className="relative" />
+
+        <div className="relative flex flex-col items-center text-center">
+          <div className="relative">
+            <div className="w-[300px] h-[300px] xl:w-[360px] xl:h-[360px] rounded-full bg-[#FFE1D0] flex items-center justify-center">
+              <GloryMascota mood={mascotaMood} size={250} className="xl:w-[290px] xl:h-[288px] translate-y-3" />
+            </div>
+            <div
+              key={mascotaMood}
+              aria-live="polite"
+              className="absolute -top-2 -right-16 xl:-right-20 max-w-[190px] bg-white text-[#1F2128] text-sm font-bold px-4 py-2.5 rounded-2xl rounded-bl-md shadow-lg shadow-orange-900/5 border border-orange-100 gm-burbuja"
+            >
+              {mascotaMensaje}
+            </div>
+          </div>
+
+          <h1 className="font-display font-bold text-4xl xl:text-5xl tracking-tight mt-8 leading-tight">
+            Vende fácil, <span className="text-[#FF6B35]">crece feliz.</span>
+          </h1>
+          <p className="text-[15px] text-slate-600 mt-3 max-w-md">
+            Ventas, inventario y caja de tu negocio en un solo lugar, incluso cuando se va el internet.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-2 mt-6">
+            {[
+              { label: 'Ventas en segundos', dot: 'bg-[#FF6B35]' },
+              { label: 'Inventario al día', dot: 'bg-[#2BB3A3]' },
+              { label: 'Funciona sin internet', dot: 'bg-[#FFC94D]' },
+            ].map(f => (
+              <span key={f.label} className="inline-flex items-center gap-2 bg-white/80 border border-orange-100 rounded-full px-3.5 py-1.5 text-xs font-bold text-slate-700">
+                <span className={`w-2 h-2 rounded-full ${f.dot}`} />
+                {f.label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <p className="relative text-xs font-semibold text-slate-500">© 2026 GloryPOS · Hecho en Bolivia</p>
+      </aside>
+
+      <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6">
       
       {/* Top Bar Branding */}
       <header className="max-w-md mx-auto w-full flex items-center justify-between pt-2">
         <div className="flex items-center space-x-2.5">
-          <GloryLogo size="sm" showSubtitle={false} />
-          <div className="border-l border-slate-200 pl-2">
+          <GloryLogo size="sm" showSubtitle={false} className="lg:hidden" />
+          <div className="border-l border-slate-200 pl-2 lg:border-l-0 lg:pl-0">
             <p className="text-[11px] text-slate-500 font-semibold truncate max-w-[180px]">
               {empresa?.nombre || 'GLORYPOS BOLIVIA S.R.L.'}
             </p>
@@ -266,14 +333,22 @@ export default function LoginView({ onGoToRegister }) {
 
       {/* Main Login Card (GLORYPOS SaaS) */}
       <main className="max-w-md mx-auto w-full my-auto py-6">
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-200/80 flex flex-col space-y-5">
+        {/* Mascota asomándose sobre la tarjeta (móvil y tablet) */}
+        <div className="lg:hidden flex justify-center -mb-7 relative z-10">
+          <GloryMascota mood={mascotaMood} size={112} />
+        </div>
+
+        <div className="bg-white rounded-3xl p-6 sm:p-8 pt-9 lg:pt-8 shadow-xl shadow-orange-900/5 border border-slate-200/80 flex flex-col space-y-5">
           
-          {/* Logo Central GLORYPOS */}
-          <div className="flex flex-col items-center space-y-2 text-center">
-            <GloryLogo size="xl" className="items-center" subtitleText="Cloud System" />
-            <p className="text-xs text-slate-500 mt-0.5">
-              {empresa?.nombre ? `Acceso a ${empresa.nombre}` : 'Inicia sesión en tu espacio de trabajo'}
+          {/* Encabezado de bienvenida */}
+          <div className="flex flex-col items-center text-center">
+            <h2 className="font-display font-bold text-2xl tracking-tight text-[#1F2128]">
+              {inviteMode ? 'Crea tu acceso' : '¡Hola de nuevo!'}
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">
+              {empresa?.nombre ? `Ingresa a ${empresa.nombre}` : 'Inicia sesión en tu espacio de trabajo'}
             </p>
+            <p className="lg:hidden text-xs font-bold text-[#FF6B35] mt-1" aria-live="polite">{mascotaMensaje}</p>
           </div>
 
           {/* Banner de Bloqueo por Intentos */}
@@ -351,7 +426,7 @@ export default function LoginView({ onGoToRegister }) {
                       <Store className="w-4 h-4 text-[#FF6B35]" />
                       <span className="font-mono font-bold text-slate-900">{detectedSubdomain}</span>
                     </div>
-                    <span className="text-[10px] text-[#FF6B35] font-bold bg-[#FF6B35]/10 px-2 py-0.5 rounded-full border border-blue-200">
+                    <span className="text-[10px] text-[#FF6B35] font-bold bg-[#FF6B35]/10 px-2 py-0.5 rounded-full border border-[#FF6B35]/20">
                       Subdominio Verificado
                     </span>
                   </div>
@@ -367,7 +442,7 @@ export default function LoginView({ onGoToRegister }) {
                         onChange={(e) => setCompanyIdInput(e.target.value.toLowerCase())}
                         onBlur={handleApplyCompanyId}
                         placeholder="admin"
-                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30 focus:border-[#FF6B35] font-mono"
                       />
                       <button
                         type="button"
@@ -399,7 +474,7 @@ export default function LoginView({ onGoToRegister }) {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="admin@glorypos.com"
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30 focus:border-[#FF6B35]"
                   />
                 </div>
               </div>
@@ -416,8 +491,10 @@ export default function LoginView({ onGoToRegister }) {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
                     placeholder="••••••••"
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30 focus:border-[#FF6B35]"
                   />
                   <button
                     type="button"
@@ -640,10 +717,11 @@ export default function LoginView({ onGoToRegister }) {
             Desvincular este dispositivo
           </button>
         )}
-        <p className="text-[11px] text-slate-400 font-medium">
+        <p className="text-[11px] text-slate-400 font-medium lg:hidden">
           GLORYPOS SaaS @ 2026
         </p>
       </footer>
+      </div>
     </div>
   );
 }
