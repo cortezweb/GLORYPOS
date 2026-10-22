@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Printer, Search, Calendar, Banknote, QrCode, CreditCard, ChevronRight } from 'lucide-react';
 import { db } from '../../db/dexie';
+import EstadoVacio from '../Common/EstadoVacio';
 import { simbolo } from '../../utils/currency';
 
 export default function SalesHistoryView({ onOpenReceipt }) {
@@ -124,10 +125,10 @@ export default function SalesHistoryView({ onOpenReceipt }) {
         })}
 
         {filtered.length === 0 && (
-          <div className="text-center py-12 text-slate-400 space-y-2">
-            <FileText className="w-10 h-10 mx-auto text-slate-300" />
-            <p className="text-xs font-semibold">No se encontraron ventas registradas</p>
-          </div>
+          <EstadoVacio
+            titulo="Aún no hay ventas aquí"
+            descripcion="Cuando registres una venta aparecerá en este historial."
+          />
         )}
       </div>
     </div>

@@ -65,6 +65,9 @@ export default {
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        // Guía de marca: Poppins para títulos/logo, Nunito para textos y botones
+        display: ['Poppins', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        brand: ['Nunito', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
     },
   },

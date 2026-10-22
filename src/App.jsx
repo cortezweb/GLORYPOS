@@ -70,6 +70,7 @@ import UnidadesMedidaView from './components/Products/UnidadesMedidaView';
 
 // Auth Screens
 import LoginView from './components/Auth/LoginView';
+import GloryMascota from './components/Common/GloryMascota';
 import RegisterView from './components/Auth/RegisterView';
 
 function MainShell() {
@@ -186,9 +187,16 @@ function MainShell() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-white">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs font-bold text-slate-400 mt-4 tracking-widest uppercase">Iniciando GLORYPOS...</p>
+      <div className="min-h-screen bg-[#FAF8F2] flex flex-col items-center justify-center p-4 text-[#1F2128] font-brand">
+        <div className="w-44 h-44 rounded-full bg-[#FFE1D0] flex items-center justify-center">
+          <GloryMascota mood="pensando" size={140} className="translate-y-2" />
+        </div>
+        <p className="font-display font-bold text-lg mt-5">Preparando tu caja...</p>
+        <div className="flex gap-1.5 mt-3" aria-hidden="true">
+          <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-bounce [animation-delay:-0.3s]" />
+          <span className="w-2 h-2 rounded-full bg-[#FFC94D] animate-bounce [animation-delay:-0.15s]" />
+          <span className="w-2 h-2 rounded-full bg-[#2BB3A3] animate-bounce" />
+        </div>
       </div>
     );
   }
@@ -208,7 +216,7 @@ function MainShell() {
       return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-center">
           <div className="max-w-sm space-y-2">
-            <Store className="w-10 h-10 text-slate-400 mx-auto" />
+            <GloryMascota mood="preocupado" size={120} className="mx-auto" />
             <h1 className="text-lg font-black text-slate-900">Tienda en línea no disponible</h1>
             <p className="text-sm text-slate-500">{empresa?.nombre || 'Este negocio'} aún no tiene activada su tienda en línea.</p>
           </div>

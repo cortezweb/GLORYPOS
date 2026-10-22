@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Package, Search, Plus, Sparkles, Edit2, AlertTriangle, 
   CheckCircle2, X, Tag, Barcode, Download, UploadCloud, 
@@ -1055,8 +1056,11 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
 
                 {paginatedProducts.length === 0 && (
                   <tr>
-                    <td colSpan={11} className="py-12 text-center text-slate-400 italic">
-                      No se encontraron productos registrados con los filtros aplicados.
+                    <td colSpan={11}>
+                      <EstadoVacio
+                        titulo="No se encontraron productos"
+                        descripcion="Prueba con otros filtros o registra un producto nuevo."
+                      />
                     </td>
                   </tr>
                 )}

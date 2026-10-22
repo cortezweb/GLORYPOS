@@ -10,6 +10,7 @@ import { playCashChime } from '../../utils/audio';
 import { tenantService, slugify } from '../../services/tenantService';
 import { isDemoMode } from '../../lib/supabase';
 import GloryLogo from '../Common/GloryLogo';
+import GloryMascota from '../Common/GloryMascota';
 import { CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currency';
 import { registroNegocioSchema, registroAdminSchema, validar } from '../../lib/schemas';
 
@@ -187,6 +188,16 @@ export default function RegisterView({ onGoToLogin }) {
   const inputClass = (hasError) =>
     `w-full px-3 py-2.5 text-sm rounded-xl border ${hasError ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-white'} text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30 transition`;
 
+  const hayErrores = Object.values(errors).some(Boolean);
+  const mascotaMood = hayErrores ? 'preocupado' : isSubmitting ? 'pensando' : step === 3 ? 'celebra' : step === 2 ? 'feliz' : 'saludo';
+  const mascotaMensaje = {
+    preocupado: 'Revisemos los campos marcados.',
+    pensando: 'Creando tu empresa...',
+    celebra: '¡Ya casi! Confirma y empezamos a vender.',
+    feliz: 'Ahora crea tu cuenta de administrador.',
+    saludo: '¡Hola! Vamos a registrar tu negocio.',
+  }[mascotaMood];
+
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#1E2022] via-[#2a2d30] to-[#1E2022] flex flex-col justify-between p-4 sm:p-6 text-slate-100 antialiased select-none">
@@ -207,7 +218,14 @@ export default function RegisterView({ onGoToLogin }) {
 
       {/* Main Card */}
       <main className="max-w-lg mx-auto w-full my-auto py-4">
-        <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-7 shadow-2xl border border-slate-100 space-y-5">
+        {/* Mascota que acompaña cada paso del registro */}
+        <div className="flex items-end justify-center gap-3 -mb-6 relative z-10">
+          <GloryMascota mood={mascotaMood} size={104} />
+          <div key={step} className="mb-10 max-w-[200px] bg-white text-[#1F2128] text-xs font-bold font-brand px-3.5 py-2 rounded-2xl rounded-bl-md shadow-lg gm-burbuja">
+            {mascotaMensaje}
+          </div>
+        </div>
+        <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-7 pt-8 sm:pt-9 shadow-2xl border border-slate-100 space-y-5">
 
           {/* Progress Steps */}
           <div className="flex items-center gap-1">
