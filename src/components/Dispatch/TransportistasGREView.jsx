@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { Truck, Plus, Search, X, CheckCircle2, Building2 } from 'lucide-react';
 import { db } from '../../db/dexie';
 
@@ -134,8 +135,8 @@ export default function TransportistasGREView() {
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-xs text-slate-400 font-normal">
-                    No hay transportistas registrados
+                  <td colSpan={4}>
+                    <EstadoVacio titulo="No hay transportistas registrados" />
                   </td>
                 </tr>
               ) : (

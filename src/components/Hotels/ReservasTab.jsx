@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { Search } from 'lucide-react';
 import { RESERVA_ESTADOS, formatFecha, folio, hoyISO } from '../../services/hotelService';
 import { money } from './useHotelData';
@@ -75,7 +76,7 @@ export default function ReservasTab({ data, onOpenReserva }) {
               );
             })}
             {lista.length === 0 && (
-              <tr><td colSpan="8" className="px-3 py-8 text-center text-slate-400">No hay reservas con este filtro.</td></tr>
+              <tr><td colSpan="8"><EstadoVacio titulo="No hay reservas" descripcion="No hay reservas con este filtro." /></td></tr>
             )}
           </tbody>
         </table>

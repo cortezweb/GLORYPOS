@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Sparkles, Plus, Search, Edit2, Trash2, CheckCircle2, 
   Package, Tag, Calendar, DollarSign, ArrowRight, Percent, 
@@ -342,11 +343,11 @@ export default function CombosPromocionesView({ onSelectSubView, onOpenPosWithCa
 
         {/* Listado de Combos */}
         {filteredCombos.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
-            <Sparkles className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-            <p className="text-sm font-semibold">No se encontraron combos o promociones.</p>
-            <p className="text-xs mt-1">Crea un nuevo paquete o ajusta los términos de búsqueda.</p>
-          </div>
+          <EstadoVacio
+            className="bg-white rounded-2xl border border-slate-200"
+            titulo="No se encontraron combos o promociones"
+            descripcion="Crea un nuevo paquete o ajusta los términos de búsqueda."
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredCombos.map((combo) => (

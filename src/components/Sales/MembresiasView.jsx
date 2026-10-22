@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   CreditCard, RotateCw, Plus, ChevronDown, Search, X, 
   CheckCircle2, Clock, Trash2, Edit, AlertCircle, Calendar
@@ -255,11 +256,11 @@ export default function MembresiasView({ onSelectSubView }) {
 
           {/* Estado vacío cuando no hay membresías */}
           {filtered.length === 0 && (
-            <div className="flex-1 flex items-center justify-center py-16 text-center">
-              <p className="text-sm text-slate-500 font-medium">
-                No hay membresías registradas.
-              </p>
-            </div>
+            <EstadoVacio
+              className="flex-1 justify-center"
+              titulo="No hay membresías registradas"
+              descripcion="Cuando crees una membresía aparecerá aquí."
+            />
           )}
 
           {/* Tabla cuando existen membresías */}

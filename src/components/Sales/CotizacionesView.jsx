@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Plus, Search, Calendar, ChevronDown, Eye, Download, 
   Ticket, FileText, Mail, Printer, ShoppingCart, 
@@ -632,8 +633,8 @@ export default function CotizacionesView({ onSelectSubView, onOpenPosWithCart, o
                 })}
                 {pageRows.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="py-10 text-center text-xs text-slate-400">
-                      No hay cotizaciones en este rango de fechas.
+                    <td colSpan={7}>
+                      <EstadoVacio titulo="No hay cotizaciones" descripcion="Prueba con otro rango de fechas." />
                     </td>
                   </tr>
                 )}

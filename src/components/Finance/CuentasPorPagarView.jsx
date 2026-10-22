@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import GloryMascota from '../Common/GloryMascota';
 import { 
   Search, Plus, FileText, CheckCircle2, AlertCircle, 
   DollarSign, Calendar, Check, X, CreditCard, ChevronLeft, ChevronRight 
@@ -234,8 +235,8 @@ export default function CuentasPorPagarView({ onSelectSubView }) {
       {/* Contenido / Estado Vacío o Tabla */}
       {filteredCuentas.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-16 flex flex-col items-center justify-center text-center space-y-3">
-          <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
-            <FileText className="w-8 h-8" />
+          <div className="w-32 h-32 rounded-full bg-[#FFF1E8] flex items-center justify-center">
+            <GloryMascota mood="pensando" size={96} animated={false} className="translate-y-1.5" />
           </div>
           <div className="space-y-1 max-w-sm">
             <h3 className="font-bold text-slate-800 text-sm">

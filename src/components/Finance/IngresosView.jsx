@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Plus, Search, Download, Printer, Filter, X, Check, Calendar, ArrowUpRight, FileText, ChevronLeft, ChevronRight 
 } from 'lucide-react';
@@ -259,8 +260,8 @@ export default function IngresosView({ onSelectSubView }) {
             <tbody className="divide-y divide-slate-100">
               {paginatedIngresos.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center text-slate-400">
-                    No se encontraron ingresos registrados con los criterios seleccionados.
+                  <td colSpan="8">
+                    <EstadoVacio titulo="No se encontraron ingresos" descripcion="Prueba con otros criterios de búsqueda." />
                   </td>
                 </tr>
               ) : (

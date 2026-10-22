@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { BookOpen, Package, AlertTriangle, Plus, Trash2, Save, X } from 'lucide-react';
 import { db } from '../../db/dexie';
 import { restaurantService, ESTACIONES } from '../../services/restaurantService';
@@ -151,8 +152,8 @@ export default function CartaRecetasTab({ data }) {
                 );
               })}
               {insumos.length === 0 && (
-                <tr><td colSpan="6" className="px-3 py-6 text-center text-slate-400">
-                  Aún no hay insumos. Crea productos en Productos y márcalos aquí como insumo (botón “Es insumo” en la carta).
+                <tr><td colSpan="6">
+                  <EstadoVacio titulo="Aún no hay insumos" descripcion="Crea productos en Productos y márcalos aquí como insumo (botón “Es insumo” en la carta)." />
                 </td></tr>
               )}
             </tbody>

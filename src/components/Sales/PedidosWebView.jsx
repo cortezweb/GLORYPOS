@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import {
   Search, Clock, CheckCircle2, X, FileText, Truck, Store, Phone, MapPin, Printer, Ban,
   ChefHat, PackageCheck, RefreshCw, MessageCircle, Receipt, Wallet
@@ -164,9 +165,7 @@ export default function PedidosWebView({ onSelectSubView, onOpenReceipt }) {
         <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
           <div className="xl:col-span-3 space-y-2">
             {lista.length === 0 && (
-              <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-10 text-center text-xs text-slate-500">
-                No hay pedidos con este filtro.
-              </div>
+                <EstadoVacio className="bg-white rounded-3xl border border-dashed border-slate-300" titulo="No hay pedidos con este filtro" />
             )}
             {lista.map(p => {
               const st = ESTADOS_PEDIDO[p.estado] || ESTADOS_PEDIDO.NUEVO;

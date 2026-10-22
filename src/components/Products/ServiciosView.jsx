@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Wrench, Plus, Search, Edit2, Trash2, CheckCircle2, 
   Clock, DollarSign, Tag, Briefcase, FileText, X, 
@@ -361,8 +362,8 @@ export default function ServiciosView({ onSelectSubView }) {
               <tbody className="divide-y divide-slate-100 text-xs">
                 {filteredServicios.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-12 text-center text-slate-400">
-                      No se encontraron servicios registrados.
+                    <td colSpan={9}>
+                      <EstadoVacio titulo="No se encontraron servicios registrados" />
                     </td>
                   </tr>
                 ) : (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   ArrowRightLeft, History, Plus, Trash2, Search, X, CheckCircle2,
   Package, AlertTriangle, AlertCircle, Check
@@ -322,8 +323,8 @@ export default function TransferenciasView({ onSelectSubView, initialProductToTr
 
                   {transferItems.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="py-10 text-center text-slate-400 text-xs italic">
-                        No hay productos. Haz clic en "Agregar productos" para buscar y añadir.
+                      <td colSpan={4}>
+                        <EstadoVacio titulo="No hay productos" descripcion={'Haz clic en "Agregar productos" para buscar y añadir.'} />
                       </td>
                     </tr>
                   )}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Plus, Minus, Search, ArrowDownRight, FileText, ChevronLeft, ChevronRight, Check, X 
 } from 'lucide-react';
@@ -265,8 +266,8 @@ export default function EgresosView({ onSelectSubView }) {
             <tbody className="divide-y divide-slate-100">
               {paginatedEgresos.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="py-12 text-center text-slate-400">
-                    No se encontraron egresos registrados con los criterios seleccionados.
+                  <td colSpan="9">
+                    <EstadoVacio titulo="No se encontraron egresos" descripcion="Prueba con otros criterios de búsqueda." />
                   </td>
                 </tr>
               ) : (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   FileText, Search, Printer, Share2, Copy, Check, Ban, 
   RefreshCw, Download, Calendar, ChevronDown, MoreVertical, 
@@ -629,8 +630,8 @@ export default function ComprobantesView({ onSelectSubView, onOpenReceipt }) {
               <tbody className="divide-y divide-slate-100 text-xs">
                 {paginatedVentas.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-16 text-center text-slate-400">
-                      No se encontraron comprobantes electrónicos con los filtros seleccionados.
+                    <td colSpan={11}>
+                      <EstadoVacio titulo="No se encontraron comprobantes" descripcion="Prueba con otros filtros." />
                     </td>
                   </tr>
                 ) : (

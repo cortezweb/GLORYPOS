@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { Users, Clock, X, CalendarClock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { restaurantService, totalComanda } from '../../services/restaurantService';
@@ -59,9 +60,7 @@ export default function MesasTab({ data, onOpenComanda }) {
       </div>
 
       {visibles.length === 0 && (
-        <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">
-          No hay mesas en este salón. Créalas en la pestaña Configuración.
-        </div>
+          <EstadoVacio className="bg-white rounded-3xl border border-dashed border-slate-300" titulo="No hay mesas en este salón" descripcion="Créalas en la pestaña Configuración." />
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">

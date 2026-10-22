@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Wallet, ArrowUpRight, ArrowDownLeft, Plus, DollarSign, 
   Lock, Printer, RefreshCw, AlertTriangle, CheckCircle2, Clock, 
@@ -480,9 +481,7 @@ export default function CajaChicaView({ onSelectSubView, onOpenCloseCash, defaul
                 })}
 
                 {movimientos.length === 0 && (
-                  <p className="text-center py-6 text-slate-400 text-xs italic">
-                    No hay movimientos registrados para el rango seleccionado.
-                  </p>
+                    <EstadoVacio titulo="No hay movimientos" descripcion="No hay registros en el rango seleccionado." />
                 )}
               </div>
             </div>

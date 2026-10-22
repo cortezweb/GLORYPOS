@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Ruler, Search, Plus, Edit2, CheckCircle2, X, Check, Trash2 
 } from 'lucide-react';
@@ -317,8 +318,8 @@ export default function UnidadesMedidaView({ onSelectSubView }) {
 
                 {filteredUnidades.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-slate-400 italic">
-                      No se encontraron unidades de medida con los filtros aplicados.
+                    <td colSpan={6}>
+                      <EstadoVacio titulo="No se encontraron unidades de medida" descripcion="Prueba con otros filtros." />
                     </td>
                   </tr>
                 )}

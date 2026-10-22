@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   FileText, Search, Plus, Trash2, CheckCircle2, 
   Printer, DollarSign, User, ShieldCheck, ArrowRight, 
@@ -1456,9 +1457,7 @@ export default function NuevoComprobanteView({ onSelectSubView, onOpenReceipt, m
 
               <div className="overflow-y-auto divide-y divide-slate-100">
                 {filas.length === 0 ? (
-                  <div className="py-10 text-center text-xs text-slate-400">
-                    No se encontraron productos.
-                  </div>
+                    <EstadoVacio titulo="No se encontraron productos" />
                 ) : (
                   filas.map((p) => {
                     const presentaciones = Array.isArray(p.presentaciones) ? p.presentaciones : [];

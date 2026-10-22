@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Tag, Search, Plus, Edit2, Trash2, CheckCircle2, 
   Layers, Sparkles, X, ChevronRight, Bookmark, Boxes
@@ -263,11 +264,11 @@ export default function CategoriasMarcasView({ currentRubro = 'ABARROTES', onSel
           })}
 
           {filteredList.length === 0 && (
-            <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
-              <Layers className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-xs font-bold text-slate-600">No se encontraron {activeTab}</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Crea una nueva con el botón superior.</p>
-            </div>
+            <EstadoVacio
+              className="col-span-full bg-white rounded-2xl border border-slate-200"
+              titulo={`No se encontraron ${activeTab}`}
+              descripcion="Crea una nueva con el botón superior."
+            />
           )}
         </div>
 

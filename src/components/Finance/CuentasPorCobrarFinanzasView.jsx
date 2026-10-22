@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import EstadoVacio from '../Common/EstadoVacio';
 import { 
   Search, AlertCircle, CheckCircle2, DollarSign, Calendar, 
   FileText, ArrowUpRight, Check, X, ShieldAlert, CreditCard 
@@ -256,8 +257,8 @@ export default function CuentasPorCobrarFinanzasView({ onSelectSubView }) {
             <tbody className="divide-y divide-slate-100">
               {filteredCuentas.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="py-12 text-center text-slate-400">
-                    No hay comprobantes de cuentas por cobrar para mostrar.
+                  <td colSpan="9">
+                    <EstadoVacio titulo="No hay cuentas por cobrar" descripcion="Aquí verás los comprobantes pendientes de cobro." />
                   </td>
                 </tr>
               ) : (
