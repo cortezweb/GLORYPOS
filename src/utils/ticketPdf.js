@@ -2,6 +2,7 @@
 import { jsPDF } from 'jspdf';
 import { simbolo, getCurrency } from './currency';
 import { montoEnLetras, ponerMarcaAgua } from './cotizacionPdf';
+import { imprimirPdf } from './exportar';
 
 const fmt = (n) => (Number(n) || 0).toFixed(2);
 
@@ -115,12 +116,9 @@ export function crearTicketPdf(datos, empresa, anchoMm = 80, titulo = 'NOTA DE V
   return doc;
 }
 
-// Abre el ticket en una pestaña nueva con el diálogo de impresión; si el navegador bloquea la pestaña, lo descarga.
+// Abre el diálogo de impresión del ticket en la misma pantalla; en celulares lo descarga.
 export function imprimirTicketPdf(datos, empresa, anchoMm = 80, titulo) {
-  const doc = crearTicketPdf(datos, empresa, anchoMm, titulo);
-  doc.autoPrint();
-  const win = window.open(doc.output('bloburl'), '_blank');
-  if (!win) doc.save(nombreArchivoTicket(datos, anchoMm));
+  imprimirPdf(crearTicketPdf(datos, empresa, anchoMm, titulo), nombreArchivoTicket(datos, anchoMm));
 }
 
 export const nombreArchivoTicket = (datos, anchoMm = 80) => `ticket-${anchoMm}mm-${datos?.correlativo || 'sin-numero'}.pdf`;

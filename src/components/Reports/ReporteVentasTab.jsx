@@ -1,8 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, Calendar, FileText, Download } from 'lucide-react';
 import { simbolo } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
+
+const hoy = () => new Date().toISOString().slice(0, 10);
 
 export default function ReporteVentasTab({ ventas = [] }) {
+  const { empresa } = useAuth();
   const [desde, setDesde] = useState('01/09/2026');
   const [hasta, setHasta] = useState('22/09/2026');
   const [sucursal, setSucursal] = useState('Todas');
@@ -211,22 +216,24 @@ export default function ReporteVentasTab({ ventas = [] }) {
     });
   }, [baseData, search, comprobante, metodoPago, estadoVenta]);
 
+  // Mismas columnas para PDF y Excel (los números quedan como número en Excel)
+  const tablaExportar = () => ({
+    columnas: ['Fecha', 'Comprobante', 'Número', 'Cliente', 'Documento', 'Registrado por', 'Subtotal', 'IGV', 'Total', 'Efecto neto', 'Neto cobrable', 'Tipo operación', 'Método pago', 'Estado'],
+    filas: filteredData.map(r => [r.fecha, r.tipo_comprobante, r.numero_comprobante, r.cliente, r.nro_documento, r.registrado_por, r.subtotal, r.igv, r.total_factura, r.efecto_neto, r.neto_cobrable, r.tipo_operacion, r.metodo_pago, r.estado]),
+  });
+
   const handleExportPDF = () => {
-    window.print();
+    const { columnas, filas } = tablaExportar();
+    const usar = [0, 1, 2, 3, 4, 8, 12, 13];
+    descargarPdfTabla(`reporte_ventas_${hoy()}`, {
+      titulo: 'Reporte de ventas', subtitulo: `${filas.length} registros`, empresa: empresa || {},
+      columnas: usar.map(i => columnas[i]), filas: filas.map(f => usar.map(i => f[i])), horizontal: true,
+    });
   };
 
   const handleExportExcel = () => {
-    let csv = "Fecha,Comprobante,Numero,Cliente,Documento,RegistradoPor,Subtotal,IGV,Total,EfectoNeto,NetoCobrable,TipoOperacion,MetodoPago,Estado\n";
-    filteredData.forEach(r => {
-      csv += `"${r.fecha}","${r.tipo_comprobante}","${r.numero_comprobante}","${r.cliente}","${r.nro_documento}","${r.registrado_por}",${r.subtotal.toFixed(2)},${r.igv.toFixed(2)},${r.total_factura.toFixed(2)},${r.efecto_neto.toFixed(2)},${r.neto_cobrable.toFixed(2)},"${r.tipo_operacion}","${r.metodo_pago}","${r.estado}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `reporte_ventas_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { columnas, filas } = tablaExportar();
+    descargarExcel(`reporte_ventas_${hoy()}`, columnas, filas, 'Reporte de ventas');
   };
 
   return (

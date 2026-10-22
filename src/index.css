@@ -33,7 +33,8 @@
 
 /* Professional Thermal Printer Media Rules (58mm / 80mm ESC/POS) */
 @media print {
-  body * {
+  /* Solo cuando hay un ticket térmico en pantalla; si no, window.print() salía en blanco */
+  body:has(#ticket-termico) * {
     visibility: hidden;
   }
   #ticket-termico, #ticket-termico * {
@@ -54,10 +55,6 @@
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 11px !important;
     line-height: 1.25 !important;
-  }
-  @page {
-    size: auto;
-    margin: 0mm;
   }
 }
 

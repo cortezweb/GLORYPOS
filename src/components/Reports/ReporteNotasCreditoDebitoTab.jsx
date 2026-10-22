@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Calendar, FileText, RotateCw } from 'lucide-react';
 import { simbolo } from '../../utils/currency';
+import { descargarExcel } from '../../utils/exportar';
+
+const hoy = () => new Date().toISOString().slice(0, 10);
 
 export default function ReporteNotasCreditoDebitoTab() {
   const [desde, setDesde] = useState('01/09/2026');
@@ -33,18 +36,15 @@ export default function ReporteNotasCreditoDebitoTab() {
   const totalND = 0.00;
   const totalPeriodo = 1259.15;
 
+  // Mismas columnas para PDF y Excel (los números quedan como número en Excel)
+  const tablaExportar = () => ({
+    columnas: ['Fecha', 'Número', 'Tipo', 'Motivo', 'Comprobante afectado', 'Cliente', 'Estado', 'Monto'],
+    filas: detalleNotas.map(n => [n.fecha, n.numero, n.tipo, n.motivo, n.comprobante_afectado, n.cliente, n.estado, n.monto]),
+  });
+
   const handleExport = () => {
-    let csv = "Fecha,Numero,Tipo,Motivo,ComprobanteAfectado,Cliente,Estado,Monto\n";
-    detalleNotas.forEach(n => {
-      csv += `"${n.fecha}","${n.numero}","${n.tipo}","${n.motivo}","${n.comprobante_afectado}","${n.cliente}","${n.estado}",${n.monto.toFixed(2)}\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `reporte_notas_credito_debito_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { columnas, filas } = tablaExportar();
+    descargarExcel(`reporte_notas_credito_debito_${hoy()}`, columnas, filas, 'Notas de crédito y débito');
   };
 
   return (

@@ -13,6 +13,7 @@ import { RUBROS_CONFIG } from '../../db/rubros';
 import { simbolo } from '../../utils/currency';
 import { productoSchema, validar } from '../../lib/schemas';
 import { toast } from 'sonner';
+import { descargarExcel } from '../../utils/exportar';
 
 // ── REGISTROS SEMILLA EXACTOS AL SCREENSHOT ──
 const SEED_PRODUCTOS_LIST = [
@@ -661,31 +662,21 @@ export default function ProductsView({ currentRubro = 'ABARROTES', onSelectSubVi
 
   // ── EXPORTAR A EXCEL / CSV ──
   const handleExportExcel = () => {
-    const headers = ['CÓDIGO', 'PRODUCTO', 'CATEGORÍA', 'MARCA', 'PRECIO_VENTA', 'PRECIO_COMPRA', 'IGV', 'STOCK', 'VENCIMIENTO', 'ESTADO'];
-    const rows = filteredProducts.map(p => [
-      `"${p.codigo_barras || ''}"`,
-      `"${(p.nombre || '').replace(/"/g, '""')}"`,
-      `"${p.categoria || '-'}"`,
-      `"${p.marca || '-'}"`,
-      p.precio_venta || 0,
-      p.precio_compra || 0,
-      p.igv || 10,
-      p.controla_stock ? (p.stock_actual ?? 0) : 'No controla stock',
-      `"${p.fecha_vencimiento || '—'}"`,
-      `"${p.activo !== false ? 'Activo' : 'Inactivo'}"`
+    const columnas = ['CÓDIGO', 'PRODUCTO', 'CATEGORÍA', 'MARCA', 'PRECIO_VENTA', 'PRECIO_COMPRA', 'IGV', 'STOCK', 'VENCIMIENTO', 'ESTADO'];
+    const filas = filteredProducts.map(p => [
+      p.codigo_barras || '',
+      p.nombre || '',
+      p.categoria || '-',
+      p.marca || '-',
+      Number(p.precio_venta) || 0,
+      Number(p.precio_compra) || 0,
+      Number(p.igv ?? 10),
+      p.controla_stock ? (Number(p.stock_actual) || 0) : 'No controla stock',
+      p.fecha_vencimiento || '—',
+      p.activo !== false ? 'Activo' : 'Inactivo'
     ]);
-
-    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' 
-      + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `catalogo_productos_glorypos_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast('Catálogo exportado exitosamente a Excel / CSV');
+    descargarExcel(`catalogo_productos_glorypos_${new Date().toISOString().split('T')[0]}`, columnas, filas, 'Productos');
+    showToast('Catálogo exportado a Excel');
   };
 
   return (

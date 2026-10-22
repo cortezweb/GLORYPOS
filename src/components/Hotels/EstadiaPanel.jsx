@@ -9,6 +9,7 @@ import { hotelService, folio, formatFecha, RESERVA_ESTADOS, hoyISO } from '../..
 import { money } from './useHotelData';
 import { simbolo } from '../../utils/currency';
 import { toast } from 'sonner';
+import { imprimirHtml } from '../../utils/exportar';
 
 const ESTADO_BADGE = {
   RESERVADA: 'bg-indigo-50 text-indigo-700 border-indigo-200',
@@ -68,9 +69,7 @@ export default function EstadiaPanel({ reserva: r, data, onBack, onEditar, onCob
       ...(r.consumos || []).filter(c => !c.anulado).map(c => `<tr><td>${c.cantidad} x ${c.nombre}</td><td style="text-align:right">${(c.precio * c.cantidad).toFixed(2)}</td></tr>`),
     ].join('');
     const pagos = (r.pagos || []).map(p => `<tr><td>Pago ${p.correlativo || ''} (${p.metodo || ''})</td><td style="text-align:right">-${Number(p.monto).toFixed(2)}</td></tr>`).join('');
-    const w = window.open('', '_blank', 'width=380,height=680');
-    if (!w) return;
-    w.document.write(`<html><head><title>Folio ${r.codigo}</title><style>body{font-family:monospace;font-size:12px;padding:10px}table{width:100%}h3,p{text-align:center;margin:4px 0}</style></head><body>
+    imprimirHtml(`<html><head><title>Folio ${r.codigo}</title><style>body{font-family:monospace;font-size:12px;padding:10px}table{width:100%}h3,p{text-align:center;margin:4px 0}</style></head><body>
       <h3>${empresa?.nombre || 'HOTEL'}</h3><p>FOLIO DEL HUÉSPED (no válido como factura)</p>
       <p>${r.codigo} · Hab. ${hab?.numero} (${tipo?.nombre || ''})</p>
       <p>${r.huesped?.nombre} · ${r.huesped?.tipo_doc || ''} ${r.huesped?.documento || ''}</p>
@@ -78,9 +77,7 @@ export default function EstadiaPanel({ reserva: r, data, onBack, onEditar, onCob
       <table>${filas}</table><hr/><table>${pagos}</table><hr/>
       <table><tr><td><b>TOTAL</b></td><td style="text-align:right"><b>${f.total.toFixed(2)}</b></td></tr>
       <tr><td>Pagado</td><td style="text-align:right">${f.totalPagado.toFixed(2)}</td></tr>
-      <tr><td><b>SALDO</b></td><td style="text-align:right"><b>${simbolo()} ${f.saldo.toFixed(2)}</b></td></tr></table>
-      <script>window.print()</script></body></html>`);
-    w.document.close();
+      <tr><td><b>SALDO</b></td><td style="text-align:right"><b>${simbolo()} ${f.saldo.toFixed(2)}</b></td></tr></table></body></html>`);
   };
 
   const activa = r.estado === 'RESERVADA' || r.estado === 'EN_CASA';

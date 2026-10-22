@@ -431,7 +431,7 @@ export default function NotasVentaView({ onSelectSubView, onOpenReceipt }) {
                           {/* 5. Imprimir directo (Impresora en verde) */}
                           <button
                             type="button"
-                            onClick={() => window.print()}
+                            onClick={() => imprimirTicketPdf(nota, empresa, 80, tituloVenta(nota.tipo_documento))}
                             title="Imprimir"
                             className="p-1 text-[#FF6B35] hover:text-[#E85B28] hover:bg-[#FF6B35]/10 rounded transition"
                           >

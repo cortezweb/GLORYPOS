@@ -12,6 +12,7 @@ import DetalleDocumentoModal from './DetalleDocumentoModal';
 import EstadoSunatModal from './EstadoSunatModal';
 import DocumentoPdfPreviewModal from './DocumentoPdfPreviewModal';
 import { simbolo, getCurrencyCode } from '../../utils/currency';
+import { imprimirElemento } from '../../utils/exportar';
 
 export default function DocumentosAvanzadosView({ initialTab = 'retenciones', onSelectSubView }) {
   // Pestaña activa: 'retenciones', 'percepciones', 'reversiones'
@@ -546,7 +547,7 @@ export default function DocumentosAvanzadosView({ initialTab = 'retenciones', on
                           <button
                             type="button"
                             title="Descargar PDF"
-                            onClick={() => setSelectedDocPdf(doc)}
+                            onClick={() => { setSelectedDocPdf(doc); setTimeout(() => imprimirElemento('documento-imprimir', doc.serie_nro || 'Comprobante'), 150); }}
                             className="hover:text-rose-700 transition p-0.5"
                           >
                             <Download className="w-3.5 h-3.5" />

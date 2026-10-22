@@ -1,8 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, Calendar, FileText, Download } from 'lucide-react';
 import { simbolo } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
+
+const hoy = () => new Date().toISOString().slice(0, 10);
 
 export default function ReporteComprasTab({ compras = [] }) {
+  const { empresa } = useAuth();
   const [desde, setDesde] = useState('01/09/2026');
   const [hasta, setHasta] = useState('22/09/2026');
   const [search, setSearch] = useState('');
@@ -133,22 +138,24 @@ export default function ReporteComprasTab({ compras = [] }) {
     });
   }, [baseCompras, search]);
 
+  // Mismas columnas para PDF y Excel (los números quedan como número en Excel)
+  const tablaExportar = () => ({
+    columnas: ['Fecha', 'Tipo', 'Serie', 'Número', 'Proveedor', 'Subtotal', 'IGV', 'Total', 'Estado', 'CRE', 'Estado CRE', 'RR', 'Estado RR'],
+    filas: filteredCompras.map(c => [c.fecha, c.tipo, c.serie, c.numero, c.proveedor, c.subtotal, c.igv, c.total, c.estado, c.cre, c.estado_cre, c.rr, c.estado_rr]),
+  });
+
   const handleExportPDF = () => {
-    window.print();
+    const { columnas, filas } = tablaExportar();
+    const usar = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    descargarPdfTabla(`reporte_compras_${hoy()}`, {
+      titulo: 'Reporte de compras', subtitulo: `${filas.length} registros`, empresa: empresa || {},
+      columnas: usar.map(i => columnas[i]), filas: filas.map(f => usar.map(i => f[i])), horizontal: true,
+    });
   };
 
   const handleExportExcel = () => {
-    let csv = "Fecha,Tipo,Serie,Numero,Proveedor,Subtotal,IGV,Total,Estado,CRE,EstadoCRE,RR,EstadoRR\n";
-    filteredCompras.forEach(c => {
-      csv += `"${c.fecha}","${c.tipo}","${c.serie}","${c.numero}","${c.proveedor}",${c.subtotal.toFixed(2)},${c.igv.toFixed(2)},${c.total.toFixed(2)},"${c.estado}","${c.cre}","${c.estado_cre}","${c.rr}","${c.estado_rr}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `reporte_compras_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { columnas, filas } = tablaExportar();
+    descargarExcel(`reporte_compras_${hoy()}`, columnas, filas, 'Reporte de compras');
   };
 
   return (

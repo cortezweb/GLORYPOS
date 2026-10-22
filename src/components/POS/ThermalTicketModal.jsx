@@ -6,6 +6,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { ticketHTML, imprimirTicket, getAnchoTicket } from '../../utils/ticketPrint';
 import { simbolo } from '../../utils/currency';
+import { descargarTicketPdf } from '../../utils/ticketPdf';
+import { tituloVenta } from '../../utils/cotizacionPdf';
 import { toast } from 'sonner';
 
 export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }) {
@@ -152,8 +154,8 @@ export default function ThermalTicketModal({ venta, isOpen, onClose, onNewSale }
               </button>
 
               <button 
-                onClick={() => handlePrint()}
-                title="En el diálogo de impresión elige 'Guardar como PDF'"
+                onClick={() => descargarTicketPdf(venta, empresa, ancho, tituloVenta(venta.tipo_documento))}
+                title="Descargar el ticket en PDF"
                 className="bg-[#FFB627] hover:bg-[#e6a21e] active:scale-[0.98] text-[#1E2022] transition flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg shadow-xs"
               >
                 <FileText className="w-3.5 h-3.5" />

@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart2, Search, Calendar, FileText, Download } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { descargarExcel, descargarPdfTabla } from '../../utils/exportar';
+
+const hoy = () => new Date().toISOString().slice(0, 10);
 
 export default function ReporteKardexTab({ kardex = [] }) {
+  const { empresa } = useAuth();
   const [productoSearch, setProductoSearch] = useState('');
   const [desde, setDesde] = useState('01/09/2026');
   const [hasta, setHasta] = useState('22/09/2026');
@@ -72,22 +77,24 @@ export default function ReporteKardexTab({ kardex = [] }) {
     });
   }, [baseKardex, tipoOrigen, tipoOperacion, codigoSunat, productoSearch, refNotas]);
 
+  // Mismas columnas para PDF y Excel (los números quedan como número en Excel)
+  const tablaExportar = () => ({
+    columnas: ['Fecha y hora', 'Código', 'Producto', 'Movimiento', 'Tipo operación', 'Código SUNAT', 'Cantidad', 'Saldo', 'Sucursal', 'Usuario', 'Referencia', 'Notas'],
+    filas: filteredKardex.map(k => [k.fecha_hora, k.codigo, k.producto, k.movimiento, k.tipo_operacion, k.codigo_sunat, Number(k.cantidad) || 0, Number(k.saldo) || 0, k.sucursal, k.usuario, k.referencia, k.notas]),
+  });
+
   const handleExportPDF = () => {
-    window.print();
+    const { columnas, filas } = tablaExportar();
+    const usar = [0, 1, 2, 3, 4, 6, 7, 9, 10];
+    descargarPdfTabla(`reporte_kardex_${hoy()}`, {
+      titulo: 'Reporte de kardex', subtitulo: `${filas.length} registros`, empresa: empresa || {},
+      columnas: usar.map(i => columnas[i]), filas: filas.map(f => usar.map(i => f[i])), horizontal: true,
+    });
   };
 
   const handleExportExcel = () => {
-    let csv = "FechaHora,Codigo,Producto,Movimiento,TipoOperacion,CodigoSUNAT,Cantidad,Saldo,Sucursal,Usuario,Referencia,Notas\n";
-    filteredKardex.forEach(k => {
-      csv += `"${k.fecha_hora}","${k.codigo}","${k.producto}","${k.movimiento}","${k.tipo_operacion}","${k.codigo_sunat}",${k.cantidad},${k.saldo},"${k.sucursal}","${k.usuario}","${k.referencia}","${k.notas}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `reporte_kardex_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { columnas, filas } = tablaExportar();
+    descargarExcel(`reporte_kardex_${hoy()}`, columnas, filas, 'Reporte de kardex');
   };
 
   return (
