@@ -4,6 +4,8 @@ import { db, switchTenantDatabase } from '../db/dexie';
 const RESERVED_SUBDOMAINS = ['www', 'app', 'pos', 'api', 'cdn', 'static', 'mail', 'staging', 'dev'];
 const HOSTING_DOMAINS = ['.pages.dev', '.workers.dev', '.vercel.app', '.netlify.app', '.up.railway.app', '.onrender.com'];
 const BASE_DOMAIN = String(import.meta.env.VITE_BASE_DOMAIN || '').toLowerCase().replace(/^\.+/, '');
+// Dominio que se muestra en pantalla para los subdominios (ej. "tienda-sol.<dominio>")
+export const DOMINIO_BASE = BASE_DOMAIN || 'glorypos.app';
 
 /**
  * Convierte un nombre en un slug URL-friendly
