@@ -10,7 +10,7 @@ import {
 import AdminDashboardView from './AdminDashboardView';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../db/dexie';
-import { tenantService, slugify } from '../../services/tenantService';
+import { tenantService, slugify, DOMINIO_BASE } from '../../services/tenantService';
 import { supabase, isSupabaseConfigured, isDemoMode } from '../../lib/supabase';
 import { hashText } from '../../utils/crypto';
 import { ALL_CLIENT_MODULES, MODULE_PRESETS } from '../../config/modules';
@@ -533,7 +533,7 @@ export default function SuperAdminView({
     return encodeURIComponent(
       `¡Hola ${c.propietario || c.nombre}! 👋\n\n` +
       `Tu espacio en *GLORYPOS SaaS* ha sido activado con éxito.\n\n` +
-      `🌐 *Subdominio Web:* https://${c.slug}.glorypos.bo\n` +
+      `🌐 *Subdominio Web:* https://${c.slug}.${DOMINIO_BASE}\n` +
       `🏢 *Identificador Local:* ${c.slug}\n` +
       `👤 *Usuario:* ${c.email}\n` +
       `🔑 *Contraseña:* ${rawPwd}\n` +
@@ -872,7 +872,7 @@ export default function SuperAdminView({
                               </div>
                               <div className="flex items-center gap-1.5 text-[#FF6B35] font-mono text-[11px] font-semibold">
                                 <Globe className="w-3 h-3 shrink-0" />
-                                <span>{client.slug || 'admin'}.glorypos.bo</span>
+                                <span>{client.slug || 'admin'}.{DOMINIO_BASE}</span>
                               </div>
                             </div>
                           </div>
@@ -1120,7 +1120,7 @@ export default function SuperAdminView({
                       }}
                       className="w-full p-2.5 bg-transparent text-[#FF6B35] font-mono font-bold focus:outline-none"
                     />
-                    <span className="pr-3 text-slate-400 select-none font-mono">.glorypos.bo</span>
+                    <span className="pr-3 text-slate-400 select-none font-mono">.{DOMINIO_BASE}</span>
                   </div>
                   <span className="text-[10px] text-[#FF6B35] font-semibold mt-1 block">
                     ✓ Subdominio web para producción e identificador de acceso local.
@@ -1374,7 +1374,7 @@ export default function SuperAdminView({
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 text-xs">
               <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
                 <span className="text-slate-500">Subdominio Web:</span>
-                <span className="text-[#FF6B35] font-bold font-mono">https://{credentialsModalClient.slug}.glorypos.bo</span>
+                <span className="text-[#FF6B35] font-bold font-mono">https://{credentialsModalClient.slug}.{DOMINIO_BASE}</span>
               </div>
               <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/80">
                 <span className="text-slate-500">Identificador Local:</span>

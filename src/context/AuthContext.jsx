@@ -409,7 +409,8 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signUp({
       email: cleanEmail,
       password,
-      options: { data: { nombre: adminNombre } },
+      // El enlace de confirmación vuelve al mismo dominio/subdominio desde el que se registró
+      options: { data: { nombre: adminNombre }, emailRedirectTo: window.location.origin },
     });
     if (error) return { success: false, error: error.message };
 
@@ -431,7 +432,7 @@ export function AuthProvider({ children }) {
   const signUpInvited = async (email, password) => {
     if (isDemoMode) return { success: false, error: 'No disponible en modo demo' };
     const cleanEmail = email.trim().toLowerCase();
-    const { data, error } = await supabase.auth.signUp({ email: cleanEmail, password });
+    const { data, error } = await supabase.auth.signUp({ email: cleanEmail, password, options: { emailRedirectTo: window.location.origin } });
     if (error) return { success: false, error: error.message };
     if (!data.session) return { success: true, needsConfirmation: true };
     return completeCloudLogin(data.user);

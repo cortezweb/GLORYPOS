@@ -7,7 +7,7 @@ import { db } from '../../db/dexie';
 import { hashText } from '../../utils/crypto';
 import { useAuth } from '../../context/AuthContext';
 import { playCashChime } from '../../utils/audio';
-import { tenantService, slugify } from '../../services/tenantService';
+import { tenantService, slugify, DOMINIO_BASE } from '../../services/tenantService';
 import { isDemoMode } from '../../lib/supabase';
 import GloryLogo from '../Common/GloryLogo';
 import GloryMascota from '../Common/GloryMascota';
@@ -293,7 +293,7 @@ export default function RegisterView({ onGoToLogin }) {
                       }}
                       className="w-full px-2 py-2 text-xs bg-transparent text-slate-900 font-mono font-bold focus:outline-none"
                     />
-                    <span className="pr-3 text-slate-400 text-xs font-mono select-none">.glorypos.bo</span>
+                    <span className="pr-3 text-slate-400 text-xs font-mono select-none">.{DOMINIO_BASE}</span>
                   </div>
                   <p className="text-[10px] text-slate-400 mt-1">
                     Tu subdominio web único y tu identificador de acceso local en GLORYPOS.
