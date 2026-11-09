@@ -16,8 +16,8 @@ app.use(helmet({
 }));
 
 // Configuración CORS flexible para subdominios y Cloudflare Pages
-// BASE_DOMAIN (ej. "glorypos.com") permite el dominio propio y todos sus subdominios
-const BASE_DOMAIN = String(process.env.BASE_DOMAIN || 'glorypos.bo').toLowerCase().replace(/^\.+/, '');
+// BASE_DOMAIN (ej. "glorypos.app") permite el dominio propio y todos sus subdominios
+const BASE_DOMAIN = String(process.env.BASE_DOMAIN || 'glorypos.app').toLowerCase().replace(/^\.+/, '');
 const escaparRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const allowedOriginRegex = new RegExp(
   `^(https?:\\/\\/localhost(:\\d+)?|https?:\\/\\/127\\.0\\.0\\.1(:\\d+)?|https:\\/\\/.*\\.pages\\.dev|https:\\/\\/([a-z0-9-]+\\.)*${escaparRegex(BASE_DOMAIN)})$`
