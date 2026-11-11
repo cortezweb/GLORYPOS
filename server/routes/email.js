@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const { authenticateUser } = require('../middleware/auth');
 
@@ -16,23 +17,46 @@ function dentroDelLimite(userId) {
   return true;
 }
 
+// Proveedor de correo: Gmail (SMTP con contraseña de aplicación) o Resend (dominio propio)
+const proveedor = () => {
+  if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) return 'gmail';
+  if (process.env.RESEND_API_KEY && process.env.MAIL_FROM) return 'resend';
+  return null;
+};
+
+let transporteGmail = null;
+function obtenerTransporteGmail() {
+  if (!transporteGmail) {
+    transporteGmail = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+    });
+  }
+  return transporteGmail;
+}
+
 const escapar = (t) => String(t || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /**
  * POST /api/email/documento
- * Envía un PDF (cotización) por correo con Resend. Solo usuarios con sesión y empresa.
- * Variables: RESEND_API_KEY y MAIL_FROM (ej. "GLORYPOS <documentos@tudominio.com>").
+ * Envía un PDF (cotización) por correo. Solo usuarios con sesión y empresa.
+ * Proveedor (el primero que esté configurado):
+ *  - Gmail: GMAIL_USER y GMAIL_APP_PASSWORD (contraseña de aplicación de Google).
+ *  - Resend: RESEND_API_KEY y MAIL_FROM (ej. "GLORYPOS <documentos@tudominio.com>").
  */
 router.post('/documento', authenticateUser, async (req, res) => {
   try {
-    if (!process.env.RESEND_API_KEY || !process.env.MAIL_FROM) {
+    const via = proveedor();
+    if (!via) {
       return res.status(503).json({ success: false, error: 'El envío de correos no está configurado en el servidor.' });
     }
     if (!req.user?.empresa_id && req.user?.rol !== 'SUPERADMIN') {
       return res.status(403).json({ success: false, error: 'Tu cuenta no pertenece a una empresa.' });
     }
 
-    const { para, asunto, mensaje, nombreArchivo, pdfBase64, responderA, nombreRemitente } = req.body || {};
+    const { para, asunto: asunto0, mensaje, nombreArchivo, pdfBase64, responderA, nombreRemitente } = req.body || {};
 
     if (!EMAIL_RE.test(String(para || '').trim())) {
       return res.status(400).json({ success: false, error: 'El correo del destinatario no es válido.' });
@@ -51,14 +75,35 @@ router.post('/documento', authenticateUser, async (req, res) => {
     const remitente = String(nombreRemitente || '').replace(/[<>"\r\n]/g, '').slice(0, 80);
     const cuerpo = escapar(String(mensaje || 'Le enviamos el documento adjunto.').slice(0, 2000)).replace(/\n/g, '<br>');
 
+    const asunto = String(asunto0 || 'Documento').replace(/[\r\n]/g, ' ').slice(0, 150);
+    const respuestaA = EMAIL_RE.test(String(responderA || '').trim()) ? String(responderA).trim() : null;
+
+    if (via === 'gmail') {
+      // Sale desde la cuenta Gmail del sistema; el nombre que se ve es el de la empresa
+      try {
+        await obtenerTransporteGmail().sendMail({
+          from: `"${remitente || 'GLORYPOS'}" <${process.env.GMAIL_USER}>`,
+          to: String(para).trim(),
+          replyTo: respuestaA || undefined,
+          subject: asunto,
+          text: `${String(mensaje || 'Le enviamos el documento adjunto.').slice(0, 2000)}\n\n--\n${remitente ? `${remitente} · ` : ''}Enviado con GLORYPOS`,
+          attachments: [{ filename: archivo, content: pdfBase64, encoding: 'base64', contentType: 'application/pdf' }],
+        });
+      } catch (err) {
+        console.error('[email route] Gmail rechazó el envío:', err.code || '', err.responseCode || '', String(err.message).slice(0, 200));
+        return res.status(502).json({ success: false, error: 'Gmail rechazó el envío. Revisa la contraseña de aplicación.' });
+      }
+      return res.json({ success: true });
+    }
+
     const payload = {
       from: process.env.MAIL_FROM,
       to: [String(para).trim()],
-      subject: String(asunto || 'Documento').replace(/[\r\n]/g, ' ').slice(0, 150),
+      subject: asunto,
       html: `<div style="font-family:Arial,sans-serif;font-size:14px;color:#1E2022">${cuerpo}<br><br><span style="color:#888;font-size:12px">${escapar(remitente)}${remitente ? ' · ' : ''}Enviado con GLORYPOS</span></div>`,
       attachments: [{ filename: archivo, content: pdfBase64 }],
     };
-    if (EMAIL_RE.test(String(responderA || '').trim())) payload.reply_to = String(responderA).trim();
+    if (respuestaA) payload.reply_to = respuestaA;
 
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
